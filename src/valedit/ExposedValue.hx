@@ -1,6 +1,5 @@
 package valedit;
 import openfl.errors.Error;
-import openfl.events.Event;
 import openfl.events.EventDispatcher;
 import valedit.events.ValueEvent;
 import valedit.ui.IValueUI;
@@ -14,7 +13,7 @@ class ExposedValue extends EventDispatcher
 	public var collection(get, set):ExposedCollection;
 	/* used as value when object is null */
 	public var defaultValue:Dynamic = null;
-	public var isEditable:Bool = true;
+	public var isEditable(get, set):Bool;
 	public var name:String;
 	public var object(get, set):Dynamic;
 	public var parentValue:ExposedValue;
@@ -29,6 +28,20 @@ class ExposedValue extends EventDispatcher
 		return _collection = value;
 	}
 	
+	private var _isEditable:Bool = true;
+	private function get_isEditable():Bool { return _isEditable; }
+	private function set_isEditable(value:Bool):Bool
+	{
+		if (_isEditable == value) return value;
+		_isEditable = value;
+		ValueEvent.dispatch(this, ValueEvent.EDITABLE_CHANGE);
+		for (val in _childValues)
+		{
+			val.isEditable = _isEditable;
+		}
+		return _isEditable;
+	}
+	
 	private var _object:Dynamic;
 	private function get_object():Dynamic { return _object; }
 	private function set_object(value:Dynamic):Dynamic
@@ -36,7 +49,6 @@ class ExposedValue extends EventDispatcher
 		if (_object == value) return value;
 		_object = value;
 		_storedValue = null;
-		//dispatchEvent(new Event(Event.CHANGE));
 		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE);
 		return _object;
 	}

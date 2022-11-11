@@ -22,6 +22,15 @@ class ExposedGroup extends ExposedValue
 		return super.set_collection(value);
 	}
 	
+	override function set_isEditable(value:Bool):Bool 
+	{
+		for (val in _valueList)
+		{
+			val.isEditable = value;
+		}
+		return super.set_isEditable(value);
+	}
+	
 	override function set_object(value:Dynamic):Dynamic
 	{
 		for (val in _valueList)
