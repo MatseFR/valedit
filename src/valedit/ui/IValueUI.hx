@@ -6,6 +6,7 @@ import valedit.ExposedValue;
  */
 interface IValueUI 
 {
-	var exposedValue(get,set):ExposedValue;
+	var exposedValue(get, set):ExposedValue;
+	function initExposedValue():Void;
 	function updateExposedValue(exceptControl:IValueUI = null):Void;
 }

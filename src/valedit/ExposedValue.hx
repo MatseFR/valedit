@@ -2,6 +2,7 @@ package valedit;
 import openfl.errors.Error;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
+import valedit.events.ValueEvent;
 import valedit.ui.IValueUI;
 
 /**
@@ -34,7 +35,9 @@ class ExposedValue extends EventDispatcher
 	{
 		if (_object == value) return value;
 		_object = value;
-		dispatchEvent(new Event(Event.CHANGE));
+		_storedValue = null;
+		//dispatchEvent(new Event(Event.CHANGE));
+		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE);
 		return _object;
 	}
 	
@@ -67,14 +70,18 @@ class ExposedValue extends EventDispatcher
 		{
 			defaultValue = value;
 		}
-		else
+		else if (_storedValue != value)
 		{
+			_storedValue = value;
 			Reflect.setProperty(_object, name, value);
 			if (parentValue != null) parentValue.childValueChanged();
 			if (updateCollectionUIOnChange) _collection.uiCollection.update(_uiControl);
 		}
 		return value;
 	}
+	
+	private var _storedValue:Dynamic;
+	private var _childValues:Array<ExposedValue> = new Array<ExposedValue>();
 	
 	/**
 	   
@@ -92,6 +99,24 @@ class ExposedValue extends EventDispatcher
 	public function clear():Void
 	{
 		_object = null;
+	}
+	
+	/**
+	   
+	   @param	value
+	**/
+	public function addChildValue(value:ExposedValue):Void
+	{
+		_childValues.push(value);
+	}
+	
+	/**
+	   
+	   @param	value
+	**/
+	public function removeChildValue(value:ExposedValue):Void
+	{
+		_childValues.remove(value);
 	}
 	
 	/**

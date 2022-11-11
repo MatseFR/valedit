@@ -31,6 +31,22 @@ class ExposedCollection
 	private function set_parentValue(value:ExposedValue):ExposedValue
 	{
 		if (_parentValue == value) return value;
+		if (_parentValue != null)
+		{
+			for (val in _valueList)
+			{
+				_parentValue.removeChildValue(val);
+			}
+		}
+		
+		if (value != null)
+		{
+			for (val in _valueList)
+			{
+				value.addChildValue(val);
+			}
+		}
+		
 		for (val in _valueList)
 		{
 			val.parentValue = value;

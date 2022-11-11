@@ -16,7 +16,15 @@ class UICollection
 	{
 		if (_uiContainer == value) return value;
 		
-		if (_uiContainer != null)
+		if (_uiGroup != null)
+		{
+			for (control in _uiList)
+			{
+				_uiGroup.removeExposedControl(control);
+			}
+			_uiGroup = null;
+		}
+		else if (_uiContainer != null)
 		{
 			for (control in _displayList)
 			{
@@ -26,15 +34,27 @@ class UICollection
 		
 		if (value != null)
 		{
-			for (control in _displayList)
+			if (Std.isOfType(value, IGroupUI))
 			{
-				value.addChild(control);
+				_uiGroup = cast value;
+				for (control in _uiList)
+				{
+					_uiGroup.addExposedControl(control);
+				}
+			}
+			else
+			{
+				for (control in _displayList)
+				{
+					value.addChild(control);
+				}
 			}
 		}
 		
 		return _uiContainer = value;
 	}
 	
+	private var _uiGroup:IGroupUI;
 	private var _displayList:Array<DisplayObject> = new Array<DisplayObject>();
 	private var _uiList:Array<IValueUI> = new Array<IValueUI>();
 	

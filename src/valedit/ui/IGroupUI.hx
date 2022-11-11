@@ -6,5 +6,6 @@ package valedit.ui;
 interface IGroupUI 
 {
 	function addExposedControl(control:IValueUI):Void;
+	function removeExposedControl(control:IValueUI):Void;
 	
 }

@@ -11,37 +11,21 @@ class ExposedObject extends ExposedValue
 	public var reassignOnChange:Bool = false;
 	public var storeValue:Bool = false;
 	
-	override function set_object(value:Dynamic):Dynamic
-	{
-		if (_object == value) return value;
-		_storedValue = null;
-		return super.set_object(value);
-	}
-	
 	override function get_value():Dynamic 
 	{
-		if (_object == null)
+		if (storeValue && _object != null)
 		{
-			return defaultValue;
+			if (_storedValue == null)
+			{
+				_storedValue = Reflect.getProperty(_object, name);
+			}
+			return _storedValue;
 		}
 		else
 		{
-			if (storeValue)
-			{
-				if (_storedValue == null)
-				{
-					_storedValue = Reflect.getProperty(_object, name);
-				}
-				return _storedValue;
-			}
-			else
-			{
-				return Reflect.getProperty(_object, name);
-			}
+			return super.get_value();
 		}
 	}
-	
-	private var _storedValue:Dynamic;
 	
 	/**
 	   
@@ -64,6 +48,15 @@ class ExposedObject extends ExposedValue
 		}
 		
 		super.childValueChanged();
+	}
+	
+	public function reloadObject():Void
+	{
+		_storedValue = Reflect.getProperty(_object, name);
+		for (value in _childValues)
+		{
+			value.object = _storedValue;
+		}
 	}
 	
 	override public function clone():ExposedValue 
