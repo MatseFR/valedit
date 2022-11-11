@@ -121,6 +121,12 @@ class DisplayHelper
 			collection.addValue(listVal, groupName);
 		}
 		
+		if (!collection.hasValue("transform"))
+		{
+			objVal = new ExposedObject("transform");
+			collection.addValue(objVal, groupName);
+		}
+		
 		if (!collection.hasValue("cacheAsBitmap"))
 		{
 			boolVal = new ExposedBool("cacheAsBitmap");
@@ -131,12 +137,6 @@ class DisplayHelper
 		{
 			boolVal = new ExposedBool("visible");
 			collection.addValue(boolVal, groupName);
-		}
-		
-		if (!collection.hasValue("transform"))
-		{
-			objVal = new ExposedObject("transform");
-			collection.addValue(objVal, groupName);
 		}
 		
 		return collection;

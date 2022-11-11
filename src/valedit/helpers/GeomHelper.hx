@@ -32,8 +32,8 @@ class GeomHelper
 		
 		if (!collection.hasValue("redMultiplier"))
 		{
-			floatVal = new ExposedFloat("redMultiplier");
-			collection.addValue(floatVal);
+			floatRange = new ExposedFloatRange("redMultiplier", 0, 1, 0.01);
+			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("redOffset"))
@@ -44,8 +44,8 @@ class GeomHelper
 		
 		if (!collection.hasValue("greenMultiplier"))
 		{
-			floatVal = new ExposedFloat("greenMultiplier");
-			collection.addValue(floatVal);
+			floatRange = new ExposedFloatRange("greenMultiplier", 0, 1, 0.01);
+			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("greenOffset"))
@@ -56,8 +56,8 @@ class GeomHelper
 		
 		if (!collection.hasValue("blueMultiplier"))
 		{
-			floatVal = new ExposedFloat("blueMultiplier");
-			collection.addValue(floatVal);
+			floatRange = new ExposedFloatRange("blueMultiplier", 0, 1, 0.01);
+			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("blueOffset"))
@@ -68,8 +68,8 @@ class GeomHelper
 		
 		if (!collection.hasValue("alphaMultiplier"))
 		{
-			floatVal = new ExposedFloat("alphaMultiplier");
-			collection.addValue(floatVal);
+			floatRange = new ExposedFloatRange("alphaMultiplier", 0, 1, 0.01);
+			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("alphaOffset"))
