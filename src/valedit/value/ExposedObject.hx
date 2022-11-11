@@ -61,9 +61,7 @@ class ExposedObject extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var object:ExposedObject = new ExposedObject(this.name);
-		object.reassignOnChange = reassignOnChange;
-		object.storeValue = storeValue;
+		var object:ExposedObject = new ExposedObject(this.name, storeValue, reassignOnChange);
 		super.clone_internal(object);
 		return object;
 	}

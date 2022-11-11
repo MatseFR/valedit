@@ -202,9 +202,7 @@ class ExposedGroup extends ExposedValue
 	**/
 	override public function clone():ExposedValue 
 	{
-		var group:ExposedGroup = new ExposedGroup(name);
-		group.isCollapsable = isCollapsable;
-		group.isCollapsedDefault = isCollapsedDefault;
+		var group:ExposedGroup = new ExposedGroup(name, isCollapsable, isCollapsedDefault);
 		
 		for (val in _valueList)
 		{

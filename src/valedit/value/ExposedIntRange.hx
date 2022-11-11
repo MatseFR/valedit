@@ -11,6 +11,8 @@ class ExposedIntRange extends ExposedValue
 	public var max(get, set):Int;
 	public var min(get, set):Int;
 	public var step:Int = 1;
+	public var sliderPercentWidth:Float;
+	public var inputPercentWidth:Float;
 	
 	private var _max:Int;
 	private function get_max():Int { return _max; }
@@ -35,21 +37,20 @@ class ExposedIntRange extends ExposedValue
 	   @param	max
 	   @param	step
 	**/
-	public function new(name:String, min:Int = 0, max:Int = 100, step:Int = 1) 
+	public function new(name:String, min:Int = 0, max:Int = 100, step:Int = 1, sliderPercentWidth:Float = 60, inputPercentWidth:Float = 40) 
 	{
 		super(name);
 		this.min = min;
 		this.max = max;
 		this.step = step;
+		this.sliderPercentWidth = sliderPercentWidth;
+		this.inputPercentWidth = inputPercentWidth;
 		this.defaultValue = 0;
 	}
 	
 	override public function clone():ExposedValue 
 	{
-		var range:ExposedIntRange = new ExposedIntRange(this.name);
-		range.max = _max;
-		range.min = _min;
-		range.step = step;
+		var range:ExposedIntRange = new ExposedIntRange(this.name, min, max, step, sliderPercentWidth, inputPercentWidth);
 		super.clone_internal(range);
 		return range;
 	}

@@ -12,6 +12,8 @@ class ExposedFloatRange extends ExposedValue
 	public var min(get, set):Float;
 	public var precision:Int;
 	public var step:Float = 1.0;
+	public var sliderPercentWidth:Float;
+	public var inputPercentWidth:Float;
 	
 	private var _max:Float;
 	private function get_max():Float { return _max; }
@@ -37,23 +39,21 @@ class ExposedFloatRange extends ExposedValue
 	   @param	step
 	   @param	precision
 	**/
-	public function new(name:String, min:Float = 0, max:Float = 100, step:Float = 1, precision:Int = 2) 
+	public function new(name:String, min:Float = 0, max:Float = 100, step:Float = 1, precision:Int = 2, sliderPercentWidth:Float = 60, inputPercentWidth:Float = 40) 
 	{
 		super(name);
 		this.min = min;
 		this.max = max;
 		this.step = step;
 		this.precision = precision;
+		this.sliderPercentWidth = sliderPercentWidth;
+		this.inputPercentWidth = inputPercentWidth;
 		this.defaultValue = 0.0;
 	}
 	
 	override public function clone():ExposedValue 
 	{
-		var range:ExposedFloatRange = new ExposedFloatRange(this.name);
-		range.max = _max;
-		range.min = _min;
-		range.precision = precision;
-		range.step = step;
+		var range:ExposedFloatRange = new ExposedFloatRange(this.name, min, max, step, precision, sliderPercentWidth, inputPercentWidth);
 		super.clone_internal(range);
 		return range;
 	}

@@ -10,6 +10,7 @@ class ExposedSelect extends ExposedValue
 {
 	public var choiceList(default, null):Array<String>;
 	public var valueList(default, null):Array<Dynamic>;
+	public var listPercentWidth:Float;
 	
 	/**
 	   
@@ -17,13 +18,14 @@ class ExposedSelect extends ExposedValue
 	   @param	choiceList
 	   @param	valueList
 	**/
-	public function new(name:String, choiceList:Array<String> = null, valueList:Array<Dynamic> = null) 
+	public function new(name:String, choiceList:Array<String> = null, valueList:Array<Dynamic> = null, listPercentWidth:Float = 100) 
 	{
 		super(name);
 		if (choiceList == null) choiceList = new Array<String>();
 		if (valueList == null) valueList = new Array<Dynamic>();
 		this.choiceList = choiceList;
 		this.valueList = valueList;
+		this.listPercentWidth = listPercentWidth;
 	}
 	
 	override public function clear():Void 
@@ -69,7 +71,7 @@ class ExposedSelect extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var select:ExposedSelect = new ExposedSelect(this.name, choiceList != null ? choiceList.copy():null, valueList != null ? valueList.copy():null);
+		var select:ExposedSelect = new ExposedSelect(this.name, choiceList != null ? choiceList.copy():null, valueList != null ? valueList.copy():null, listPercentWidth);
 		super.clone_internal(select);
 		return select;
 	}
