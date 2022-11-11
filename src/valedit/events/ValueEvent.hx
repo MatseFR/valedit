@@ -17,8 +17,8 @@ import openfl.events.IEventDispatcher;
  */
 class ValueEvent extends Event 
 {
+	inline static public var EDITABLE_CHANGE:EventType<ValueEvent> = "editableChange";
 	inline static public var OBJECT_CHANGE:EventType<ValueEvent> = "objectChange";
-	inline static public var VALUE_CHANGE:EventType<ValueEvent> = "valueChange";
 	
 	#if !flash
 	static private var _pool:ObjectPool<ValueEvent> = new ObjectPool<ValueEvent>(() -> return new ValueEvent(null, false, false), (event) -> {
