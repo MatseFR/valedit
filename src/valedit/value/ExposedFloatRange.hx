@@ -33,15 +33,18 @@ class ExposedFloatRange extends ExposedValue
 	
 	/**
 	   
+	   @param	propertyName
 	   @param	name
 	   @param	min
 	   @param	max
 	   @param	step
 	   @param	precision
+	   @param	sliderPercentWidth
+	   @param	inputPercentWidth
 	**/
-	public function new(name:String, min:Float = 0, max:Float = 100, step:Float = 1, precision:Int = 2, sliderPercentWidth:Float = 60, inputPercentWidth:Float = 40) 
+	public function new(propertyName:String, name:String = null, min:Float = 0, max:Float = 100, step:Float = 1, precision:Int = 2, sliderPercentWidth:Float = 60, inputPercentWidth:Float = 40) 
 	{
-		super(name);
+		super(propertyName, name);
 		this.min = min;
 		this.max = max;
 		this.step = step;
@@ -53,9 +56,22 @@ class ExposedFloatRange extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var range:ExposedFloatRange = new ExposedFloatRange(this.name, min, max, step, precision, sliderPercentWidth, inputPercentWidth);
+		var range:ExposedFloatRange = new ExposedFloatRange(this.propertyName, this.name, min, max, step, precision, sliderPercentWidth, inputPercentWidth);
 		super.clone_internal(range);
 		return range;
+	}
+	
+	override public function fromJSON(json:Dynamic):Void 
+	{
+		super.fromJSON(json);
+		this.value = json.value;
+	}
+	
+	override public function toJSON(json:Dynamic = null):Dynamic 
+	{
+		if (json == null) json = {};
+		json.value = this.value;
+		return super.toJSON(json);
 	}
 	
 }

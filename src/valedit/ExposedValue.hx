@@ -17,6 +17,7 @@ class ExposedValue extends EventDispatcher
 	public var name:String;
 	public var object(get, set):Dynamic;
 	public var parentValue:ExposedValue;
+	public var propertyName:String;
 	public var uiControl(get, set):IValueUI;
 	public var updateCollectionUIOnChange:Bool = true;
 	public var value(get, set):Dynamic;
@@ -47,7 +48,12 @@ class ExposedValue extends EventDispatcher
 	private function set_object(value:Dynamic):Dynamic
 	{
 		if (_object == value) return value;
+		var nullObject:Bool = _object == null;
 		_object = value;
+		if (nullObject && _storedValue != null)
+		{
+			Reflect.setProperty(_object, propertyName, _storedValue);
+		}
 		_storedValue = null;
 		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE);
 		return _object;
@@ -69,23 +75,23 @@ class ExposedValue extends EventDispatcher
 	{
 		if (_object == null)
 		{
-			return defaultValue;
+			return _storedValue;
 		}
 		else
 		{
-			return Reflect.getProperty(_object, name);
+			return Reflect.getProperty(_object, propertyName);
 		}
 	}
 	private function set_value(value:Dynamic):Dynamic
 	{
 		if (_object == null)
 		{
-			defaultValue = value;
+			_storedValue = value;
 		}
 		else if (_storedValue != value)
 		{
 			_storedValue = value;
-			Reflect.setProperty(_object, name, value);
+			Reflect.setProperty(_object, propertyName, value);
 			if (parentValue != null) parentValue.childValueChanged();
 			if (updateCollectionUIOnChange) _collection.uiCollection.update(_uiControl);
 		}
@@ -97,11 +103,14 @@ class ExposedValue extends EventDispatcher
 	
 	/**
 	   
+	   @param	propertyName
 	   @param	name
 	**/
-	public function new(name:String) 
+	public function new(propertyName:String, name:String = null) 
 	{
 		super();
+		this.propertyName = propertyName;
+		if (name == null) name = propertyName;
 		this.name = name;
 	}
 	
@@ -156,6 +165,35 @@ class ExposedValue extends EventDispatcher
 	{
 		value.defaultValue = defaultValue;
 		value.isEditable = isEditable;
+		value.updateCollectionUIOnChange = updateCollectionUIOnChange;
+	}
+	
+	public function fromJSON(json:Dynamic):Void
+	{
+		//name = json.name;
+		propertyName = json.propName;
+	}
+	
+	public function toJSON(json:Dynamic = null):Dynamic
+	{
+		if (json == null) json = {};
+		json.clss = Type.getClassName(Type.getClass(this));
+		//json.name = name;
+		json.propName = propertyName;
+		return json;
+	}
+	
+	/**
+	   
+	   @param	json
+	   @return
+	**/
+	static public function valueFromJSON(json:Dynamic):ExposedValue
+	{
+		var clss:Class<Dynamic> = Type.resolveClass(json.clss);
+		var value:ExposedValue = Type.createInstance(clss, []);
+		value.fromJSON(json);
+		return value;
 	}
 	
 }

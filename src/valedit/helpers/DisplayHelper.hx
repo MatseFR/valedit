@@ -90,13 +90,13 @@ class DisplayHelper
 		
 		if (!collection.hasValue("alpha"))
 		{
-			floatRange = new ExposedFloatRange("alpha", 0, 1, 0.01);
+			floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2, 75, 25);
 			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("rotation"))
 		{
-			floatRange = new ExposedFloatRange("rotation", -180, 180, 0.1);
+			floatRange = new ExposedFloatRange("rotation", null, -180, 180, 1, 2, 75, 25);
 			collection.addValue(floatRange, groupName);
 		}
 		

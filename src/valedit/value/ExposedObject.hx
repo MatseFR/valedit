@@ -17,7 +17,7 @@ class ExposedObject extends ExposedValue
 		{
 			if (_storedValue == null)
 			{
-				_storedValue = Reflect.getProperty(_object, name);
+				_storedValue = Reflect.getProperty(_object, propertyName);
 			}
 			return _storedValue;
 		}
@@ -29,13 +29,14 @@ class ExposedObject extends ExposedValue
 	
 	/**
 	   
+	   @param	propertyName
 	   @param	name
 	   @param	storeValue
 	   @param	reassignOnChange
 	**/
-	public function new(name:String, storeValue:Bool = false, reassignOnChange:Bool = false) 
+	public function new(propertyName:String, name:String = null, storeValue:Bool = false, reassignOnChange:Bool = false) 
 	{
-		super(name);
+		super(propertyName, name);
 		this.storeValue = storeValue;
 		this.reassignOnChange = reassignOnChange;
 	}
@@ -44,7 +45,7 @@ class ExposedObject extends ExposedValue
 	{
 		if (reassignOnChange && _object != null)
 		{
-			Reflect.setProperty(_object, name, this.value);
+			Reflect.setProperty(_object, propertyName, this.value);
 		}
 		
 		super.childValueChanged();
@@ -52,7 +53,7 @@ class ExposedObject extends ExposedValue
 	
 	public function reloadObject():Void
 	{
-		_storedValue = Reflect.getProperty(_object, name);
+		_storedValue = Reflect.getProperty(_object, propertyName);
 		for (value in _childValues)
 		{
 			value.object = _storedValue;
@@ -61,9 +62,20 @@ class ExposedObject extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var object:ExposedObject = new ExposedObject(this.name, storeValue, reassignOnChange);
+		var object:ExposedObject = new ExposedObject(this.propertyName, this.name, storeValue, reassignOnChange);
 		super.clone_internal(object);
 		return object;
+	}
+	
+	override public function fromJSON(json:Dynamic):Void 
+	{
+		super.fromJSON(json);
+	}
+	
+	override public function toJSON(json:Dynamic = null):Dynamic 
+	{
+		if (json == null) json = {};
+		return super.toJSON(json);
 	}
 	
 }

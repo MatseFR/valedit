@@ -20,9 +20,9 @@ class ExposedString extends ExposedValue
 	   @param	restrict
 	   @param	inputWidthPercent
 	**/
-	public function new(name:String, maxChars:Int = 0, restrict:String = null, inputPercentWidth:Float = 100) 
+	public function new(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, inputPercentWidth:Float = 100) 
 	{
-		super(name);
+		super(propertyName, name);
 		this.maxChars = maxChars;
 		this.restrict = restrict;
 		this.inputPercentWidth = inputPercentWidth;
@@ -31,9 +31,22 @@ class ExposedString extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var string:ExposedString = new ExposedString(this.name, maxChars, restrict, inputPercentWidth);
+		var string:ExposedString = new ExposedString(this.propertyName, this.name, maxChars, restrict, inputPercentWidth);
 		super.clone_internal(string);
 		return string;
+	}
+	
+	override public function fromJSON(json:Dynamic):Void 
+	{
+		super.fromJSON(json);
+		this.value = json.value;
+	}
+	
+	override public function toJSON(json:Dynamic = null):Dynamic 
+	{
+		if (json == null) json = {};
+		json.value = this.value;
+		return super.toJSON(json);
 	}
 	
 }

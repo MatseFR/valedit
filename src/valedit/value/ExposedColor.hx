@@ -11,19 +11,33 @@ class ExposedColor extends ExposedValue
 	
 	/**
 	   
+	   @param	propertyName
 	   @param	name
 	**/
-	public function new(name:String) 
+	public function new(propertyName:String, name:String = null) 
 	{
-		super(name);
+		super(propertyName, name);
 		this.defaultValue = 0xffffff;
 	}
 	
 	override public function clone():ExposedValue 
 	{
-		var color:ExposedColor = new ExposedColor(this.name);
+		var color:ExposedColor = new ExposedColor(this.propertyName, this.name);
 		super.clone_internal(color);
 		return color;
+	}
+	
+	override public function fromJSON(json:Dynamic):Void 
+	{
+		super.fromJSON(json);
+		this.value = json.value;
+	}
+	
+	override public function toJSON(json:Dynamic = null):Dynamic 
+	{
+		if (json == null) json = {};
+		json.value = this.value;
+		return super.toJSON(json);
 	}
 	
 }

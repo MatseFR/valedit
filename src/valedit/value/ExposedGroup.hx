@@ -66,6 +66,8 @@ class ExposedGroup extends ExposedValue
 	/**
 	   
 	   @param	name
+	   @param	isCollapsable
+	   @param	isCollapsedDefault
 	**/
 	public function new(name:String, isCollapsable:Bool = true, isCollapsedDefault:Bool = false) 
 	{
@@ -202,7 +204,7 @@ class ExposedGroup extends ExposedValue
 	**/
 	override public function clone():ExposedValue 
 	{
-		var group:ExposedGroup = new ExposedGroup(name, isCollapsable, isCollapsedDefault);
+		var group:ExposedGroup = new ExposedGroup(this.name, isCollapsable, isCollapsedDefault);
 		
 		for (val in _valueList)
 		{

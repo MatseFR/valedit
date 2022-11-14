@@ -14,13 +14,15 @@ class ExposedSelect extends ExposedValue
 	
 	/**
 	   
+	   @param	propertyName
 	   @param	name
 	   @param	choiceList
 	   @param	valueList
+	   @param	listPercentWidth
 	**/
-	public function new(name:String, choiceList:Array<String> = null, valueList:Array<Dynamic> = null, listPercentWidth:Float = 100) 
+	public function new(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null, listPercentWidth:Float = 100) 
 	{
-		super(name);
+		super(propertyName, name);
 		if (choiceList == null) choiceList = new Array<String>();
 		if (valueList == null) valueList = new Array<Dynamic>();
 		this.choiceList = choiceList;
@@ -71,9 +73,24 @@ class ExposedSelect extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var select:ExposedSelect = new ExposedSelect(this.name, choiceList != null ? choiceList.copy():null, valueList != null ? valueList.copy():null, listPercentWidth);
+		var select:ExposedSelect = new ExposedSelect(this.propertyName, this.name, choiceList != null ? choiceList.copy():null, valueList != null ? valueList.copy():null, listPercentWidth);
 		super.clone_internal(select);
 		return select;
+	}
+	
+	override public function fromJSON(json:Dynamic):Void 
+	{
+		super.fromJSON(json);
+		var index:Int = choiceList.indexOf(json.choice);
+		if (index != -1) this.value = valueList[index];
+	}
+	
+	override public function toJSON(json:Dynamic = null):Dynamic 
+	{
+		if (json == null) json = {};
+		var index:Int = valueList.indexOf(this.value);
+		if (index != -1) json.choice = choiceList[index];
+		return super.toJSON(json);
 	}
 	
 }

@@ -32,14 +32,17 @@ class ExposedIntRange extends ExposedValue
 	
 	/**
 	   
+	   @param	propertyName
 	   @param	name
 	   @param	min
 	   @param	max
 	   @param	step
+	   @param	sliderPercentWidth
+	   @param	inputPercentWidth
 	**/
-	public function new(name:String, min:Int = 0, max:Int = 100, step:Int = 1, sliderPercentWidth:Float = 60, inputPercentWidth:Float = 40) 
+	public function new(propertyName:String, name:String = null, min:Int = 0, max:Int = 100, step:Int = 1, sliderPercentWidth:Float = 60, inputPercentWidth:Float = 40) 
 	{
-		super(name);
+		super(propertyName, name);
 		this.min = min;
 		this.max = max;
 		this.step = step;
@@ -50,9 +53,22 @@ class ExposedIntRange extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var range:ExposedIntRange = new ExposedIntRange(this.name, min, max, step, sliderPercentWidth, inputPercentWidth);
+		var range:ExposedIntRange = new ExposedIntRange(this.propertyName, this.name, min, max, step, sliderPercentWidth, inputPercentWidth);
 		super.clone_internal(range);
 		return range;
+	}
+	
+	override public function fromJSON(json:Dynamic):Void 
+	{
+		super.fromJSON(json);
+		this.value = json.value;
+	}
+	
+	override public function toJSON(json:Dynamic = null):Dynamic 
+	{
+		if (json == null) json = {};
+		json.value = this.value;
+		return super.toJSON(json);
 	}
 	
 }

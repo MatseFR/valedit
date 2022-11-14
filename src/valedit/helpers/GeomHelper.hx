@@ -19,7 +19,6 @@ class GeomHelper
 	static public function exposeColorTransform(collection:ExposedCollection = null):ExposedCollection
 	{
 		var colorVal:ExposedColor;
-		var floatVal:ExposedFloat;
 		var floatRange:ExposedFloatRange;
 		
 		if (collection == null) collection = new ExposedCollection();
@@ -32,49 +31,49 @@ class GeomHelper
 		
 		if (!collection.hasValue("redMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("redMultiplier", 0, 1, 0.01);
+			floatRange = new ExposedFloatRange("redMultiplier", null, 0, 1, 0.01, 2, 75, 25);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("redOffset"))
 		{
-			floatRange = new ExposedFloatRange("redOffset", -255, 255);
+			floatRange = new ExposedFloatRange("redOffset", null, -255, 255, 1, 0, 75, 25);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("greenMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("greenMultiplier", 0, 1, 0.01);
+			floatRange = new ExposedFloatRange("greenMultiplier", null, 0, 1, 0.01, 2, 75, 25);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("greenOffset"))
 		{
-			floatRange = new ExposedFloatRange("greenOffset", -255, 255);
+			floatRange = new ExposedFloatRange("greenOffset", null, -255, 255, 1, 0, 75, 25);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("blueMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("blueMultiplier", 0, 1, 0.01);
+			floatRange = new ExposedFloatRange("blueMultiplier", null, 0, 1, 0.01, 2, 75, 25);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("blueOffset"))
 		{
-			floatRange = new ExposedFloatRange("blueOffset", -255, 255);
+			floatRange = new ExposedFloatRange("blueOffset", null, -255, 255, 1, 0, 75, 25);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("alphaMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("alphaMultiplier", 0, 1, 0.01);
+			floatRange = new ExposedFloatRange("alphaMultiplier", null, 0, 1, 0.01, 0, 75, 25);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("alphaOffset"))
 		{
-			floatRange = new ExposedFloatRange("alphaOffset", -255, 255);
+			floatRange = new ExposedFloatRange("alphaOffset", null, -255, 255, 1, 0, 75, 25);
 			collection.addValue(floatRange);
 		}
 		
@@ -255,13 +254,13 @@ class GeomHelper
 		
 		if (!collection.hasValue("colorTransform"))
 		{
-			objVal = new ExposedObject("colorTransform", true, true);
+			objVal = new ExposedObject("colorTransform", null, true, true);
 			collection.addValue(objVal);
 		}
 		
 		if (!collection.hasValue("matrix"))
 		{
-			objVal = new ExposedObject("matrix", true, true);
+			objVal = new ExposedObject("matrix", null, true, true);
 			collection.addValue(objVal);
 		}
 		

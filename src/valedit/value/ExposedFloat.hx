@@ -14,12 +14,15 @@ class ExposedFloat extends ExposedValue
 	
 	/**
 	   
+	   @param	propertyName
 	   @param	name
 	   @param	precision
+	   @param	numericMode
+	   @param	inputPercentWidth
 	**/
-	public function new(name:String, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, inputPercentWidth:Float = 100) 
+	public function new(propertyName:String, name:String = null, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, inputPercentWidth:Float = 100) 
 	{
-		super(name);
+		super(propertyName, name);
 		this.precision = precision;
 		this.numericMode = numericMode;
 		this.inputPercentWidth = inputPercentWidth;
@@ -28,9 +31,22 @@ class ExposedFloat extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var float:ExposedFloat = new ExposedFloat(this.name, this.precision, this.numericMode, inputPercentWidth);
+		var float:ExposedFloat = new ExposedFloat(this.propertyName, this.name, precision, numericMode, inputPercentWidth);
 		super.clone_internal(float);
 		return float;
+	}
+	
+	override public function fromJSON(json:Dynamic):Void 
+	{
+		super.fromJSON(json);
+		this.value = json.value;
+	}
+	
+	override public function toJSON(json:Dynamic = null):Dynamic 
+	{
+		if (json == null) json = {};
+		json.value = this.value;
+		return super.toJSON(json);
 	}
 	
 }
