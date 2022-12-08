@@ -1,4 +1,4 @@
-package valedit.helpers;
+package valedit.data.openfl.geom;
 import valedit.ExposedCollection;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloat;
@@ -9,7 +9,7 @@ import valedit.value.ExposedObject;
  * ...
  * @author Matse
  */
-class GeomHelper 
+class GeomData 
 {
 	/**
 	   

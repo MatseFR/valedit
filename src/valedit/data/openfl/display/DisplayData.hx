@@ -1,4 +1,4 @@
-package valedit.helpers;
+package valedit.data.openfl.display;
 import openfl.display.BlendMode;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
@@ -13,7 +13,7 @@ import valedit.value.ExposedString;
  * ...
  * @author Matse
  */
-class DisplayHelper 
+class DisplayData 
 {
 	
 	/**

@@ -75,7 +75,7 @@ class ExposedValue extends EventDispatcher
 	{
 		if (_object == null)
 		{
-			return _storedValue;
+			return _storedValue == null ? defaultValue : _storedValue;
 		}
 		else
 		{
