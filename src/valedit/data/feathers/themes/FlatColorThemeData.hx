@@ -1,6 +1,6 @@
 package valedit.data.feathers.themes;
 import openfl.text.Font;
-import valedit.ExposedCollection;
+import openfl.text.TextFormatAlign;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedColorReadOnly;
@@ -16,9 +16,169 @@ import valedit.value.ExposedSpacing;
  * ...
  * @author Matse
  */
-class SimpleThemeData 
+class FlatColorThemeData 
 {
-	static public function exposeSimpleTheme(collection:ExposedCollection = null):ExposedCollection
+	static public function exposeBiColorSettings(collection:ExposedCollection = null):ExposedCollection
+	{
+		var color:ExposedColor;
+		var floatRange:ExposedFloatRange;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("alpha"))
+		{
+			floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.05, 2, 80, 20);
+			collection.addValue(floatRange);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			collection.addValue(color);
+		}
+		
+		if (!collection.hasValue("alpha2"))
+		{
+			floatRange = new ExposedFloatRange("alpha2", null, 0, 1, 0.05, 2, 80, 20);
+			collection.addValue(floatRange);
+		}
+		
+		if (!collection.hasValue("color2"))
+		{
+			color = new ExposedColor("color2");
+			collection.addValue(color);
+		}
+		
+		if (!collection.hasValue("borderAlpha"))
+		{
+			floatRange = new ExposedFloatRange("borderAlpha", null, 0, 1, 0.05, 2, 80, 20);
+			collection.addValue(floatRange);
+		}
+		
+		if (!collection.hasValue("borderColor"))
+		{
+			color = new ExposedColor("borderColor");
+			collection.addValue(color);
+		}
+		
+		if (!collection.hasValue("borderAlpha2"))
+		{
+			floatRange = new ExposedFloatRange("borderAlpha2", null, 0, 1, 0.05, 2, 80, 20);
+			collection.addValue(floatRange);
+		}
+		
+		if (!collection.hasValue("borderColor2"))
+		{
+			color = new ExposedColor("borderColor2");
+			collection.addValue(color);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeColorSettings(collection:ExposedCollection = null):ExposedCollection
+	{
+		var color:ExposedColor;
+		var floatRange:ExposedFloatRange;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("alpha"))
+		{
+			floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.05, 2, 80, 20);
+			collection.addValue(floatRange);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			collection.addValue(color);
+		}
+		
+		if (!collection.hasValue("borderAlpha"))
+		{
+			floatRange = new ExposedFloatRange("borderAlpha", null, 0, 1, 0.05, 2, 80, 20);
+			collection.addValue(floatRange);
+		}
+		
+		if (!collection.hasValue("borderColor"))
+		{
+			color = new ExposedColor("borderColor");
+			collection.addValue(color);
+		}
+		
+		return collection;
+	}
+	
+	//static public function exposeControlSettings(collection:ExposedCollection = null):ExposedCollection
+	//{
+		////var 
+	//}
+	
+	static public function exposeTextSettings(collection:ExposedCollection = null):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var color:ExposedColor;
+		var intRange:ExposedIntRange;
+		var select:ExposedSelect;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("fontName"))
+		{
+			select = new ExposedSelect("fontName");
+			var fonts:Array<Font> = Font.enumerateFonts(true);
+			for (font in fonts)
+			{
+				select.add(font.fontName);
+			}
+			collection.addValue(select);
+		}
+		
+		if (!collection.hasValue("fontSize"))
+		{
+			intRange = new ExposedIntRange("fontSize", null, 6, 42, 1, 80, 20);
+			collection.addValue(intRange);
+		}
+		
+		if (!collection.hasValue("alignDefault"))
+		{
+			select = new ExposedSelect("alignDefault");
+			select.add("CENTER", TextFormatAlign.CENTER);
+			select.add("JUSTIFY", TextFormatAlign.JUSTIFY);
+			select.add("LEFT", TextFormatAlign.LEFT);
+			select.add("RIGHT", TextFormatAlign.RIGHT);
+			collection.addValue(select);
+		}
+		
+		if (!collection.hasValue("bold"))
+		{
+			bool = new ExposedBool("bold");
+			collection.addValue(bool);
+		}
+		
+		if (!collection.hasValue("italic"))
+		{
+			bool = new ExposedBool("italic");
+			collection.addValue(bool);
+		}
+		
+		if (!collection.hasValue("underline"))
+		{
+			bool = new ExposedBool("underline");
+			collection.addValue(bool);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			collection.addValue(color);
+		}
+		
+		return collection;
+	}
+
+	static public function exposeFlatColorTheme(collection:ExposedCollection = null):ExposedCollection
 	{
 		var bool:ExposedBool;
 		var color:ExposedColor;
@@ -249,5 +409,4 @@ class SimpleThemeData
 		
 		return collection;
 	}
-	
 }
