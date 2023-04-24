@@ -1,6 +1,8 @@
 package valedit.data.openfl.display;
 import openfl.display.BlendMode;
+import openfl.display.PixelSnapping;
 import valedit.ExposedCollection;
+import valedit.value.ExposedBitmapData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
@@ -15,6 +17,47 @@ import valedit.value.ExposedString;
  */
 class DisplayData 
 {
+	/**
+	 * 
+	 * @param	collection
+	 * @param	useGroups
+	 * @return
+	 */
+	static public function exposeBitmap(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	{
+		var groupName:String = useGroups ? "Properties" : null;
+		
+		var bmdVal:ExposedBitmapData;
+		var boolVal:ExposedBool;
+		var selectVal:ExposedSelect;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObject(collection, useGroups);
+		
+		if (!collection.hasValue("bitmapData"))
+		{
+			bmdVal = new ExposedBitmapData("bitmapData");
+			collection.addValue(bmdVal, groupName);
+		}
+		
+		if (!collection.hasValue("pixelSnapping"))
+		{
+			selectVal = new ExposedSelect("pixelSnapping");
+			selectVal.add("ALWAYS", PixelSnapping.ALWAYS);
+			selectVal.add("AUTO", PixelSnapping.AUTO);
+			selectVal.add("NEVER", PixelSnapping.NEVER);
+			collection.addValue(selectVal, groupName);
+		}
+		
+		if (!collection.hasValue("smoothing"))
+		{
+			boolVal = new ExposedBool("smoothing");
+			collection.addValue(boolVal, groupName);
+		}
+		
+		return collection;
+	}
 	
 	/**
 	   
@@ -27,6 +70,7 @@ class DisplayData
 	{
 		var group:ExposedGroup;
 		var groupName:String = null;
+		
 		var boolVal:ExposedBool;
 		var floatVal:ExposedFloat;
 		var floatRange:ExposedFloatRange;
@@ -150,7 +194,7 @@ class DisplayData
 	static public function exposeSprite(collection:ExposedCollection = null, useGroups:Bool = true, includeSubGroups:Bool = false):ExposedCollection
 	{
 		var boolVal:ExposedBool;
-		var groupName:String = useGroups ? "Properties":null;
+		var groupName:String = useGroups ? "Properties" : null;
 		
 		if (collection == null) collection = new ExposedCollection();
 		

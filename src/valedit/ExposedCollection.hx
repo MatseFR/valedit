@@ -1,5 +1,6 @@
 package valedit;
 import openfl.display.DisplayObjectContainer;
+import openfl.errors.Error;
 import valedit.ui.UICollection;
 import valedit.value.ExposedGroup;
 
@@ -91,6 +92,68 @@ class ExposedCollection
 		else
 		{
 			_valueList.push(value);
+			_valueMap[value.name] = value;
+			if (Std.isOfType(value, ExposedGroup))
+			{
+				_groupList.push(cast value);
+				_groupMap[value.name] = cast value;
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param	value
+	 * @param	afterValueName
+	 * @param	groupName
+	 */
+	public function addValueAfter(value:ExposedValue, afterValueName:String, groupName:String = null):Void
+	{
+		value.collection = this;
+		if (groupName != null)
+		{
+			_groupMap[groupName].addValueAfter(value, afterValueName);
+		}
+		else
+		{
+			var afterValue:ExposedValue = _valueMap[afterValueName];
+			if (afterValue == null)
+			{
+				throw new Error("ExposedCollection.addValueAfter ::: no value with name " + afterValueName);
+			}
+			var index:Int = _valueList.indexOf(afterValue);
+			_valueList.insert(index + 1, value);
+			_valueMap[value.name] = value;
+			if (Std.isOfType(value, ExposedGroup))
+			{
+				_groupList.push(cast value);
+				_groupMap[value.name] = cast value;
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param	value
+	 * @param	beforeValueName
+	 * @param	groupName
+	 */
+	public function addValueBefore(value:ExposedValue, beforeValueName:String, groupName:String = null):Void
+	{
+		value.collection = this;
+		if (groupName != null)
+		{
+			_groupMap[groupName].addValueBefore(value, beforeValueName);
+		}
+		else
+		{
+			var beforeValue:ExposedValue = _valueMap[beforeValueName];
+			if (beforeValue == null)
+			{
+				throw new Error("ExposedCollection.addValueBefore ::: no value with name " + beforeValueName);
+			}
+			var index:Int = _valueList.indexOf(beforeValue);
+			_valueList.insert(index, value);
 			_valueMap[value.name] = value;
 			if (Std.isOfType(value, ExposedGroup))
 			{

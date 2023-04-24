@@ -1,4 +1,5 @@
 package valedit.value;
+import openfl.errors.Error;
 import valedit.ExposedCollection;
 import valedit.ExposedValue;
 import valedit.ui.IGroupUI;
@@ -94,6 +95,57 @@ class ExposedGroup extends ExposedValue
 		{
 			var control:IValueUI = ValEdit.toUIControl(value);
 			_uiGroup.addExposedControl(control);
+		}
+	}
+	
+	
+	public function addValueAfter(value:ExposedValue, afterValueName:String):Void
+	{
+		var afterValue:ExposedValue = _valueMap[afterValueName];
+		if (afterValue == null)
+		{
+			throw new Error("ExposedGroup.addValueAfter ::: no value with name " + afterValueName);
+		}
+		
+		var index:Int = _valueList.indexOf(afterValue);
+		_valueList.insert(index + 1, value);
+		_valueMap[value.name] = value;
+		
+		if (Std.isOfType(value, ExposedGroup))
+		{
+			_groupList.push(cast value);
+			_groupMap[value.name] = cast value;
+		}
+		
+		if (_isUIBuilt && value._uiControl == null)
+		{
+			var control:IValueUI = ValEdit.toUIControl(value);
+			_uiGroup.addExposedControlAfter(control, afterValue._uiControl);
+		}
+	}
+	
+	public function addValueBefore(value:ExposedValue, beforeValueName:String):Void
+	{
+		var beforeValue:ExposedValue = _valueMap[beforeValueName];
+		if (beforeValue == null)
+		{
+			throw new Error("ExposedGroup.addValueBefore ::: no value with name " + beforeValueName);
+		}
+		
+		var index:Int = _valueList.indexOf(beforeValue);
+		_valueList.insert(index, value);
+		_valueMap[value.name] = value;
+		
+		if (Std.isOfType(value, ExposedGroup))
+		{
+			_groupList.push(cast value);
+			_groupMap[value.name] = cast value;
+		}
+		
+		if (_isUIBuilt && value._uiControl == null)
+		{
+			var control:IValueUI = ValEdit.toUIControl(value);
+			_uiGroup.addExposedControlBefore(control, beforeValue._uiControl);
 		}
 	}
 	
