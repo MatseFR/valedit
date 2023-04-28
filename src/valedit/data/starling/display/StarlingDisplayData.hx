@@ -9,7 +9,7 @@ import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedGroup;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
-import valedit.value.ExposedStarlingTexture;
+import valedit.value.starling.ExposedStarlingTexture;
 import valedit.value.ExposedString;
 
 /**

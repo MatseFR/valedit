@@ -351,7 +351,15 @@ class AssetLib
 	static private function makeBitmapPreview(asset:BitmapAsset):Void
 	{
 		ScaleUtil.fitRectangle(asset.content.rect, _previewRect, _rect);
-		var bmd:BitmapData = new BitmapData(Std.int(_rect.width), Std.int(_rect.height));
+		var bmd:BitmapData;
+		if (asset.content.transparent)
+		{
+			bmd = new BitmapData(Std.int(_rect.width), Std.int(_rect.height), true, 0x00ffffff);
+		}
+		else
+		{
+			bmd = new BitmapData(Std.int(_rect.width), Std.int(_rect.height), false, 0x000000);
+		}
 		var scale = bmd.width / asset.content.width;
 		_matrix.identity();
 		_matrix.scale(scale, scale);

@@ -1,19 +1,19 @@
-package valedit.value;
+package valedit.value.starling;
 
 import valedit.ExposedValue;
-import valedit.asset.starling.StarlingTextureAsset;
+import valedit.asset.starling.StarlingAtlasAsset;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedStarlingTexture extends ExposedValue 
+class ExposedStarlingAtlas extends ExposedValue 
 {
 	override function set_value(value:Dynamic):Dynamic 
 	{
-		if (Std.isOfType(value, StarlingTextureAsset))
+		if (Std.isOfType(value, StarlingAtlasAsset))
 		{
-			var asset:StarlingTextureAsset = cast value;
+			var asset:StarlingAtlasAsset = cast value;
 			return super.set_value(asset.content);
 		}
 		else
@@ -21,7 +21,7 @@ class ExposedStarlingTexture extends ExposedValue
 			return super.set_value(value);
 		}
 	}
-
+	
 	public function new(propertyName:String, name:String=null) 
 	{
 		super(propertyName, name);
@@ -30,9 +30,9 @@ class ExposedStarlingTexture extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var tex:ExposedStarlingTexture = new ExposedStarlingTexture(this.propertyName, this.name);
-		super.clone_internal(tex);
-		return tex;
+		var atlas:ExposedStarlingAtlas = new ExposedStarlingAtlas(this.propertyName, this.name);
+		super.clone_internal(atlas);
+		return atlas;
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 
