@@ -84,11 +84,11 @@ class ExposedGroup extends ExposedValue
 	public function addValue(value:ExposedValue):Void
 	{
 		_valueList.push(value);
-		_valueMap[value.name] = value;
+		_valueMap[value.propertyName] = value;
 		if (Std.isOfType(value, ExposedGroup))
 		{
 			_groupList.push(cast value);
-			_groupMap[value.name] = cast value;
+			_groupMap[value.propertyName] = cast value;
 		}
 		
 		if (_isUIBuilt && value._uiControl == null)
@@ -109,12 +109,12 @@ class ExposedGroup extends ExposedValue
 		
 		var index:Int = _valueList.indexOf(afterValue);
 		_valueList.insert(index + 1, value);
-		_valueMap[value.name] = value;
+		_valueMap[value.propertyName] = value;
 		
 		if (Std.isOfType(value, ExposedGroup))
 		{
 			_groupList.push(cast value);
-			_groupMap[value.name] = cast value;
+			_groupMap[value.propertyName] = cast value;
 		}
 		
 		if (_isUIBuilt && value._uiControl == null)
@@ -134,12 +134,12 @@ class ExposedGroup extends ExposedValue
 		
 		var index:Int = _valueList.indexOf(beforeValue);
 		_valueList.insert(index, value);
-		_valueMap[value.name] = value;
+		_valueMap[value.propertyName] = value;
 		
 		if (Std.isOfType(value, ExposedGroup))
 		{
 			_groupList.push(cast value);
-			_groupMap[value.name] = cast value;
+			_groupMap[value.propertyName] = cast value;
 		}
 		
 		if (_isUIBuilt && value._uiControl == null)
@@ -185,16 +185,16 @@ class ExposedGroup extends ExposedValue
 	
 	/**
 	   
-	   @param	name
+	   @param	propertyName
 	   @return
 	**/
-	public function getValue(name:String):ExposedValue
+	public function getValue(propertyName:String):ExposedValue
 	{
-		var value:ExposedValue = _valueMap[name];
+		var value:ExposedValue = _valueMap[propertyName];
 		if (value != null) return value;
 		for (group in _groupList)
 		{
-			value = group.getValue(name);
+			value = group.getValue(propertyName);
 			if (value != null) return value;
 		}
 		return null;
@@ -202,15 +202,15 @@ class ExposedGroup extends ExposedValue
 	
 	/**
 	   
-	   @param	name
+	   @param	propertyName
 	   @return
 	**/
-	public function hasValue(name:String):Bool
+	public function hasValue(propertyName:String):Bool
 	{
-		if (_valueMap.exists(name)) return true;
+		if (_valueMap.exists(propertyName)) return true;
 		for (group in _groupList)
 		{
-			if (group.hasValue(name)) return true;
+			if (group.hasValue(propertyName)) return true;
 		}
 		return false;
 	}
@@ -221,7 +221,7 @@ class ExposedGroup extends ExposedValue
 	**/
 	public function removeValue(value:ExposedValue):Void
 	{
-		removeValueByName(value.name);
+		removeValueByName(value.propertyName);
 	}
 	
 	/**
@@ -229,21 +229,21 @@ class ExposedGroup extends ExposedValue
 	   @param	name
 	   @return
 	**/
-	public function removeValueByName(name:String):ExposedValue
+	public function removeValueByName(propertyName:String):ExposedValue
 	{
 		var value:ExposedValue;
-		value = _valueMap[name];
+		value = _valueMap[propertyName];
 		if (value != null)
 		{
 			_valueList.remove(value);
-			_valueMap.remove(value.name);
+			_valueMap.remove(propertyName);
 		}
 		
 		if (value == null)
 		{
 			for (group in _groupList)
 			{
-				value = group.removeValueByName(name);
+				value = group.removeValueByName(propertyName);
 				if (value != null) break;
 			}
 		}

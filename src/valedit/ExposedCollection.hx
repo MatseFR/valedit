@@ -92,7 +92,7 @@ class ExposedCollection
 		else
 		{
 			_valueList.push(value);
-			_valueMap[value.name] = value;
+			_valueMap[value.propertyName] = value;
 			if (Std.isOfType(value, ExposedGroup))
 			{
 				_groupList.push(cast value);
@@ -104,7 +104,7 @@ class ExposedCollection
 	/**
 	 * 
 	 * @param	value
-	 * @param	afterValueName
+	 * @param	afterValueName	the propertyName of the ExposedValue
 	 * @param	groupName
 	 */
 	public function addValueAfter(value:ExposedValue, afterValueName:String, groupName:String = null):Void
@@ -135,7 +135,7 @@ class ExposedCollection
 	/**
 	 * 
 	 * @param	value
-	 * @param	beforeValueName
+	 * @param	beforeValueName	the propertyName of the ExposedValue
 	 * @param	groupName
 	 */
 	public function addValueBefore(value:ExposedValue, beforeValueName:String, groupName:String = null):Void
@@ -202,16 +202,16 @@ class ExposedCollection
 	
 	/**
 	   
-	   @param	name
+	   @param	propertyName
 	   @return
 	**/
-	public function getValue(name:String):ExposedValue
+	public function getValue(propertyName:String):ExposedValue
 	{
 		var value:ExposedValue;
-		if (_valueMap.exists(name)) return _valueMap[name];
+		if (_valueMap.exists(propertyName)) return _valueMap[propertyName];
 		for (group in _groupList)
 		{
-			value = group.getValue(name);
+			value = group.getValue(propertyName);
 			if (value != null) return value;
 		}
 		return null;
@@ -219,15 +219,15 @@ class ExposedCollection
 	
 	/**
 	   
-	   @param	name
+	   @param	propertyName
 	   @return
 	**/
-	public function hasValue(name:String):Bool
+	public function hasValue(propertyName:String):Bool
 	{
-		if (_valueMap.exists(name)) return true;
+		if (_valueMap.exists(propertyName)) return true;
 		for (group in _groupList)
 		{
-			if (group.hasValue(name)) return true;
+			if (group.hasValue(propertyName)) return true;
 		}
 		return false;
 	}
@@ -238,7 +238,7 @@ class ExposedCollection
 	**/
 	public function removeValue(value:ExposedValue):Void
 	{
-		removeValueByName(value.name);
+		removeValueByName(value.propertyName);
 	}
 	
 	/**
@@ -246,20 +246,20 @@ class ExposedCollection
 	   @param	name
 	   @return
 	**/
-	public function removeValueByName(name:String):ExposedValue
+	public function removeValueByName(propertyName:String):ExposedValue
 	{
 		var value:ExposedValue;
-		value = _valueMap[name];
+		value = _valueMap[propertyName];
 		if (value != null)
 		{
 			_valueList.remove(value);
-			_valueMap.remove(value.name);
+			_valueMap.remove(propertyName);
 			return value;
 		}
 		
 		for (group in _groupList)
 		{
-			value = group.removeValueByName(name);
+			value = group.removeValueByName(propertyName);
 			if (value != null) return value;
 		}
 		return null;
