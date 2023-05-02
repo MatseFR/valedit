@@ -28,13 +28,13 @@ class ColorFilterHelperData
 		group = new ExposedGroup("ColorFilterHelper properties");
 		collection.addValue(group);
 		
-		floatRange = new ExposedFloatRange("brightness", null, -1, 1, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("brightness", null, -1, 1, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("saturation", null, 0, 5, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("saturation", null, 0, 5, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("contrast", null, 0, 5, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("contrast", null, 0, 5, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("luminosity", null, 0, 5, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("luminosity", null, 0, 5, 0.01, 2);
 		group.addValue(floatRange);
 		
 		func = new ExposedFunction("resetSettings", "reset settings");
@@ -49,15 +49,15 @@ class ColorFilterHelperData
 		name = new ExposedName("red channel");
 		group.addValue(name);
 		
-		floatRange = new ExposedFloatRange("redRed", "red", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("redRed", "red", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("redGreen", "green", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("redGreen", "green", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("redBlue", "blue", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("redBlue", "blue", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("redAlpha", "alpha", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("redAlpha", "alpha", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("redOffset", "offset", -255, 255, 1, 1, 80, 20);
+		floatRange = new ExposedFloatRange("redOffset", "offset", -255, 255, 1, 1);
 		group.addValue(floatRange);
 		
 		sep = new ExposedSeparator();
@@ -66,15 +66,15 @@ class ColorFilterHelperData
 		name = new ExposedName("green channel");
 		group.addValue(name);
 		
-		floatRange = new ExposedFloatRange("greenRed", "red", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("greenRed", "red", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("greenGreen", "green", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("greenGreen", "green", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("greenBlue", "blue", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("greenBlue", "blue", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("greenAlpha", "alpha", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("greenAlpha", "alpha", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("greenOffset", "offset", -255, 255, 1, 1, 80, 20);
+		floatRange = new ExposedFloatRange("greenOffset", "offset", -255, 255, 1, 1);
 		group.addValue(floatRange);
 		
 		sep = new ExposedSeparator();
@@ -83,15 +83,15 @@ class ColorFilterHelperData
 		name = new ExposedName("blue channel");
 		group.addValue(name);
 		
-		floatRange = new ExposedFloatRange("blueRed", "red", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("blueRed", "red", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("blueGreen", "green", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("blueGreen", "green", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("blueBlue", "blue", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("blueBlue", "blue", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("blueAlpha", "alpha", -1, 2, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("blueAlpha", "alpha", -1, 2, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("blueOffset", "offset", -255, 255, 1, 1, 80, 20);
+		floatRange = new ExposedFloatRange("blueOffset", "offset", -255, 255, 1, 1);
 		group.addValue(floatRange);
 		
 		sep = new ExposedSeparator();
@@ -100,15 +100,15 @@ class ColorFilterHelperData
 		name = new ExposedName("alpha channel");
 		group.addValue(name);
 		
-		floatRange = new ExposedFloatRange("alphaRed", "red", -1, 1, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("alphaRed", "red", -1, 1, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("alphaGreen", "green", -1, 1, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("alphaGreen", "green", -1, 1, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("alphaBlue", "blue", -1, 1, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("alphaBlue", "blue", -1, 1, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("alphaAlpha", "alpha", -1, 1, 0.01, 2, 80, 20);
+		floatRange = new ExposedFloatRange("alphaAlpha", "alpha", -1, 1, 0.01, 2);
 		group.addValue(floatRange);
-		floatRange = new ExposedFloatRange("alphaOffset", "offset", -255, 255, 1, 1, 80, 20);
+		floatRange = new ExposedFloatRange("alphaOffset", "offset", -255, 255, 1, 1);
 		group.addValue(floatRange);
 		
 		return collection;

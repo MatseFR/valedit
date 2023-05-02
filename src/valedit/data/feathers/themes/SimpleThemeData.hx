@@ -57,25 +57,25 @@ class SimpleThemeData
 		
 		if (!collection.hasValue("fontSize"))
 		{
-			intRange = new ExposedIntRange("fontSize", null, 6, 42, 1, 80, 20);
+			intRange = new ExposedIntRange("fontSize", null, 6, 42, 1);
 			group.addValue(intRange);
 		}
 		
 		if (!collection.hasValue("fontSizeBig"))
 		{
-			intRange = new ExposedIntRange("fontSizeBig", null, 6, 42, 1, 80, 20);
+			intRange = new ExposedIntRange("fontSizeBig", null, 6, 42, 1);
 			group.addValue(intRange);
 		}
 		
 		if (!collection.hasValue("fontSizeSmall"))
 		{
-			intRange = new ExposedIntRange("fontSizeSmall", null, 6, 42, 1, 80, 20);
+			intRange = new ExposedIntRange("fontSizeSmall", null, 6, 42, 1);
 			group.addValue(intRange);
 		}
 		
 		if (!collection.hasValue("lineThickness"))
 		{
-			floatRange = new ExposedFloatRange("lineThickness", null, 0, 12, 1, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lineThickness", null, 0, 12, 1, 2);
 			group.addValue(floatRange);
 		}
 		
@@ -92,10 +92,10 @@ class SimpleThemeData
 			color = new ExposedColor("lightThemeColor", "color");
 			subGroup.addValue(color);
 			
-			floatRange = new ExposedFloatRange("lightThemeColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			floatRange = new ExposedFloatRange("lightThemeColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
 			//spacing = new ExposedSpacing();
@@ -109,10 +109,10 @@ class SimpleThemeData
 			color = new ExposedColor("lightThemeLightColor", "light color");
 			subGroup.addValue(color);
 			
-			floatRange = new ExposedFloatRange("lightThemeLightColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeLightColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			floatRange = new ExposedFloatRange("lightThemeLightColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeLightColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
 			//spacing = new ExposedSpacing();
@@ -126,10 +126,10 @@ class SimpleThemeData
 			color = new ExposedColor("lightThemeContrastColor", "contrast color");
 			subGroup.addValue(color);
 			
-			floatRange = new ExposedFloatRange("lightThemeContrastColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeContrastColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			floatRange = new ExposedFloatRange("lightThemeContrastColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeContrastColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
 			//spacing = new ExposedSpacing();
@@ -143,10 +143,10 @@ class SimpleThemeData
 			color = new ExposedColor("lightThemeDangerColor", "danger color");
 			subGroup.addValue(color);
 			
-			floatRange = new ExposedFloatRange("lightThemeDangerColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeDangerColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			floatRange = new ExposedFloatRange("lightThemeDangerColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeDangerColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
 			//spacing = new ExposedSpacing();
@@ -160,10 +160,10 @@ class SimpleThemeData
 			color = new ExposedColor("lightThemeFocusColor", "focus color");
 			subGroup.addValue(color);
 			
-			floatRange = new ExposedFloatRange("lightThemeFocusColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeFocusColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			floatRange = new ExposedFloatRange("lightThemeFocusColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("lightThemeFocusColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 		}
 		
@@ -180,10 +180,10 @@ class SimpleThemeData
 			color = new ExposedColor("darkThemeColor", "color");
 			subGroup.addValue(color);
 			
-			floatRange = new ExposedFloatRange("darkThemeColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("darkThemeColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			floatRange = new ExposedFloatRange("darkThemeColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("darkThemeColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
 			spacing = new ExposedSpacing();
@@ -195,10 +195,10 @@ class SimpleThemeData
 			color = new ExposedColor("darkThemeLightColor", "light color");
 			subGroup.addValue(color);
 			
-			floatRange = new ExposedFloatRange("darkThemeLightColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("darkThemeLightColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			floatRange = new ExposedFloatRange("darkThemeLightColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("darkThemeLightColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
 			spacing = new ExposedSpacing();
@@ -210,10 +210,10 @@ class SimpleThemeData
 			color = new ExposedColor("darkThemeContrastColor", "contrast color");
 			subGroup.addValue(color);
 			
-			floatRange = new ExposedFloatRange("darkThemeContrastColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("darkThemeContrastColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			floatRange = new ExposedFloatRange("darkThemeContrastColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("darkThemeContrastColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
 			spacing = new ExposedSpacing();
@@ -225,10 +225,10 @@ class SimpleThemeData
 			color = new ExposedColor("darkThemeDangerColor", "danger color");
 			subGroup.addValue(color);
 			
-			floatRange = new ExposedFloatRange("darkThemeDangerColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("darkThemeDangerColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			floatRange = new ExposedFloatRange("darkThemeDangerColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			floatRange = new ExposedFloatRange("darkThemeDangerColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
 			spacing = new ExposedSpacing();
@@ -240,10 +240,10 @@ class SimpleThemeData
 			color = new ExposedColor("darkThemeFocusColor", "focus color");
 			subGroup.addValue(color);
 			
-			//floatRange = new ExposedFloatRange("darkThemeFocusColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2, 80, 20);
+			//floatRange = new ExposedFloatRange("darkThemeFocusColorDarkenRatio", "darken ratio", 0, 1, 0.01, 2);
 			//subGroup.addValue(floatRange);
 			
-			//floatRange = new ExposedFloatRange("darkThemeFocusColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2, 80, 20);
+			//floatRange = new ExposedFloatRange("darkThemeFocusColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			//subGroup.addValue(floatRange);
 		}
 		

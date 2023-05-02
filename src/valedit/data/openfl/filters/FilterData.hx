@@ -27,13 +27,13 @@ class FilterData
 		group = new ExposedGroup("BlurFilter properties");
 		collection.addValue(group);
 		
-		floatRange = new ExposedFloatRange("blurX", null, 0, 255, 0.1, 2, 75, 25);
+		floatRange = new ExposedFloatRange("blurX", null, 0, 255, 0.1, 2);
 		group.addValue(floatRange);
 		
-		floatRange = new ExposedFloatRange("blurY", null, 0, 255, 0.1, 2, 75, 25);
+		floatRange = new ExposedFloatRange("blurY", null, 0, 255, 0.1, 2);
 		group.addValue(floatRange);
 		
-		intRange = new ExposedIntRange("quality", null, 0, 16, 1, 75, 25);
+		intRange = new ExposedIntRange("quality", null, 0, 16, 1);
 		group.addValue(intRange);
 		
 		return collection;
@@ -53,19 +53,19 @@ class FilterData
 		group = new ExposedGroup("DropShadowFilter properties");
 		collection.addValue(group);
 		
-		floatRange = new ExposedFloatRange("angle", null, 0, 360, 1, 2, 75, 25);
+		floatRange = new ExposedFloatRange("angle", null, 0, 360, 1, 2);
 		group.addValue(floatRange);
 		
-		floatRange = new ExposedFloatRange("blurX", null, 0, 255, 1, 2, 75, 25);
+		floatRange = new ExposedFloatRange("blurX", null, 0, 255, 1, 2);
 		group.addValue(floatRange);
 		
-		floatRange = new ExposedFloatRange("blurY", null, 0, 255, 1, 2, 75, 25);
+		floatRange = new ExposedFloatRange("blurY", null, 0, 255, 1, 2);
 		group.addValue(floatRange);
 		
-		floatRange = new ExposedFloatRange("strength", null, 0, 255, 1, 2, 75, 25);
+		floatRange = new ExposedFloatRange("strength", null, 0, 255, 1, 2);
 		group.addValue(floatRange);
 		
-		floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2, 75, 25);
+		floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2);
 		group.addValue(floatRange);
 		
 		float = new ExposedFloat("distance");
@@ -83,7 +83,7 @@ class FilterData
 		bool = new ExposedBool("knockout");
 		group.addValue(bool);
 		
-		intRange = new ExposedIntRange("quality", null, 0, 16, 1, 75, 25);
+		intRange = new ExposedIntRange("quality", null, 0, 16, 1);
 		group.addValue(intRange);
 		
 		return collection;
@@ -105,16 +105,16 @@ class FilterData
 		color = new ExposedColor("color", null);
 		group.addValue(color);
 		
-		floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2, 75, 25);
+		floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2);
 		group.addValue(floatRange);
 		
-		floatRange = new ExposedFloatRange("blurX", null, 0, 255, 1, 2, 75, 25);
+		floatRange = new ExposedFloatRange("blurX", null, 0, 255, 1, 2);
 		group.addValue(floatRange);
 		
-		floatRange = new ExposedFloatRange("blurY", null, 0, 255, 1, 2, 75, 25);
+		floatRange = new ExposedFloatRange("blurY", null, 0, 255, 1, 2);
 		group.addValue(floatRange);
 		
-		floatRange = new ExposedFloatRange("strength", null, 0, 255, 1, 2, 75, 25);
+		floatRange = new ExposedFloatRange("strength", null, 0, 255, 1, 2);
 		group.addValue(floatRange);
 		
 		select = new ExposedSelect("quality");
