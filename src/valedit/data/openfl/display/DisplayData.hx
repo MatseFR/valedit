@@ -1,12 +1,14 @@
 package valedit.data.openfl.display;
 import openfl.display.BlendMode;
 import openfl.display.PixelSnapping;
+import ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBitmapData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedGroup;
+import valedit.value.ExposedInt;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
@@ -27,9 +29,9 @@ class DisplayData
 	{
 		var groupName:String = useGroups ? "Properties" : null;
 		
-		var bmdVal:ExposedBitmapData;
-		var boolVal:ExposedBool;
-		var selectVal:ExposedSelect;
+		var bmd:ExposedBitmapData;
+		var bool:ExposedBool;
+		var select:ExposedSelect;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -37,23 +39,23 @@ class DisplayData
 		
 		if (!collection.hasValue("bitmapData"))
 		{
-			bmdVal = new ExposedBitmapData("bitmapData");
-			collection.addValue(bmdVal, groupName);
+			bmd = new ExposedBitmapData("bitmapData");
+			collection.addValue(bmd, groupName);
 		}
 		
 		if (!collection.hasValue("pixelSnapping"))
 		{
-			selectVal = new ExposedSelect("pixelSnapping");
-			selectVal.add("ALWAYS", PixelSnapping.ALWAYS);
-			selectVal.add("AUTO", PixelSnapping.AUTO);
-			selectVal.add("NEVER", PixelSnapping.NEVER);
-			collection.addValue(selectVal, groupName);
+			select = new ExposedSelect("pixelSnapping");
+			select.add("ALWAYS", PixelSnapping.ALWAYS);
+			select.add("AUTO", PixelSnapping.AUTO);
+			select.add("NEVER", PixelSnapping.NEVER);
+			collection.addValue(select, groupName);
 		}
 		
 		if (!collection.hasValue("smoothing"))
 		{
-			boolVal = new ExposedBool("smoothing");
-			collection.addValue(boolVal, groupName);
+			bool = new ExposedBool("smoothing");
+			collection.addValue(bool, groupName);
 		}
 		
 		return collection;
@@ -71,14 +73,15 @@ class DisplayData
 		var group:ExposedGroup;
 		var groupName:String = null;
 		
-		var boolVal:ExposedBool;
-		var floatVal:ExposedFloat;
+		var bool:ExposedBool;
+		var float:ExposedFloat;
 		var floatRange:ExposedFloatRange;
-		var listVal:ExposedSelect;
-		var objVal:ExposedObject;
-		var stringVal:ExposedString;
+		var obj:ExposedObject;
+		var select:ExposedSelect;
+		var string:ExposedString;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
 		if (useGroups)
 		{
 			groupName = "Properties";
@@ -92,95 +95,113 @@ class DisplayData
 		
 		if (!collection.hasValue("name"))
 		{
-			stringVal = new ExposedString("name");
-			collection.addValue(stringVal, groupName);
+			string = new ExposedString("name");
+			collection.addValue(string, groupName);
 		}
 		
 		if (!collection.hasValue("x"))
 		{
-			floatVal = new ExposedFloat("x");
-			collection.addValue(floatVal, groupName);
+			float = new ExposedFloat("x");
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			floatVal = new ExposedFloat("y");
-			collection.addValue(floatVal, groupName);
+			float = new ExposedFloat("y");
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("width"))
 		{
-			floatVal = new ExposedFloat("width");
-			collection.addValue(floatVal, groupName);
+			float = new ExposedFloat("width");
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
-			floatVal = new ExposedFloat("height");
-			collection.addValue(floatVal, groupName);
+			float = new ExposedFloat("height");
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("scaleX"))
 		{
-			floatVal = new ExposedFloat("scaleX");
-			collection.addValue(floatVal, groupName);
+			float = new ExposedFloat("scaleX");
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("scaleY"))
 		{
-			floatVal = new ExposedFloat("scaleY");
-			collection.addValue(floatVal, groupName);
+			float = new ExposedFloat("scaleY");
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("alpha"))
 		{
-			floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2, 75, 25);
+			floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("rotation"))
 		{
-			floatRange = new ExposedFloatRange("rotation", null, -180, 180, 1, 2, 75, 25);
+			floatRange = new ExposedFloatRange("rotation", null, -180, 180, 1, 2, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("blendMode"))
 		{
-			listVal = new ExposedSelect("blendMode");
-			listVal.add("ADD", BlendMode.ADD);
-			listVal.add("ALPHA", BlendMode.ALPHA);
-			listVal.add("DARKEN", BlendMode.DARKEN);
-			listVal.add("DIFFERENCE", BlendMode.DIFFERENCE);
-			listVal.add("ERASE", BlendMode.ERASE);
-			listVal.add("HARDLIGHT", BlendMode.HARDLIGHT);
-			listVal.add("INVERT", BlendMode.INVERT);
-			listVal.add("LAYER", BlendMode.LAYER);
-			listVal.add("LIGHTEN", BlendMode.LIGHTEN);
-			listVal.add("MULTIPLY", BlendMode.MULTIPLY);
-			listVal.add("NORMAL", BlendMode.NORMAL);
-			listVal.add("OVERLAY", BlendMode.OVERLAY);
-			listVal.add("SCREEN", BlendMode.SCREEN);
-			listVal.add("SHADER", BlendMode.SHADER);
-			listVal.add("SUBTRACT", BlendMode.SUBTRACT);
-			collection.addValue(listVal, groupName);
+			select = new ExposedSelect("blendMode");
+			select.add("ADD", BlendMode.ADD);
+			select.add("ALPHA", BlendMode.ALPHA);
+			select.add("DARKEN", BlendMode.DARKEN);
+			select.add("DIFFERENCE", BlendMode.DIFFERENCE);
+			select.add("ERASE", BlendMode.ERASE);
+			select.add("HARDLIGHT", BlendMode.HARDLIGHT);
+			select.add("INVERT", BlendMode.INVERT);
+			select.add("LAYER", BlendMode.LAYER);
+			select.add("LIGHTEN", BlendMode.LIGHTEN);
+			select.add("MULTIPLY", BlendMode.MULTIPLY);
+			select.add("NORMAL", BlendMode.NORMAL);
+			select.add("OVERLAY", BlendMode.OVERLAY);
+			select.add("SCREEN", BlendMode.SCREEN);
+			select.add("SHADER", BlendMode.SHADER);
+			select.add("SUBTRACT", BlendMode.SUBTRACT);
+			collection.addValue(select, groupName);
 		}
 		
 		if (!collection.hasValue("transform"))
 		{
-			objVal = new ExposedObject("transform");
-			collection.addValue(objVal, groupName);
+			obj = new ExposedObject("transform");
+			collection.addValue(obj, groupName);
 		}
 		
 		if (!collection.hasValue("cacheAsBitmap"))
 		{
-			boolVal = new ExposedBool("cacheAsBitmap");
-			collection.addValue(boolVal, groupName);
+			bool = new ExposedBool("cacheAsBitmap");
+			collection.addValue(bool, groupName);
 		}
 		
 		if (!collection.hasValue("visible"))
 		{
-			boolVal = new ExposedBool("visible");
-			collection.addValue(boolVal, groupName);
+			bool = new ExposedBool("visible");
+			collection.addValue(bool, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeMovieClip(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var groupName:String = useGroups ? "Properties" : null;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeSprite(collection, useGroups);
+		
+		if (!collection.hasValue("enabled"))
+		{
+			bool = new ExposedBool("enabled");
+			collection.addValue(bool, groupName);
 		}
 		
 		return collection;
@@ -193,7 +214,7 @@ class DisplayData
 	**/
 	static public function exposeSprite(collection:ExposedCollection = null, useGroups:Bool = true, includeSubGroups:Bool = false):ExposedCollection
 	{
-		var boolVal:ExposedBool;
+		var bool:ExposedBool;
 		var groupName:String = useGroups ? "Properties" : null;
 		
 		if (collection == null) collection = new ExposedCollection();
@@ -202,14 +223,14 @@ class DisplayData
 		
 		if (!collection.hasValue("buttonMode"))
 		{
-			boolVal = new ExposedBool("buttonMode");
-			collection.addValue(boolVal, groupName);
+			bool = new ExposedBool("buttonMode");
+			collection.addValue(bool, groupName);
 		}
 		
 		if (!collection.hasValue("useHandCursor"))
 		{
-			boolVal = new ExposedBool("useHandCursor");
-			collection.addValue(boolVal, groupName);
+			bool = new ExposedBool("useHandCursor");
+			collection.addValue(bool, groupName);
 		}
 		
 		return collection;

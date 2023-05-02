@@ -1,4 +1,5 @@
 package valedit.data.openfl.geom;
+import ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloat;
@@ -18,62 +19,62 @@ class GeomData
 	**/
 	static public function exposeColorTransform(collection:ExposedCollection = null):ExposedCollection
 	{
-		var colorVal:ExposedColor;
+		var color:ExposedColor;
 		var floatRange:ExposedFloatRange;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("color"))
 		{
-			colorVal = new ExposedColor("color");
-			collection.addValue(colorVal);
+			color = new ExposedColor("color");
+			collection.addValue(color);
 		}
 		
 		if (!collection.hasValue("redMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("redMultiplier", null, 0, 1, 0.01, 2, 75, 25);
+			floatRange = new ExposedFloatRange("redMultiplier", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("redOffset"))
 		{
-			floatRange = new ExposedFloatRange("redOffset", null, -255, 255, 1, 0, 75, 25);
+			floatRange = new ExposedFloatRange("redOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("greenMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("greenMultiplier", null, 0, 1, 0.01, 2, 75, 25);
+			floatRange = new ExposedFloatRange("greenMultiplier", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("greenOffset"))
 		{
-			floatRange = new ExposedFloatRange("greenOffset", null, -255, 255, 1, 0, 75, 25);
+			floatRange = new ExposedFloatRange("greenOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("blueMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("blueMultiplier", null, 0, 1, 0.01, 2, 75, 25);
+			floatRange = new ExposedFloatRange("blueMultiplier", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("blueOffset"))
 		{
-			floatRange = new ExposedFloatRange("blueOffset", null, -255, 255, 1, 0, 75, 25);
+			floatRange = new ExposedFloatRange("blueOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("alphaMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("alphaMultiplier", null, 0, 1, 0.01, 0, 75, 25);
+			floatRange = new ExposedFloatRange("alphaMultiplier", null, 0, 1, 0.01, 0, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange);
 		}
 		
 		if (!collection.hasValue("alphaOffset"))
 		{
-			floatRange = new ExposedFloatRange("alphaOffset", null, -255, 255, 1, 0, 75, 25);
+			floatRange = new ExposedFloatRange("alphaOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange);
 		}
 		
@@ -89,44 +90,44 @@ class GeomData
 	**/
 	static public function exposeMatrix(collection:ExposedCollection = null, useGroups:Bool = true, includeSubGroups:Bool = false):ExposedCollection
 	{
-		var floatVal:ExposedFloat;
+		var float:ExposedFloat;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("a"))
 		{
-			floatVal = new ExposedFloat("a");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("a");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("b"))
 		{
-			floatVal = new ExposedFloat("b");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("b");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("c"))
 		{
-			floatVal = new ExposedFloat("c");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("c");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("d"))
 		{
-			floatVal = new ExposedFloat("d");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("d");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("tx"))
 		{
-			floatVal = new ExposedFloat("tx");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("tx");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("ty"))
 		{
-			floatVal = new ExposedFloat("ty");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("ty");
+			collection.addValue(float);
 		}
 		
 		return collection;
@@ -141,20 +142,20 @@ class GeomData
 	**/
 	static public function exposePoint(collection:ExposedCollection = null, useGroups:Bool = true, includeSubGroups:Bool = false):ExposedCollection
 	{
-		var floatVal:ExposedFloat;
+		var float:ExposedFloat;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("x"))
 		{
-			floatVal = new ExposedFloat("x");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("x");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			floatVal = new ExposedFloat("y");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("y");
+			collection.addValue(float);
 		}
 		
 		return collection;
@@ -167,75 +168,75 @@ class GeomData
 	**/
 	static public function exposeRectangle(collection:ExposedCollection = null):ExposedCollection
 	{
-		var floatVal:ExposedFloat;
-		var objVal:ExposedObject;
+		var float:ExposedFloat;
+		var obj:ExposedObject;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("x"))
 		{
-			floatVal = new ExposedFloat("x");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("x");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			floatVal = new ExposedFloat("y");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("y");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("width"))
 		{
-			floatVal = new ExposedFloat("width");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("width");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
-			floatVal = new ExposedFloat("height");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("height");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("top"))
 		{
-			floatVal = new ExposedFloat("top");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("top");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("bottom"))
 		{
-			floatVal = new ExposedFloat("bottom");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("bottom");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("left"))
 		{
-			floatVal = new ExposedFloat("left");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("left");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("right"))
 		{
-			floatVal = new ExposedFloat("right");
-			collection.addValue(floatVal);
+			float = new ExposedFloat("right");
+			collection.addValue(float);
 		}
 		
 		if (!collection.hasValue("topLeft"))
 		{
-			objVal = new ExposedObject("topLeft");
-			collection.addValue(objVal);
+			obj = new ExposedObject("topLeft");
+			collection.addValue(obj);
 		}
 		
 		if (!collection.hasValue("bottomRight"))
 		{
-			objVal = new ExposedObject("bottomRight");
-			collection.addValue(objVal);
+			obj = new ExposedObject("bottomRight");
+			collection.addValue(obj);
 		}
 		
 		if (!collection.hasValue("size"))
 		{
-			objVal = new ExposedObject("size");
-			collection.addValue(objVal);
+			obj = new ExposedObject("size");
+			collection.addValue(obj);
 		}
 		
 		return collection;
@@ -248,20 +249,20 @@ class GeomData
 	**/
 	static public function exposeTransform(collection:ExposedCollection = null):ExposedCollection
 	{
-		var objVal:ExposedObject;
+		var obj:ExposedObject;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("colorTransform"))
 		{
-			objVal = new ExposedObject("colorTransform", null, true, true);
-			collection.addValue(objVal);
+			obj = new ExposedObject("colorTransform", null, true, true);
+			collection.addValue(obj);
 		}
 		
 		if (!collection.hasValue("matrix"))
 		{
-			objVal = new ExposedObject("matrix", null, true, true);
-			collection.addValue(objVal);
+			obj = new ExposedObject("matrix", null, true, true);
+			collection.addValue(obj);
 		}
 		
 		return collection;

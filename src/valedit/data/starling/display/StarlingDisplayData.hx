@@ -1,11 +1,13 @@
 package valedit.data.starling.display;
 import starling.display.BlendMode;
 import starling.textures.TextureSmoothing;
+import ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
+import valedit.value.ExposedFunction;
 import valedit.value.ExposedGroup;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
@@ -100,14 +102,14 @@ class StarlingDisplayData
 		
 		if (!collection.hasValue("alpha"))
 		{
-			floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2, 75, 25);
+			floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
 			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("rotation"))
 		{
 			float = new ExposedFloat("rotation");
-			collection.addValue(float, groupName)
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("skewX"))
@@ -139,7 +141,7 @@ class StarlingDisplayData
 		
 		if (!collection.hasValue("transformationMatrix"))
 		{
-			object = new ExposedObject("transformationMatrix");
+			object = new ExposedObject("transformationMatrix", null, true, true);
 			collection.addValue(object, groupName);
 		}
 		
@@ -204,6 +206,7 @@ class StarlingDisplayData
 		
 		var bool:ExposedBool;
 		var color:ExposedColor;
+		var func:ExposedFunction;
 		var select:ExposedSelect;
 		var texture:ExposedStarlingTexture;
 		
@@ -229,10 +232,16 @@ class StarlingDisplayData
 			collection.addValue(texture, groupName);
 		}
 		
+		if (!collection.hasValue("readjustSize"))
+		{
+			func = new ExposedFunction("readjustSize", "readjust size");
+			collection.addValue(func, groupName);
+		}
+		
 		if (!collection.hasValue("textureRepeat"))
 		{
 			bool = new ExposedBool("textureRepeat");
-			collection.addValue(bool, groupName);
+			collection.addValueAfter(bool, "texture", groupName);
 		}
 		
 		if (!collection.hasValue("textureSmoothing"))
@@ -241,7 +250,7 @@ class StarlingDisplayData
 			select.add("BILINEAR", TextureSmoothing.BILINEAR);
 			select.add("NONE", TextureSmoothing.NONE);
 			select.add("TRILINEAR", TextureSmoothing.TRILINEAR);
-			collection.addValue(select, groupName);
+			collection.addValueAfter(select, "texture", groupName);
 		}
 		
 		return collection;
