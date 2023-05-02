@@ -1,5 +1,6 @@
 package valedit.value;
 
+import ui.feathers.variant.TextInputVariant;
 import valedit.ExposedValue;
 
 /**
@@ -10,7 +11,7 @@ class ExposedFloat extends ExposedValue
 {
 	public var numericMode:NumericMode;
 	public var precision:Int;
-	public var inputPercentWidth:Float;
+	public var inputVariant:String;
 	
 	/**
 	   
@@ -20,18 +21,18 @@ class ExposedFloat extends ExposedValue
 	   @param	numericMode
 	   @param	inputPercentWidth
 	**/
-	public function new(propertyName:String, name:String = null, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, inputPercentWidth:Float = 100) 
+	public function new(propertyName:String, name:String = null, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, inputVariant:String = TextInputVariant.FULL_WIDTH) 
 	{
 		super(propertyName, name);
 		this.precision = precision;
 		this.numericMode = numericMode;
-		this.inputPercentWidth = inputPercentWidth;
+		this.inputVariant = inputVariant;
 		this.defaultValue = 0.0;
 	}
 	
 	override public function clone():ExposedValue 
 	{
-		var float:ExposedFloat = new ExposedFloat(this.propertyName, this.name, precision, numericMode, inputPercentWidth);
+		var float:ExposedFloat = new ExposedFloat(this.propertyName, this.name, precision, numericMode, inputVariant);
 		super.clone_internal(float);
 		return float;
 	}

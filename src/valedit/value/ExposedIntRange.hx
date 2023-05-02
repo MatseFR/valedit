@@ -1,5 +1,6 @@
 package valedit.value;
 
+import ui.feathers.variant.TextInputVariant;
 import valedit.ExposedValue;
 
 /**
@@ -11,8 +12,7 @@ class ExposedIntRange extends ExposedValue
 	public var max(get, set):Int;
 	public var min(get, set):Int;
 	public var step:Int = 1;
-	public var sliderPercentWidth:Float;
-	public var inputPercentWidth:Float;
+	public var inputVariant:String;
 	
 	private var _max:Int;
 	private function get_max():Int { return _max; }
@@ -40,20 +40,19 @@ class ExposedIntRange extends ExposedValue
 	   @param	sliderPercentWidth
 	   @param	inputPercentWidth
 	**/
-	public function new(propertyName:String, name:String = null, min:Int = 0, max:Int = 100, step:Int = 1, sliderPercentWidth:Float = 60, inputPercentWidth:Float = 40) 
+	public function new(propertyName:String, name:String = null, min:Int = 0, max:Int = 100, step:Int = 1, inputVariant:String = TextInputVariant.NUMERIC_MEDIUM) 
 	{
 		super(propertyName, name);
 		this.min = min;
 		this.max = max;
 		this.step = step;
-		this.sliderPercentWidth = sliderPercentWidth;
-		this.inputPercentWidth = inputPercentWidth;
+		this.inputVariant = inputVariant;
 		this.defaultValue = 0;
 	}
 	
 	override public function clone():ExposedValue 
 	{
-		var range:ExposedIntRange = new ExposedIntRange(this.propertyName, this.name, min, max, step, sliderPercentWidth, inputPercentWidth);
+		var range:ExposedIntRange = new ExposedIntRange(this.propertyName, this.name, min, max, step, inputVariant);
 		super.clone_internal(range);
 		return range;
 	}
