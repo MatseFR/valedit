@@ -10,6 +10,8 @@ import valedit.ui.IValueUI;
  */
 class ValEdit 
 {
+	static public var EXPOSED_VALUE_MARKER:String = "@@@";
+	
 	static public var uiContainerDefault:DisplayObjectContainer;
 	
 	static private var _classMap:Map<String, ValEditClass> = new Map<String, ValEditClass>();
