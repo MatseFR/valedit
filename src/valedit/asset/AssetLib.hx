@@ -14,6 +14,7 @@ import openfl.media.Sound;
 import openfl.utils.AssetType;
 import openfl.utils.Assets;
 import openfl.utils.ByteArray;
+import starling.textures.SubTexture;
 import starling.textures.TextureAtlas;
 import ui.UIConfig;
 #if starling
@@ -354,11 +355,11 @@ class AssetLib
 		var bmd:BitmapData;
 		if (asset.content.transparent)
 		{
-			bmd = new BitmapData(Std.int(_rect.width), Std.int(_rect.height), true, 0x00ffffff);
+			bmd = new BitmapData(Math.ceil(_rect.width), Math.ceil(_rect.height), true, 0x00ffffff);
 		}
 		else
 		{
-			bmd = new BitmapData(Std.int(_rect.width), Std.int(_rect.height), false, 0x000000);
+			bmd = new BitmapData(Math.ceil(_rect.width), Math.ceil(_rect.height), false, 0x000000);
 		}
 		var scale = bmd.width / asset.content.width;
 		_matrix.identity();
@@ -587,14 +588,29 @@ class AssetLib
 		if (asset.content != null) _starlingTextureToAsset.set(asset.content, asset);
 	}
 	
-	static public function createStarlingTexture(path:String, texture:Texture, bitmapAsset:BitmapAsset):Void
+	static public function createStarlingTexture(path:String, texture:Texture, bitmapAsset:BitmapAsset, ?name:String, ?preview:BitmapData):Void
 	{
 		var asset:StarlingTextureAsset = new StarlingTextureAsset();
 		path = Path.normalize(path);
 		asset.path = path;
-		asset.name = Path.withoutDirectory(path);
+		if (name == null)
+		{
+			asset.name = Path.withoutDirectory(path);
+		}
+		else
+		{
+			asset.name = name;
+		}
 		asset.content = texture;
 		asset.bitmapAsset = bitmapAsset;
+		if (preview == null)
+		{
+			asset.preview = bitmapAsset.preview;
+		}
+		else
+		{
+			asset.preview = preview;
+		}
 		asset.source = AssetSource.EXTERNAL;
 		asset.isLoaded = true;
 		addStarlingTexture(asset);
@@ -625,10 +641,41 @@ class AssetLib
 			_starlingAtlasToAsset.set(asset.content, asset);
 			_starlingAtlasTextureToAsset.set(asset.content.texture, asset);
 			
-			var textures:Vector<Texture> = asset.content.getTextures();
-			for (texture in textures)
+			var names:Vector<String> = asset.content.getNames();
+			var name:String;
+			var subTexture:SubTexture;
+			var preview:BitmapData = null;
+			var scale:Float;
+			var count:Int = names.length;
+			var texWidth:Float;
+			var texHeight:Float;
+			
+			for (i in 0...count)
 			{
-				createStarlingTexture(asset.path, texture, asset.bitmapAsset);
+				name = names[i];
+				subTexture = cast asset.content.getTexture(name);
+				
+				if (subTexture.rotated)
+				{
+					texWidth = subTexture.height;
+					texHeight = subTexture.width;
+				}
+				else
+				{
+					texWidth = subTexture.width;
+					texHeight = subTexture.height;
+				}
+				
+				scale = ScaleUtil.scaleToFit(texWidth, texHeight, UIConfig.ASSET_PREVIEW_SIZE, UIConfig.ASSET_PREVIEW_SIZE);
+				preview = new BitmapData(Math.ceil(texWidth * scale), Math.ceil(texHeight * scale), true, 0x00ffffff);
+				
+				_rect.setTo(0, 0, texWidth, texHeight);
+				_matrix.identity();
+				_matrix.translate(-subTexture.region.left, -subTexture.region.top);
+				_matrix.scale(scale, scale);
+				preview.draw(asset.bitmapAsset.content, _matrix, null, null, _rect);
+				
+				createStarlingTexture(asset.path, subTexture, asset.bitmapAsset, name, preview);
 			}
 		}
 	}
@@ -640,6 +687,7 @@ class AssetLib
 		asset.path = path;
 		asset.name = Path.withoutDirectory(path);
 		asset.content = atlas;
+		asset.preview = bitmapAsset.preview;
 		asset.bitmapAsset = bitmapAsset;
 		asset.textAsset = textAsset;
 		asset.source = AssetSource.EXTERNAL;
