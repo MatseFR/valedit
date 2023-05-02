@@ -47,6 +47,8 @@ class ExposedFunction extends ExposedValue
 		
 		Reflect.callMethod(_object, this.value, _parameters);
 		_parameters.resize(0);
+		
+		if (this.updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
 	}
 	
 	override public function clone():ExposedValue 
