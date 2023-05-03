@@ -1,9 +1,13 @@
 package valedit.data.starling.libs.massive;
+import starling.utils.Align;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
+import valedit.value.ExposedFunction;
 import valedit.value.ExposedGroup;
+import valedit.value.ExposedSelect;
+import valedit.value.extra.FunctionCallExtra;
 
 /**
  * ...
@@ -115,6 +119,10 @@ class MassiveData
 		var groupName:String = null;
 		
 		var float:ExposedFloat;
+		var func:ExposedFunction;
+		var select:ExposedSelect;
+		
+		var funcExtra:FunctionCallExtra;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -132,13 +140,36 @@ class MassiveData
 		if (!collection.hasValue("pivotX"))
 		{
 			float = new ExposedFloat("pivotX");
+			funcExtra = new FunctionCallExtra("pivotUpdate");
+			float.extras.add(funcExtra);
 			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("pivotY"))
 		{
-			float = new ExposedFloat("pivotY")
+			float = new ExposedFloat("pivotY");
+			funcExtra = new FunctionCallExtra("pivotUpdate");
+			float.extras.add(funcExtra);
 			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("alignPivot"))
+		{
+			func = new ExposedFunction("alignPivot", "align pivot");
+			
+			select = new ExposedSelect("horizontal align");
+			select.add("center", Align.CENTER);
+			select.add("left", Align.LEFT);
+			select.add("right", Align.RIGHT);
+			func.addParameter(select);
+			
+			select = new ExposedSelect("vertical align");
+			select.add("center", Align.CENTER);
+			select.add("top", Align.TOP);
+			select.add("bottom", Align.BOTTOM);
+			func.addParameter(select);
+			
+			collection.addValue(func);
 		}
 		
 		return collection;
@@ -187,6 +218,10 @@ class MassiveData
 		var groupName:String = null;
 		
 		var float:ExposedFloat;
+		var func:ExposedFunction;
+		var select:ExposedSelect;
+		
+		var funcExtra:FunctionCallExtra;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -218,13 +253,36 @@ class MassiveData
 		if (!collection.hasValue("pivotX"))
 		{
 			float = new ExposedFloat("pivotX");
+			funcExtra = new FunctionCallExtra("pivotUpdate");
+			float.extras.add(funcExtra);
 			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("pivotY"))
 		{
 			float = new ExposedFloat("pivotY");
+			funcExtra = new FunctionCallExtra("pivotUpdate");
+			float.extras.add(funcExtra);
 			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("alignPivot"))
+		{
+			func = new ExposedFunction("alignPivot", "align pivot");
+			
+			select = new ExposedSelect("horizontal align");
+			select.add("center", Align.CENTER);
+			select.add("left", Align.LEFT);
+			select.add("right", Align.RIGHT);
+			func.addParameter(select);
+			
+			select = new ExposedSelect("vertical align");
+			select.add("center", Align.CENTER);
+			select.add("top", Align.TOP);
+			select.add("bottom", Align.BOTTOM);
+			func.addParameter(select);
+			
+			collection.addValue(func);
 		}
 		
 		return collection;
