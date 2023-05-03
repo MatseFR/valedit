@@ -1,6 +1,7 @@
 package valedit.data.starling.display;
 import starling.display.BlendMode;
 import starling.textures.TextureSmoothing;
+import starling.utils.Align;
 import ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
@@ -31,6 +32,7 @@ class StarlingDisplayData
 		var bool:ExposedBool;
 		var floatRange:ExposedFloatRange;
 		var float:ExposedFloat;
+		var func:ExposedFunction;
 		var object:ExposedObject;
 		var select:ExposedSelect;
 		var string:ExposedString;
@@ -141,12 +143,6 @@ class StarlingDisplayData
 			collection.addValue(select, groupName);
 		}
 		
-		if (!collection.hasValue("transformationMatrix"))
-		{
-			object = new ExposedObject("transformationMatrix", null, true, true);
-			collection.addValue(object, groupName);
-		}
-		
 		if (!collection.hasValue("maskInverted"))
 		{
 			bool = new ExposedBool("maskInverted");
@@ -171,6 +167,31 @@ class StarlingDisplayData
 			collection.addValue(bool, groupName);
 		}
 		
+		if (!collection.hasValue("alignPivot"))
+		{
+			func = new ExposedFunction("alignPivot", "align pivot");
+			
+			select = new ExposedSelect("horizontal align");
+			select.add("center", Align.CENTER);
+			select.add("left", Align.LEFT);
+			select.add("right", Align.RIGHT);
+			func.addParameter(select);
+			
+			select = new ExposedSelect("vertical align");
+			select.add("center", Align.CENTER);
+			select.add("top", Align.TOP);
+			select.add("bottom", Align.BOTTOM);
+			func.addParameter(select);
+			
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("transformationMatrix"))
+		{
+			object = new ExposedObject("transformationMatrix", null, true, true);
+			collection.addValue(object, groupName);
+		}
+		
 		return collection;
 	}
 	
@@ -187,7 +208,7 @@ class StarlingDisplayData
 		if (!collection.hasValue("touchGroup"))
 		{
 			bool = new ExposedBool("touchGroup");
-			collection.addValue(bool, groupName);
+			collection.addValueAfter(bool, "touchable", groupName);
 		}
 		
 		return collection;
@@ -218,39 +239,12 @@ class StarlingDisplayData
 		
 		exposeDisplayObject(collection, useGroups);
 		
-		if (!collection.hasValue("color"))
-		{
-			color = new ExposedColor("color");
-			collection.addValue(color, groupName);
-		}
-		
-		if (!collection.hasValue("pixelSnapping"))
-		{
-			bool = new ExposedBool("pixelSnapping");
-			collection.addValue(bool, groupName);
-		}
-		
 		if (!collection.hasValue("texture"))
 		{
 			texture = new ExposedStarlingTexture("texture");
 			funcExtra = new FunctionCallExtra("readjustSize");
 			texture.extras.add(funcExtra);
-			collection.addValue(texture, groupName);
-		}
-		
-		if (!collection.hasValue("readjustSize"))
-		{
-			func = new ExposedFunction("readjustSize", "readjust size");
-			func.addParameter(new ExposedNote("note", "Set width and height to 0 to match texture dimensions"));
-			func.addParameter(new ExposedFloat("width"));
-			func.addParameter(new ExposedFloat("height"));
-			collection.addValue(func, groupName);
-		}
-		
-		if (!collection.hasValue("textureRepeat"))
-		{
-			bool = new ExposedBool("textureRepeat");
-			collection.addValueAfter(bool, "texture", groupName);
+			collection.addValueAfter(texture, "blendMode", groupName);
 		}
 		
 		if (!collection.hasValue("textureSmoothing"))
@@ -262,13 +256,38 @@ class StarlingDisplayData
 			collection.addValueAfter(select, "texture", groupName);
 		}
 		
+		if (!collection.hasValue("textureRepeat"))
+		{
+			bool = new ExposedBool("textureRepeat");
+			collection.addValueAfter(bool, "textureSmoothing", groupName);
+		}
+		
+		if (!collection.hasValue("pixelSnapping"))
+		{
+			bool = new ExposedBool("pixelSnapping");
+			collection.addValueAfter(bool, "textureRepeat", groupName);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			collection.addValueBefore(color, "alignPivot", groupName);
+		}
+		
+		if (!collection.hasValue("readjustSize"))
+		{
+			func = new ExposedFunction("readjustSize", "readjust size");
+			func.addParameter(new ExposedNote("note", "Set width and height to 0 to match texture dimensions"));
+			func.addParameter(new ExposedFloat("width"));
+			func.addParameter(new ExposedFloat("height"));
+			collection.addValueAfter(func, "alignPivot", groupName);
+		}
+		
 		return collection;
 	}
 	
 	static public function exposeQuad(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
 	{
-		//var groupName:String = useGroups ? "Properties" : null;
-		
 		if (collection == null) collection = new ExposedCollection();
 		
 		exposeMesh(collection, useGroups);
