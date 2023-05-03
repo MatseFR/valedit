@@ -8,7 +8,7 @@ import valedit.ExposedValue;
  */
 class ExposedFunction extends ExposedValue 
 {
-	public var parameters:Array<Dynamic>;// = new Array<Dynamic>();
+	public var parameters:Array<Dynamic>;
 	
 	private var _parameterValues:Array<Dynamic> = new Array<Dynamic>();
 	
@@ -88,7 +88,7 @@ class ExposedFunction extends ExposedValue
 			}
 		}
 		
-		Reflect.callMethod(_object, this.value, this._parameterValues);
+		Reflect.callMethod(this._object, this.value, this._parameterValues);
 		this._parameterValues.resize(0);
 		
 		if (this.updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);

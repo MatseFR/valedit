@@ -3,6 +3,7 @@ import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 import valedit.events.ValueEvent;
 import valedit.ui.IValueUI;
+import valedit.value.extra.ValueExtraContainer;
 
 /**
  * ...
@@ -13,6 +14,7 @@ class ExposedValue extends EventDispatcher
 	public var collection(get, set):ExposedCollection;
 	/* used as value when object is null */
 	public var defaultValue:Dynamic = null;
+	public var extras(get, never):ValueExtraContainer;
 	public var isEditable(get, set):Bool;
 	/* tells whether this value is real (true, default) or not (false) */
 	public var isRealValue(get, never):Bool;
@@ -25,50 +27,55 @@ class ExposedValue extends EventDispatcher
 	public var value(get, set):Dynamic;
 	
 	private var _collection:ExposedCollection;
-	private function get_collection():ExposedCollection { return _collection; }
+	private function get_collection():ExposedCollection { return this._collection; }
 	private function set_collection(value:ExposedCollection):ExposedCollection
 	{
-		return _collection = value;
+		this._extras.collection = value;
+		return this._collection = value;
 	}
 	
+	private var _extras:ValueExtraContainer = new ValueExtraContainer();
+	private function get_extras():ValueExtraContainer { return this._extras; }
+	
 	private var _isEditable:Bool = true;
-	private function get_isEditable():Bool { return _isEditable; }
+	private function get_isEditable():Bool { return this._isEditable; }
 	private function set_isEditable(value:Bool):Bool
 	{
-		if (_isEditable == value) return value;
-		_isEditable = value;
+		if (this._isEditable == value) return value;
+		this._isEditable = value;
 		ValueEvent.dispatch(this, ValueEvent.EDITABLE_CHANGE);
-		for (val in _childValues)
+		for (val in this._childValues)
 		{
-			val.isEditable = _isEditable;
+			val.isEditable = this._isEditable;
 		}
-		return _isEditable;
+		return this._isEditable;
 	}
 	
 	private var _isRealValue:Bool = true;
 	private function get_isRealValue():Bool { return this._isRealValue; }
 	
 	private var _object:Dynamic;
-	private function get_object():Dynamic { return _object; }
+	private function get_object():Dynamic { return this._object; }
 	private function set_object(value:Dynamic):Dynamic
 	{
-		if (_object == value) return value;
-		var nullObject:Bool = _object == null;
-		_object = value;
-		if (nullObject && _storedValue != null)
+		if (this._object == value) return value;
+		var nullObject:Bool = this._object == null;
+		this._object = value;
+		if (nullObject && this._storedValue != null)
 		{
-			Reflect.setProperty(_object, propertyName, _storedValue);
+			Reflect.setProperty(this._object, propertyName, this._storedValue);
 		}
-		_storedValue = null;
+		this._storedValue = null;
+		this._extras.object = value;
 		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE);
-		return _object;
+		return this._object;
 	}
 	
 	private var _uiControl:IValueUI;
-	private function get_uiControl():IValueUI { return _uiControl; }
+	private function get_uiControl():IValueUI { return this._uiControl; }
 	private function set_uiControl(value:IValueUI):IValueUI
 	{
-		if (_uiControl == value) return value;
+		if (this._uiControl == value) return value;
 		if (value != null)
 		{
 			value.exposedValue = this;
@@ -78,27 +85,28 @@ class ExposedValue extends EventDispatcher
 	
 	private function get_value():Dynamic
 	{
-		if (_object == null)
+		if (this._object == null)
 		{
-			return _storedValue == null ? defaultValue : _storedValue;
+			return this._storedValue == null ? defaultValue : this._storedValue;
 		}
 		else
 		{
-			return Reflect.getProperty(_object, propertyName);
+			return Reflect.getProperty(this._object, propertyName);
 		}
 	}
 	private function set_value(value:Dynamic):Dynamic
 	{
-		if (_object == null)
+		if (this._object == null)
 		{
-			_storedValue = value;
+			this._storedValue = value;
 		}
-		else if (_storedValue != value)
+		else if (this._storedValue != value)
 		{
-			_storedValue = value;
-			Reflect.setProperty(_object, propertyName, value);
+			this._storedValue = value;
+			Reflect.setProperty(this._object, propertyName, value);
+			this._extras.execute();
 			if (parentValue != null) parentValue.childValueChanged();
-			if (updateCollectionUIOnChange) _collection.uiCollection.update(_uiControl);
+			if (updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
 		}
 		return value;
 	}
@@ -117,6 +125,7 @@ class ExposedValue extends EventDispatcher
 		this.propertyName = propertyName;
 		if (name == null) name = propertyName;
 		this.name = name;
+		this._extras.owner = this;
 	}
 	
 	/**
@@ -124,7 +133,8 @@ class ExposedValue extends EventDispatcher
 	**/
 	public function clear():Void
 	{
-		_object = null;
+		this._object = null;
+		this._extras.object = null;
 	}
 	
 	/**
@@ -133,7 +143,7 @@ class ExposedValue extends EventDispatcher
 	**/
 	public function addChildValue(value:ExposedValue):Void
 	{
-		_childValues.push(value);
+		this._childValues.push(value);
 	}
 	
 	/**
@@ -142,7 +152,7 @@ class ExposedValue extends EventDispatcher
 	**/
 	public function removeChildValue(value:ExposedValue):Void
 	{
-		_childValues.remove(value);
+		this._childValues.remove(value);
 	}
 	
 	/**
@@ -152,7 +162,7 @@ class ExposedValue extends EventDispatcher
 	{
 		if (updateCollectionUIOnChange) 
 		{
-			_collection.uiCollection.update(_uiControl);
+			this._collection.uiCollection.update(_uiControl);
 			if (parentValue != null) parentValue.childValueChanged();
 		}
 	}
@@ -168,9 +178,10 @@ class ExposedValue extends EventDispatcher
 	
 	private function clone_internal(value:ExposedValue):Void
 	{
-		value.defaultValue = defaultValue;
-		value.isEditable = isEditable;
-		value.updateCollectionUIOnChange = updateCollectionUIOnChange;
+		value.defaultValue = this.defaultValue;
+		value.isEditable = this._isEditable;
+		value.updateCollectionUIOnChange = this.updateCollectionUIOnChange;
+		this._extras.clone(value._extras);
 	}
 	
 	public function fromJSON(json:Dynamic):Void

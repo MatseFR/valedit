@@ -12,6 +12,7 @@ import valedit.value.ExposedGroup;
 import valedit.value.ExposedNote;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
+import valedit.value.extra.FunctionCallExtra;
 import valedit.value.starling.ExposedStarlingTexture;
 import valedit.value.ExposedString;
 
@@ -211,6 +212,8 @@ class StarlingDisplayData
 		var select:ExposedSelect;
 		var texture:ExposedStarlingTexture;
 		
+		var funcExtra:FunctionCallExtra;
+		
 		if (collection == null) collection = new ExposedCollection();
 		
 		exposeDisplayObject(collection, useGroups);
@@ -230,6 +233,8 @@ class StarlingDisplayData
 		if (!collection.hasValue("texture"))
 		{
 			texture = new ExposedStarlingTexture("texture");
+			funcExtra = new FunctionCallExtra("readjustSize");
+			texture.extras.add(funcExtra);
 			collection.addValue(texture, groupName);
 		}
 		
