@@ -14,6 +14,7 @@ class ExposedValue extends EventDispatcher
 	public var collection(get, set):ExposedCollection;
 	/* used as value when object is null */
 	public var defaultValue:Dynamic = null;
+	/* all extras are executed when an ExposedValue's value changes */
 	public var extras(get, never):ValueExtraContainer;
 	public var isEditable(get, set):Bool;
 	/* tells whether this value is real (true, default) or not (false) */
