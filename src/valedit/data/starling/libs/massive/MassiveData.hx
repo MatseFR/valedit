@@ -1,13 +1,18 @@
 package valedit.data.starling.libs.massive;
+import massive.data.MassiveConstants;
 import starling.utils.Align;
 import valedit.ExposedCollection;
+import valedit.data.starling.display.StarlingDisplayData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedGroup;
+import valedit.value.ExposedIntRange;
 import valedit.value.ExposedSelect;
+import valedit.value.ExposedString;
 import valedit.value.extra.FunctionCallExtra;
+import valedit.value.starling.ExposedStarlingTexture;
 
 /**
  * ...
@@ -210,6 +215,192 @@ class MassiveData
 		}
 		
 		return collection
+	}
+	
+	static public function exposeMassiveDisplayData(collection:ExposedCollection, useGroups:Bool = true):ExposedCollection
+	{
+		var group:ExposedGroup;
+		var groupName:String = null;
+		
+		var bool:ExposedBool;
+		var intRange:ExposedIntRange;
+		var float:ExposedFloat;
+		var floatRange:ExposedFloatRange;
+		var select:ExposedSelect;
+		var texture:ExposedStarlingTexture;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (useGroups)
+		{
+			groupName = "Properties";
+			group = collection.getGroup(groupName);
+			if (group == null)
+			{
+				group = new ExposedGroup(groupName);
+				collection.addValue(group);
+			}
+		}
+		
+		if (!collection.hasValue("autoHandleJuggler"))
+		{
+			bool = new ExposedBool("autoHandleJuggler");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("bufferSize"))
+		{
+			intRange = new ExposedIntRange("bufferSize", null, 0, MassiveConstants.MAX_QUADS);
+			collection.addValue(intRange, groupName);
+		}
+		
+		if (!collection.hasValue("numBuffers"))
+		{
+			intRange = new ExposedIntRange("numBuffers", null, 1, 8);
+			collection.addValue(intRange, groupName);
+		}
+		
+		if (!collection.hasValue("colorRed"))
+		{
+			floatRange = new ExposedFloatRange("colorRed", null, 0, 10);
+			collection.addValue(floatRange, groupName);
+		}
+		
+		if (!collection.hasValue("colorGreen"))
+		{
+			floatRange = new ExposedFloatRange("colorGreen", null, 0, 10);
+			collection.addValue(floatRange, groupName);
+		}
+		
+		if (!collection.hasValue("colorBlue"))
+		{
+			floatRange = new ExposedFloatRange("colorBlue", null, 0, 10);
+			collection.addValue(floatRange, groupName);
+		}
+		
+		if (!collection.hasValue("renderOffsetX"))
+		{
+			float = new ExposedFloat("renderOffsetX");
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("renderOffsetY"))
+		{
+			float = new ExposedFloat("renderOffsetY");
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("texture"))
+		{
+			texture = new ExposedStarlingTexture("texture");
+			collection.addValue(texture, groupName);
+		}
+		
+		if (!collection.hasValue("textureRepeat"))
+		{
+			bool = new ExposedBool("textureRepeat");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("textureSmoothing"))
+		{
+			select = new ExposedSelect("textureSmoothing");
+			select.add("BILINEAR", TextureSmoothing.BILINEAR);
+			select.add("NONE", TextureSmoothing.NONE);
+			select.add("TRILINEAR", TextureSmoothing.TRILINEAR);
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("useByteArray"))
+		{
+			bool = new ExposedBool("useByteArray");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("useColor"))
+		{
+			bool = new ExposedBool("useColor");
+			collection.addValue(bool, groupName);
+		}
+		
+		StarlingDisplayData.exposeDisplayObject(collection, useGroups);
+		
+		return collection;
+	}
+	
+	static private function exposeMassiveLayer(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	{
+		var group:ExposedGroup;
+		var groupName:String = null;
+		
+		var string:ExposedString;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (useGroups)
+		{
+			groupName = "Properties";
+			group = collection.getGroup(groupName);
+			if (group == null)
+			{
+				group = new ExposedGroup(groupName);
+				collection.addValue(group);
+			}
+		}
+		
+		if (!collection.hasValue("name"))
+		{
+			string = new ExposedString("name");
+			collection.addValue(string, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeMassiveImageLayer(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	{
+		var group:ExposedGroup;
+		var groupName:String = null;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (useGroups)
+		{
+			groupName = "Properties";
+			group = collection.getGroup(groupName);
+			if (group == null)
+			{
+				group = new ExposedGroup(groupName);
+				collection.addValue(group);
+			}
+		}
+		
+		exposeMassiveLayer(collection, useGroups);
+		
+		return collection;
+	}
+	
+	static public function exposeMassiveQuadLayer(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	{
+		var group:ExposedGroup;
+		var groupName:String = null;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (useGroups)
+		{
+			groupName = "Properties";
+			group = collection.getGroup(groupName);
+			if (group == null)
+			{
+				group = new ExposedGroup(groupName);
+				collection.addValue(group);
+			}
+		}
+		
+		exposeMassiveLayer(collection, useGroups);
+		
+		return collection;
 	}
 	
 	static public function exposeQuadData(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
