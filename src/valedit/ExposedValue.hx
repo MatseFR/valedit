@@ -14,6 +14,8 @@ class ExposedValue extends EventDispatcher
 	/* used as value when object is null */
 	public var defaultValue:Dynamic = null;
 	public var isEditable(get, set):Bool;
+	/* tells whether this value is real (true, default) or not (false) */
+	public var isRealValue(get, never):Bool;
 	public var name:String;
 	public var object(get, set):Dynamic;
 	public var parentValue:ExposedValue;
@@ -42,6 +44,9 @@ class ExposedValue extends EventDispatcher
 		}
 		return _isEditable;
 	}
+	
+	private var _isRealValue:Bool = true;
+	private function get_isRealValue():Bool { return this._isRealValue; }
 	
 	private var _object:Dynamic;
 	private function get_object():Dynamic { return _object; }

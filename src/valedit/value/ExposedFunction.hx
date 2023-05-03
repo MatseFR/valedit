@@ -8,9 +8,8 @@ import valedit.ExposedValue;
  */
 class ExposedFunction extends ExposedValue 
 {
-	//public var parameterNames:Array<String>;
+	public var parameters:Array<Dynamic>;// = new Array<Dynamic>();
 	
-	private var _parameters:Array<Dynamic>;// = new Array<Dynamic>();
 	private var _parameterValues:Array<Dynamic> = new Array<Dynamic>();
 	
 	/**
@@ -21,15 +20,36 @@ class ExposedFunction extends ExposedValue
 	public function new(propertyName:String, name:String=null, parameters:Array<Dynamic> = null) 
 	{
 		super(propertyName, name);
-		//if (parameterNames == null) parameterNames = new Array<String>();
-		//this.parameterNames = parameterNames;
+		
 		if (parameters == null) parameters = new Array<Dynamic>();
-		this._parameters = parameters;
+		this.parameters = parameters;
 	}
 	
+	/**
+	   - if param is a String and it starts with ValEdit.EXPOSED_VALUE_MARKER the function 
+	   will look for an exposed value with that name and use its value for the function call
+	   - if param is an ExposedValue instance, a ValueUI control will be shown and its value
+	   will be used for the function call
+	   @param	param
+	**/
 	public function addParameter(param:Dynamic):Void
 	{
-		this._parameters.push(param);
+		this.parameters.push(param);
+	}
+	
+	public function getExposedValueParameters(?values:Array<ExposedValue>):Array<ExposedValue>
+	{
+		if (values == null) values = new Array<ExposedValue>();
+		
+		for (param in this.parameters)
+		{
+			if (Std.isOfType(param, ExposedValue))
+			{
+				values.push(cast param);
+			}
+		}
+		
+		return values;
 	}
 	
 	/**
@@ -37,26 +57,9 @@ class ExposedFunction extends ExposedValue
 	**/
 	public function execute():Void
 	{
-		//if (_parameterValues.length == 0 && parameterNames.length != 0)
-		//{
-			//var val:ExposedValue;
-			//for (valName in parameterNames)
-			//{
-				//val = _collection.getValue(valName);
-				//if (val != null) _parameterValues.push(val);
-			//}
-		//}
-		//
-		//for (paramValue in _parameterValues)
-		//{
-			//_parameters.push(paramValue.value);
-		//}
-		//
-		//Reflect.callMethod(_object, this.value, _parameters);
-		//_parameters.resize(0);
 		var str:String;
 		var val:ExposedValue;
-		for (param in this._parameters)
+		for (param in this.parameters)
 		{
 			if (Std.isOfType(param, String))
 			{
@@ -69,6 +72,14 @@ class ExposedFunction extends ExposedValue
 				else
 				{
 					this._parameterValues.push(param);
+				}
+			}
+			else if (Std.isOfType(param, ExposedValue))
+			{
+				val = cast param;
+				if (val.isRealValue)
+				{
+					this._parameterValues.push(val.value);
 				}
 			}
 			else
@@ -85,8 +96,7 @@ class ExposedFunction extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		//var func:ExposedFunction = new ExposedFunction(this.propertyName, this.name, parameterNames.copy());
-		var func:ExposedFunction = new ExposedFunction(this.propertyName, this.name, this._parameters.copy());
+		var func:ExposedFunction = new ExposedFunction(this.propertyName, this.name, this.parameters.copy());
 		super.clone_internal(func);
 		return func;
 	}
@@ -100,8 +110,7 @@ class ExposedFunction extends ExposedValue
 		{
 			for (param in data)
 			{
-				//parameterNames.push(paramName);
-				this._parameters.push(param);
+				this.parameters.push(param);
 			}
 		}
 	}
@@ -110,7 +119,7 @@ class ExposedFunction extends ExposedValue
 	{
 		if (json == null) json = {};
 		json.params = [];
-		for (param in this._parameters)
+		for (param in this.parameters)
 		{
 			json.params.push(param);
 		}

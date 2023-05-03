@@ -9,6 +9,7 @@ import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedGroup;
+import valedit.value.ExposedNote;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
 import valedit.value.starling.ExposedStarlingTexture;
@@ -235,6 +236,9 @@ class StarlingDisplayData
 		if (!collection.hasValue("readjustSize"))
 		{
 			func = new ExposedFunction("readjustSize", "readjust size");
+			func.addParameter(new ExposedNote("note", "Set width and height to 0 to match texture dimensions"));
+			func.addParameter(new ExposedFloat("width"));
+			func.addParameter(new ExposedFloat("height"));
 			collection.addValue(func, groupName);
 		}
 		

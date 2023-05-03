@@ -20,15 +20,15 @@ class ExposedNote extends ExposedValue
 	public function new(name:String="", text:String="", textPercentWidth:Float = 100) 
 	{
 		super(name);
-		
+		this._isRealValue = false;
 		this.text = text;
 		this.textPercentWidth = textPercentWidth;
 	}
 	
 	override public function clone():ExposedValue 
 	{
-		var text:ExposedNote = new ExposedNote(this.name, this.text, this.textPercentWidth);
-		return text;
+		var note:ExposedNote = new ExposedNote(this.name, this.text, this.textPercentWidth);
+		return note;
 	}
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 

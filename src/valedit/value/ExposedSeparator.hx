@@ -12,7 +12,7 @@ class ExposedSeparator extends ExposedValue
 	public function new(name:String="") 
 	{
 		super(name);
-		
+		this._isRealValue = false;
 	}
 	
 	override public function clone():ExposedValue 
