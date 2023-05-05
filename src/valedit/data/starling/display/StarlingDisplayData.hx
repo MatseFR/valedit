@@ -244,7 +244,7 @@ class StarlingDisplayData
 			texture = new ExposedStarlingTexture("texture");
 			funcExtra = new FunctionCallExtra("readjustSize");
 			texture.extras.add(funcExtra);
-			collection.addValueAfter(texture, "blendMode", groupName);
+			collection.addValueAfter(texture, "name", groupName);
 		}
 		
 		if (!collection.hasValue("textureSmoothing"))
