@@ -141,6 +141,7 @@ class ExposedValue extends EventDispatcher
 	public function applyToObject(object:Dynamic):Void
 	{
 		Reflect.setProperty(object, this.propertyName, this.value);
+		this._extras.applyToObject(object);
 		
 		for (value in this._childValues)
 		{
@@ -203,6 +204,7 @@ class ExposedValue extends EventDispatcher
 	public function fromJSON(json:Dynamic):Void
 	{
 		this.propertyName = json.propName;
+		this._extras.fromJSON(json.extras);
 	}
 	
 	public function toJSON(json:Dynamic = null):Dynamic
@@ -210,6 +212,7 @@ class ExposedValue extends EventDispatcher
 		if (json == null) json = {};
 		json.clss = Type.getClassName(Type.getClass(this));
 		json.propName = this.propertyName;
+		json.extras = this._extras.toJSON();
 		return json;
 	}
 	
