@@ -705,7 +705,7 @@ class AssetLib
 				_matrix.scale(scale, scale);
 				preview.draw(asset.bitmapAsset.content, _matrix, null, null, _rect);
 				
-				createStarlingTexture(asset.path, subTexture, asset.bitmapAsset, name, preview);
+				createStarlingTexture(asset.path + ValEdit.STARLING_SUBTEXTURE_MARKER + name, subTexture, asset.bitmapAsset, name, preview);
 			}
 		}
 	}
