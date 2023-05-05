@@ -47,6 +47,35 @@ class FunctionCallExtra extends ValueExtra
 		return func;
 	}
 	
+	override public function applyToObject(object:Dynamic):Void 
+	{
+		var str:String;
+		var val:ExposedValue;
+		for (param in this._parameters)
+		{
+			if (Std.isOfType(param, String))
+			{
+				str = param;
+				if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
+				{
+					val = this._collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
+					this._parameterValues.push(val.value);
+				}
+				else
+				{
+					this._parameterValues.push(param);
+				}
+			}
+			else
+			{
+				this._parameterValues.push(param);
+			}
+		}
+		
+		Reflect.callMethod(object, Reflect.getProperty(object, this._functionName), this._parameterValues);
+		this._parameterValues.resize(0);
+	}
+	
 	override public function execute():Void 
 	{
 		var str:String;
@@ -74,6 +103,23 @@ class FunctionCallExtra extends ValueExtra
 		
 		Reflect.callMethod(this._object, this._function, this._parameterValues);
 		this._parameterValues.resize(0);
+	}
+	
+	override public function fromJSON(json:Dynamic):Void 
+	{
+		super.fromJSON(json);
+		this._functionName = json.funcName;
+		this._parameters = json.params;
+	}
+	
+	override public function toJSON(json:Dynamic = null):Dynamic 
+	{
+		if (json == null) json = {};
+		
+		json.funcName = this._functionName;
+		json.params = this._parameters.copy();
+		
+		return super.toJSON(json);
 	}
 	
 }

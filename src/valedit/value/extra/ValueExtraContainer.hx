@@ -59,6 +59,14 @@ class ValueExtraContainer
 		this._extras.push(extra);
 	}
 	
+	public function applyToObject(object:Dynamic):Void
+	{
+		for (extra in this._extras)
+		{
+			extra.applyToObject(object);
+		}
+	}
+	
 	public function clone(toContainer:ValueExtraContainer):Void
 	{
 		var newExtra:ValueExtra;
@@ -75,6 +83,39 @@ class ValueExtraContainer
 		{
 			extra.execute();
 		}
+	}
+	
+	public function fromJSON(json:Dynamic):Void
+	{
+		if (json.extras != null)
+		{
+			var data:Array<Dynamic> = json.extras;
+			var extra:ValueExtra;
+			for (node in data)
+			{
+				extra = ValueExtra.valueExtraFromJSON(node);
+				add(extra);
+			}
+		}
+	}
+	
+	public function toJSON(json:Dynamic = null):Dynamic
+	{
+		if (json == null) json = {};
+		
+		if (this._extras.length != 0)
+		{
+			var data:Array<Dynamic> = new Array<Dynamic>();
+			var extraJson:Dynamic;
+			for (extra in this._extras)
+			{
+				extraJson = extra.toJSON();
+				if (extraJson != null) data.push(extraJson);
+			}
+			json.extras = data;
+		}
+		
+		return json;
 	}
 	
 }

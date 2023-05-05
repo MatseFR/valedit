@@ -38,6 +38,11 @@ class ValueExtra
 		
 	}
 	
+	public function applyToObject(object:Dynamic):Void
+	{
+		
+	}
+	
 	public function execute():Void
 	{
 		
@@ -51,6 +56,26 @@ class ValueExtra
 	private function clone_internal(extra:ValueExtra):Void
 	{
 		
+	}
+	
+	public function fromJSON(json:Dynamic):Void
+	{
+		
+	}
+	
+	public function toJSON(json:Dynamic = null):Dynamic
+	{
+		if (json == null) json = {};
+		json.clss = Type.getClassName(Type.getClass(this));
+		return json;
+	}
+	
+	static public function valueExtraFromJSON(json:Dynamic):ValueExtra
+	{
+		var clss:Class<Dynamic> = Type.resolveClass(json.clss);
+		var extra:ValueExtra = Type.createInstance(clss, []);
+		extra.fromJSON(json);
+		return extra;
 	}
 	
 }
