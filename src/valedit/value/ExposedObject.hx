@@ -13,13 +13,13 @@ class ExposedObject extends ExposedValue
 	
 	override function get_value():Dynamic 
 	{
-		if (storeValue && _object != null)
+		if (this.storeValue && this._object != null)
 		{
-			if (_storedValue == null)
+			if (this._storedValue == null)
 			{
-				_storedValue = Reflect.getProperty(_object, propertyName);
+				this._storedValue = Reflect.getProperty(this._object, this.propertyName);
 			}
-			return _storedValue;
+			return this._storedValue;
 		}
 		else
 		{
@@ -41,11 +41,29 @@ class ExposedObject extends ExposedValue
 		this.reassignOnChange = reassignOnChange;
 	}
 	
+	override public function applyToObject(object:Dynamic):Void 
+	{
+		var realObject:Dynamic = Reflect.getProperty(object, this.propertyName);
+		
+		for (value in this._childValues)
+		{
+			value.applyToObject(realObject);
+		}
+	}
+	
+	override public function readValue():Void 
+	{
+		for (value in this._childValues)
+		{
+			value.readValue();
+		}
+	}
+	
 	override public function childValueChanged():Void 
 	{
-		if (reassignOnChange && _object != null)
+		if (this.reassignOnChange && this._object != null)
 		{
-			Reflect.setProperty(_object, propertyName, this.value);
+			Reflect.setProperty(this._object, this.propertyName, this.value);
 		}
 		
 		super.childValueChanged();
@@ -53,8 +71,8 @@ class ExposedObject extends ExposedValue
 	
 	public function reloadObject():Void
 	{
-		_storedValue = Reflect.getProperty(_object, propertyName);
-		for (value in _childValues)
+		this._storedValue = Reflect.getProperty(_object, propertyName);
+		for (value in this._childValues)
 		{
 			value.object = _storedValue;
 		}
@@ -62,7 +80,7 @@ class ExposedObject extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var object:ExposedObject = new ExposedObject(this.propertyName, this.name, storeValue, reassignOnChange);
+		var object:ExposedObject = new ExposedObject(this.propertyName, this.name, this.storeValue, this.reassignOnChange);
 		super.clone_internal(object);
 		return object;
 	}
@@ -70,12 +88,43 @@ class ExposedObject extends ExposedValue
 	override public function fromJSON(json:Dynamic):Void 
 	{
 		super.fromJSON(json);
+		if (json.childValues != null)
+		{
+			var data:Array<Dynamic> = json.childValues;
+			var value:ExposedValue;
+			for (node in data)
+			{
+				value = ExposedValue.valueFromJSON(node);
+				addChildValue(value);
+			}
+		}
 	}
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
+		if (this._childValues.length != 0)
+		{
+			var data:Array<Dynamic> = new Array<Dynamic>();
+			var valueJson:Dynamic;
+			for (value in this._childValues)
+			{
+				valueJson = value.toJSON();
+				if (valueJson != null) data.push(valueJson);
+			}
+			json.childValues = data;
+		}
 		return super.toJSON(json);
+	}
+	
+	override public function toJSONSimple(json:Dynamic):Void 
+	{
+		var childJson:Dynamic = {};
+		for (value in this._childValues)
+		{
+			value.toJSONSimple(childJson);
+		}
+		Reflect.setField(json, this.propertyName, childJson);
 	}
 	
 }

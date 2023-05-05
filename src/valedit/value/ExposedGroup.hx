@@ -16,7 +16,7 @@ class ExposedGroup extends ExposedValue
 	
 	override function set_collection(value:ExposedCollection):ExposedCollection 
 	{
-		for (val in _valueList)
+		for (val in this._valueList)
 		{
 			val.collection = value;
 		}
@@ -25,7 +25,7 @@ class ExposedGroup extends ExposedValue
 	
 	override function set_isEditable(value:Bool):Bool 
 	{
-		for (val in _valueList)
+		for (val in this._valueList)
 		{
 			val.isEditable = value;
 		}
@@ -34,7 +34,7 @@ class ExposedGroup extends ExposedValue
 	
 	override function set_object(value:Dynamic):Dynamic
 	{
-		for (val in _valueList)
+		for (val in this._valueList)
 		{
 			val.object = value;
 		}
@@ -43,16 +43,16 @@ class ExposedGroup extends ExposedValue
 	
 	override function set_uiControl(value:IValueUI):IValueUI 
 	{
-		if (_uiControl == value) return value;
+		if (this._uiControl == value) return value;
 		super.set_uiControl(value);
 		if (value != null)
 		{
-			_uiGroup = cast(value);
+			this._uiGroup = cast(value);
 			buildUI();
 		}
 		else
 		{
-			_uiGroup = null;
+			this._uiGroup = null;
 		}
 		return value;
 	}
@@ -77,88 +77,104 @@ class ExposedGroup extends ExposedValue
 		this.isCollapsedDefault = isCollapsedDefault;
 	}
 	
+	override public function applyToObject(object:Dynamic):Void 
+	{
+		for (value in this._valueList)
+		{
+			value.applyToObject(object);
+		}
+	}
+	
+	override public function readValue():Void 
+	{
+		for (value in this._valueList)
+		{
+			value.readValue();
+		}
+	}
+	
 	/**
 	   
 	   @param	value
 	**/
 	public function addValue(value:ExposedValue):Void
 	{
-		_valueList.push(value);
-		_valueMap[value.propertyName] = value;
+		this._valueList.push(value);
+		this._valueMap[value.propertyName] = value;
 		if (Std.isOfType(value, ExposedGroup))
 		{
-			_groupList.push(cast value);
-			_groupMap[value.propertyName] = cast value;
+			this._groupList.push(cast value);
+			this._groupMap[value.propertyName] = cast value;
 		}
 		
-		if (_isUIBuilt && value._uiControl == null)
+		if (this._isUIBuilt && value._uiControl == null)
 		{
 			var control:IValueUI = ValEdit.toUIControl(value);
-			_uiGroup.addExposedControl(control);
+			this._uiGroup.addExposedControl(control);
 		}
 	}
 	
 	
 	public function addValueAfter(value:ExposedValue, afterValueName:String):Void
 	{
-		var afterValue:ExposedValue = _valueMap[afterValueName];
+		var afterValue:ExposedValue = this._valueMap[afterValueName];
 		if (afterValue == null)
 		{
 			throw new Error("ExposedGroup.addValueAfter ::: no value with name " + afterValueName);
 		}
 		
-		var index:Int = _valueList.indexOf(afterValue);
-		_valueList.insert(index + 1, value);
-		_valueMap[value.propertyName] = value;
+		var index:Int = this._valueList.indexOf(afterValue);
+		this._valueList.insert(index + 1, value);
+		this._valueMap[value.propertyName] = value;
 		
 		if (Std.isOfType(value, ExposedGroup))
 		{
-			_groupList.push(cast value);
-			_groupMap[value.propertyName] = cast value;
+			this._groupList.push(cast value);
+			this._groupMap[value.propertyName] = cast value;
 		}
 		
 		if (_isUIBuilt && value._uiControl == null)
 		{
 			var control:IValueUI = ValEdit.toUIControl(value);
-			_uiGroup.addExposedControlAfter(control, afterValue._uiControl);
+			this._uiGroup.addExposedControlAfter(control, afterValue._uiControl);
 		}
 	}
 	
 	public function addValueBefore(value:ExposedValue, beforeValueName:String):Void
 	{
-		var beforeValue:ExposedValue = _valueMap[beforeValueName];
+		var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 		if (beforeValue == null)
 		{
 			throw new Error("ExposedGroup.addValueBefore ::: no value with name " + beforeValueName);
 		}
 		
-		var index:Int = _valueList.indexOf(beforeValue);
-		_valueList.insert(index, value);
-		_valueMap[value.propertyName] = value;
+		var index:Int = this._valueList.indexOf(beforeValue);
+		this._valueList.insert(index, value);
+		this._valueMap[value.propertyName] = value;
 		
 		if (Std.isOfType(value, ExposedGroup))
 		{
-			_groupList.push(cast value);
-			_groupMap[value.propertyName] = cast value;
+			this._groupList.push(cast value);
+			this._groupMap[value.propertyName] = cast value;
 		}
 		
-		if (_isUIBuilt && value._uiControl == null)
+		if (this._isUIBuilt && value._uiControl == null)
 		{
 			var control:IValueUI = ValEdit.toUIControl(value);
-			_uiGroup.addExposedControlBefore(control, beforeValue._uiControl);
+			this._uiGroup.addExposedControlBefore(control, beforeValue._uiControl);
 		}
 	}
 	
 	private function buildUI():Void
 	{
-		if (_isUIBuilt) return;
+		if (this._isUIBuilt) return;
 		var control:IValueUI;
-		for (val in _valueList)
+		for (val in this._valueList)
 		{
 			control = ValEdit.toUIControl(val);
-			_uiGroup.addExposedControl(control);
+			this._uiGroup.addExposedControl(control);
 		}
-		_isUIBuilt = true;
+		this._isUIBuilt = true;
 	}
 	
 	/**
@@ -169,12 +185,12 @@ class ExposedGroup extends ExposedValue
 	**/
 	public function getGroup(name:String, includeSubGroups:Bool = false):ExposedGroup
 	{
-		var group:ExposedGroup = _groupMap[name];
+		var group:ExposedGroup = this._groupMap[name];
 		if (group != null) return group;
 		
 		if (includeSubGroups)
 		{
-			for (grp in _groupList)
+			for (grp in this._groupList)
 			{
 				group = grp.getGroup(name);
 				if (group != null) return group;
@@ -190,9 +206,9 @@ class ExposedGroup extends ExposedValue
 	**/
 	public function getValue(propertyName:String):ExposedValue
 	{
-		var value:ExposedValue = _valueMap[propertyName];
+		var value:ExposedValue = this._valueMap[propertyName];
 		if (value != null) return value;
-		for (group in _groupList)
+		for (group in this._groupList)
 		{
 			value = group.getValue(propertyName);
 			if (value != null) return value;
@@ -207,8 +223,8 @@ class ExposedGroup extends ExposedValue
 	**/
 	public function hasValue(propertyName:String):Bool
 	{
-		if (_valueMap.exists(propertyName)) return true;
-		for (group in _groupList)
+		if (this._valueMap.exists(propertyName)) return true;
+		for (group in this._groupList)
 		{
 			if (group.hasValue(propertyName)) return true;
 		}
@@ -232,16 +248,16 @@ class ExposedGroup extends ExposedValue
 	public function removeValueByName(propertyName:String):ExposedValue
 	{
 		var value:ExposedValue;
-		value = _valueMap[propertyName];
+		value = this._valueMap[propertyName];
 		if (value != null)
 		{
-			_valueList.remove(value);
-			_valueMap.remove(propertyName);
+			this._valueList.remove(value);
+			this._valueMap.remove(propertyName);
 		}
 		
 		if (value == null)
 		{
-			for (group in _groupList)
+			for (group in this._groupList)
 			{
 				value = group.removeValueByName(propertyName);
 				if (value != null) break;
@@ -256,14 +272,56 @@ class ExposedGroup extends ExposedValue
 	**/
 	override public function clone():ExposedValue 
 	{
-		var group:ExposedGroup = new ExposedGroup(this.name, isCollapsable, isCollapsedDefault);
+		var group:ExposedGroup = new ExposedGroup(this.name, this.isCollapsable, this.isCollapsedDefault);
 		
-		for (val in _valueList)
+		for (val in this._valueList)
 		{
 			group.addValue(val.clone());
 		}
 		
 		return group;
+	}
+	
+	override public function fromJSON(json:Dynamic):Void 
+	{
+		super.fromJSON(json);
+		if (json.values != null)
+		{
+			var data:Array<Dynamic> = json.values;
+			var value:ExposedValue;
+			for (node in data)
+			{
+				value = ExposedValue.valueFromJSON(node);
+				this.addValue(value);
+			}
+		}
+	}
+	
+	override public function toJSON(json:Dynamic = null):Dynamic 
+	{
+		if (json == null) json = {};
+		
+		if (this._valueList.length != 0)
+		{
+			var data:Array<Dynamic> = new Array<Dynamic>();
+			var valueJson:Dynamic;
+			for (value in this._valueList)
+			{
+				valueJson = value.toJSON();
+				if (valueJson != null) data.push(valueJson);
+			}
+			json.values = data;
+		}
+		
+		return super.toJSON(json);
+	}
+	
+	override public function toJSONSimple(json:Dynamic):Void 
+	{
+		for (value in this._valueList)
+		{
+			value.toJSONSimple(json);
+		}
 	}
 	
 }

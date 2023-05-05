@@ -32,7 +32,7 @@ class ExposedFloat extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var float:ExposedFloat = new ExposedFloat(this.propertyName, this.name, precision, numericMode, inputVariant);
+		var float:ExposedFloat = new ExposedFloat(this.propertyName, this.name, this.precision, this.numericMode, this.inputVariant);
 		super.clone_internal(float);
 		return float;
 	}

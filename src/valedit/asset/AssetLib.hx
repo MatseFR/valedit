@@ -208,6 +208,11 @@ class AssetLib
 		return _binaryToAsset.get(bytes);
 	}
 	
+	static public function getBinaryFromPath(path:String):BinaryAsset
+	{
+		return _binaryMap[path];
+	}
+	
 	static private function loadBinaries():Void
 	{
 		var idList:Array<String> = new Array<String>();
@@ -307,6 +312,11 @@ class AssetLib
 	static public function getBitmapFromBitmapData(bmd:BitmapData):BitmapAsset
 	{
 		return _bitmapDataToAsset.get(bmd);
+	}
+	
+	static public function getBitmapFromPath(path:String):BitmapAsset
+	{
+		return _bitmapMap[path];
 	}
 	
 	static private function loadBitmaps():Void
@@ -434,6 +444,11 @@ class AssetLib
 		addSound(asset);
 	}
 	
+	static public function getSoundFromPath(path:String):SoundAsset
+	{
+		return _soundMap[path];
+	}
+	
 	static public function getSoundFromSound(sound:Sound):SoundAsset
 	{
 		return _soundToAsset.get(sound);
@@ -532,6 +547,16 @@ class AssetLib
 		addText(asset);
 	}
 	
+	static public function getTextFromPath(path:String):TextAsset
+	{
+		return _textMap[path];
+	}
+	
+	static public function getTextFromText(text:String):TextAsset
+	{
+		return _textToAsset[text];
+	}
+	
 	static private function loadTexts():Void
 	{
 		var idList:Array<String> = new Array<String>();
@@ -616,6 +641,11 @@ class AssetLib
 		addStarlingTexture(asset);
 	}
 	
+	static public function getStarlingTextureAssetFromPath(path:String):StarlingTextureAsset
+	{
+		return _starlingTextureMap[path];
+	}
+	
 	static public function getStarlingTextureAssetFromTexture(texture:Texture):StarlingTextureAsset
 	{
 		return _starlingTextureToAsset.get(texture);
@@ -698,6 +728,11 @@ class AssetLib
 	static public function getStarlingAtlasAssetFromAtlas(atlas:TextureAtlas):StarlingAtlasAsset
 	{
 		return _starlingAtlasToAsset.get(atlas);
+	}
+	
+	static public function getStarlingAtlasAssetFromPath(path:String):StarlingAtlasAsset
+	{
+		return _starlingAtlasMap[path];
 	}
 	
 	static public function getStarlingAtlasAssetFromTexture(texture:Texture):StarlingAtlasAsset

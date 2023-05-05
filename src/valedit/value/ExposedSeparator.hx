@@ -15,6 +15,16 @@ class ExposedSeparator extends ExposedValue
 		this._isRealValue = false;
 	}
 	
+	override public function applyToObject(object:Dynamic):Void 
+	{
+		// nothing
+	}
+	
+	override public function readValue():Void 
+	{
+		// nothing
+	}
+	
 	override public function clone():ExposedValue 
 	{
 		var separator:ExposedSeparator = new ExposedSeparator(this.name);
@@ -23,8 +33,12 @@ class ExposedSeparator extends ExposedValue
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
-		if (json == null) json = {};
-		return super.toJSON(json);
+		return null;
+	}
+	
+	override public function toJSONSimple(json:Dynamic):Void 
+	{
+		// nothing
 	}
 	
 }

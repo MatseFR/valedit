@@ -1,6 +1,7 @@
 package valedit.value.starling;
 
 import valedit.ExposedValue;
+import valedit.asset.AssetLib;
 import valedit.asset.starling.StarlingTextureAsset;
 
 /**
@@ -9,17 +10,17 @@ import valedit.asset.starling.StarlingTextureAsset;
  */
 class ExposedStarlingTexture extends ExposedValue 
 {
+	private var _asset:StarlingTextureAsset;
+	
 	override function set_value(value:Dynamic):Dynamic 
 	{
 		if (Std.isOfType(value, StarlingTextureAsset))
 		{
-			var asset:StarlingTextureAsset = cast value;
-			return super.set_value(asset.content);
+			this._asset = cast value;
+			return super.set_value(this._asset.content);
 		}
-		else
-		{
-			return super.set_value(value);
-		}
+		this._asset = null;
+		return super.set_value(value);
 	}
 
 	public function new(propertyName:String, name:String=null) 
@@ -38,12 +39,28 @@ class ExposedStarlingTexture extends ExposedValue
 	override public function fromJSON(json:Dynamic):Void 
 	{
 		super.fromJSON(json);
+		if (json.asset != null)
+		{
+			this.value = AssetLib.getStarlingTextureAssetFromPath(json.asset);
+		}
 	}
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
+		if (this._asset != null)
+		{
+			json.asset = this._asset.path;
+		}
 		return super.toJSON(json);
+	}
+	
+	override public function toJSONSimple(json:Dynamic):Void 
+	{
+		if (this._asset != null)
+		{
+			Reflect.setField(json, this.propertyName, this._asset.path);
+		}
 	}
 	
 }

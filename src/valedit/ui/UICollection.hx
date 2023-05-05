@@ -14,21 +14,21 @@ class UICollection
 	private function get_uiContainer():DisplayObjectContainer { return _uiContainer; }
 	private function set_uiContainer(value:DisplayObjectContainer):DisplayObjectContainer
 	{
-		if (_uiContainer == value) return value;
+		if (this._uiContainer == value) return value;
 		
-		if (_uiGroup != null)
+		if (this._uiGroup != null)
 		{
-			for (control in _uiList)
+			for (control in this._uiList)
 			{
-				_uiGroup.removeExposedControl(control);
+				this._uiGroup.removeExposedControl(control);
 			}
-			_uiGroup = null;
+			this._uiGroup = null;
 		}
-		else if (_uiContainer != null)
+		else if (this._uiContainer != null)
 		{
-			for (control in _displayList)
+			for (control in this._displayList)
 			{
-				_uiContainer.removeChild(control);
+				this._uiContainer.removeChild(control);
 			}
 		}
 		
@@ -36,22 +36,22 @@ class UICollection
 		{
 			if (Std.isOfType(value, IGroupUI))
 			{
-				_uiGroup = cast value;
-				for (control in _uiList)
+				this._uiGroup = cast value;
+				for (control in this._uiList)
 				{
-					_uiGroup.addExposedControl(control);
+					this._uiGroup.addExposedControl(control);
 				}
 			}
 			else
 			{
-				for (control in _displayList)
+				for (control in this._displayList)
 				{
 					value.addChild(control);
 				}
 			}
 		}
 		
-		return _uiContainer = value;
+		return this._uiContainer = value;
 	}
 	
 	private var _uiGroup:IGroupUI;
@@ -72,8 +72,8 @@ class UICollection
 	**/
 	public function addUI(control:IValueUI):Void
 	{
-		_displayList.push(cast control);
-		_uiList.push(control);
+		this._displayList.push(cast control);
+		this._uiList.push(control);
 	}
 	
 	/**
@@ -82,7 +82,7 @@ class UICollection
 	**/
 	public function update(exceptControl:IValueUI = null):Void
 	{
-		for (control in _uiList)
+		for (control in this._uiList)
 		{
 			if (control == exceptControl) continue;
 			control.updateExposedValue(exceptControl);

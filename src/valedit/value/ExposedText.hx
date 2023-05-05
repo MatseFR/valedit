@@ -1,6 +1,8 @@
 package valedit.value;
 
 import valedit.ExposedValue;
+import valedit.asset.AssetLib;
+import valedit.asset.TextAsset;
 
 /**
  * ...
@@ -11,6 +13,19 @@ class ExposedText extends ExposedValue
 	/* 0 = unlimited */
 	public var maxChars:Int = 0;
 	public var restrict:String = null;
+	
+	private var _asset:TextAsset;
+	
+	override function set_value(value:Dynamic):Dynamic 
+	{
+		if (Std.isOfType(value, TextAsset))
+		{
+			this._asset = cast value;
+			return super.set_value(this._asset.content);
+		}
+		this._asset = null;
+		return super.set_value(value);
+	}
 	
 	/**
 	   
@@ -29,7 +44,7 @@ class ExposedText extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var text:ExposedText = new ExposedText(this.propertyName, this.name, maxChars, restrict);
+		var text:ExposedText = new ExposedText(this.propertyName, this.name, this.maxChars, this.restrict);
 		super.clone_internal(text);
 		return text;
 	}
@@ -37,14 +52,40 @@ class ExposedText extends ExposedValue
 	override public function fromJSON(json:Dynamic):Void 
 	{
 		super.fromJSON(json);
-		this.value = json.value;
+		if (json.asset != null)
+		{
+			this.value = AssetLib.getTextFromPath(json.asset);
+		}
+		else
+		{
+			this.value = json.value;
+		}
 	}
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
-		json.value = this.value;
+		if (this._asset != null)
+		{
+			json.asset = this._asset.path;
+		}
+		else
+		{
+			json.value = this.value;
+		}
 		return super.toJSON(json);
+	}
+	
+	override public function toJSONSimple(json:Dynamic):Void 
+	{
+		if (this._asset != null)
+		{
+			Reflect.setField(json, this.propertyName, this._asset.path);
+		}
+		else
+		{
+			super.toJSONSimple(json);
+		}
 	}
 	
 }

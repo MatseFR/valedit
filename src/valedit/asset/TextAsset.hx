@@ -11,7 +11,6 @@ class TextAsset extends Asset
 	public function new() 
 	{
 		super();
-		
 	}
 	
 }

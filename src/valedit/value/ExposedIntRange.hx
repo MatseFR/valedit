@@ -19,7 +19,7 @@ class ExposedIntRange extends ExposedValue
 	private function set_max(value:Int):Int
 	{
 		if (this.defaultValue > value) this.defaultValue = value;
-		return _max = value;
+		return this._max = value;
 	}
 	
 	private var _min:Int;
@@ -27,7 +27,7 @@ class ExposedIntRange extends ExposedValue
 	private function set_min(value:Int):Int
 	{
 		if (this.defaultValue < value) this.defaultValue = value;
-		return _min = value;
+		return this._min = value;
 	}
 	
 	/**
@@ -52,7 +52,7 @@ class ExposedIntRange extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var range:ExposedIntRange = new ExposedIntRange(this.propertyName, this.name, min, max, step, inputVariant);
+		var range:ExposedIntRange = new ExposedIntRange(this.propertyName, this.name, this.min, this.max, this.step, this.inputVariant);
 		super.clone_internal(range);
 		return range;
 	}

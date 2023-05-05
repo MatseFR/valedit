@@ -15,7 +15,6 @@ class StarlingTextureAsset extends Asset
 	public function new() 
 	{
 		super();
-		
 	}
 	
 }

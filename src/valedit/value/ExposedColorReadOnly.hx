@@ -15,6 +15,11 @@ class ExposedColorReadOnly extends ExposedValue
 		
 	}
 	
+	override public function applyToObject(object:Dynamic):Void 
+	{
+		// nothing
+	}
+	
 	override public function clone():ExposedValue 
 	{
 		var color:ExposedColorReadOnly = new ExposedColorReadOnly(this.propertyName, this.name);
@@ -24,8 +29,12 @@ class ExposedColorReadOnly extends ExposedValue
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
-		if (json == null) json = {};
-		return super.toJSON(json);
+		return null;
+	}
+	
+	override public function toJSONSimple(json:Dynamic):Void 
+	{
+		// nothing
 	}
 	
 }

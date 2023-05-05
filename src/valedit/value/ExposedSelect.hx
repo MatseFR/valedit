@@ -34,8 +34,8 @@ class ExposedSelect extends ExposedValue
 	{
 		super.clear();
 		
-		choiceList.resize(0);
-		valueList.resize(0);
+		this.choiceList.resize(0);
+		this.valueList.resize(0);
 	}
 	
 	/**
@@ -46,28 +46,28 @@ class ExposedSelect extends ExposedValue
 	public function add(choice:String, value:Dynamic = null):Void
 	{
 		if (value == null) value = choice;
-		choiceList.push(choice);
-		valueList.push(value);
+		this.choiceList.push(choice);
+		this.valueList.push(value);
 		if (this.defaultValue == null) this.defaultValue = value;
 	}
 	
 	public function removeChoice(choice:String):Void
 	{
-		var index:Int = choiceList.indexOf(choice);
+		var index:Int = this.choiceList.indexOf(choice);
 		if (index != -1)
 		{
-			choiceList.splice(index, 1);
-			valueList.splice(index, 1);
+			this.choiceList.splice(index, 1);
+			this.valueList.splice(index, 1);
 		}
 	}
 	
 	public function removeValue(value:Dynamic):Void
 	{
-		var index:Int = valueList.indexOf(value);
+		var index:Int = this.valueList.indexOf(value);
 		if (index != -1)
 		{
-			choiceList.splice(index, 1);
-			valueList.splice(index, 1);
+			this.choiceList.splice(index, 1);
+			this.valueList.splice(index, 1);
 		}
 	}
 	
@@ -81,16 +81,23 @@ class ExposedSelect extends ExposedValue
 	override public function fromJSON(json:Dynamic):Void 
 	{
 		super.fromJSON(json);
-		var index:Int = choiceList.indexOf(json.choice);
-		if (index != -1) this.value = valueList[index];
+		//var index:Int = choiceList.indexOf(json.choice);
+		//if (index != -1) this.value = valueList[index];
+		this.value = json.value;
 	}
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
-		var index:Int = valueList.indexOf(this.value);
-		if (index != -1) json.choice = choiceList[index];
+		//var index:Int = valueList.indexOf(this.value);
+		//if (index != -1) json.choice = choiceList[index];
+		json.value = this.value;
 		return super.toJSON(json);
+	}
+	
+	override public function toJSONSimple(json:Dynamic):Void 
+	{
+		Reflect.setField(json, this.propertyName, this.value);
 	}
 	
 }

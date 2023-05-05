@@ -25,6 +25,16 @@ class ExposedFunction extends ExposedValue
 		this.parameters = parameters;
 	}
 	
+	override public function applyToObject(object:Dynamic):Void 
+	{
+		// nothing
+	}
+	
+	override public function readValue():Void 
+	{
+		// nothing
+	}
+	
 	/**
 	   - if param is a String and it starts with ValEdit.EXPOSED_VALUE_MARKER the function 
 	   will look for an exposed value with that name and use its value for the function call
@@ -103,27 +113,33 @@ class ExposedFunction extends ExposedValue
 	
 	override public function fromJSON(json:Dynamic):Void 
 	{
-		super.fromJSON(json);
-		var data:Array<Dynamic>;
-		data = json.params;
-		if (data != null)
-		{
-			for (param in data)
-			{
-				this.parameters.push(param);
-			}
-		}
+		//super.fromJSON(json);
+		//var data:Array<Dynamic>;
+		//data = json.params;
+		//if (data != null)
+		//{
+			//for (param in data)
+			//{
+				//this.parameters.push(param);
+			//}
+		//}
 	}
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
-		if (json == null) json = {};
-		json.params = [];
-		for (param in this.parameters)
-		{
-			json.params.push(param);
-		}
-		return super.toJSON(json);
+		//if (json == null) json = {};
+		//json.params = [];
+		//for (param in this.parameters)
+		//{
+			//json.params.push(param);
+		//}
+		//return super.toJSON(json);
+		return null;
+	}
+	
+	override public function toJSONSimple(json:Dynamic):Void 
+	{
+		// nothing
 	}
 	
 }

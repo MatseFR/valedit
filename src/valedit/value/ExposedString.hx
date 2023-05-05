@@ -31,7 +31,7 @@ class ExposedString extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var string:ExposedString = new ExposedString(this.propertyName, this.name, maxChars, restrict, inputPercentWidth);
+		var string:ExposedString = new ExposedString(this.propertyName, this.name, this.maxChars, this.restrict, this.inputPercentWidth);
 		super.clone_internal(string);
 		return string;
 	}

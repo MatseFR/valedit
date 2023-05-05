@@ -81,18 +81,18 @@ class ExposedValue extends EventDispatcher
 		{
 			value.exposedValue = this;
 		}
-		return _uiControl = value;
+		return this._uiControl = value;
 	}
 	
 	private function get_value():Dynamic
 	{
 		if (this._object == null)
 		{
-			return this._storedValue == null ? defaultValue : this._storedValue;
+			return this._storedValue == null ? this.defaultValue : this._storedValue;
 		}
 		else
 		{
-			return Reflect.getProperty(this._object, propertyName);
+			return Reflect.getProperty(this._object, this.propertyName);
 		}
 	}
 	private function set_value(value:Dynamic):Dynamic
@@ -104,10 +104,10 @@ class ExposedValue extends EventDispatcher
 		else if (this._storedValue != value)
 		{
 			this._storedValue = value;
-			Reflect.setProperty(this._object, propertyName, value);
+			Reflect.setProperty(this._object, this.propertyName, value);
 			this._extras.execute();
-			if (parentValue != null) parentValue.childValueChanged();
-			if (updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
+			if (this.parentValue != null) this.parentValue.childValueChanged();
+			if (this.updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
 		}
 		return value;
 	}
@@ -138,6 +138,21 @@ class ExposedValue extends EventDispatcher
 		this._extras.object = null;
 	}
 	
+	public function applyToObject(object:Dynamic):Void
+	{
+		Reflect.setProperty(object, this.propertyName, this.value);
+		
+		for (value in this._childValues)
+		{
+			value.applyToObject(object);
+		}
+	}
+	
+	public function readValue():Void
+	{
+		this._storedValue = this.value;
+	}
+	
 	/**
 	   
 	   @param	value
@@ -161,10 +176,10 @@ class ExposedValue extends EventDispatcher
 	**/
 	public function childValueChanged():Void
 	{
-		if (updateCollectionUIOnChange) 
+		if (this.updateCollectionUIOnChange) 
 		{
-			this._collection.uiCollection.update(_uiControl);
-			if (parentValue != null) parentValue.childValueChanged();
+			this._collection.uiCollection.update(this._uiControl);
+			if (this.parentValue != null) this.parentValue.childValueChanged();
 		}
 	}
 	
@@ -187,17 +202,20 @@ class ExposedValue extends EventDispatcher
 	
 	public function fromJSON(json:Dynamic):Void
 	{
-		//name = json.name;
-		propertyName = json.propName;
+		this.propertyName = json.propName;
 	}
 	
 	public function toJSON(json:Dynamic = null):Dynamic
 	{
 		if (json == null) json = {};
 		json.clss = Type.getClassName(Type.getClass(this));
-		//json.name = name;
-		json.propName = propertyName;
+		json.propName = this.propertyName;
 		return json;
+	}
+	
+	public function toJSONSimple(json:Dynamic):Void
+	{
+		Reflect.setField(json, this.propertyName, this.value);
 	}
 	
 	/**

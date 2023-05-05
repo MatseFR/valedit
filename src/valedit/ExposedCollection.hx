@@ -19,49 +19,49 @@ class ExposedCollection
 	private function get_object():Dynamic { return _object; }
 	private function set_object(value:Dynamic):Dynamic
 	{
-		if (_object == value) return value;
-		for (val in _valueList)
+		if (this._object == value) return value;
+		for (val in this._valueList)
 		{
 			val.object = value;
 		}
-		return _object = value;
+		return this._object = value;
 	}
 	
 	private var _parentValue:ExposedValue;
 	private function get_parentValue():ExposedValue { return _parentValue; }
 	private function set_parentValue(value:ExposedValue):ExposedValue
 	{
-		if (_parentValue == value) return value;
-		if (_parentValue != null)
+		if (this._parentValue == value) return value;
+		if (this._parentValue != null)
 		{
-			for (val in _valueList)
+			for (val in this._valueList)
 			{
-				_parentValue.removeChildValue(val);
+				this._parentValue.removeChildValue(val);
 			}
 		}
 		
 		if (value != null)
 		{
-			for (val in _valueList)
+			for (val in this._valueList)
 			{
 				value.addChildValue(val);
 			}
 		}
 		
-		for (val in _valueList)
+		for (val in this._valueList)
 		{
 			val.parentValue = value;
 		}
-		return _parentValue = value;
+		return this._parentValue = value;
 	}
 	
 	private var _uiContainer:DisplayObjectContainer;
 	private function get_uiContainer():DisplayObjectContainer { return _uiContainer; }
 	private function set_uiContainer(value:DisplayObjectContainer):DisplayObjectContainer
 	{
-		if (uiCollection == null) buildUI();
-		uiCollection.uiContainer = value;
-		return _uiContainer = value;
+		if (this.uiCollection == null) buildUI();
+		this.uiCollection.uiContainer = value;
+		return this._uiContainer = value;
 	}
 	
 	private var _groupList:Array<ExposedGroup> = new Array<ExposedGroup>();
@@ -77,6 +77,32 @@ class ExposedCollection
 		
 	}
 	
+	public function clear():Void
+	{
+		
+	}
+	
+	public function dispose():Void
+	{
+		
+	}
+	
+	public function applyToObject(object:Dynamic):Void
+	{
+		for (value in this._valueList)
+		{
+			value.applyToObject(object);
+		}
+	}
+	
+	public function readValues():Void
+	{
+		for (value in this._valueList)
+		{
+			value.readValue();
+		}
+	}
+	
 	/**
 	   
 	   @param	value
@@ -87,16 +113,16 @@ class ExposedCollection
 		value.collection = this;
 		if (groupName != null)
 		{
-			_groupMap[groupName].addValue(value);
+			this._groupMap[groupName].addValue(value);
 		}
 		else
 		{
-			_valueList.push(value);
-			_valueMap[value.propertyName] = value;
+			this._valueList.push(value);
+			this._valueMap[value.propertyName] = value;
 			if (Std.isOfType(value, ExposedGroup))
 			{
-				_groupList.push(cast value);
-				_groupMap[value.name] = cast value;
+				this._groupList.push(cast value);
+				this._groupMap[value.name] = cast value;
 			}
 		}
 	}
@@ -112,22 +138,22 @@ class ExposedCollection
 		value.collection = this;
 		if (groupName != null)
 		{
-			_groupMap[groupName].addValueAfter(value, afterValueName);
+			this._groupMap[groupName].addValueAfter(value, afterValueName);
 		}
 		else
 		{
-			var afterValue:ExposedValue = _valueMap[afterValueName];
+			var afterValue:ExposedValue = this._valueMap[afterValueName];
 			if (afterValue == null)
 			{
 				throw new Error("ExposedCollection.addValueAfter ::: no value with name " + afterValueName);
 			}
-			var index:Int = _valueList.indexOf(afterValue);
-			_valueList.insert(index + 1, value);
-			_valueMap[value.name] = value;
+			var index:Int = this._valueList.indexOf(afterValue);
+			this._valueList.insert(index + 1, value);
+			this._valueMap[value.name] = value;
 			if (Std.isOfType(value, ExposedGroup))
 			{
-				_groupList.push(cast value);
-				_groupMap[value.name] = cast value;
+				this._groupList.push(cast value);
+				this._groupMap[value.name] = cast value;
 			}
 		}
 	}
@@ -143,22 +169,22 @@ class ExposedCollection
 		value.collection = this;
 		if (groupName != null)
 		{
-			_groupMap[groupName].addValueBefore(value, beforeValueName);
+			this._groupMap[groupName].addValueBefore(value, beforeValueName);
 		}
 		else
 		{
-			var beforeValue:ExposedValue = _valueMap[beforeValueName];
+			var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 			if (beforeValue == null)
 			{
 				throw new Error("ExposedCollection.addValueBefore ::: no value with name " + beforeValueName);
 			}
-			var index:Int = _valueList.indexOf(beforeValue);
-			_valueList.insert(index, value);
-			_valueMap[value.name] = value;
+			var index:Int = this._valueList.indexOf(beforeValue);
+			this._valueList.insert(index, value);
+			this._valueMap[value.name] = value;
 			if (Std.isOfType(value, ExposedGroup))
 			{
-				_groupList.push(cast value);
-				_groupMap[value.name] = cast value;
+				this._groupList.push(cast value);
+				this._groupMap[value.name] = cast value;
 			}
 		}
 	}
@@ -168,13 +194,13 @@ class ExposedCollection
 	**/
 	public function buildUI():Void
 	{
-		if (uiCollection != null) return;
+		if (this.uiCollection != null) return;
 		
-		uiCollection = new UICollection();
+		this.uiCollection = new UICollection();
 		
-		for (value in _valueList)
+		for (value in this._valueList)
 		{
-			uiCollection.addUI(ValEdit.toUIControl(value));
+			this.uiCollection.addUI(ValEdit.toUIControl(value));
 		}
 	}
 	
@@ -186,12 +212,12 @@ class ExposedCollection
 	**/
 	public function getGroup(name:String, includeSubGroups:Bool = false):ExposedGroup
 	{
-		var group:ExposedGroup = _groupMap[name];
+		var group:ExposedGroup = this._groupMap[name];
 		if (group != null) return group;
 		
 		if (includeSubGroups)
 		{
-			for (grp in _groupList)
+			for (grp in this._groupList)
 			{
 				group = grp.getGroup(name);
 				if (group != null) return group;
@@ -208,8 +234,8 @@ class ExposedCollection
 	public function getValue(propertyName:String):ExposedValue
 	{
 		var value:ExposedValue;
-		if (_valueMap.exists(propertyName)) return _valueMap[propertyName];
-		for (group in _groupList)
+		if (this._valueMap.exists(propertyName)) return this._valueMap[propertyName];
+		for (group in this._groupList)
 		{
 			value = group.getValue(propertyName);
 			if (value != null) return value;
@@ -224,8 +250,8 @@ class ExposedCollection
 	**/
 	public function hasValue(propertyName:String):Bool
 	{
-		if (_valueMap.exists(propertyName)) return true;
-		for (group in _groupList)
+		if (this._valueMap.exists(propertyName)) return true;
+		for (group in this._groupList)
 		{
 			if (group.hasValue(propertyName)) return true;
 		}
@@ -249,15 +275,15 @@ class ExposedCollection
 	public function removeValueByName(propertyName:String):ExposedValue
 	{
 		var value:ExposedValue;
-		value = _valueMap[propertyName];
+		value = this._valueMap[propertyName];
 		if (value != null)
 		{
-			_valueList.remove(value);
-			_valueMap.remove(propertyName);
+			this._valueList.remove(value);
+			this._valueMap.remove(propertyName);
 			return value;
 		}
 		
-		for (group in _groupList)
+		for (group in this._groupList)
 		{
 			value = group.removeValueByName(propertyName);
 			if (value != null) return value;
@@ -273,12 +299,57 @@ class ExposedCollection
 	{
 		var collection:ExposedCollection = new ExposedCollection();
 		
-		for (val in _valueList)
+		for (val in this._valueList)
 		{
 			collection.addValue(val.clone());
 		}
 		
 		return collection;
+	}
+	
+	public function fromJSON(json:Dynamic):Void
+	{
+		if (json.values != null)
+		{
+			var data:Array<Dynamic> = json.values;
+			var value:ExposedValue;
+			for (node in data)
+			{
+				value = ExposedValue.valueFromJSON(node);
+				this.addValue(value);
+			}
+		}
+	}
+	
+	public function toJSON(json:Dynamic = null):Dynamic
+	{
+		if (json == null) json = {};
+		
+		if (this._valueList.length != 0)
+		{
+			var data:Array<Dynamic> = new Array<Dynamic>();
+			var valueJson:Dynamic;
+			for (value in this._valueList)
+			{
+				valueJson = value.toJSON();
+				if (valueJson != null) data.push(valueJson);
+			}
+			json.values = data;
+		}
+		
+		return json;
+	}
+	
+	public function toJSONSimple(json:Dynamic = null):Dynamic
+	{
+		if (json == null) json = {};
+		
+		for (value in this._valueList)
+		{
+			value.toJSONSimple(json);
+		}
+		
+		return json;
 	}
 	
 }

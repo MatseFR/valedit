@@ -11,6 +11,9 @@ import valedit.ui.IValueUI;
 class ValEdit 
 {
 	static public var EXPOSED_VALUE_MARKER:String = "@@@";
+	#if starling
+	static public var STARLING_SUBTEXTURE_MARKER:String = "@@@";
+	#end
 	
 	static public var uiContainerDefault:DisplayObjectContainer;
 	
@@ -56,7 +59,7 @@ class ValEdit
 	   @param	object	instance of a registered Class
 	   @param	uiContainer	if left null uiContainerDefault is used
 	**/
-	static public function edit(object:Dynamic, container:DisplayObjectContainer = null, parentValue:ExposedValue = null):Void
+	static public function edit(object:Dynamic, container:DisplayObjectContainer = null, parentValue:ExposedValue = null):ExposedCollection
 	{
 		if (container == null) container = uiContainerDefault;
 		if (container == null)
@@ -66,17 +69,16 @@ class ValEdit
 		
 		clearContainer(container);
 		
-		if (object == null) return;
+		if (object == null) return null;
 		
 		var clss:Class<Dynamic> = Type.getClass(object);
 		var className:String = Type.getClassName(clss);
 		var valClass:ValEditClass = _classMap[className];
 		
-		
 		if (valClass != null)
 		{
-			valClass.addContainer(container, object, parentValue);
 			_displayMap[container] = valClass;
+			return valClass.addContainer(container, object, parentValue);
 		}
 		else
 		{

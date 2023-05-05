@@ -12,7 +12,6 @@ class BinaryAsset extends Asset
 	public function new() 
 	{
 		super();
-		
 	}
 	
 }

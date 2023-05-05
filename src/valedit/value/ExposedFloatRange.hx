@@ -20,7 +20,7 @@ class ExposedFloatRange extends ExposedValue
 	private function set_max(value:Float):Float
 	{
 		if (this.defaultValue > value) this.defaultValue = value;
-		return _max = value;
+		return this._max = value;
 	}
 	
 	private var _min:Float;
@@ -28,7 +28,7 @@ class ExposedFloatRange extends ExposedValue
 	private function set_min(value:Float):Float
 	{
 		if (this.defaultValue < value) this.defaultValue = value;
-		return _min = value;
+		return this._min = value;
 	}
 	
 	/**
@@ -55,7 +55,7 @@ class ExposedFloatRange extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var range:ExposedFloatRange = new ExposedFloatRange(this.propertyName, this.name, min, max, step, precision, inputVariant);
+		var range:ExposedFloatRange = new ExposedFloatRange(this.propertyName, this.name, this._min, this._max, this.step, this.precision, this.inputVariant);
 		super.clone_internal(range);
 		return range;
 	}

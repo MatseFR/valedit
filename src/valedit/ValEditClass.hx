@@ -27,8 +27,8 @@ class ValEditClass
 	**/
 	public function clear():Void
 	{
-		classReference = null;
-		sourceCollection = null;
+		this.classReference = null;
+		this.sourceCollection = null;
 	}
 	
 	/**
@@ -37,12 +37,12 @@ class ValEditClass
 	   @param	object
 	   @param	parentValue
 	**/
-	public function addContainer(container:DisplayObjectContainer, object:Dynamic, parentValue:ExposedValue = null):Void
+	public function addContainer(container:DisplayObjectContainer, object:Dynamic, parentValue:ExposedValue = null):ExposedCollection
 	{
 		var collection:ExposedCollection;
-		if (_pool.length != 0) 
+		if (this._pool.length != 0) 
 		{
-			collection = _pool.pop();
+			collection = this._pool.pop();
 		}
 		else
 		{
@@ -50,10 +50,12 @@ class ValEditClass
 			collection.buildUI();
 		}
 		
-		_containers[container] = collection;
+		this._containers[container] = collection;
 		collection.parentValue = parentValue;
 		collection.object = object;
 		collection.uiContainer = container;
+		
+		return collection;
 	}
 	
 	/**
@@ -62,14 +64,14 @@ class ValEditClass
 	**/
 	public function removeContainer(container:DisplayObjectContainer):Void
 	{
-		var collection:ExposedCollection = _containers[container];
+		var collection:ExposedCollection = this._containers[container];
 		if (collection != null)
 		{
-			_containers.remove(container);
+			this._containers.remove(container);
 			collection.parentValue = null;
 			collection.object = null;
 			collection.uiContainer = null;
-			_pool.push(collection);
+			this._pool.push(collection);
 		}
 	}
 	
