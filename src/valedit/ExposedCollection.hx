@@ -316,7 +316,7 @@ class ExposedCollection
 			for (node in data)
 			{
 				value = ExposedValue.valueFromJSON(node);
-				this.addValue(value);
+				addValue(value);
 			}
 		}
 	}
