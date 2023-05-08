@@ -191,6 +191,16 @@ class AssetLib
 		if (asset.content != null) _binaryToAsset.set(asset.content, asset);
 	}
 	
+	static public function removeBinary(asset:BinaryAsset):Void
+	{
+		_binaryList.remove(asset);
+		_binaryMap.remove(asset.path);
+		#if valeditor
+		_binaryCollection.remove(asset);
+		#end
+		if (asset.content != null) _binaryToAsset.remove(asset.content);
+	}
+	
 	static public function createBinary(path:String, bytes:ByteArray):Void
 	{
 		var asset:BinaryAsset = new BinaryAsset();
@@ -294,6 +304,16 @@ class AssetLib
 		_bitmapCollection.add(asset);
 		#end
 		if (asset.content != null) _bitmapDataToAsset.set(asset.content, asset);
+	}
+	
+	static public function removeBitmap(asset:BitmapAsset):Void
+	{
+		_bitmapList.remove(asset);
+		_bitmapMap.remove(asset.path);
+		#if valeditor
+		_bitmapCollection.remove(asset);
+		#end
+		if (asset.content != null) _bitmapDataToAsset.remove(asset.content);
 	}
 	
 	static public function createBitmap(path:String, bmd:BitmapData):Void
@@ -432,6 +452,16 @@ class AssetLib
 		if (asset.content != null) _soundToAsset.set(asset.content, asset);
 	}
 	
+	static public function removeSound(asset:SoundAsset):Void
+	{
+		_soundList.remove(asset);
+		_soundMap.remove(asset.path);
+		#if valeditor
+		_soundCollection.remove(asset);
+		#end
+		if (asset.content != null) _soundToAsset.remove(asset.content);
+	}
+	
 	static public function createSound(path:String, sound:Sound):Void
 	{
 		var asset:SoundAsset = new SoundAsset();
@@ -535,6 +565,16 @@ class AssetLib
 		if (asset.content != null) _textToAsset.set(asset.content, asset);
 	}
 	
+	static public function removeText(asset:TextAsset):Void
+	{
+		_textList.remove(asset);
+		_textMap.remove(asset.path);
+		#if valeditor
+		_textCollection.remove(asset);
+		#end
+		if (asset.content != null) _textToAsset.remove(asset.content);
+	}
+	
 	static public function createText(path:String, text:String):Void
 	{
 		var asset:TextAsset = new TextAsset();
@@ -611,6 +651,16 @@ class AssetLib
 		_starlingTextureCollection.add(asset);
 		#end
 		if (asset.content != null) _starlingTextureToAsset.set(asset.content, asset);
+	}
+	
+	static public function removeStarlingTexture(asset:StarlingTextureAsset):Void
+	{
+		_starlingTextureList.remove(asset);
+		_starlingTextureMap.remove(asset.path);
+		#if valeditor
+		_starlingTextureCollection.remove(asset);
+		#end
+		if (asset.content != null) _starlingTextureToAsset.remove(asset.content);
 	}
 	
 	static public function createStarlingTexture(path:String, texture:Texture, bitmapAsset:BitmapAsset, ?name:String, ?preview:BitmapData):Void
@@ -706,6 +756,33 @@ class AssetLib
 				preview.draw(asset.bitmapAsset.content, _matrix, null, null, _rect);
 				
 				createStarlingTexture(asset.path + ValEdit.STARLING_SUBTEXTURE_MARKER + name, subTexture, asset.bitmapAsset, name, preview);
+			}
+		}
+	}
+	
+	static public function removeStarlingAtlas(asset:StarlingAtlasAsset):Void
+	{
+		_starlingAtlasList.remove(asset);
+		_starlingAtlasMap.remove(asset.path);
+		#if valeditor
+		_starlingAtlasCollection.remove(asset);
+		#end
+		if (asset.content != null)
+		{
+			_starlingAtlasToAsset.remove(asset.content);
+			_starlingAtlasTextureToAsset.remove(asset.content.texture);
+			
+			var names:Vector<String> = asset.content.getNames();
+			var name:String;
+			var texture:Texture;
+			var textureAsset:StarlingTextureAsset;
+			var count:Int = names.length;
+			for (i in 0...count)
+			{
+				name = names[i];
+				texture = asset.content.getTexture(name);
+				textureAsset = getStarlingTextureAssetFromTexture(texture);
+				if (textureAsset != null) removeStarlingTexture(textureAsset);
 			}
 		}
 	}
