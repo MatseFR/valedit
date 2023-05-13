@@ -8,7 +8,6 @@ import valedit.value.ExposedBool;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedGroup;
-import valedit.value.ExposedInt;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
@@ -19,23 +18,16 @@ import valedit.value.ExposedString;
  */
 class DisplayData 
 {
-	/**
-	 * 
-	 * @param	collection
-	 * @param	useGroups
-	 * @return
-	 */
-	static public function exposeBitmap(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	
+	static public function exposeBitmap(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var groupName:String = useGroups ? "Properties" : null;
-		
 		var bmd:ExposedBitmapData;
 		var bool:ExposedBool;
 		var select:ExposedSelect;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeDisplayObject(collection, useGroups);
+		exposeDisplayObject(collection, groupName);
 		
 		if (!collection.hasValue("bitmapData"))
 		{
@@ -61,18 +53,8 @@ class DisplayData
 		return collection;
 	}
 	
-	/**
-	   
-	   @param	collection
-	   @param	useGroups
-	   @param	includeSubGroups
-	   @return
-	**/
-	static public function exposeDisplayObject(collection:ExposedCollection = null, useGroups:Bool = true, includeSubGroups:Bool = false):ExposedCollection
+	static public function exposeDisplayObject(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		var bool:ExposedBool;
 		var float:ExposedFloat;
 		var floatRange:ExposedFloatRange;
@@ -81,17 +63,6 @@ class DisplayData
 		var string:ExposedString;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName, includeSubGroups);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName, true);
-				collection.addValue(group);
-			}
-		}
 		
 		if (!collection.hasValue("name"))
 		{
@@ -189,14 +160,13 @@ class DisplayData
 		return collection;
 	}
 	
-	static public function exposeMovieClip(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeMovieClip(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
-		var groupName:String = useGroups ? "Properties" : null;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeSprite(collection, useGroups);
+		exposeSprite(collection, groupName);
 		
 		if (!collection.hasValue("enabled"))
 		{
@@ -207,19 +177,13 @@ class DisplayData
 		return collection;
 	}
 	
-	/**
-	   
-	   @param	groups
-	   @return
-	**/
-	static public function exposeSprite(collection:ExposedCollection = null, useGroups:Bool = true, includeSubGroups:Bool = false):ExposedCollection
+	static public function exposeSprite(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
-		var groupName:String = useGroups ? "Properties" : null;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeDisplayObject(collection, useGroups, includeSubGroups);
+		exposeDisplayObject(collection, groupName);
 		
 		if (!collection.hasValue("buttonMode"))
 		{

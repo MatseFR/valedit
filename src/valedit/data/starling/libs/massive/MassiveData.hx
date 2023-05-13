@@ -7,7 +7,6 @@ import valedit.value.ExposedBool;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedFunction;
-import valedit.value.ExposedGroup;
 import valedit.value.ExposedIntRange;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
@@ -21,27 +20,13 @@ import valedit.value.starling.ExposedStarlingTexture;
 class MassiveData 
 {
 
-	static private function exposeDisplayData(collection:ExposedCollection, useGroups:Bool = true):ExposedCollection
+	static private function exposeDisplayData(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		var bool:ExposedBool;
 		var float:ExposedFloat;
 		var floatRange:ExposedFloatRange;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName);
-				collection.addValue(group);
-			}
-		}
 		
 		if (!collection.hasValue("x"))
 		{
@@ -118,11 +103,8 @@ class MassiveData
 		return collection;
 	}
 	
-	static public function exposeFrame(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeFrame(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		var float:ExposedFloat;
 		var func:ExposedFunction;
 		var select:ExposedSelect;
@@ -130,17 +112,6 @@ class MassiveData
 		var funcExtra:FunctionCallExtra;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName);
-				collection.addValue(group);
-			}
-		}
 		
 		if (!collection.hasValue("pivotX"))
 		{
@@ -180,27 +151,62 @@ class MassiveData
 		return collection;
 	}
 	
-	static public function exposeImageData(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeFrameDataProxy(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
+		var float:ExposedFloat;
+		var func:ExposedFunction;
+		var select:ExposedSelect;
+		var texture:ExposedStarlingTexture;
 		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("texture"))
+		{
+			texture = new ExposedStarlingTexture("texture");
+			collection.addValue(texture);
+		}
+		
+		if (!collection.hasValue("pivotX"))
+		{
+			float = new ExposedFloat("pivotX");
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("pivotY"))
+		{
+			float = new ExposedFloat("pivotY");
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("alignPivot"))
+		{
+			func = new ExposedFunction("alignPivot", "align pivot");
+			
+			select = new ExposedSelect("horizontal align");
+			select.add("center", Align.CENTER);
+			select.add("left", Align.LEFT);
+			select.add("right", Align.RIGHT);
+			func.addParameter(select);
+			
+			select = new ExposedSelect("vertical align");
+			select.add("center", Align.CENTER);
+			select.add("top", Align.TOP);
+			select.add("bottom", Align.BOTTOM);
+			func.addParameter(select);
+			
+			collection.addValue(func);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeImageData(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
 		var bool:ExposedBool;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName);
-				collection.addValue(group);
-			}
-		}
-		
-		exposeDisplayData(collection, useGroups);
+		exposeDisplayData(collection, groupName);
 		
 		if (!collection.hasValue("invertX"))
 		{
@@ -217,11 +223,8 @@ class MassiveData
 		return collection
 	}
 	
-	static public function exposeMassiveDisplayData(collection:ExposedCollection, useGroups:Bool = true):ExposedCollection
+	static private function exposeMassiveDisplayData(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		var bool:ExposedBool;
 		var intRange:ExposedIntRange;
 		var float:ExposedFloat;
@@ -230,17 +233,6 @@ class MassiveData
 		var texture:ExposedStarlingTexture;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName);
-				collection.addValue(group);
-			}
-		}
 		
 		if (!collection.hasValue("autoHandleJuggler"))
 		{
@@ -323,30 +315,16 @@ class MassiveData
 			collection.addValue(bool, groupName);
 		}
 		
-		StarlingDisplayData.exposeDisplayObject(collection, useGroups);
+		StarlingDisplayData.exposeDisplayObject(collection, groupName);
 		
 		return collection;
 	}
 	
-	static private function exposeMassiveLayer(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static private function exposeMassiveLayer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		var string:ExposedString;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName);
-				collection.addValue(group);
-			}
-		}
 		
 		if (!collection.hasValue("name"))
 		{
@@ -357,57 +335,26 @@ class MassiveData
 		return collection;
 	}
 	
-	static public function exposeMassiveImageLayer(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeMassiveImageLayer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName);
-				collection.addValue(group);
-			}
-		}
 		
 		exposeMassiveLayer(collection, useGroups);
 		
 		return collection;
 	}
 	
-	static public function exposeMassiveQuadLayer(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeMassiveQuadLayer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		if (collection == null) collection = new ExposedCollection();
 		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName);
-				collection.addValue(group);
-			}
-		}
-		
-		exposeMassiveLayer(collection, useGroups);
+		exposeMassiveLayer(collection, groupName);
 		
 		return collection;
 	}
 	
-	static public function exposeQuadData(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeQuadData(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		var float:ExposedFloat;
 		var func:ExposedFunction;
 		var select:ExposedSelect;
@@ -416,18 +363,7 @@ class MassiveData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName);
-				collection.addValue(group);
-			}
-		}
-		
-		exposeDisplayData(collection, useGroups);
+		exposeDisplayData(collection, groupName);
 		
 		if (!collection.hasValue("width"))
 		{
@@ -473,7 +409,7 @@ class MassiveData
 			select.add("bottom", Align.BOTTOM);
 			func.addParameter(select);
 			
-			collection.addValue(func);
+			collection.addValue(func, groupName);
 		}
 		
 		return collection;

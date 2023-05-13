@@ -1,5 +1,8 @@
 package valedit;
+import feathers.data.ArrayCollection;
+import feathers.data.TreeNode;
 import flash.display.DisplayObjectContainer;
+import haxe.ds.ObjectMap;
 
 /**
  * ...
@@ -7,9 +10,15 @@ import flash.display.DisplayObjectContainer;
  */
 class ValEditClass 
 {
-	public var classReference:Class<Dynamic>;
-	public var name:String;
+	public var canBeCreated(default, null):Bool;
+	public var className(default, null):String;
+	public var classReference(default, null):Class<Dynamic>;
+	public var instanceCount(default, null):Int = 0;
 	public var sourceCollection:ExposedCollection;
+	
+	private var _nameToObject:Map<String, Dynamic> = new Map<String, Dynamic>();
+	private var _objectToName:ObjectMap<Dynamic, String> = new ObjectMap<Dynamic, String>();
+	private var _objectNameIndex:Int = -1;
 	
 	private var _containers:Map<DisplayObjectContainer, ExposedCollection> = new Map<DisplayObjectContainer, ExposedCollection>();
 	private var _pool:Array<ExposedCollection> = new Array<ExposedCollection>();
@@ -17,9 +26,12 @@ class ValEditClass
 	/**
 	   
 	**/
-	public function new() 
+	public function new(classReference:Class<Dynamic>, className:String, sourceCollection:ExposedCollection, canBeCreated:Bool) 
 	{
-		
+		this.classReference = classReference;
+		this.className = className;
+		this.sourceCollection = sourceCollection;
+		this.canBeCreated = canBeCreated;
 	}
 	
 	/**
@@ -27,8 +39,79 @@ class ValEditClass
 	**/
 	public function clear():Void
 	{
-		this.classReference = null;
-		this.sourceCollection = null;
+		this.instanceCount = 0;
+		
+		this._nameToObject.clear();
+		this._objectToName.clear();
+		this._objectNameIndex = -1;
+	}
+	
+	public function makeObjectName():String
+	{
+		var objName:String = null;
+		while (true)
+		{
+			this._objectNameIndex++;
+			objName = this.className + this._objectNameIndex;
+			if (!this._nameToObject.exists(objName)) break;
+		}
+		return objName;
+	}
+	
+	public function objectNameExists(name:String):Bool
+	{
+		return this._nameToObject.exists(name);
+	}
+	
+	public function addObject(object:Dynamic, name:String = null):Void
+	{
+		if (name == null) name = makeObjectName();
+		this._nameToObject.set(name, object);
+		this._objectToName.set(object, name);
+		this.instanceCount++;
+	}
+	
+	public function getObjectByName(name:String):Dynamic
+	{
+		return this._nameToObject.get(name);
+	}
+	
+	public function getObjectList(?objList:Array<Dynamic>):Array<Dynamic>
+	{
+		if (objList == null) objList = new Array<Dynamic>();
+		
+		for (obj in _nameToObject)
+		{
+			objList.push(obj);
+		}
+		
+		return objList;
+	}
+	
+	public function getObjectName(object:Dynamic):String
+	{
+		return this._objectToName.get(object);
+	}
+	
+	public function hasObject(object:Dynamic):Bool
+	{
+		return this._objectToName.exists(object);
+	}
+	
+	public function removeObject(object:Dynamic):Void
+	{
+		var name:String = this._objectToName.get(object);
+		this._nameToObject.remove(name);
+		this._objectToName.remove(object);
+		this.instanceCount--;
+	}
+	
+	public function removeObjectByName(name:String):Void
+	{
+		var object:Dynamic = this._nameToObject.get(name);
+		this._nameToObject.remove(name);
+		this._objectToName.remove(object);
+		this.instanceCount--;
 	}
 	
 	/**

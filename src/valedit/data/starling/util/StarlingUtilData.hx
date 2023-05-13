@@ -3,7 +3,6 @@ import openfl.display3D.Context3DTextureFormat;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedFloat;
-import valedit.value.ExposedGroup;
 import valedit.value.ExposedSelect;
 import valedit.value.NumericMode;
 
@@ -13,33 +12,14 @@ import valedit.value.NumericMode;
  */
 class StarlingUtilData 
 {
-	/**
-	 * 
-	 * @param	collection
-	 * @param	useGroups
-	 * @return
-	 */
-	static public function exposeTextureCreationParameters(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	
+	static public function exposeTextureCreationParameters(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		var boolVal:ExposedBool;
 		var floatVal:ExposedFloat;
 		var selectVal:ExposedSelect;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName, true);
-				collection.addValue(group);
-			}
-		}
 		
 		if (!collection.hasValue("generateMipMaps"))
 		{

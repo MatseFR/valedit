@@ -18,7 +18,7 @@ import valedit.value.ExposedSpacing;
  */
 class SimpleThemeData 
 {
-	static public function exposeSimpleTheme(collection:ExposedCollection = null):ExposedCollection
+	static public function exposeSimpleTheme(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
 		var color:ExposedColor;
@@ -27,21 +27,17 @@ class SimpleThemeData
 		var int:ExposedInt;
 		var intRange:ExposedIntRange;
 		var select:ExposedSelect;
-		var group:ExposedGroup;
 		var subGroup:ExposedGroup;
 		var spacing:ExposedSpacing;
 		var sep:ExposedSeparator;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		group = new ExposedGroup("Flat Color Theme properties");
-		collection.addValue(group);
-		
 		// common properties
 		if (!collection.hasValue("darkMode"))
 		{
 			bool = new ExposedBool("darkMode");
-			group.addValue(bool);
+			collection.addValue(bool, groupName);
 		}
 		
 		if (!collection.hasValue("fontName"))
@@ -52,31 +48,31 @@ class SimpleThemeData
 			{
 				select.add(font.fontName);
 			}
-			group.addValue(select);
+			collection.addValue(select, groupName);
 		}
 		
 		if (!collection.hasValue("fontSize"))
 		{
 			intRange = new ExposedIntRange("fontSize", null, 6, 42, 1);
-			group.addValue(intRange);
+			collection.addValue(intRange, groupName);
 		}
 		
 		if (!collection.hasValue("fontSizeBig"))
 		{
 			intRange = new ExposedIntRange("fontSizeBig", null, 6, 42, 1);
-			group.addValue(intRange);
+			collection.addValue(intRange, groupName);
 		}
 		
 		if (!collection.hasValue("fontSizeSmall"))
 		{
 			intRange = new ExposedIntRange("fontSizeSmall", null, 6, 42, 1);
-			group.addValue(intRange);
+			collection.addValue(intRange, groupName);
 		}
 		
 		if (!collection.hasValue("lineThickness"))
 		{
 			floatRange = new ExposedFloatRange("lineThickness", null, 0, 12, 1, 2);
-			group.addValue(floatRange);
+			collection.addValue(floatRange, groupName);
 		}
 		
 		// light mode properties
@@ -84,7 +80,7 @@ class SimpleThemeData
 		if (subGroup == null)
 		{
 			subGroup = new ExposedGroup("light mode", true, true);
-			group.addValue(subGroup);
+			collection.addValue(subGroup, groupName);
 		}
 		
 		if (!subGroup.hasValue("color"))
@@ -98,8 +94,6 @@ class SimpleThemeData
 			floatRange = new ExposedFloatRange("lightThemeColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			//spacing = new ExposedSpacing();
-			//subGroup.addValue(spacing);
 			sep = new ExposedSeparator();
 			subGroup.addValue(sep);
 		}
@@ -115,8 +109,6 @@ class SimpleThemeData
 			floatRange = new ExposedFloatRange("lightThemeLightColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			//spacing = new ExposedSpacing();
-			//subGroup.addValue(spacing);
 			sep = new ExposedSeparator();
 			subGroup.addValue(sep);
 		}
@@ -132,8 +124,6 @@ class SimpleThemeData
 			floatRange = new ExposedFloatRange("lightThemeContrastColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			//spacing = new ExposedSpacing();
-			//subGroup.addValue(spacing);
 			sep = new ExposedSeparator();
 			subGroup.addValue(sep);
 		}
@@ -149,8 +139,6 @@ class SimpleThemeData
 			floatRange = new ExposedFloatRange("lightThemeDangerColorLightenRatio", "lighten ratio", 0, 1, 0.01, 2);
 			subGroup.addValue(floatRange);
 			
-			//spacing = new ExposedSpacing();
-			//subGroup.addValue(spacing);
 			sep = new ExposedSeparator();
 			subGroup.addValue(sep);
 		}
@@ -172,7 +160,7 @@ class SimpleThemeData
 		if (subGroup == null)
 		{
 			subGroup = new ExposedGroup("dark mode", true, true);
-			group.addValue(subGroup);
+			collection.addValue(subGroup, groupName);
 		}
 		
 		if (!subGroup.hasValue("color"))

@@ -5,7 +5,6 @@ import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
-import valedit.value.ExposedGroup;
 import valedit.value.ExposedIntRange;
 import valedit.value.ExposedSelect;
 
@@ -16,30 +15,26 @@ import valedit.value.ExposedSelect;
 class FilterData 
 {
 
-	static public function exposeBlurFilter(collection:ExposedCollection = null):ExposedCollection
+	static public function exposeBlurFilter(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
 		var floatRange:ExposedFloatRange;
 		var intRange:ExposedIntRange;
-		var group:ExposedGroup;
-		
-		group = new ExposedGroup("BlurFilter properties");
-		collection.addValue(group);
 		
 		floatRange = new ExposedFloatRange("blurX", null, 0, 255, 0.1, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		floatRange = new ExposedFloatRange("blurY", null, 0, 255, 0.1, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		intRange = new ExposedIntRange("quality", null, 0, 16, 1);
-		group.addValue(intRange);
+		collection.addValue(intRange, groupName);
 		
 		return collection;
 	}
 	
-	static public function exposeDropShadowFilter(collection:ExposedCollection = null):ExposedCollection
+	static public function exposeDropShadowFilter(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -48,48 +43,44 @@ class FilterData
 		var floatRange:ExposedFloatRange;
 		var intRange:ExposedIntRange;
 		var color:ExposedColor;
-		var group:ExposedGroup;
-		
-		group = new ExposedGroup("DropShadowFilter properties");
-		collection.addValue(group);
 		
 		floatRange = new ExposedFloatRange("angle", null, 0, 360, 1, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		floatRange = new ExposedFloatRange("blurX", null, 0, 255, 1, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		floatRange = new ExposedFloatRange("blurY", null, 0, 255, 1, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		floatRange = new ExposedFloatRange("strength", null, 0, 255, 1, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		float = new ExposedFloat("distance");
-		group.addValue(float);
+		collection.addValue(float, groupName);
 		
 		color = new ExposedColor("color", null);
-		group.addValue(color);
+		collection.addValue(color, groupName);
 		
 		bool = new ExposedBool("hideObject");
-		group.addValue(bool);
+		collection.addValue(bool, groupName);
 		
 		bool = new ExposedBool("inner");
-		group.addValue(bool);
+		collection.addValue(bool, groupName);
 		
 		bool = new ExposedBool("knockout");
-		group.addValue(bool);
+		collection.addValue(bool, groupName);
 		
 		intRange = new ExposedIntRange("quality", null, 0, 16, 1);
-		group.addValue(intRange);
+		collection.addValue(intRange, groupName);
 		
 		return collection;
 	}
 	
-	static public function exposeGlowFilter(collection:ExposedCollection = null):ExposedCollection
+	static public function exposeGlowFilter(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -97,37 +88,33 @@ class FilterData
 		var floatRange:ExposedFloatRange;
 		var color:ExposedColor;
 		var select:ExposedSelect;
-		var group:ExposedGroup;
-		
-		group = new ExposedGroup("GlowFilter properties");
-		collection.addValue(group);
 		
 		color = new ExposedColor("color", null);
-		group.addValue(color);
+		collection.addValue(color, groupName);
 		
 		floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		floatRange = new ExposedFloatRange("blurX", null, 0, 255, 1, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		floatRange = new ExposedFloatRange("blurY", null, 0, 255, 1, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		floatRange = new ExposedFloatRange("strength", null, 0, 255, 1, 2);
-		group.addValue(floatRange);
+		collection.addValue(floatRange, groupName);
 		
 		select = new ExposedSelect("quality");
 		select.add("LOW", BitmapFilterQuality.LOW);
 		select.add("MEDIUM", BitmapFilterQuality.MEDIUM);
 		select.add("HIGH", BitmapFilterQuality.HIGH);
-		group.addValue(select);
+		collection.addValue(select, groupName);
 		
 		bool = new ExposedBool("inner");
-		group.addValue(bool);
+		collection.addValue(bool, groupName);
 		
 		bool = new ExposedBool("knockout");
-		group.addValue(bool);
+		collection.addValue(bool, groupName);
 		
 		return collection;
 	}

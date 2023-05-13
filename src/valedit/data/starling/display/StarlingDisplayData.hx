@@ -9,13 +9,12 @@ import valedit.value.ExposedColor;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedFunction;
-import valedit.value.ExposedGroup;
 import valedit.value.ExposedNote;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
+import valedit.value.ExposedString;
 import valedit.value.extra.FunctionCallExtra;
 import valedit.value.starling.ExposedStarlingTexture;
-import valedit.value.ExposedString;
 
 /**
  * ...
@@ -24,11 +23,8 @@ import valedit.value.ExposedString;
 class StarlingDisplayData 
 {
 
-	static public function exposeDisplayObject(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeDisplayObject(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var group:ExposedGroup;
-		var groupName:String = null;
-		
 		var bool:ExposedBool;
 		var floatRange:ExposedFloatRange;
 		var float:ExposedFloat;
@@ -38,17 +34,6 @@ class StarlingDisplayData
 		var string:ExposedString;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (useGroups)
-		{
-			groupName = "Properties";
-			group = collection.getGroup(groupName);
-			if (group == null)
-			{
-				group = new ExposedGroup(groupName, true);
-				collection.addValue(group);
-			}
-		}
 		
 		if (!collection.hasValue("name"))
 		{
@@ -195,15 +180,13 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeDisplayObjectContainer(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeDisplayObjectContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var groupName:String = useGroups ? "Properties" : null;
-		
 		var bool:ExposedBool;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeDisplayObject(collection, useGroups);
+		exposeDisplayObject(collection, groupName);
 		
 		if (!collection.hasValue("touchGroup"))
 		{
@@ -214,19 +197,17 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeImage(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeImage(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeMesh(collection, useGroups);
+		exposeMesh(collection, groupName);
 		
 		return collection;
 	}
 	
-	static public function exposeMesh(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeMesh(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var groupName:String = useGroups ? "Properties" : null;
-		
 		var bool:ExposedBool;
 		var color:ExposedColor;
 		var func:ExposedFunction;
@@ -237,7 +218,7 @@ class StarlingDisplayData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeDisplayObject(collection, useGroups);
+		exposeDisplayObject(collection, groupName);
 		
 		if (!collection.hasValue("texture"))
 		{
@@ -286,33 +267,31 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeQuad(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeQuad(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeMesh(collection, useGroups);
+		exposeMesh(collection, groupName);
 		
 		return collection;
 	}
 	
-	static public function exposeSprite(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeSprite(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeDisplayObjectContainer(collection, useGroups);
+		exposeDisplayObjectContainer(collection, groupName);
 		
 		return collection;
 	}
 	
-	static public function exposeSprite3D(collection:ExposedCollection = null, useGroups:Bool = true):ExposedCollection
+	static public function exposeSprite3D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var groupName:String = useGroups ? "Properties" : null;
-		
 		var float:ExposedFloat;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeDisplayObjectContainer(collection, useGroups);
+		exposeDisplayObjectContainer(collection, groupName);
 		
 		if (!collection.hasValue("z"))
 		{

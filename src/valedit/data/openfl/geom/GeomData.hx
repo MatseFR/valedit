@@ -12,12 +12,8 @@ import valedit.value.ExposedObject;
  */
 class GeomData 
 {
-	/**
-	   
-	   @param	collection
-	   @return
-	**/
-	static public function exposeColorTransform(collection:ExposedCollection = null):ExposedCollection
+	
+	static public function exposeColorTransform(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var color:ExposedColor;
 		var floatRange:ExposedFloatRange;
@@ -27,68 +23,61 @@ class GeomData
 		if (!collection.hasValue("color"))
 		{
 			color = new ExposedColor("color");
-			collection.addValue(color);
+			collection.addValue(color, groupName);
 		}
 		
 		if (!collection.hasValue("redMultiplier"))
 		{
 			floatRange = new ExposedFloatRange("redMultiplier", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange);
+			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("redOffset"))
 		{
 			floatRange = new ExposedFloatRange("redOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange);
+			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("greenMultiplier"))
 		{
 			floatRange = new ExposedFloatRange("greenMultiplier", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange);
+			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("greenOffset"))
 		{
 			floatRange = new ExposedFloatRange("greenOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange);
+			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("blueMultiplier"))
 		{
 			floatRange = new ExposedFloatRange("blueMultiplier", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange);
+			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("blueOffset"))
 		{
 			floatRange = new ExposedFloatRange("blueOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange);
+			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("alphaMultiplier"))
 		{
 			floatRange = new ExposedFloatRange("alphaMultiplier", null, 0, 1, 0.01, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange);
+			collection.addValue(floatRange, groupName);
 		}
 		
 		if (!collection.hasValue("alphaOffset"))
 		{
 			floatRange = new ExposedFloatRange("alphaOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange);
+			collection.addValue(floatRange, groupName);
 		}
 		
 		return collection;
 	}
 	
-	/**
-	   
-	   @param	collection
-	   @param	useGroups
-	   @param	includeSubGroups
-	   @return
-	**/
-	static public function exposeMatrix(collection:ExposedCollection = null, useGroups:Bool = true, includeSubGroups:Bool = false):ExposedCollection
+	static public function exposeMatrix(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var float:ExposedFloat;
 		
@@ -97,50 +86,43 @@ class GeomData
 		if (!collection.hasValue("a"))
 		{
 			float = new ExposedFloat("a");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("b"))
 		{
 			float = new ExposedFloat("b");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("c"))
 		{
 			float = new ExposedFloat("c");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("d"))
 		{
 			float = new ExposedFloat("d");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("tx"))
 		{
 			float = new ExposedFloat("tx");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("ty"))
 		{
 			float = new ExposedFloat("ty");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		return collection;
 	}
 	
-	/**
-	   
-	   @param	collection
-	   @param	useGroups
-	   @param	includeSubGroups
-	   @return
-	**/
-	static public function exposePoint(collection:ExposedCollection = null, useGroups:Bool = true, includeSubGroups:Bool = false):ExposedCollection
+	static public function exposePoint(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var float:ExposedFloat;
 		
@@ -149,24 +131,19 @@ class GeomData
 		if (!collection.hasValue("x"))
 		{
 			float = new ExposedFloat("x");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
 			float = new ExposedFloat("y");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		return collection;
 	}
 	
-	/**
-	   
-	   @param	collection
-	   @return
-	**/
-	static public function exposeRectangle(collection:ExposedCollection = null):ExposedCollection
+	static public function exposeRectangle(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var float:ExposedFloat;
 		var obj:ExposedObject;
@@ -176,78 +153,73 @@ class GeomData
 		if (!collection.hasValue("x"))
 		{
 			float = new ExposedFloat("x");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
 			float = new ExposedFloat("y");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("width"))
 		{
 			float = new ExposedFloat("width");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
 			float = new ExposedFloat("height");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("top"))
 		{
 			float = new ExposedFloat("top");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("bottom"))
 		{
 			float = new ExposedFloat("bottom");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("left"))
 		{
 			float = new ExposedFloat("left");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("right"))
 		{
 			float = new ExposedFloat("right");
-			collection.addValue(float);
+			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("topLeft"))
 		{
 			obj = new ExposedObject("topLeft");
-			collection.addValue(obj);
+			collection.addValue(obj, groupName);
 		}
 		
 		if (!collection.hasValue("bottomRight"))
 		{
 			obj = new ExposedObject("bottomRight");
-			collection.addValue(obj);
+			collection.addValue(obj, groupName);
 		}
 		
 		if (!collection.hasValue("size"))
 		{
 			obj = new ExposedObject("size");
-			collection.addValue(obj);
+			collection.addValue(obj, groupName);
 		}
 		
 		return collection;
 	}
 	
-	/**
-	   
-	   @param	collection
-	   @return
-	**/
-	static public function exposeTransform(collection:ExposedCollection = null):ExposedCollection
+	static public function exposeTransform(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var obj:ExposedObject;
 		
@@ -256,13 +228,13 @@ class GeomData
 		if (!collection.hasValue("colorTransform"))
 		{
 			obj = new ExposedObject("colorTransform", null, true, true);
-			collection.addValue(obj);
+			collection.addValue(obj, groupName);
 		}
 		
 		if (!collection.hasValue("matrix"))
 		{
 			obj = new ExposedObject("matrix", null, true, true);
-			collection.addValue(obj);
+			collection.addValue(obj, groupName);
 		}
 		
 		return collection;
