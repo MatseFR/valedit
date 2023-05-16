@@ -292,6 +292,21 @@ class ExposedCollection
 	}
 	
 	/**
+	   Useful to create a constructor parameters array
+	**/
+	public function toValueArray(?values:Array<Dynamic>):Array<Dynamic>
+	{
+		if (values == null) values = new Array<Dynamic>();
+		
+		for (value in this._valueList)
+		{
+			value.toValueArray(values);
+		}
+		
+		return values;
+	}
+	
+	/**
 	   
 	   @return
 	**/

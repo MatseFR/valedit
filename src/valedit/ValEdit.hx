@@ -29,11 +29,12 @@ class ValEdit
 	static private var _objectToValEditObject:ObjectMap<Dynamic, ValEditObject> = new ObjectMap<Dynamic, ValEditObject>();
 	static private var _objectToTreeNode:ObjectMap<Dynamic, TreeNode<ValEditObject>> = new ObjectMap<Dynamic, TreeNode<ValEditObject>>();
 	
+	static private var _baseClassToClassList:Map<String, Array<String>> = new Map<String, Array<String>>();
 	static private var _classMap:Map<String, ValEditClass> = new Map<String, ValEditClass>();
 	static private var _displayMap:Map<DisplayObjectContainer, ValEditClass> = new Map<DisplayObjectContainer, ValEditClass>();
 	static private var _uiClassMap:Map<String, Void->IValueUI> = new Map<String, Void->IValueUI>();
 	
-	static public function registerClass<T>(type:Class<T>, collection:ExposedCollection, canBeCreated:Bool = true):Void
+	static public function registerClass<T>(type:Class<T>, collection:ExposedCollection, canBeCreated:Bool = true, ?constructorCollection:ExposedCollection):Void
 	{
 		var className:String = Type.getClassName(type);
 		if (_classMap.exists(className))
@@ -42,9 +43,51 @@ class ValEdit
 			return;
 		}
 		
-		var v:ValEditClass = new ValEditClass(type, className, collection, canBeCreated);
-		
+		var v:ValEditClass = new ValEditClass(type, className, collection, canBeCreated, constructorCollection);
 		_classMap.set(className, v);
+		
+		var clss:Class<Dynamic> = type;
+		var superName:String;
+		var nameList:Array<String>;
+		
+		nameList = _baseClassToClassList.get(className);
+		if (nameList == null)
+		{
+			nameList = new Array<String>();
+			_baseClassToClassList.set(className, nameList);
+		}
+		nameList.push(className);
+		
+		var objCollection:ArrayCollection<ValEditObject>;
+		if (!_classToObjectCollection.exists(className))
+		{
+			objCollection = new ArrayCollection<ValEditObject>();
+			_classToObjectCollection.set(className, objCollection);
+		}
+		
+		while (true)
+		{
+			clss = Type.getSuperClass(clss);
+			if (clss == null) break;
+			superName = Type.getClassName(clss);
+			
+			v.addSuperClassName(superName);
+			
+			nameList = _baseClassToClassList.get(superName);
+			if (nameList == null)
+			{
+				nameList = new Array<String>();
+				nameList.push(superName);
+				_baseClassToClassList.set(superName, nameList);
+			}
+			nameList.push(className);
+			
+			if (!_classToObjectCollection.exists(superName))
+			{
+				objCollection = new ArrayCollection<ValEditObject>();
+				_classToObjectCollection.set(superName, objCollection);
+			}
+		}
 		
 		if (canBeCreated)
 		{
@@ -62,7 +105,6 @@ class ValEdit
 	
 	static public function unregisterClass<T>(type:Class<T>):Void
 	{
-		// TODO
 		var className:String = Type.getClassName(type);
 		if (!_classMap.exists(className))
 		{
@@ -79,6 +121,12 @@ class ValEdit
 			{
 				destroyObjectInternal(obj, valClass);
 			}
+			
+			classCollection.remove(className);
+			var node:TreeNode<ValEditObject> = _classToTreeNode.get(className);
+			objectCollection.remove(node);
+			_classToTreeNode.remove(className);
+			_classToObjectCollection.remove(className);
 		}
 		else
 		{
@@ -87,6 +135,41 @@ class ValEdit
 				unregisterObjectInternal(obj, valClass);
 			}
 		}
+		
+		var clss:Class<Dynamic> = type;
+		var superName:String;
+		var nameList:Array<String>;
+		
+		nameList = _baseClassToClassList.get(className);
+		if (nameList != null)
+		{
+			nameList.remove(className);
+			if (nameList.length == 0)
+			{
+				_baseClassToClassList.remove(className);
+			}
+		}
+		
+		while (true)
+		{
+			clss = Type.getSuperClass(clss);
+			if (clss == null) break;
+			superName = Type.getClassName(clss);
+			nameList = _baseClassToClassList.get(superName);
+			if (nameList != null)
+			{
+				nameList.remove(className);
+				if (nameList.length == 0)
+				{
+					_baseClassToClassList.remove(superName);
+				}
+			}
+		}
+	}
+	
+	static public function getClassListForBaseClass(baseClassName:String):Array<String>
+	{
+		return _baseClassToClassList.get(baseClassName);
 	}
 	
 	static public function getValEditClassByClass(clss:Class<Dynamic>):ValEditClass
@@ -166,6 +249,47 @@ class ValEdit
 		}
 	}
 	
+	static public function editConstructor(className:String, ?container:DisplayObjectContainer):ExposedCollection
+	{
+		if (container == null) container = uiContainerDefault;
+		if (container == null)
+		{
+			throw new Error("ValEdit.editConstructor ::: null container");
+		}
+		
+		clearContainer(container);
+		
+		if (className == null) return null;
+		
+		var valClass:ValEditClass = _classMap[className];
+		if (valClass != null)
+		{
+			if (valClass.constructorCollection != null)
+			{
+				_displayMap[container] = valClass;
+				return valClass.addConstructorContainer(container);
+			}
+			else
+			{
+				return null;
+			}
+		}
+		else
+		{
+			throw new Error("ValEdit.edit ::: unknown Class " + className);
+		}
+	}
+	
+	/**
+	   
+	   @param	a registered Class
+	   @param	uiContainer	if left null uiContainerDefault is used
+	**/
+	static public function editConstructorWithClass<T>(clss:Class<T>, ?container:DisplayObjectContainer):ExposedCollection
+	{
+		return editConstructor(Type.getClassName(clss), container);
+	}
+	
 	/**
 	   
 	   @param	container
@@ -242,10 +366,18 @@ class ValEdit
 		// UI related stuff
 		var valObject:ValEditObject = new ValEditObject(name, object);
 		_objectToValEditObject.set(object, valObject);
-		var node:TreeNode<ValEditObject> = new TreeNode<ValEditObject>(valObject);
-		_objectToTreeNode.set(object, node);
+		
 		var objCollection:ArrayCollection<ValEditObject> = _classToObjectCollection.get(valClass.className);
 		objCollection.add(valObject);
+		
+		for (className in valClass.superClassNames)
+		{
+			objCollection = _classToObjectCollection.get(className);
+			objCollection.add(valObject);
+		}
+		
+		var node:TreeNode<ValEditObject> = new TreeNode<ValEditObject>(valObject);
+		_objectToTreeNode.set(object, node);
 		var classNode:TreeNode<ValEditObject> = _classToTreeNode.get(valClass.className);
 		var location:Array<Int> = objectCollection.locationOf(classNode);
 		location.push(classNode.children.length);
@@ -363,6 +495,12 @@ class ValEdit
 		
 		var objCollection:ArrayCollection<ValEditObject> = _classToObjectCollection.get(valClass.className);
 		objCollection.remove(valObject);
+		
+		for (className in valClass.superClassNames)
+		{
+			objCollection = _classToObjectCollection.get(className);
+			objCollection.remove(valObject);
+		}
 		
 		objectCollection.remove(node);
 	}

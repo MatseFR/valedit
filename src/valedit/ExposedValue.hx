@@ -185,6 +185,14 @@ class ExposedValue extends EventDispatcher
 	}
 	
 	/**
+	   Useful to create a constructor parameters array
+	**/
+	public function toValueArray(values:Array<Dynamic>):Void
+	{
+		values.push(this.value);
+	}
+	
+	/**
 	   
 	   @return
 	**/

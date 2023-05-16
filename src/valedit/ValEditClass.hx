@@ -13,8 +13,10 @@ class ValEditClass
 	public var canBeCreated(default, null):Bool;
 	public var className(default, null):String;
 	public var classReference(default, null):Class<Dynamic>;
+	public var constructorCollection(default, null):ExposedCollection;
 	public var instanceCount(default, null):Int = 0;
-	public var sourceCollection:ExposedCollection;
+	public var sourceCollection(default, null):ExposedCollection;
+	public var superClassNames(default, null):Array<String> = new Array<String>();
 	
 	private var _nameToObject:Map<String, Dynamic> = new Map<String, Dynamic>();
 	private var _objectToName:ObjectMap<Dynamic, String> = new ObjectMap<Dynamic, String>();
@@ -23,15 +25,19 @@ class ValEditClass
 	private var _containers:Map<DisplayObjectContainer, ExposedCollection> = new Map<DisplayObjectContainer, ExposedCollection>();
 	private var _pool:Array<ExposedCollection> = new Array<ExposedCollection>();
 	
+	private var _constructorContainers:Map<DisplayObjectContainer, ExposedCollection> = new Map<DisplayObjectContainer, ExposedCollection>();
+	private var _constructorPool:Array<ExposedCollection> = new Array<ExposedCollection>();
+	
 	/**
 	   
 	**/
-	public function new(classReference:Class<Dynamic>, className:String, sourceCollection:ExposedCollection, canBeCreated:Bool) 
+	public function new(classReference:Class<Dynamic>, className:String, sourceCollection:ExposedCollection, canBeCreated:Bool, ?constructorCollection:ExposedCollection) 
 	{
 		this.classReference = classReference;
 		this.className = className;
 		this.sourceCollection = sourceCollection;
 		this.canBeCreated = canBeCreated;
+		this.constructorCollection = constructorCollection;
 	}
 	
 	/**
@@ -44,6 +50,11 @@ class ValEditClass
 		this._nameToObject.clear();
 		this._objectToName.clear();
 		this._objectNameIndex = -1;
+	}
+	
+	public function addSuperClassName(superClassName:String):Void
+	{
+		this.superClassNames.push(superClassName);
 	}
 	
 	public function makeObjectName():String
@@ -141,6 +152,25 @@ class ValEditClass
 		return collection;
 	}
 	
+	public function addConstructorContainer(container:DisplayObjectContainer):ExposedCollection
+	{
+		var collection:ExposedCollection;
+		if (this._constructorPool.length != 0)
+		{
+			collection = this._constructorPool.pop();
+		}
+		else
+		{
+			collection = constructorCollection.clone();
+			collection.buildUI();
+		}
+		
+		this._constructorContainers[container] = collection;
+		collection.uiContainer = container;
+		
+		return collection;
+	}
+	
 	/**
 	   
 	   @param	container
@@ -155,6 +185,21 @@ class ValEditClass
 			collection.object = null;
 			collection.uiContainer = null;
 			this._pool.push(collection);
+		}
+		else
+		{
+			removeConstructorContainer(container);
+		}
+	}
+	
+	public function removeConstructorContainer(container:DisplayObjectContainer):Void
+	{
+		var collection:ExposedCollection = this._constructorContainers[container];
+		if (collection != null)
+		{
+			this._constructorContainers.remove(container);
+			collection.uiContainer = null;
+			this._constructorPool.push(collection);
 		}
 	}
 	

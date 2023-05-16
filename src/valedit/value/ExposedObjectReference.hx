@@ -9,6 +9,8 @@ import valedit.ValEditObject;
  */
 class ExposedObjectReference extends ExposedValue 
 {
+	/** if false, current object won't be available for selection. Default is false */
+	public var allowSelfReference:Bool;
 	public var classList(default, null):Array<String>;
 	
 	private var _valEditObject:ValEditObject;
@@ -24,11 +26,12 @@ class ExposedObjectReference extends ExposedValue
 		return super.set_value(value);
 	}
 
-	public function new(propertyName:String, name:String=null, classList:Array<String> = null) 
+	public function new(propertyName:String, name:String=null, classList:Array<String> = null, allowSelfReference:Bool = false) 
 	{
 		super(propertyName, name);
 		if (classList == null) classList = new Array<String>();
 		this.classList = classList;
+		this.allowSelfReference = allowSelfReference;
 	}
 	
 	public function addClass(clss:Class<Dynamic>):Void
@@ -44,7 +47,7 @@ class ExposedObjectReference extends ExposedValue
 	
 	override public function clone():ExposedValue 
 	{
-		var reference:ExposedObjectReference = new ExposedObjectReference(this.propertyName, this.name);
+		var reference:ExposedObjectReference = new ExposedObjectReference(this.propertyName, this.name, this.classList.copy(), this.allowSelfReference);
 		super.clone_internal(reference);
 		return reference;
 	}
@@ -76,6 +79,21 @@ class ExposedObjectReference extends ExposedValue
 			}
 		}
 		return super.toJSON(json);
+	}
+	
+	override public function toJSONSimple(json:Dynamic):Void 
+	{
+		if (this.value != null)
+		{
+			if (this._valEditObject != null)
+			{
+				Reflect.setField(json, this.propertyName, this._valEditObject.name);
+			}
+			else
+			{
+				Reflect.setField(json, this.propertyName, ValEdit.getObjectName(this.value));
+			}
+		}
 	}
 	
 }

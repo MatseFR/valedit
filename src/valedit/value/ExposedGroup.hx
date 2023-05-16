@@ -266,6 +266,14 @@ class ExposedGroup extends ExposedValue
 		return value;
 	}
 	
+	override public function toValueArray(values:Array<Dynamic>):Void 
+	{
+		for (value in this._valueList)
+		{
+			value.toValueArray(values);
+		}
+	}
+	
 	/**
 	   
 	   @return

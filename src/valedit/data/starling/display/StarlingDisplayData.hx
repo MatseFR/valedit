@@ -1,5 +1,6 @@
 package valedit.data.starling.display;
 import starling.display.BlendMode;
+import starling.display.DisplayObject;
 import starling.textures.TextureSmoothing;
 import starling.utils.Align;
 import ui.feathers.variant.TextInputVariant;
@@ -11,8 +12,10 @@ import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedNote;
 import valedit.value.ExposedObject;
+import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
+import valedit.value.NumericMode;
 import valedit.value.extra.FunctionCallExtra;
 import valedit.value.starling.ExposedStarlingTexture;
 
@@ -30,6 +33,7 @@ class StarlingDisplayData
 		var float:ExposedFloat;
 		var func:ExposedFunction;
 		var object:ExposedObject;
+		var objectRef:ExposedObjectReference;
 		var select:ExposedSelect;
 		var string:ExposedString;
 		
@@ -128,6 +132,13 @@ class StarlingDisplayData
 			collection.addValue(select, groupName);
 		}
 		
+		if (!collection.hasValue("mask"))
+		{
+			objectRef = new ExposedObjectReference("mask");
+			objectRef.addClass(DisplayObject);
+			collection.addValue(objectRef, groupName);
+		}
+		
 		if (!collection.hasValue("maskInverted"))
 		{
 			bool = new ExposedBool("maskInverted");
@@ -206,6 +217,21 @@ class StarlingDisplayData
 		return collection;
 	}
 	
+	static public function exposeImageConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var texture:ExposedStarlingTexture;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("texture"))
+		{
+			texture = new ExposedStarlingTexture("texture");
+			collection.addValue(texture, groupName);
+		}
+		
+		return collection;
+	}
+	
 	static public function exposeMesh(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
@@ -272,6 +298,36 @@ class StarlingDisplayData
 		if (collection == null) collection = new ExposedCollection();
 		
 		exposeMesh(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function exposeQuadConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		var float:ExposedFloat;
+		var color:ExposedColor;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("width"))
+		{
+			float = new ExposedFloat("width", null, 2, NumericMode.Positive);
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("height"))
+		{
+			float = new ExposedFloat("height", null, 2, NumericMode.Positive);
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			collection.addValue(color, groupName);
+		}
 		
 		return collection;
 	}
