@@ -1,5 +1,6 @@
 package valedit.data.openfl.display;
 import openfl.display.BlendMode;
+import openfl.display.DisplayObject;
 import openfl.display.PixelSnapping;
 import ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
@@ -9,6 +10,7 @@ import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedGroup;
 import valedit.value.ExposedObject;
+import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 
@@ -59,6 +61,7 @@ class DisplayData
 		var float:ExposedFloat;
 		var floatRange:ExposedFloatRange;
 		var obj:ExposedObject;
+		var objRef:ExposedObjectReference;
 		var select:ExposedSelect;
 		var string:ExposedString;
 		
@@ -137,6 +140,13 @@ class DisplayData
 			select.add("SHADER", BlendMode.SHADER);
 			select.add("SUBTRACT", BlendMode.SUBTRACT);
 			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("mask"))
+		{
+			objRef = new ExposedObjectReference("mask");
+			objRef.addClass(DisplayObject);
+			collection.addValue(objRef, groupName);
 		}
 		
 		if (!collection.hasValue("transform"))
