@@ -11,6 +11,7 @@ import haxe.ds.ObjectMap;
 class ValEditClass 
 {
 	public var canBeCreated(default, null):Bool;
+	public var categories(default, null):Array<String> = new Array<String>();
 	public var className(default, null):String;
 	public var classReference(default, null):Class<Dynamic>;
 	public var constructorCollection(default, null):ExposedCollection;
@@ -50,6 +51,11 @@ class ValEditClass
 		this._nameToObject.clear();
 		this._objectToName.clear();
 		this._objectNameIndex = -1;
+	}
+	
+	public function addCategory(category:String):Void
+	{
+		this.categories.push(category);
 	}
 	
 	public function addSuperClassName(superClassName:String):Void
