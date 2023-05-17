@@ -29,11 +29,21 @@ class ExposedSound extends ExposedValue
 		this.defaultValue = null;
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var snd:ExposedSound = new ExposedSound(this.propertyName, this.name);
-		super.clone_internal(snd);
+		clone_internal(snd, copyValue);
 		return snd;
+	}
+	
+	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
+	{
+		if (copyValue && this._asset != null)
+		{
+			value.value = this._asset;
+			copyValue = false;
+		}
+		super.clone_internal(value, copyValue);
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 

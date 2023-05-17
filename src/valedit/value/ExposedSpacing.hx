@@ -25,7 +25,7 @@ class ExposedSpacing extends ExposedValue
 		// nothing
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var space:ExposedSpacing = new ExposedSpacing(this.name);
 		return space;

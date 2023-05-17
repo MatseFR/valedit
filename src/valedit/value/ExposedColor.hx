@@ -20,10 +20,10 @@ class ExposedColor extends ExposedValue
 		this.defaultValue = 0xffffff;
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var color:ExposedColor = new ExposedColor(this.propertyName, this.name);
-		super.clone_internal(color);
+		super.clone_internal(color, copyValue);
 		return color;
 	}
 	

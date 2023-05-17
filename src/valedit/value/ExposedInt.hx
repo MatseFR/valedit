@@ -27,10 +27,10 @@ class ExposedInt extends ExposedValue
 		this.defaultValue = 0;
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var int:ExposedInt = new ExposedInt(this.propertyName, this.name, this.numericMode, this.inputVariant);
-		super.clone_internal(int);
+		super.clone_internal(int, copyValue);
 		return int;
 	}
 	

@@ -25,7 +25,7 @@ class ExposedName extends ExposedValue
 		// nothing
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var name:ExposedName = new ExposedName(this.name);
 		return name;

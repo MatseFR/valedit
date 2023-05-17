@@ -20,10 +20,10 @@ class ExposedBool extends ExposedValue
 		this.defaultValue = false;
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var bool:ExposedBool = new ExposedBool(this.propertyName, this.name);
-		super.clone_internal(bool);
+		super.clone_internal(bool, copyValue);
 		return bool;
 	}
 	

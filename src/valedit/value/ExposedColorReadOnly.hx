@@ -20,10 +20,10 @@ class ExposedColorReadOnly extends ExposedValue
 		// nothing
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var color:ExposedColorReadOnly = new ExposedColorReadOnly(this.propertyName, this.name);
-		super.clone_internal(color);
+		super.clone_internal(color, copyValue);
 		return color;
 	}
 	

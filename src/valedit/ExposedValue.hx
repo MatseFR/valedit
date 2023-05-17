@@ -196,14 +196,18 @@ class ExposedValue extends EventDispatcher
 	   
 	   @return
 	**/
-	public function clone():ExposedValue
+	public function clone(copyValue:Bool = false):ExposedValue
 	{
 		throw new Error("You have to override ExposedValue.clone");
 	}
 	
-	private function clone_internal(value:ExposedValue):Void
+	private function clone_internal(value:ExposedValue, copyValue:Bool = false):Void
 	{
 		value.defaultValue = this.defaultValue;
+		if (copyValue)
+		{
+			value.value = this.value;
+		}
 		value.isEditable = this._isEditable;
 		value.updateCollectionUIOnChange = this.updateCollectionUIOnChange;
 		this._extras.clone(value._extras);

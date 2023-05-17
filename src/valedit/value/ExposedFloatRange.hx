@@ -53,10 +53,10 @@ class ExposedFloatRange extends ExposedValue
 		this.defaultValue = 0.0;
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var range:ExposedFloatRange = new ExposedFloatRange(this.propertyName, this.name, this._min, this._max, this.step, this.precision, this.inputVariant);
-		super.clone_internal(range);
+		super.clone_internal(range, copyValue);
 		return range;
 	}
 	

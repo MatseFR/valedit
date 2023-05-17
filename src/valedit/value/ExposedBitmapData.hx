@@ -29,11 +29,21 @@ class ExposedBitmapData extends ExposedValue
 		this.defaultValue = null;
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var bmd:ExposedBitmapData = new ExposedBitmapData(this.propertyName, this.name);
-		super.clone_internal(bmd);
+		clone_internal(bmd, copyValue);
 		return bmd;
+	}
+	
+	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
+	{
+		if (copyValue && this._asset != null)
+		{
+			value.value = this._asset;
+			copyValue = false;
+		}
+		super.clone_internal(value, copyValue);
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 

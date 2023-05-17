@@ -50,10 +50,10 @@ class ExposedIntRange extends ExposedValue
 		this.defaultValue = 0;
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var range:ExposedIntRange = new ExposedIntRange(this.propertyName, this.name, this.min, this.max, this.step, this.inputVariant);
-		super.clone_internal(range);
+		super.clone_internal(range, copyValue);
 		return range;
 	}
 	

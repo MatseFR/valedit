@@ -35,7 +35,7 @@ class ExposedNote extends ExposedValue
 		// nothing
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var note:ExposedNote = new ExposedNote(this.name, this.text, this.textPercentWidth);
 		return note;

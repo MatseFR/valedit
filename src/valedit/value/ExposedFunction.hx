@@ -104,10 +104,10 @@ class ExposedFunction extends ExposedValue
 		if (this.updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var func:ExposedFunction = new ExposedFunction(this.propertyName, this.name, this.parameters.copy());
-		super.clone_internal(func);
+		super.clone_internal(func, copyValue);
 		return func;
 	}
 	

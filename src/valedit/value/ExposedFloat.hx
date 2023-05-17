@@ -30,10 +30,10 @@ class ExposedFloat extends ExposedValue
 		this.defaultValue = 0.0;
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var float:ExposedFloat = new ExposedFloat(this.propertyName, this.name, this.precision, this.numericMode, this.inputVariant);
-		super.clone_internal(float);
+		super.clone_internal(float, copyValue);
 		return float;
 	}
 	

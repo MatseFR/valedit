@@ -278,13 +278,13 @@ class ExposedGroup extends ExposedValue
 	   
 	   @return
 	**/
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var group:ExposedGroup = new ExposedGroup(this.name, this.isCollapsable, this.isCollapsedDefault);
 		
 		for (val in this._valueList)
 		{
-			group.addValue(val.clone());
+			group.addValue(val.clone(copyValue));
 		}
 		
 		return group;

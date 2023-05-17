@@ -204,12 +204,6 @@ class ExposedCollection
 		}
 	}
 	
-	/**
-	   
-	   @param	name
-	   @param	includeSubGroups
-	   @return
-	**/
 	public function getGroup(name:String, includeSubGroups:Bool = false):ExposedGroup
 	{
 		var group:ExposedGroup = this._groupMap[name];
@@ -226,11 +220,6 @@ class ExposedCollection
 		return null;
 	}
 	
-	/**
-	   
-	   @param	propertyName
-	   @return
-	**/
 	public function getValue(propertyName:String):ExposedValue
 	{
 		var value:ExposedValue;
@@ -243,11 +232,6 @@ class ExposedCollection
 		return null;
 	}
 	
-	/**
-	   
-	   @param	propertyName
-	   @return
-	**/
 	public function hasValue(propertyName:String):Bool
 	{
 		if (this._valueMap.exists(propertyName)) return true;
@@ -258,20 +242,11 @@ class ExposedCollection
 		return false;
 	}
 	
-	/**
-	   
-	   @param	value
-	**/
 	public function removeValue(value:ExposedValue):Void
 	{
 		removeValueByName(value.propertyName);
 	}
 	
-	/**
-	   
-	   @param	name
-	   @return
-	**/
 	public function removeValueByName(propertyName:String):ExposedValue
 	{
 		var value:ExposedValue;
@@ -306,17 +281,13 @@ class ExposedCollection
 		return values;
 	}
 	
-	/**
-	   
-	   @return
-	**/
-	public function clone():ExposedCollection
+	public function clone(copyValues:Bool = false):ExposedCollection
 	{
 		var collection:ExposedCollection = new ExposedCollection();
 		
 		for (val in this._valueList)
 		{
-			collection.addValue(val.clone());
+			collection.addValue(val.clone(copyValues));
 		}
 		
 		return collection;

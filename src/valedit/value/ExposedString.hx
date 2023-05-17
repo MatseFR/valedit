@@ -29,10 +29,10 @@ class ExposedString extends ExposedValue
 		this.defaultValue = "";
 	}
 	
-	override public function clone():ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var string:ExposedString = new ExposedString(this.propertyName, this.name, this.maxChars, this.restrict, this.inputPercentWidth);
-		super.clone_internal(string);
+		super.clone_internal(string, copyValue);
 		return string;
 	}
 	
