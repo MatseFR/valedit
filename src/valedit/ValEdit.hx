@@ -1,7 +1,5 @@
 package valedit;
 import feathers.data.ArrayCollection;
-import feathers.data.TreeCollection;
-import feathers.data.TreeNode;
 import haxe.ds.Map;
 import haxe.ds.ObjectMap;
 import openfl.display.DisplayObjectContainer;
@@ -22,12 +20,10 @@ class ValEdit
 	static public var uiContainerDefault:DisplayObjectContainer;
 	
 	static public var classCollection(default, null):ArrayCollection<String> = new ArrayCollection<String>();
-	static public var objectCollection(default, null):TreeCollection<ValEditObject> = new TreeCollection<ValEditObject>();
+	static public var objectCollection(default, null):ArrayCollection<ValEditObject> = new ArrayCollection<ValEditObject>();
 	
 	static private var _classToObjectCollection:Map<String, ArrayCollection<ValEditObject>> = new Map<String, ArrayCollection<ValEditObject>>();
-	static private var _classToTreeNode:Map<String, TreeNode<ValEditObject>> = new Map<String, TreeNode<ValEditObject>>();
 	static private var _objectToValEditObject:ObjectMap<Dynamic, ValEditObject> = new ObjectMap<Dynamic, ValEditObject>();
-	static private var _objectToTreeNode:ObjectMap<Dynamic, TreeNode<ValEditObject>> = new ObjectMap<Dynamic, TreeNode<ValEditObject>>();
 	
 	static private var _baseClassToClassList:Map<String, Array<String>> = new Map<String, Array<String>>();
 	static private var _classMap:Map<String, ValEditClass> = new Map<String, ValEditClass>();
@@ -93,11 +89,6 @@ class ValEdit
 		{
 			classCollection.add(className);
 			
-			var valObject:ValEditObject = new ValEditObject(className, null);
-			var node:TreeNode<ValEditObject> = new TreeNode(valObject, []);
-			objectCollection.addAt(node, [objectCollection.getLength()]);
-			_classToTreeNode.set(className, node);
-			
 			var objCollection:ArrayCollection<ValEditObject> = new ArrayCollection<ValEditObject>();
 			_classToObjectCollection.set(className, objCollection);
 		}
@@ -123,9 +114,6 @@ class ValEdit
 			}
 			
 			classCollection.remove(className);
-			var node:TreeNode<ValEditObject> = _classToTreeNode.get(className);
-			objectCollection.remove(node);
-			_classToTreeNode.remove(className);
 			_classToObjectCollection.remove(className);
 		}
 		else
@@ -364,8 +352,10 @@ class ValEdit
 		valClass.addObject(object, name);
 		
 		// UI related stuff
-		var valObject:ValEditObject = new ValEditObject(name, object);
+		var valObject:ValEditObject = new ValEditObject(name, object, valClass.className);
 		_objectToValEditObject.set(object, valObject);
+		
+		objectCollection.add(valObject);
 		
 		var objCollection:ArrayCollection<ValEditObject> = _classToObjectCollection.get(valClass.className);
 		objCollection.add(valObject);
@@ -375,13 +365,6 @@ class ValEdit
 			objCollection = _classToObjectCollection.get(className);
 			objCollection.add(valObject);
 		}
-		
-		var node:TreeNode<ValEditObject> = new TreeNode<ValEditObject>(valObject);
-		_objectToTreeNode.set(object, node);
-		var classNode:TreeNode<ValEditObject> = _classToTreeNode.get(valClass.className);
-		var location:Array<Int> = objectCollection.locationOf(classNode);
-		location.push(classNode.children.length);
-		objectCollection.addAt(node, location);
 	}
 	
 	static public function registerObject(object:Dynamic, name:String = null):Void
@@ -490,8 +473,8 @@ class ValEdit
 		// UI related stuff
 		var valObject:ValEditObject = _objectToValEditObject.get(object);
 		_objectToValEditObject.remove(object);
-		var node:TreeNode<ValEditObject> = _objectToTreeNode.get(object);
-		_objectToTreeNode.remove(object);
+		
+		objectCollection.remove(valObject);
 		
 		var objCollection:ArrayCollection<ValEditObject> = _classToObjectCollection.get(valClass.className);
 		objCollection.remove(valObject);
@@ -501,8 +484,6 @@ class ValEdit
 			objCollection = _classToObjectCollection.get(className);
 			objCollection.remove(valObject);
 		}
-		
-		objectCollection.remove(node);
 	}
 	
 	static public function unregisterObject(object:Dynamic):Void
