@@ -19,8 +19,10 @@ class ValEdit
 	
 	static public var uiContainerDefault:DisplayObjectContainer;
 	
+	static public var categoryCollection(default, null):ArrayCollection<String> = new ArrayCollection<String>();
 	static public var classCollection(default, null):ArrayCollection<String> = new ArrayCollection<String>();
 	static public var objectCollection(default, null):ArrayCollection<ValEditObject> = new ArrayCollection<ValEditObject>();
+	static public var templateCollection(default, null):ArrayCollection<ValEditTemplate> = new ArrayCollection<ValEditTemplate>();
 	
 	static private var _classToObjectCollection:Map<String, ArrayCollection<ValEditObject>> = new Map<String, ArrayCollection<ValEditObject>>();
 	static private var _objectToValEditObject:ObjectMap<Dynamic, ValEditObject> = new ObjectMap<Dynamic, ValEditObject>();
