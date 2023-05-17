@@ -314,12 +314,14 @@ class StarlingDisplayData
 		if (!collection.hasValue("width"))
 		{
 			float = new ExposedFloat("width", null, 2, NumericMode.Positive);
+			float.defaultValue = 100;
 			collection.addValue(float, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
 			float = new ExposedFloat("height", null, 2, NumericMode.Positive);
+			float.defaultValue = 100;
 			collection.addValue(float, groupName);
 		}
 		
