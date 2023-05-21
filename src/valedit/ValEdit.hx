@@ -1,4 +1,5 @@
 package valedit;
+import editor.SelectionController;
 import feathers.data.ArrayCollection;
 import haxe.ds.Map;
 import haxe.ds.ObjectMap;
@@ -17,6 +18,7 @@ class ValEdit
 	static public var STARLING_SUBTEXTURE_MARKER:String = "@@@";
 	#end
 	
+	static public var selection(default, null):SelectionController = new SelectionController();
 	static public var uiContainerDefault:DisplayObjectContainer;
 	
 	static public var categoryCollection(default, null):ArrayCollection<String> = new ArrayCollection<String>();
@@ -24,7 +26,11 @@ class ValEdit
 	static public var objectCollection(default, null):ArrayCollection<ValEditObject> = new ArrayCollection<ValEditObject>();
 	static public var templateCollection(default, null):ArrayCollection<ValEditTemplate> = new ArrayCollection<ValEditTemplate>();
 	
+	static private var _categoryToClassCollection:Map<String, ArrayCollection<String>> = new Map<String, ArrayCollection<String>>();
+	static private var _categoryToObjectCollection:Map<String, ArrayCollection<ValEditObject>> = new Map<String, ArrayCollection<ValEditObject>>();
+	static private var _categoryToTemplateCollection:Map<String, ArrayCollection<ValEditTemplate>> = new Map<String, ArrayCollection<ValEditTemplate>>();
 	static private var _classToObjectCollection:Map<String, ArrayCollection<ValEditObject>> = new Map<String, ArrayCollection<ValEditObject>>();
+	static private var _classToTemplateCollection:Map<String, ArrayCollection<ValEditTemplate>> = new Map<String, ArrayCollection<ValEditTemplate>>();
 	static private var _objectToValEditObject:ObjectMap<Dynamic, ValEditObject> = new ObjectMap<Dynamic, ValEditObject>();
 	
 	static private var _baseClassToClassList:Map<String, Array<String>> = new Map<String, Array<String>>();
@@ -32,7 +38,7 @@ class ValEdit
 	static private var _displayMap:Map<DisplayObjectContainer, ValEditClass> = new Map<DisplayObjectContainer, ValEditClass>();
 	static private var _uiClassMap:Map<String, Void->IValueUI> = new Map<String, Void->IValueUI>();
 	
-	static public function registerClass<T>(type:Class<T>, collection:ExposedCollection, canBeCreated:Bool = true, ?constructorCollection:ExposedCollection):Void
+	static public function registerClass<T>(type:Class<T>, collection:ExposedCollection, canBeCreated:Bool = true, categoryList:Array<String> = null, ?constructorCollection:ExposedCollection):Void
 	{
 		var className:String = Type.getClassName(type);
 		if (_classMap.exists(className))
@@ -43,6 +49,25 @@ class ValEdit
 		
 		var v:ValEditClass = new ValEditClass(type, className, collection, canBeCreated, constructorCollection);
 		_classMap.set(className, v);
+		
+		if (categoryList != null)
+		{
+			var strCollection:ArrayCollection<String>;
+			for (category in categoryList)
+			{
+				if (!_categoryToClassCollection.exists(category))
+				{
+					categoryCollection.add(category);
+					_categoryToClassCollection.set(category, new ArrayCollection<String>());
+					_categoryToObjectCollection.set(category, new ArrayCollection<ValEditObject>());
+					_categoryToTemplateCollection.set(category, new ArrayCollection<ValEditTemplate>());
+				}
+				strCollection = _categoryToClassCollection.get(category);
+				strCollection.add(className);
+				
+				v.addCategory(category);
+			}
+		}
 		
 		var clss:Class<Dynamic> = type;
 		var superName:String;
@@ -61,6 +86,13 @@ class ValEdit
 		{
 			objCollection = new ArrayCollection<ValEditObject>();
 			_classToObjectCollection.set(className, objCollection);
+		}
+		
+		var templateCollection:ArrayCollection<ValEditTemplate>;
+		if (!_classToTemplateCollection.exists(className))
+		{
+			templateCollection = new ArrayCollection<ValEditTemplate>();
+			_classToTemplateCollection.set(className, templateCollection);
 		}
 		
 		while (true)
@@ -85,14 +117,20 @@ class ValEdit
 				objCollection = new ArrayCollection<ValEditObject>();
 				_classToObjectCollection.set(superName, objCollection);
 			}
+			
+			if (!_classToTemplateCollection.exists(superName))
+			{
+				templateCollection = new ArrayCollection<ValEditTemplate>();
+				_classToTemplateCollection.set(superName, templateCollection);
+			}
 		}
 		
 		if (canBeCreated)
 		{
 			classCollection.add(className);
 			
-			var objCollection:ArrayCollection<ValEditObject> = new ArrayCollection<ValEditObject>();
-			_classToObjectCollection.set(className, objCollection);
+			//var objCollection:ArrayCollection<ValEditObject> = new ArrayCollection<ValEditObject>();
+			//_classToObjectCollection.set(className, objCollection);
 		}
 	}
 	
@@ -106,6 +144,22 @@ class ValEdit
 		}
 		
 		var valClass:ValEditClass = _classMap.get(className);
+		
+		var strCollection:ArrayCollection<String>;
+		for (category in valClass.categories)
+		{
+			strCollection = _categoryToClassCollection.get(category);
+			strCollection.remove(className);
+			if (strCollection.length == 0)
+			{
+				// no more class associated with this category : remove category
+				categoryCollection.remove(category);
+				_categoryToClassCollection.remove(category);
+				_categoryToObjectCollection.remove(category);
+				_categoryToTemplateCollection.remove(category);
+			}
+		}
+		
 		var objectList:Array<Dynamic> = valClass.getObjectList();
 		
 		if (valClass.canBeCreated)
@@ -155,21 +209,6 @@ class ValEdit
 				}
 			}
 		}
-	}
-	
-	static public function getClassListForBaseClass(baseClassName:String):Array<String>
-	{
-		return _baseClassToClassList.get(baseClassName);
-	}
-	
-	static public function getValEditClassByClass(clss:Class<Dynamic>):ValEditClass
-	{
-		return _classMap.get(Type.getClassName(clss));
-	}
-	
-	static public function getValEditClassByClassName(className:String):ValEditClass
-	{
-		return _classMap.get(className);
 	}
 	
 	static public function registerUIClass<T>(exposedValueClass:Class<T>, factory:Void->IValueUI):Void
@@ -280,6 +319,23 @@ class ValEdit
 		return editConstructor(Type.getClassName(clss), container);
 	}
 	
+	
+	static public function editTemplate(template:ValEditTemplate, ?container:DisplayObjectContainer):Void
+	{
+		if (container == null) container = uiContainerDefault;
+		if (container == null)
+		{
+			throw new Error("ValEdit.editTemplate ::: null container");
+		}
+		
+		clearContainer(container);
+		
+		if (template == null) return;
+		
+		var valClass:ValEditClass = _classMap.get(template.className);
+		valClass.addTemplateContainer(container, template);
+	}
+	
 	/**
 	   
 	   @param	container
@@ -315,26 +371,9 @@ class ValEdit
 		return control;
 	}
 	
-	static public function getObjectCollectionForClass(clss:Class<Dynamic>):ArrayCollection<ValEditObject>
-	{
-		return _classToObjectCollection.get(Type.getClassName(clss));
-	}
-	
-	static public function getObjectCollectionForClassName(className:String):ArrayCollection<ValEditObject>
-	{
-		return _classToObjectCollection.get(className);
-	}
-	
 	static public function createObjectWithClass<T>(clss:Class<T>, ?name:String, ?params:Array<Dynamic>):T
 	{
-		if (params == null) params = [];
-		var className:String = Type.getClassName(clss);
-		var valClass:ValEditClass = _classMap.get(className);
-		var object:T = Type.createInstance(clss, params);
-		
-		registerObjectInternal(object, valClass, name);
-		
-		return object;
+		return createObjectWithClassName(Type.getClassName(clss), name, params);
 	}
 	
 	static public function createObjectWithClassName(className:String, ?name:String, ?params:Array<Dynamic>):Dynamic
@@ -342,6 +381,52 @@ class ValEdit
 		if (params == null) params = [];
 		var valClass:ValEditClass = _classMap.get(className);
 		var object:Dynamic = Type.createInstance(valClass.classReference, params);
+		
+		registerObjectInternal(object, valClass, name);
+		
+		return object;
+	}
+	
+	static public function createTemplateWithClass<T>(clss:Class<T>, ?name:String, ?constructorCollection:ExposedCollection):ValEditTemplate
+	{
+		return createTemplateWithClassName(Type.getClassName(clss), name, constructorCollection);
+	}
+	
+	static public function createTemplateWithClassName(className:String, ?name:String, ?constructorCollection:ExposedCollection):ValEditTemplate
+	{
+		var params:Array<Dynamic>;
+		if (constructorCollection != null)
+		{
+			params = constructorCollection.toValueArray();
+		}
+		else
+		{
+			params = [];
+		}
+		var valClass:ValEditClass = _classMap.get(className);
+		var object:Dynamic = Type.createInstance(valClass.classReference, params);
+		var collection:ExposedCollection = valClass.getCollection();
+		collection.object = object;
+		var template:ValEditTemplate = new ValEditTemplate(name, object, className, collection, constructorCollection);
+		
+		registerTemplateInternal(template, valClass);
+		
+		return template;
+	}
+	
+	static public function createObjectWithTemplate(template:ValEditTemplate, ?name:String):Dynamic
+	{
+		var valClass:ValEditClass = _classMap.get(template.className);
+		if (name == null) name = valClass.makeObjectName();
+		var params:Array<Dynamic> = [];
+		if (template.constructorCollection != null)
+		{
+			template.constructorCollection.toValueArray(params);
+		}
+		
+		var object:Dynamic = Type.createInstance(valClass.classReference, params);
+		
+		template.collection.applyToObject(object);
 		
 		registerObjectInternal(object, valClass, name);
 		
@@ -365,6 +450,12 @@ class ValEdit
 		for (className in valClass.superClassNames)
 		{
 			objCollection = _classToObjectCollection.get(className);
+			objCollection.add(valObject);
+		}
+		
+		for (category in valClass.categories)
+		{
+			objCollection = _categoryToObjectCollection.get(category);
 			objCollection.add(valObject);
 		}
 	}
@@ -391,43 +482,33 @@ class ValEdit
 		registerObjectInternal(object, valClass, name);
 	}
 	
-	static public function getObjectClass(object:Dynamic):Class<Dynamic>
+	static private function registerTemplateInternal(template:ValEditTemplate, valClass:ValEditClass):Void
 	{
-		return Type.getClass(object);
+		valClass.addTemplate(template);
+		
+		templateCollection.add(template);
+		
+		var collection:ArrayCollection<ValEditTemplate> = _classToTemplateCollection.get(valClass.className);
+		collection.add(template);
+		
+		for (className in valClass.superClassNames)
+		{
+			collection = _classToTemplateCollection.get(className);
+			collection.add(template);
+		}
+		
+		for (category in valClass.categories)
+		{
+			collection = _categoryToTemplateCollection.get(category);
+			collection.add(template);
+		}
 	}
 	
-	static public function getObjectClassName(object:Dynamic):String
+	static public function registerTemplate(template:ValEditTemplate):Void
 	{
-		return Type.getClassName(Type.getClass(object));
-	}
-	
-	static public function getObjectName(object:Dynamic):String
-	{
-		var clss:Class<Dynamic> = Type.getClass(object);
-		var className:String = Type.getClassName(clss);
-		return _classMap.get(className).getObjectName(object);
-	}
-	
-	static public function getObjectNameWithClass(object:Dynamic, clss:Class<Dynamic>):String
-	{
-		var className:String = Type.getClassName(clss);
-		return _classMap.get(className).getObjectName(object);
-	}
-	
-	static public function getObjectNameWithClassName(object:Dynamic, className:String):String
-	{
-		return _classMap.get(className).getObjectName(object);
-	}
-	
-	static public function getObjectWithClass(name:String, clss:Class<Dynamic>):Dynamic
-	{
-		var className:String = Type.getClassName(clss);
-		return _classMap.get(className).getObjectByName(name);
-	}
-	
-	static public function getObjectWithClassName(name:String, className:String):Dynamic
-	{
-		return _classMap.get(className).getObjectByName(name);
+		var valClass:ValEditClass = _classMap.get(template.className);
+		
+		registerTemplateInternal(template, valClass);
 	}
 	
 	static public function destroyObject(object:Dynamic):Void
@@ -486,6 +567,12 @@ class ValEdit
 			objCollection = _classToObjectCollection.get(className);
 			objCollection.remove(valObject);
 		}
+		
+		for (category in valClass.categories)
+		{
+			objCollection = _categoryToObjectCollection.get(category);
+			objCollection.remove(valObject);
+		}
 	}
 	
 	static public function unregisterObject(object:Dynamic):Void
@@ -515,4 +602,123 @@ class ValEdit
 		
 		unregisterObjectInternal(object, valClass);
 	}
+	
+	static public function destroyTemplate(template:ValEditTemplate):Void
+	{
+		var valClass:ValEditClass = _classMap.get(template.className);
+		destroyTemplateInternal(template, valClass);
+	}
+	
+	static private function destroyTemplateInternal(template:ValEditTemplate, valClass:ValEditClass):Void
+	{
+		unregisterTemplateInternal(template, valClass);
+	}
+	
+	static private function unregisterTemplateInternal(template:ValEditTemplate, valClass:ValEditClass):Void
+	{
+		valClass.removeTemplate(template);
+		
+		templateCollection.remove(template);
+		
+		var collection:ArrayCollection<ValEditTemplate> = _classToTemplateCollection.get(valClass.className);
+		collection.remove(template);
+		
+		for (className in valClass.superClassNames)
+		{
+			collection = _classToTemplateCollection.get(className);
+			collection.remove(template);
+		}
+		
+		for (category in valClass.categories)
+		{
+			collection = _categoryToTemplateCollection.get(category);
+			collection.remove(template);
+		}
+	}
+	
+	static public function unregisterTemplate(template:ValEditTemplate):Void
+	{
+		var valClass:ValEditClass = _classMap.get(template.className);
+		unregisterTemplateInternal(template, valClass);
+	}
+	
+	static public function getClassListForBaseClass(baseClassName:String):Array<String>
+	{
+		return _baseClassToClassList.get(baseClassName);
+	}
+	
+	static public function getClassCollectionForCategory(category:String):ArrayCollection<String>
+	{
+		return _categoryToClassCollection.get(category);
+	}
+	
+	static public function getValEditClassByClass(clss:Class<Dynamic>):ValEditClass
+	{
+		return _classMap.get(Type.getClassName(clss));
+	}
+	
+	static public function getValEditClassByClassName(className:String):ValEditClass
+	{
+		return _classMap.get(className);
+	}
+	
+	static public function getObjectCollectionForClass(clss:Class<Dynamic>):ArrayCollection<ValEditObject>
+	{
+		return _classToObjectCollection.get(Type.getClassName(clss));
+	}
+	
+	static public function getObjectCollectionForClassName(className:String):ArrayCollection<ValEditObject>
+	{
+		return _classToObjectCollection.get(className);
+	}
+	
+	static public function getObjectClass(object:Dynamic):Class<Dynamic>
+	{
+		return Type.getClass(object);
+	}
+	
+	static public function getObjectClassName(object:Dynamic):String
+	{
+		return Type.getClassName(Type.getClass(object));
+	}
+	
+	static public function getObjectName(object:Dynamic):String
+	{
+		var clss:Class<Dynamic> = Type.getClass(object);
+		var className:String = Type.getClassName(clss);
+		return _classMap.get(className).getObjectName(object);
+	}
+	
+	static public function getObjectNameWithClass(object:Dynamic, clss:Class<Dynamic>):String
+	{
+		var className:String = Type.getClassName(clss);
+		return _classMap.get(className).getObjectName(object);
+	}
+	
+	static public function getObjectNameWithClassName(object:Dynamic, className:String):String
+	{
+		return _classMap.get(className).getObjectName(object);
+	}
+	
+	static public function getObjectWithClass(name:String, clss:Class<Dynamic>):Dynamic
+	{
+		var className:String = Type.getClassName(clss);
+		return _classMap.get(className).getObjectByName(name);
+	}
+	
+	static public function getObjectWithClassName(name:String, className:String):Dynamic
+	{
+		return _classMap.get(className).getObjectByName(name);
+	}
+	
+	static public function getTemplateCollectionForClassName(className:String):ArrayCollection<ValEditTemplate>
+	{
+		return _classToTemplateCollection.get(className);
+	}
+	
+	static public function getTemplateCollectionForCategory(category:String):ArrayCollection<ValEditTemplate>
+	{
+		return _categoryToTemplateCollection.get(category);
+	}
+	
 }
