@@ -95,9 +95,4 @@ class ExposedSelect extends ExposedValue
 		return super.toJSON(json);
 	}
 	
-	override public function toJSONSimple(json:Dynamic):Void 
-	{
-		Reflect.setField(json, this.propertyName, this.value);
-	}
-	
 }
