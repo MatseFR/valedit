@@ -17,6 +17,7 @@ class ExposedValue extends EventDispatcher
 	/* all extras are executed when an ExposedValue's value changes */
 	public var extras(get, never):ValueExtraContainer;
 	public var isEditable(get, set):Bool;
+	public var isNullable:Bool = false;
 	/* tells whether this value is real (true, default) or not (false) */
 	public var isRealValue(get, never):Bool;
 	public var name:String;
@@ -209,6 +210,7 @@ class ExposedValue extends EventDispatcher
 			value.value = this.value;
 		}
 		value.isEditable = this._isEditable;
+		value.isNullable = this.isNullable;
 		value.updateCollectionUIOnChange = this.updateCollectionUIOnChange;
 		this._extras.clone(value._extras);
 	}
