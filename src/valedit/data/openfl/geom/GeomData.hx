@@ -122,6 +122,57 @@ class GeomData
 		return collection;
 	}
 	
+	static public function exposeMatrixConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var float:ExposedFloat;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("a"))
+		{
+			float = new ExposedFloat("a");
+			float.defaultValue = 1;
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("b"))
+		{
+			float = new ExposedFloat("b");
+			float.defaultValue = 0;
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("c"))
+		{
+			float = new ExposedFloat("c");
+			float.defaultValue = 0;
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("d"))
+		{
+			float = new ExposedFloat("d");
+			float.defaultValue = 1;
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("tx"))
+		{
+			float = new ExposedFloat("tx");
+			float.defaultValue = 0;
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("ty"))
+		{
+			float = new ExposedFloat("ty");
+			float.defaultValue = 0;
+			collection.addValue(float, groupName);
+		}
+		
+		return collection;
+	}
+	
 	static public function exposePoint(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var float:ExposedFloat;
@@ -137,6 +188,29 @@ class GeomData
 		if (!collection.hasValue("y"))
 		{
 			float = new ExposedFloat("y");
+			collection.addValue(float, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposePointConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var float:ExposedFloat;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("x"))
+		{
+			float = new ExposedFloat("x");
+			float.defaultValue = 0;
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("y"))
+		{
+			float = new ExposedFloat("y");
+			float.defaultValue = 0;
 			collection.addValue(float, groupName);
 		}
 		
@@ -214,6 +288,43 @@ class GeomData
 		{
 			obj = new ExposedObject("size");
 			collection.addValue(obj, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeRectangleConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var float:ExposedFloat;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("x"))
+		{
+			float = new ExposedFloat("x");
+			float.defaultValue = 0;
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("y"))
+		{
+			float = new ExposedFloat("x");
+			float.defaultValue = 0;
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("width"))
+		{
+			float = new ExposedFloat("width");
+			float.defaultValue = 0;
+			collection.addValue(float, groupName);
+		}
+		
+		if (!collection.hasValue("height"))
+		{
+			float = new ExposedFloat("height");
+			float.defaultValue = 0;
+			collection.addValue(float, groupName);
 		}
 		
 		return collection;

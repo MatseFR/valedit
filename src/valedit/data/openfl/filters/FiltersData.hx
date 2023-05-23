@@ -12,7 +12,7 @@ import valedit.value.ExposedSelect;
  * ...
  * @author Matse
  */
-class FilterData 
+class FiltersData 
 {
 
 	static public function exposeBlurFilter(?collection:ExposedCollection, ?groupName:String):ExposedCollection

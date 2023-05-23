@@ -304,8 +304,6 @@ class StarlingDisplayData
 	
 	static public function exposeQuadConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
-		
 		var float:ExposedFloat;
 		var color:ExposedColor;
 		
