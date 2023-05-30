@@ -14,7 +14,6 @@ import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
-import valedit.value.ExposedGroup;
 import valedit.value.ExposedInt;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedObjectReference;
@@ -191,7 +190,7 @@ class DisplayData
 		
 		if (!collection.hasValue("transform"))
 		{
-			obj = new ExposedObject("transform");
+			obj = new ExposedObject("transform", null, true, true);
 			collection.addValue(obj, groupName);
 		}
 		

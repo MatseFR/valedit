@@ -1,6 +1,8 @@
 package valedit;
 import flash.display.DisplayObjectContainer;
-import haxe.ds.ObjectMap;
+import haxe.Constraints.Function;
+import ui.IInteractiveObject;
+import valedit.util.PropertyMap;
 
 /**
  * ...
@@ -15,18 +17,33 @@ class ValEditClass
 	public var constructorCollection(default, null):ExposedCollection;
 	public var numInstances(default, null):Int = 0;
 	public var numTemplates(default, null):Int = 0;
+	public var objectType:Int;
 	public var sourceCollection(default, null):ExposedCollection;
 	public var superClassNames(default, null):Array<String> = new Array<String>();
 	
-	public var proxyClassName(default, null):String;
-	public var proxyClassReference(default, null):Class<Dynamic>;
+	/** Dynamic->DisplayObjectContainer->Void */
+	public var addToDisplayCustom:Function;
+	/** Dynamic->DisplayObjectContainer->Void */
+	public var removeFromDisplayCustom:Function;
 	
-	private var _nameToObject:Map<String, Dynamic> = new Map<String, Dynamic>();
-	private var _objectToName:ObjectMap<Dynamic, String> = new ObjectMap<Dynamic, String>();
-	private var _objectNameIndex:Int = -1;
+	public var interactiveFactory:ValEditObject->IInteractiveObject;
 	
-	private var _nameToTemplate:Map<String, ValEditTemplate> = new Map<String, ValEditTemplate>();
-	private var _templateNameIndex:Int = -1;
+	public var hasPivotProperties:Bool;
+	public var hasTransformProperty:Bool;
+	public var hasTransformationMatrixProperty:Bool;
+	public var hasRadianRotation:Bool;
+	
+	public var proxyClass:Class<Dynamic>;
+	public var proxyFactory:ValEditObject->Dynamic;
+	
+	public var propertyMap:PropertyMap;
+	public var proxyPropertyMap:PropertyMap;
+	
+	private var _IDToObject:Map<String, ValEditObject> = new Map<String, ValEditObject>();
+	private var _objectIDIndex:Int = -1;
+	
+	private var _IDToTemplate:Map<String, ValEditTemplate> = new Map<String, ValEditTemplate>();
+	private var _templateIDIndex:Int = -1;
 	
 	private var _containers:Map<DisplayObjectContainer, ExposedCollection> = new Map<DisplayObjectContainer, ExposedCollection>();
 	private var _pool:Array<ExposedCollection> = new Array<ExposedCollection>();
@@ -39,12 +56,13 @@ class ValEditClass
 	/**
 	   
 	**/
-	public function new(classReference:Class<Dynamic>, className:String, sourceCollection:ExposedCollection, canBeCreated:Bool, ?constructorCollection:ExposedCollection) 
+	public function new(classReference:Class<Dynamic>, className:String, sourceCollection:ExposedCollection, canBeCreated:Bool, objectType:Int, ?constructorCollection:ExposedCollection) 
 	{
 		this.classReference = classReference;
 		this.className = className;
 		this.sourceCollection = sourceCollection;
 		this.canBeCreated = canBeCreated;
+		this.objectType = objectType;
 		this.constructorCollection = constructorCollection;
 	}
 	
@@ -56,9 +74,8 @@ class ValEditClass
 		this.numInstances = 0;
 		this.numTemplates = 0;
 		
-		this._nameToObject.clear();
-		this._objectToName.clear();
-		this._objectNameIndex = -1;
+		this._IDToObject.clear();
+		this._objectIDIndex = -1;
 	}
 	
 	public function addCategory(category:String):Void
@@ -85,41 +102,40 @@ class ValEditClass
 		return collection;
 	}
 	
-	public function makeObjectName():String
+	public function makeObjectID():String
 	{
-		var objName:String = null;
+		var objID:String = null;
 		while (true)
 		{
-			this._objectNameIndex++;
-			objName = this.className + this._objectNameIndex;
-			if (!this._nameToObject.exists(objName)) break;
+			this._objectIDIndex++;
+			objID = this.className + this._objectIDIndex;
+			if (!this._IDToObject.exists(objID)) break;
 		}
-		return objName;
+		return objID;
 	}
 	
-	public function objectNameExists(name:String):Bool
+	public function objectIDExists(name:String):Bool
 	{
-		return this._nameToObject.exists(name);
+		return this._IDToObject.exists(name);
 	}
 	
-	public function addObject(object:Dynamic, name:String = null):Void
+	public function addObject(object:ValEditObject):Void
 	{
-		if (name == null) name = makeObjectName();
-		this._nameToObject.set(name, object);
-		this._objectToName.set(object, name);
+		if (object.id == null) object.id = makeObjectID();
+		this._IDToObject.set(object.id, object);
 		this.numInstances++;
 	}
 	
-	public function getObjectByName(name:String):Dynamic
+	public function getObjectByID(id:String):ValEditObject
 	{
-		return this._nameToObject.get(name);
+		return this._IDToObject.get(id);
 	}
 	
-	public function getObjectList(?objList:Array<Dynamic>):Array<Dynamic>
+	public function getObjectList(?objList:Array<ValEditObject>):Array<ValEditObject>
 	{
-		if (objList == null) objList = new Array<Dynamic>();
+		if (objList == null) objList = new Array<ValEditObject>();
 		
-		for (obj in _nameToObject)
+		for (obj in this._IDToObject)
 		{
 			objList.push(obj);
 		}
@@ -127,66 +143,52 @@ class ValEditClass
 		return objList;
 	}
 	
-	public function getObjectName(object:Dynamic):String
+	public function removeObject(object:ValEditObject):Void
 	{
-		return this._objectToName.get(object);
-	}
-	
-	public function hasObject(object:Dynamic):Bool
-	{
-		return this._objectToName.exists(object);
-	}
-	
-	public function removeObject(object:Dynamic):Void
-	{
-		var name:String = this._objectToName.get(object);
-		this._nameToObject.remove(name);
-		this._objectToName.remove(object);
+		this._IDToObject.remove(object.id);
 		this.numInstances--;
 	}
 	
-	public function removeObjectByName(name:String):Void
+	public function removeObjectByID(id:String):Void
 	{
-		var object:Dynamic = this._nameToObject.get(name);
-		this._nameToObject.remove(name);
-		this._objectToName.remove(object);
+		this._IDToObject.remove(id);
 		this.numInstances--;
 	}
 	
-	public function makeTemplateName():String
+	public function makeTemplateID():String
 	{
-		var templateName:String = null;
+		var templateID:String = null;
 		while (true)
 		{
-			this._templateNameIndex++;
-			templateName = this.className + " template" + this._templateNameIndex;
-			if (!this._nameToTemplate.exists(templateName)) break;
+			this._templateIDIndex++;
+			templateID = this.className + " template" + this._templateIDIndex;
+			if (!this._IDToTemplate.exists(templateID)) break;
 		}
-		return templateName;
+		return templateID;
 	}
 	
-	public function templateNameExists(name:String):Bool
+	public function templateIDExists(id:String):Bool
 	{
-		return this._nameToTemplate.exists(name);
+		return this._IDToTemplate.exists(id);
 	}
 	
 	public function addTemplate(template:ValEditTemplate):Void
 	{
-		if (template.name == null) template.name = makeTemplateName();
-		this._nameToTemplate.set(template.name, template);
+		if (template.id == null) template.id = makeTemplateID();
+		this._IDToTemplate.set(template.id, template);
 		this.numTemplates++;
 	}
 	
-	public function getTemplateByName(name:String):ValEditTemplate
+	public function getTemplateByID(id:String):ValEditTemplate
 	{
-		return _nameToTemplate.get(name);
+		return this._IDToTemplate.get(id);
 	}
 	
 	public function getTemplateList(?templateList:Array<ValEditTemplate>):Array<ValEditTemplate>
 	{
 		if (templateList == null) templateList = new Array<ValEditTemplate>();
 		
-		for (template in _nameToTemplate)
+		for (template in _IDToTemplate)
 		{
 			templateList.push(template);
 		}
@@ -196,13 +198,13 @@ class ValEditClass
 	
 	public function removeTemplate(template:ValEditTemplate):Void
 	{
-		this._nameToTemplate.remove(template.name);
+		this._IDToTemplate.remove(template.id);
 		this.numTemplates--;
 	}
 	
-	public function removeTemplateByName(name:String):Void
+	public function removeTemplateByID(id:String):Void
 	{
-		this._nameToTemplate.remove(name);
+		this._IDToTemplate.remove(id);
 		this.numTemplates--;
 	}
 	
@@ -229,6 +231,11 @@ class ValEditClass
 		collection.parentValue = parentValue;
 		collection.object = object;
 		collection.uiContainer = container;
+		
+		if (Std.isOfType(object, ValEditObject))
+		{
+			cast(object, ValEditObject).collection = collection;
+		}
 		
 		return collection;
 	}
@@ -269,6 +276,10 @@ class ValEditClass
 		{
 			this._containers.remove(container);
 			collection.parentValue = null;
+			if (Std.isOfType(collection.object, ValEditObject))
+			{
+				cast(collection.object, ValEditObject).collection = null;
+			}
 			collection.object = null;
 			collection.uiContainer = null;
 			this._pool.push(collection);

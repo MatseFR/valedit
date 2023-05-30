@@ -13,64 +13,99 @@ class StringIndexedMap<V>
 
 	public function set(key:String, value:V):Void
 	{
-		if (map.exists(key)) {
-			values[map.get(key)] = value;
-		} else {
-			map.set(key, keys.length);
-			keys.push(key);
-			values.push(value);
+		if (this.map.exists(key))
+		{
+			this.values[this.map.get(key)] = value;
+		}
+		else
+		{
+			this.map.set(key, this.keys.length);
+			this.keys.push(key);
+			this.values.push(value);
+		}
+	}
+	
+	public function insert(key:String, value:V, at:Int):Void
+	{
+		var count:Int = this.keys.length;
+		if (this.map.exists(key))
+		{
+			var index:Int = this.map.get(key);
+			this.keys.splice(index, 1);
+			this.values.splice(index, 1);
+			this.map.remove(key);
+			count--;
+			for (i in index...count)
+			{
+				this.map.set(keys[i], i);
+			}
+		}
+		
+		this.map.set(key, at);
+		this.keys.insert(at, key);
+		this.values.insert(at, value);
+		count++;
+		for (i in at + 1...count)
+		{
+			this.map.set(keys[i], i);
 		}
 	}
 	
 	public function get(key:String):Null<V>
 	{
-		if (map.exists(key)) {
-			return values[map.get(key)];
-		} else {
+		if (this.map.exists(key))
+		{
+			return this.values[map.get(key)];
+		}
+		else
+		{
 			return null;
 		}
 	}
 	
 	public function remove(key:String):Void
 	{
-		if (map.exists(key)) {
-			var index:Int = map.get(key);
-			keys.splice(index, 1);
-			values.splice(index, 1);
-			map.remove(key);
-			for (i in index...keys.length) {
-				map.set(keys[i], i);
+		if (this.map.exists(key))
+		{
+			var index:Int = this.map.get(key);
+			this.keys.splice(index, 1);
+			this.values.splice(index, 1);
+			this.map.remove(key);
+			var count:Int = this.keys.length;
+			for (i in index...count)
+			{
+				this.map.set(keys[i], i);
 			}
 		}
 	}
 	
 	public function exists(key:String):Bool
 	{
-		return map.exists(key);
+		return this.map.exists(key);
 	}
 	
 	public function iterator():Iterator<V>
 	{
-		return values.iterator();
+		return this.values.iterator();
 	}
 	
 	public function keysIterator():Iterator<String>
 	{
-		return keys.iterator();
+		return this.keys.iterator();
 	}
 	
 	public function valuesIterator():Iterator<V>
 	{
-		return values.iterator();
+		return this.values.iterator();
 	}
 	
 	public function getKeys():Array<String>
 	{
-		return keys.copy();
+		return this.keys.copy();
 	}
 	
 	public function getValues():Array<V>
 	{
-		return values.copy();
+		return this.values.copy();
 	}
 }

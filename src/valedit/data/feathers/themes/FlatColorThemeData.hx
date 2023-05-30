@@ -110,11 +110,6 @@ class FlatColorThemeData
 		return collection;
 	}
 	
-	//static public function exposeControlSettings(collection:ExposedCollection = null):ExposedCollection
-	//{
-		////var 
-	//}
-	
 	static public function exposeTextSettings(collection:ExposedCollection = null):ExposedCollection
 	{
 		var bool:ExposedBool;

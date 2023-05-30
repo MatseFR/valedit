@@ -9,15 +9,15 @@ class ValEditTemplate
 	public var className:String;
 	public var collection:ExposedCollection;
 	public var constructorCollection:ExposedCollection;
-	public var name:String;
+	public var id:String;
 	public var numInstances(default, null):Int;
 	public var object:Dynamic;
 	
 	private var _instances:Array<ValEditObject> = new Array<ValEditObject>();
 	
-	public function new(?name:String, ?object:Dynamic, ?className:String, ?collection:ExposedCollection, ?constructorCollection:ExposedCollection) 
+	public function new(?id:String, ?object:Dynamic, ?className:String, ?collection:ExposedCollection, ?constructorCollection:ExposedCollection) 
 	{
-		this.name = name;
+		this.id = id;
 		this.object = object;
 		this.className = className;
 		this.collection = collection;

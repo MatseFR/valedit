@@ -10,7 +10,9 @@ import valedit.ExposedCollection;
 import valedit.data.openfl.display.DisplayData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
+import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatRange;
+import valedit.value.ExposedFontName;
 import valedit.value.ExposedInt;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
@@ -254,10 +256,34 @@ class TextData
 	{
 		var bool:ExposedBool;
 		var color:ExposedColor;
+		var float:ExposedFloat;
+		var font:ExposedFontName;
 		var int:ExposedInt;
 		var select:ExposedSelect;
+		var str:ExposedString;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("font"))
+		{
+			font = new ExposedFontName("font");
+			font.isNullable = true;
+			collection.addValue(font, groupName);
+		}
+		
+		if (!collection.hasValue("size"))
+		{
+			int = new ExposedInt("size");
+			int.isNullable = true;
+			collection.addValue(int, groupName);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			color.isNullable = true;
+			collection.addValue(color, groupName);
+		}
 		
 		if (!collection.hasValue("align"))
 		{
@@ -271,38 +297,222 @@ class TextData
 			collection.addValue(select, groupName);
 		}
 		
-		if (!collection.hasValue("blockIndent"))
-		{
-			int = new ExposedInt("blockIndent");
-			collection.addValue(int, groupName);
-		}
-		
 		if (!collection.hasValue("bold"))
 		{
 			bool = new ExposedBool("bold");
+			bool.isNullable = true;
 			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("italic"))
+		{
+			bool = new ExposedBool("italic");
+			bool.isNullable = true;
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("underline"))
+		{
+			bool = new ExposedBool("underline");
+			bool.isNullable = true;
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("leftMargin"))
+		{
+			int = new ExposedInt("leftMargin");
+			int.isNullable = true;
+			collection.addValue(int, groupName);
+		}
+		
+		if (!collection.hasValue("rightMargin"))
+		{
+			int = new ExposedInt("rightMargin");
+			int.isNullable = true;
+			collection.addValue(int, groupName);
+		}
+		
+		if (!collection.hasValue("leading"))
+		{
+			int = new ExposedInt("leading");
+			int.isNullable = true;
+			collection.addValue(int, groupName);
+		}
+		
+		if (!collection.hasValue("indent"))
+		{
+			int = new ExposedInt("indent");
+			int.isNullable = true;
+			collection.addValue(int, groupName);
+		}
+		
+		if (!collection.hasValue("blockIndent"))
+		{
+			int = new ExposedInt("blockIndent");
+			int.isNullable = true;
+			collection.addValue(int, groupName);
 		}
 		
 		if (!collection.hasValue("bullet"))
 		{
 			bool = new ExposedBool("bullet");
+			bool.isNullable = true;
 			collection.addValue(bool, groupName);
 		}
 		
-		if (!collection.hasValue("color"))
+		if (!collection.hasValue("kerning"))
 		{
-			color = new ExposedColor("color");
-			collection.addValue(color, groupName);
+			bool = new ExposedBool("kerning");
+			bool.isNullable = true;
+			collection.addValue(bool, groupName);
 		}
 		
+		if (!collection.hasValue("letterSpacing"))
+		{
+			float = new ExposedFloat("letterSpacing");
+			float.isNullable = true;
+			collection.addValue(float, groupName);
+		}
 		
+		// TODO : tabStops
+		
+		if (!collection.hasValue("target"))
+		{
+			str = new ExposedString("target");
+			str.isNullable = true;
+			collection.addValue(str, groupName);
+		}
+		
+		if (!collection.hasValue("url"))
+		{
+			str = new ExposedString("url");
+			str.isNullable = true;
+			collection.addValue(str, groupName);
+		}
 		
 		return collection;
 	}
 	
 	static public function exposeTextFormatConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
+		var bool:ExposedBool;
+		var color:ExposedColor;
+		var font:ExposedFontName;
+		var int:ExposedInt;
+		var select:ExposedSelect;
+		var str:ExposedString;
+		
 		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("font"))
+		{
+			font = new ExposedFontName("font");
+			font.isNullable = true;
+			font.defaultValue = null;
+			collection.addValue(font, groupName);
+		}
+		
+		if (!collection.hasValue("size"))
+		{
+			int = new ExposedInt("size");
+			int.isNullable = true;
+			int.defaultValue = null;
+			collection.addValue(int, groupName);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			color.isNullable = true;
+			color.defaultValue = null;
+			collection.addValue(color, groupName);
+		}
+		
+		if (!collection.hasValue("bold"))
+		{
+			bool = new ExposedBool("bold");
+			bool.isNullable = true;
+			bool.defaultValue = null;
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("italic"))
+		{
+			bool = new ExposedBool("italic");
+			bool.isNullable = true;
+			bool.defaultValue = null;
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("underline"))
+		{
+			bool = new ExposedBool("underline");
+			bool.isNullable = true;
+			bool.defaultValue = null;
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("url"))
+		{
+			str = new ExposedString("url");
+			str.isNullable = true;
+			str.defaultValue = null;
+			collection.addValue(str, groupName);
+		}
+		
+		if (!collection.hasValue("target"))
+		{
+			str = new ExposedString("target");
+			str.isNullable = true;
+			str.defaultValue = null;
+			collection.addValue(str, groupName);
+		}
+		
+		if (!collection.hasValue("align"))
+		{
+			select = new ExposedSelect("align");
+			select.add("center", TextFormatAlign.CENTER);
+			select.add("end", TextFormatAlign.END);
+			select.add("justify", TextFormatAlign.JUSTIFY);
+			select.add("left", TextFormatAlign.LEFT);
+			select.add("right", TextFormatAlign.RIGHT);
+			select.add("start", TextFormatAlign.START);
+			select.isNullable = true;
+			select.defaultValue = null;
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("leftMargin"))
+		{
+			int = new ExposedInt("leftMargin");
+			int.isNullable = true;
+			int.defaultValue = null;
+			collection.addValue(int, groupName);
+		}
+		
+		if (!collection.hasValue("rightMargin"))
+		{
+			int = new ExposedInt("rightMargin");
+			int.isNullable = true;
+			int.defaultValue = null;
+			collection.addValue(int, groupName);
+		}
+		
+		if (!collection.hasValue("indent"))
+		{
+			int = new ExposedInt("indent");
+			int.isNullable = true;
+			int.defaultValue = null;
+			collection.addValue(int, groupName);
+		}
+		
+		if (!collection.hasValue("leading"))
+		{
+			int = new ExposedInt("leading");
+			int.isNullable = true;
+			int.defaultValue = null;
+			collection.addValue(int, groupName);
+		}
 		
 		return collection;
 	}

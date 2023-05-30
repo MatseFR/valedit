@@ -1,5 +1,6 @@
 package valedit.value;
 
+import openfl.errors.Error;
 import valedit.ExposedValue;
 import valedit.ValEditObject;
 
@@ -13,16 +14,16 @@ class ExposedObjectReference extends ExposedValue
 	public var allowSelfReference:Bool;
 	public var classList(default, null):Array<String>;
 	
-	private var _valEditObject:ValEditObject;
+	private var _valEditObjectReference:ValEditObject;
 	
 	override function set_value(value:Dynamic):Dynamic 
 	{
 		if (Std.isOfType(value, ValEditObject))
 		{
-			this._valEditObject = cast value;
-			return super.set_value(this._valEditObject.object);
+			this._valEditObjectReference = cast value;
+			return super.set_value(this._valEditObjectReference.object);
 		}
-		this._valEditObject = null;
+		this._valEditObjectReference = null;
 		return super.set_value(value);
 	}
 
@@ -66,16 +67,18 @@ class ExposedObjectReference extends ExposedValue
 		if (json == null) json = {};
 		if (this.value != null)
 		{
-			if (this._valEditObject != null)
+			if (this._valEditObjectReference != null)
 			{
-				json.value = this._valEditObject.name;
-				json.clss = ValEdit.getObjectClassName(this._valEditObject.object);
+				json.value = this._valEditObjectReference.id;
+				json.clss = this._valEditObjectReference.className;
 			}
 			else
 			{
-				var className:String = ValEdit.getObjectClassName(this.value);
-				json.value = ValEdit.getObjectNameWithClassName(this.value, className);
-				json.clss = className;
+				//var className:String = ValEdit.getObjectClassName(this.value);
+				//json.value = ValEdit.getObjectNameWithClassName(this.value, className);
+				//json.clss = className;
+				
+				throw new Error("missing ValEditObject");
 			}
 		}
 		return super.toJSON(json);
@@ -85,13 +88,15 @@ class ExposedObjectReference extends ExposedValue
 	{
 		if (this.value != null)
 		{
-			if (this._valEditObject != null)
+			if (this._valEditObjectReference != null)
 			{
-				Reflect.setField(json, this.propertyName, this._valEditObject.name);
+				Reflect.setField(json, this.propertyName, this._valEditObjectReference.id);
 			}
 			else
 			{
-				Reflect.setField(json, this.propertyName, ValEdit.getObjectName(this.value));
+				//Reflect.setField(json, this.propertyName, ValEdit.getObjectID(this.value));
+				
+				throw new Error("missing ValEditObject");
 			}
 		}
 	}

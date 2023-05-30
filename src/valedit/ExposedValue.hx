@@ -62,13 +62,25 @@ class ExposedValue extends EventDispatcher
 	{
 		if (this._object == value) return value;
 		var nullObject:Bool = this._object == null;
-		this._object = value;
+		if (Std.isOfType(value, ValEditObject))
+		{
+			this._valEditObject = cast value;
+			this._object = this._valEditObject.object;
+			this._extras.object = this._valEditObject.object;
+		}
+		else
+		{
+			this._object = value;
+			this._extras.object = value;
+		}
 		if (nullObject && this._storedValue != null)
 		{
-			Reflect.setProperty(this._object, propertyName, this._storedValue);
+			//Reflect.setProperty(this._object, propertyName, this._storedValue);
+			var value:Dynamic = this._storedValue;
+			this._storedValue = null;
+			this.value = value;
 		}
 		this._storedValue = null;
-		this._extras.object = value;
 		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE);
 		return this._object;
 	}
@@ -109,10 +121,16 @@ class ExposedValue extends EventDispatcher
 			this._extras.execute();
 			if (this.parentValue != null) this.parentValue.childValueChanged();
 			if (this.updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
+			
+			if (this._valEditObject != null)
+			{
+				this._valEditObject.valueChange(this.propertyName);
+			}
 		}
 		return value;
 	}
 	
+	private var _valEditObject:ValEditObject;
 	private var _storedValue:Dynamic;
 	private var _childValues:Array<ExposedValue> = new Array<ExposedValue>();
 	
@@ -171,6 +189,15 @@ class ExposedValue extends EventDispatcher
 	public function removeChildValue(value:ExposedValue):Void
 	{
 		this._childValues.remove(value);
+	}
+	
+	/**
+	   
+	**/
+	public function valueChanged():Void
+	{
+		readValue();
+		if (this._uiControl != null) this._uiControl.updateExposedValue();
 	}
 	
 	/**
