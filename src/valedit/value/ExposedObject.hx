@@ -51,7 +51,7 @@ class ExposedObject extends ExposedValue
 		}
 	}
 	
-	override public function readValue():Void 
+	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
 		for (value in this._childValues)
 		{

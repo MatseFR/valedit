@@ -1,6 +1,8 @@
 package valedit;
 import openfl.display.DisplayObjectContainer;
 import openfl.errors.Error;
+import openfl.events.EventDispatcher;
+import valedit.events.ValueEvent;
 import valedit.ui.UICollection;
 import valedit.value.ExposedGroup;
 
@@ -8,7 +10,7 @@ import valedit.value.ExposedGroup;
  * ...
  * @author Matse
  */
-class ExposedCollection 
+class ExposedCollection extends EventDispatcher
 {
 	public var object(get, set):Dynamic;
 	public var parentValue(get, set):ExposedValue;
@@ -74,7 +76,7 @@ class ExposedCollection
 	**/
 	public function new() 
 	{
-		
+		super();
 	}
 	
 	public function clear():Void
@@ -103,6 +105,11 @@ class ExposedCollection
 		}
 	}
 	
+	private function onValueChange(evt:ValueEvent):Void
+	{
+		this.dispatchEvent(evt);
+	}
+	
 	/**
 	   
 	   @param	value
@@ -111,6 +118,7 @@ class ExposedCollection
 	public function addValue(value:ExposedValue, groupName:String = null):Void
 	{
 		value.collection = this;
+		value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		if (groupName != null)
 		{
 			this._groupMap[groupName].addValue(value);
@@ -136,6 +144,7 @@ class ExposedCollection
 	public function addValueAfter(value:ExposedValue, afterValueName:String, groupName:String = null):Void
 	{
 		value.collection = this;
+		value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		if (groupName != null)
 		{
 			this._groupMap[groupName].addValueAfter(value, afterValueName);
@@ -167,6 +176,7 @@ class ExposedCollection
 	public function addValueBefore(value:ExposedValue, beforeValueName:String, groupName:String = null):Void
 	{
 		value.collection = this;
+		value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		if (groupName != null)
 		{
 			this._groupMap[groupName].addValueBefore(value, beforeValueName);
@@ -253,6 +263,7 @@ class ExposedCollection
 		value = this._valueMap[propertyName];
 		if (value != null)
 		{
+			value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 			this._valueList.remove(value);
 			this._valueMap.remove(propertyName);
 			return value;
@@ -261,7 +272,11 @@ class ExposedCollection
 		for (group in this._groupList)
 		{
 			value = group.removeValueByName(propertyName);
-			if (value != null) return value;
+			if (value != null)
+			{
+				value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+				return value;
+			}
 		}
 		return null;
 	}

@@ -2,6 +2,7 @@ package valedit.value;
 import openfl.errors.Error;
 import valedit.ExposedCollection;
 import valedit.ExposedValue;
+import valedit.events.ValueEvent;
 import valedit.ui.IGroupUI;
 import valedit.ui.IValueUI;
 
@@ -85,12 +86,17 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	
-	override public function readValue():Void 
+	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
 		for (value in this._valueList)
 		{
 			value.readValue();
 		}
+	}
+	
+	private function onValueChange(evt:ValueEvent):Void
+	{
+		dispatchEvent(evt);
 	}
 	
 	/**
@@ -99,8 +105,14 @@ class ExposedGroup extends ExposedValue
 	**/
 	public function addValue(value:ExposedValue):Void
 	{
+		if (!value.hasEventListener(ValueEvent.VALUE_CHANGE))
+		{
+			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		}
+		
 		this._valueList.push(value);
 		this._valueMap[value.propertyName] = value;
+		
 		if (Std.isOfType(value, ExposedGroup))
 		{
 			this._groupList.push(cast value);
@@ -117,6 +129,11 @@ class ExposedGroup extends ExposedValue
 	
 	public function addValueAfter(value:ExposedValue, afterValueName:String):Void
 	{
+		if (!value.hasEventListener(ValueEvent.VALUE_CHANGE))
+		{
+			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		}
+		
 		var afterValue:ExposedValue = this._valueMap[afterValueName];
 		if (afterValue == null)
 		{
@@ -142,6 +159,11 @@ class ExposedGroup extends ExposedValue
 	
 	public function addValueBefore(value:ExposedValue, beforeValueName:String):Void
 	{
+		if (!value.hasEventListener(ValueEvent.VALUE_CHANGE))
+		{
+			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		}
+		
 		var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 		if (beforeValue == null)
 		{
@@ -262,6 +284,11 @@ class ExposedGroup extends ExposedValue
 				value = group.removeValueByName(propertyName);
 				if (value != null) break;
 			}
+		}
+		
+		if (value != null)
+		{
+			value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		}
 		return value;
 	}

@@ -5,6 +5,7 @@ import openfl.geom.Rectangle;
 import ui.IInteractiveObject;
 import ui.feathers.controls.SelectionBox;
 import ui.shape.PivotIndicator;
+import valedit.events.ValueEvent;
 import valedit.util.PropertyMap;
 
 /**
@@ -42,7 +43,16 @@ class ValEditObject extends EventDispatcher
 	
 	public var isMouseDown:Bool;
 	
-	public var collection:ExposedCollection;
+	public var collection(get, set):ExposedCollection;
+	private var _collection:ExposedCollection;
+	private function get_collection():ExposedCollection { return this._collection; }
+	private function set_collection(value:ExposedCollection):ExposedCollection
+	{
+		if (value == this._collection) return value;
+		if (this._collection != null) this._collection.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		if (value != null) value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		return this._collection = value;
+	}
 	
 	public var interactiveObject(get, set):IInteractiveObject;
 	private var _interactiveObject:IInteractiveObject;
@@ -112,7 +122,28 @@ class ValEditObject extends EventDispatcher
 		this._regularPropertyName = this.propertyMap.getRegularPropertyName(propertyName);
 		if (this._regularPropertyName == null) this._regularPropertyName = propertyName;
 		
-		if (this._interactiveObject != null && this._interactiveObject.hasInterestIn(this._regularPropertyName))//this.interactiveObject.propertyMap.hasPropertyRegular(this._regularPropertyName))
+		if (this._interactiveObject != null && this._interactiveObject.hasInterestIn(this._regularPropertyName))
+		{
+			this._interactiveObject.objectUpdate(this);
+		}
+		
+		if (this._selectionBox != null && this._selectionBox.hasInterestIn(this._regularPropertyName))
+		{
+			this._selectionBox.objectUpdate(this);
+		}
+		
+		if (this._pivotIndicator != null && this._pivotIndicator.hasInterestIn(this._regularPropertyName))
+		{
+			this._pivotIndicator.objectUpdate(this);
+		}
+	}
+	
+	private function onValueChange(evt:ValueEvent):Void
+	{
+		this._regularPropertyName = this.propertyMap.getRegularPropertyName(evt.value.propertyName);
+		if (this._regularPropertyName == null) this._regularPropertyName = evt.value.propertyName;
+		
+		if (this._interactiveObject != null && this._interactiveObject.hasInterestIn(this._regularPropertyName))
 		{
 			this._interactiveObject.objectUpdate(this);
 		}
@@ -154,9 +185,9 @@ class ValEditObject extends EventDispatcher
 		if (this._realPropertyName == null) this._realPropertyName = regularPropertyName;
 		Reflect.setProperty(this.object, this._realPropertyName, value);
 		
-		if (dispatchValueChange && this.collection != null)
+		if (dispatchValueChange && this._collection != null)
 		{
-			var value:ExposedValue = this.collection.getValue(this._realPropertyName);
+			var value:ExposedValue = this._collection.getValue(this._realPropertyName);
 			value.valueChanged();
 		}
 		

@@ -12,6 +12,7 @@ import valedit.value.extra.ValueExtraContainer;
 class ExposedValue extends EventDispatcher
 {
 	public var collection(get, set):ExposedCollection;
+	public var concatenatedPropertyName(get, never):String;
 	/* used as value when object is null */
 	public var defaultValue:Dynamic = null;
 	/* all extras are executed when an ExposedValue's value changes */
@@ -36,6 +37,19 @@ class ExposedValue extends EventDispatcher
 		return this._collection = value;
 	}
 	
+	private function get_concatenatedPropertyName():String
+	{
+		var name:String = this.propertyName;
+		var parent:ExposedValue = this.parentValue;
+		while (parent != null)
+		{
+			name = parent.name + "." + name;
+			parent = parent.parentValue;
+		}
+		
+		return name;
+	}
+	
 	private var _extras:ValueExtraContainer = new ValueExtraContainer();
 	private function get_extras():ValueExtraContainer { return this._extras; }
 	
@@ -45,7 +59,7 @@ class ExposedValue extends EventDispatcher
 	{
 		if (this._isEditable == value) return value;
 		this._isEditable = value;
-		ValueEvent.dispatch(this, ValueEvent.EDITABLE_CHANGE);
+		ValueEvent.dispatch(this, ValueEvent.EDITABLE_CHANGE, this);
 		for (val in this._childValues)
 		{
 			val.isEditable = this._isEditable;
@@ -81,7 +95,7 @@ class ExposedValue extends EventDispatcher
 			this.value = value;
 		}
 		this._storedValue = null;
-		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE);
+		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE, this);
 		return this._object;
 	}
 	
@@ -168,9 +182,14 @@ class ExposedValue extends EventDispatcher
 		}
 	}
 	
-	public function readValue():Void
+	public function readValue(dispatchEventIfChange:Bool = true):Void
 	{
-		this._storedValue = this.value;
+		var val:Dynamic = this.value;
+		if (this._storedValue != val)
+		{
+			this._storedValue = val;
+			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+		}
 	}
 	
 	/**
@@ -196,7 +215,7 @@ class ExposedValue extends EventDispatcher
 	**/
 	public function valueChanged():Void
 	{
-		readValue();
+		readValue(false);
 		if (this._uiControl != null) this._uiControl.updateExposedValue();
 	}
 	

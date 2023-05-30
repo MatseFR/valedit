@@ -20,7 +20,7 @@ class ExposedSeparator extends ExposedValue
 		// nothing
 	}
 	
-	override public function readValue():Void 
+	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
 		// nothing
 	}
