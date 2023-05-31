@@ -159,24 +159,54 @@ class ValEditObject extends EventDispatcher
 		}
 	}
 	
-	//private var _sourceName:String;
-	//private var _targetName:String;
-	//private function updateValue(regularPropertyName:String, sourceObject:Dynamic, sourceMap:PropertyMap, targetObject:Dynamic, targetMap:PropertyMap):Void
-	//{
-		//this._sourceName = sourceMap.getObjectPropertyName(regularPropertyName);
-		//if (this._sourceName == null) this._sourceName = regularPropertyName;
-		//
-		//this._targetName = targetMap.getObjectPropertyName(regularPropertyName);
-		//if (this._targetName == null) this._targetName = regularPropertyName;
-		//
-		//Reflect.setProperty(targetObject, this._targetName, Reflect.getProperty(sourceObject, this._sourceName));
-	//}
-	
 	public function getProperty(regularPropertyName:String):Dynamic
 	{
 		this._realPropertyName = this.propertyMap.getObjectPropertyName(regularPropertyName);
 		if (this._realPropertyName == null) this._realPropertyName = regularPropertyName;
 		return Reflect.getProperty(this.object, this._realPropertyName);
+	}
+	
+	public function modifyProperty(regularPropertyName:String, value:Dynamic, objectOnly:Bool = false, dispatchValueChange:Bool = true):Void
+	{
+		this._realPropertyName = this.propertyMap.getObjectPropertyName(regularPropertyName);
+		if (this._realPropertyName == null) this._realPropertyName = regularPropertyName;
+		Reflect.setProperty(this.object, this._realPropertyName, Reflect.getProperty(this.object, this._realPropertyName) + value);
+		
+		if (dispatchValueChange && this._collection != null)
+		{
+			var value:ExposedValue = this._collection.getValue(this._realPropertyName);
+			value.valueChanged();
+			this._collection.readValues();
+			this._collection.uiCollection.update(value.uiControl);
+		}
+		
+		if (!objectOnly)
+		{
+			if (this.realObject != this.object)
+			{
+				this._realPropertyName = this.realPropertyMap.getObjectPropertyName(regularPropertyName);
+				if (this._realPropertyName == null) this._realPropertyName = regularPropertyName;
+				Reflect.setProperty(this.realObject, this._realPropertyName, Reflect.getProperty(this.realObject, this._realPropertyName) + value);
+			}
+			
+			if (this._interactiveObject != null && this._interactiveObject.hasInterestIn(regularPropertyName))
+			{
+				this._interactiveObject.objectUpdate(this);
+			}
+			
+			if (!this.isMouseDown)
+			{
+				if (this._selectionBox != null && this._selectionBox.hasInterestIn(regularPropertyName))
+				{
+					this._selectionBox.objectUpdate(this);
+				}
+				
+				if (this._pivotIndicator != null && this._pivotIndicator.hasInterestIn(regularPropertyName))
+				{
+					this._pivotIndicator.objectUpdate(this);
+				}
+			}
+		}
 	}
 	
 	public function setProperty(regularPropertyName:String, value:Dynamic, objectOnly:Bool = false, dispatchValueChange:Bool = true):Void
@@ -189,6 +219,8 @@ class ValEditObject extends EventDispatcher
 		{
 			var value:ExposedValue = this._collection.getValue(this._realPropertyName);
 			value.valueChanged();
+			this._collection.readValues();
+			this._collection.uiCollection.update(value.uiControl);
 		}
 		
 		if (!objectOnly)

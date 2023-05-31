@@ -135,6 +135,7 @@ class ExposedValue extends EventDispatcher
 			this._extras.execute();
 			if (this.parentValue != null) this.parentValue.childValueChanged();
 			if (this.updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
+			this._collection.readValues();
 			
 			if (this._valEditObject != null)
 			{
@@ -188,6 +189,7 @@ class ExposedValue extends EventDispatcher
 		if (this._storedValue != val)
 		{
 			this._storedValue = val;
+			if (this._uiControl != null) this._uiControl.updateExposedValue();
 			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
 		}
 	}
@@ -216,7 +218,7 @@ class ExposedValue extends EventDispatcher
 	public function valueChanged():Void
 	{
 		readValue(false);
-		if (this._uiControl != null) this._uiControl.updateExposedValue();
+		//if (this._uiControl != null) this._uiControl.updateExposedValue();
 	}
 	
 	/**
@@ -224,11 +226,12 @@ class ExposedValue extends EventDispatcher
 	**/
 	public function childValueChanged():Void
 	{
-		if (this.updateCollectionUIOnChange) 
-		{
-			this._collection.uiCollection.update(this._uiControl);
+		//if (this.updateCollectionUIOnChange) 
+		//{
+			//this._collection.uiCollection.update(this._uiControl);
+			this._collection.readValues();
 			if (this.parentValue != null) this.parentValue.childValueChanged();
-		}
+		//}
 	}
 	
 	/**

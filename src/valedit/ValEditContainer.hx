@@ -1,5 +1,6 @@
 package valedit;
 import editor.MouseController;
+import events.SelectionEvent;
 import feathers.data.ArrayCollection;
 import haxe.ds.ObjectMap;
 import openfl.Lib;
@@ -202,7 +203,11 @@ class ValEditContainer
 	private var _mouseObjectRestoreX:Float;
 	private var _mouseObjectRestoreY:Float;
 	
+	private var _selection:ValEditObjectGroup = new ValEditObjectGroup();
+	
 	private var _mouseDownOnObject:Bool;
+	private var _mouseDownWithCtrl:Bool;
+	private var _mouseDownWithShift:Bool;
 	
 	private var _pt:Point;
 	
@@ -287,7 +292,7 @@ class ValEditContainer
 				}
 				var dispatcher:EventDispatcher = cast object.interactiveObject;
 				dispatcher.addEventListener(MouseEvent.MOUSE_DOWN, onObjectMouseDown);
-				dispatcher.addEventListener(MouseEvent.MOUSE_UP, onObjectMouseUp);
+				//dispatcher.addEventListener(MouseEvent.MOUSE_UP, onObjectMouseUp);
 			
 			#if starling
 			case ObjectType.DISPLAY_STARLING :
@@ -349,7 +354,7 @@ class ValEditContainer
 				}
 				var dispatcher:EventDispatcher = cast object.interactiveObject;
 				dispatcher.removeEventListener(MouseEvent.MOUSE_DOWN, onObjectMouseDown);
-				dispatcher.removeEventListener(MouseEvent.MOUSE_UP, onObjectMouseUp);
+				//dispatcher.removeEventListener(MouseEvent.MOUSE_UP, onObjectMouseUp);
 			
 			#if starling
 			case ObjectType.DISPLAY_STARLING :
@@ -393,14 +398,18 @@ class ValEditContainer
 			_containerUI = new Sprite();
 		}
 		
+		ValEdit.selection.addEventListener(SelectionEvent.CHANGE, onSelectionChange);
 		this._containerUI.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		Lib.current.stage.addEventListener(MouseEvent.CLICK, onStageMouseClick);
 	}
 	
 	public function close():Void
 	{
 		if (!this._isOpen) return;
 		
+		ValEdit.selection.removeEventListener(SelectionEvent.CHANGE, onSelectionChange);
 		this._containerUI.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+		Lib.current.stage.removeEventListener(MouseEvent.CLICK, onStageMouseClick);
 	}
 	
 	private function onObjectMouseDown(evt:MouseEvent):Void
@@ -410,19 +419,24 @@ class ValEditContainer
 		if (this._mouseDownOnObject) return;
 		this._mouseDownOnObject = true;
 		
+		this._mouseDownWithCtrl = evt.ctrlKey;
+		this._mouseDownWithShift = evt.shiftKey;
+		
 		var object:ValEditObject = this._interactiveObjectToValEditObject.get(evt.target);
-		if (this._mouseObject != null && this._mouseObject != object)
+		if (this._mouseObject != null && this._mouseObject != object && !this._mouseDownWithCtrl && !this._mouseDownWithShift)
 		{
 			ValEdit.selection.object = null;
 		}
 		this._mouseObject = object;
 		this._mouseObject.isMouseDown = true;
+		this._selection.isMouseDown = true;
 		this._mouseObjectOffsetX = evt.localX;
 		this._mouseObjectOffsetY = evt.localY;
 		this._mouseObjectRestoreX = this._mouseObject.getProperty(RegularPropertyName.X);
 		this._mouseObjectRestoreY = this._mouseObject.getProperty(RegularPropertyName.Y);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, onObjectMouseMove);
 		
+		cast(this._mouseObject.interactiveObject, EventDispatcher).addEventListener(MouseEvent.MOUSE_UP, onObjectMouseUp);
 		cast(this._mouseObject.interactiveObject, EventDispatcher).addEventListener(MouseEvent.RELEASE_OUTSIDE, onObjectMouseUpOutside);
 	}
 	
@@ -431,33 +445,34 @@ class ValEditContainer
 		//trace("ValEditContainer.onObjectMouseUp");
 		
 		Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onObjectMouseMove);
+		cast(this._mouseObject.interactiveObject, EventDispatcher).removeEventListener(MouseEvent.MOUSE_UP, onObjectMouseUp);
 		cast(this._mouseObject.interactiveObject, EventDispatcher).removeEventListener(MouseEvent.RELEASE_OUTSIDE, onObjectMouseUpOutside);
-		ValEdit.selection.object = this._mouseObject;
+		
+		if ((this._mouseDownWithCtrl && evt.ctrlKey) || (this._mouseDownWithShift && evt.shiftKey))
+		{
+			if (this._selection.hasObject(this._mouseObject))
+			{
+				ValEdit.selection.removeObject(this._mouseObject);
+			}
+			else
+			{
+				ValEdit.selection.addObject(this._mouseObject);
+			}
+		}
+		else if (!this._selection.hasObject(this._mouseObject))
+		{
+			ValEdit.selection.object = this._mouseObject;
+		}
 		
 		this._mouseObject.isMouseDown = false;
+		this._selection.isMouseDown = false;
 		
-		var box:SelectionBox = this._mouseObject.selectionBox;
-		if (box == null)
-		{
-			box = SelectionBox.fromPool();
-			this._containerUI.addChild(box);
-			this._mouseObject.selectionBox = box;
-		}
-		else
-		{
-			box.objectUpdate(this._mouseObject);
-		}
+		this._mouseObject = null;
 		
-		var pivot:PivotIndicator = this._mouseObject.pivotIndicator;
-		if (pivot == null)
+		for (obj in this._selection)
 		{
-			pivot = PivotIndicator.fromPool();
-			this._containerUI.addChild(pivot);
-			this._mouseObject.pivotIndicator = pivot;
-		}
-		else
-		{
-			pivot.objectUpdate(this._mouseObject);
+			obj.selectionBox.objectUpdate(obj);
+			obj.pivotIndicator.objectUpdate(obj);
 		}
 	}
 	
@@ -466,20 +481,43 @@ class ValEditContainer
 		trace("ValEditContainer.onObjectMouseUpOutside");
 		
 		Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onObjectMouseMove);
+		cast(this._mouseObject.interactiveObject, EventDispatcher).removeEventListener(MouseEvent.MOUSE_UP, onObjectMouseUp);
 		cast(this._mouseObject.interactiveObject, EventDispatcher).removeEventListener(MouseEvent.RELEASE_OUTSIDE, onObjectMouseUpOutside);
 		
 		this._mouseObject.isMouseDown = false;
+		this._selection.isMouseDown = false;
+		
+		if (!this._selection.hasObject(this._mouseObject))
+		{
+			ValEdit.selection.object = this._mouseObject;
+		}
 		
 		this._mouseObject.setProperty(RegularPropertyName.X, this._mouseObjectRestoreX);
 		this._mouseObject.setProperty(RegularPropertyName.Y, this._mouseObjectRestoreY);
+		
+		this._mouseObject = null;
 	}
 	
 	private function onObjectMouseMove(evt:MouseEvent):Void
 	{
 		//trace("ValEditContainer.onObjectMouseMove " + evt.target + " " + evt.currentTarget + " " + evt.stageX + ", " + evt.localY);
 		
-		this._mouseObject.setProperty(RegularPropertyName.X, evt.stageX - this._mouseObjectOffsetX + this._cameraX);
-		this._mouseObject.setProperty(RegularPropertyName.Y, evt.stageY - this._mouseObjectOffsetY + this._cameraY);
+		this._mouseDownWithCtrl = false;
+		this._mouseDownWithShift = false;
+		
+		if (!this._selection.hasObject(this._mouseObject))
+		{
+			ValEdit.selection.object = null;
+			this._mouseObject.setProperty(RegularPropertyName.X, evt.stageX - this._mouseObjectOffsetX + this._cameraX);
+			this._mouseObject.setProperty(RegularPropertyName.Y, evt.stageY - this._mouseObjectOffsetY + this._cameraY);
+		}
+		else
+		{
+			var moveX:Float = evt.stageX - this._mouseObjectOffsetX + this._cameraX - this._mouseObject.getProperty(RegularPropertyName.X);
+			var moveY:Float = evt.stageY - this._mouseObjectOffsetY + this._cameraY - this._mouseObject.getProperty(RegularPropertyName.Y);
+			this._selection.modifyProperty(RegularPropertyName.X, moveX);
+			this._selection.modifyProperty(RegularPropertyName.Y, moveY);
+		}
 	}
 	
 	#if starling
@@ -494,12 +532,16 @@ class ValEditContainer
 			if (this._mouseDownOnObject) return;
 			this._mouseDownOnObject = true;
 			
-			if (this._mouseObject != null && this._mouseObject != object)
+			this._mouseDownWithCtrl = evt.ctrlKey;
+			this._mouseDownWithShift = evt.shiftKey;
+			
+			if (this._mouseObject != null && this._mouseObject != object && !this._mouseDownWithCtrl && !this._mouseDownWithShift)
 			{
 				ValEdit.selection.object = null;
 			}
 			this._mouseObject = object;
 			this._mouseObject.isMouseDown = true;
+			this._selection.isMouseDown = true;
 			_pt = touch.getLocation(cast object.interactiveObject, _pt);
 			if (this._mouseObject.hasPivotProperties)
 			{
@@ -518,47 +560,156 @@ class ValEditContainer
 		else if (touch.phase == TouchPhase.ENDED)
 		{
 			Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onObjectMouseMove);
-			ValEdit.selection.object = this._mouseObject;
+			
+			if ((this._mouseDownWithCtrl && evt.ctrlKey) || (this._mouseDownWithShift && evt.shiftKey))
+			{
+				if (this._selection.hasObject(this._mouseObject))
+				{
+					ValEdit.selection.removeObject(this._mouseObject);
+				}
+				else
+				{
+					ValEdit.selection.addObject(this._mouseObject);
+				}
+			}
+			else if (!this._selection.hasObject(this._mouseObject))
+			{
+				ValEdit.selection.object = this._mouseObject;
+			}
 			
 			this._mouseObject.isMouseDown = false;
+			this._selection.isMouseDown = false;
 			
 			if (MouseController.isMouseOverUI)
 			{
+				// release outside
 				this._mouseObject.setProperty(RegularPropertyName.X, this._mouseObjectRestoreX);
 				this._mouseObject.setProperty(RegularPropertyName.Y, this._mouseObjectRestoreY);
 			}
 			
-			var box:SelectionBox = this._mouseObject.selectionBox;
-			if (box == null)
-			{
-				box = SelectionBox.fromPool();
-				this._containerUI.addChild(box);
-				this._mouseObject.selectionBox = box;
-			}
-			else
-			{
-				box.objectUpdate(this._mouseObject);
-			}
+			this._mouseObject = null;
 			
-			var pivot:PivotIndicator = this._mouseObject.pivotIndicator;
-			if (pivot == null)
+			for (obj in this._selection)
 			{
-				pivot = PivotIndicator.fromPool();
-				this._containerUI.addChild(pivot);
-				this._mouseObject.pivotIndicator = pivot;
-			}
-			else
-			{
-				pivot.objectUpdate(this._mouseObject);
+				obj.selectionBox.objectUpdate(obj);
+				obj.pivotIndicator.objectUpdate(obj);
 			}
 		}
 	}
 	#end
 	
+	private function select(object:ValEditObject):Void
+	{
+		var box:SelectionBox = SelectionBox.fromPool();
+		this._containerUI.addChild(box);
+		object.selectionBox = box;
+		
+		var pivot:PivotIndicator = PivotIndicator.fromPool();
+		this._containerUI.addChild(pivot);
+		object.pivotIndicator = pivot;
+		
+		this._selection.addObject(object);
+	}
+	
+	private function unselect(object:ValEditObject):Void
+	{
+		var box:SelectionBox = object.selectionBox;
+		this._containerUI.removeChild(box);
+		object.selectionBox = null;
+		box.pool();
+		
+		var pivot:PivotIndicator = object.pivotIndicator;
+		this._containerUI.removeChild(pivot);
+		object.pivotIndicator = null;
+		pivot.pool();
+		
+		this._selection.removeObject(object);
+	}
+	
+	private function clearSelection():Void
+	{
+		for (object in this._selection)
+		{
+			this._objectsToDeselect.push(object);
+		}
+		
+		for (object in this._objectsToDeselect)
+		{
+			unselect(object);
+		}
+		this._objectsToDeselect.resize(0);
+	}
+	
+	private var _objectsToDeselect:Array<ValEditObject> = new Array<ValEditObject>();
+	private function onSelectionChange(evt:SelectionEvent):Void
+	{
+		if (evt.object == null)
+		{
+			clearSelection();
+		}
+		else if (Std.isOfType(evt.object, ValEditTemplate))
+		{
+			clearSelection();
+		}
+		else if (Std.isOfType(evt.object, ValEditObject))
+		{
+			var object:ValEditObject = cast evt.object;
+			if (this._selection.hasObject(object))
+			{
+				for (obj in this._selection)
+				{
+					if (obj != object) this._objectsToDeselect.push(obj);
+				}
+				
+				for (obj in this._objectsToDeselect)
+				{
+					unselect(obj);
+				}
+				this._objectsToDeselect.resize(0);
+			}
+			else
+			{
+				clearSelection();
+				select(object);
+			}
+		}
+		else // ValEditGroup
+		{
+			var group:ValEditObjectGroup = cast evt.object;
+			for (obj in this._selection)
+			{
+				if (!group.hasObject(obj))
+				{
+					this._objectsToDeselect.push(obj);
+				}
+			}
+			
+			for (obj in this._objectsToDeselect)
+			{
+				unselect(obj);
+			}
+			this._objectsToDeselect.resize(0);
+			
+			for (obj in group)
+			{
+				if (!this._selection.hasObject(obj))
+				{
+					select(obj);
+				}
+			}
+		}
+	}
+	
+	private function onStageMouseClick(evt:MouseEvent):Void
+	{
+		if (evt.target != Lib.current.stage) return;
+		if (this._mouseObject != null) return;
+		if (this._selection.numObjects == 0) return;
+		ValEdit.selection.object = null;
+	}
+	
 	private function onEnterFrame(evt:Event):Void
 	{
-		//trace("onEnterFrame");
-		
 		this._mouseDownOnObject = false;
 	}
 }

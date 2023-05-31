@@ -53,9 +53,11 @@ class ExposedObject extends ExposedValue
 	
 	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
+		//this._storedValue = Reflect.getProperty(this._object, this.propertyName);
+		//reloadObject();
 		for (value in this._childValues)
 		{
-			value.readValue();
+			value.readValue(dispatchEventIfChange);
 		}
 	}
 	
