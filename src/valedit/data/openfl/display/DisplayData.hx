@@ -82,6 +82,7 @@ class DisplayData
 			select.add("ALWAYS", PixelSnapping.ALWAYS);
 			select.add("AUTO", PixelSnapping.AUTO);
 			select.add("NEVER", PixelSnapping.NEVER);
+			select.defaultValue = PixelSnapping.AUTO;
 			collection.addValue(select, groupName);
 		}
 		
