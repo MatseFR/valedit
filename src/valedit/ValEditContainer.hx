@@ -16,6 +16,7 @@ import starling.events.Touch;
 import starling.events.TouchEvent;
 import starling.events.TouchPhase;
 #end
+import ui.IInteractiveObject;
 import ui.UIConfig;
 import ui.feathers.controls.SelectionBox;
 import ui.shape.PivotIndicator;
@@ -209,7 +210,10 @@ class ValEditContainer
 	private var _mouseDownWithCtrl:Bool;
 	private var _mouseDownWithShift:Bool;
 	
-	private var _pt:Point;
+	private var _middleMouseX:Float;
+	private var _middleMouseY:Float;
+	
+	private var _pt:Point = new Point();
 	
 	private var _layerNameIndex:Int = 0;
 	
@@ -292,7 +296,6 @@ class ValEditContainer
 				}
 				var dispatcher:EventDispatcher = cast object.interactiveObject;
 				dispatcher.addEventListener(MouseEvent.MOUSE_DOWN, onObjectMouseDown);
-				//dispatcher.addEventListener(MouseEvent.MOUSE_UP, onObjectMouseUp);
 			
 			#if starling
 			case ObjectType.DISPLAY_STARLING :
@@ -354,7 +357,6 @@ class ValEditContainer
 				}
 				var dispatcher:EventDispatcher = cast object.interactiveObject;
 				dispatcher.removeEventListener(MouseEvent.MOUSE_DOWN, onObjectMouseDown);
-				//dispatcher.removeEventListener(MouseEvent.MOUSE_UP, onObjectMouseUp);
 			
 			#if starling
 			case ObjectType.DISPLAY_STARLING :
@@ -401,6 +403,7 @@ class ValEditContainer
 		ValEdit.selection.addEventListener(SelectionEvent.CHANGE, onSelectionChange);
 		this._containerUI.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		Lib.current.stage.addEventListener(MouseEvent.CLICK, onStageMouseClick);
+		Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, onMiddleMouseDown);
 	}
 	
 	public function close():Void
@@ -410,12 +413,11 @@ class ValEditContainer
 		ValEdit.selection.removeEventListener(SelectionEvent.CHANGE, onSelectionChange);
 		this._containerUI.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 		Lib.current.stage.removeEventListener(MouseEvent.CLICK, onStageMouseClick);
+		Lib.current.stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP, onMiddleMouseUp);
 	}
 	
 	private function onObjectMouseDown(evt:MouseEvent):Void
 	{
-		//trace("ValEditContainer.onObjectMouseDown");
-		
 		if (this._mouseDownOnObject) return;
 		this._mouseDownOnObject = true;
 		
@@ -500,8 +502,6 @@ class ValEditContainer
 	
 	private function onObjectMouseMove(evt:MouseEvent):Void
 	{
-		//trace("ValEditContainer.onObjectMouseMove " + evt.target + " " + evt.currentTarget + " " + evt.stageX + ", " + evt.localY);
-		
 		this._mouseDownWithCtrl = false;
 		this._mouseDownWithShift = false;
 		
@@ -523,8 +523,6 @@ class ValEditContainer
 	#if starling
 	private function onObjectTouch(evt:TouchEvent):Void
 	{
-		//trace("ValEditContainer.onObjectTouch");
-		
 		var touch:Touch = evt.touches[0];
 		var object:ValEditObject = this._interactiveObjectToValEditObject.get(evt.target);
 		if (touch.phase == TouchPhase.BEGAN)
@@ -559,6 +557,8 @@ class ValEditContainer
 		}
 		else if (touch.phase == TouchPhase.ENDED)
 		{
+			if (this._mouseObject == null) return;
+			
 			Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onObjectMouseMove);
 			
 			if ((this._mouseDownWithCtrl && evt.ctrlKey) || (this._mouseDownWithShift && evt.shiftKey))
@@ -706,6 +706,47 @@ class ValEditContainer
 		if (this._mouseObject != null) return;
 		if (this._selection.numObjects == 0) return;
 		ValEdit.selection.object = null;
+	}
+	
+	private function onMiddleMouseDown(evt:MouseEvent):Void
+	{
+		trace("onMiddleMouseDown");
+		
+		if (evt.target != Lib.current.stage && !Std.isOfType(evt.target, IInteractiveObject)) return;
+		Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_UP, onMiddleMouseUp);
+		Lib.current.stage.addEventListener(MouseEvent.RELEASE_OUTSIDE, onMiddleMouseUpOutside);
+		Lib.current.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMiddleMouseMove);
+		
+		this._middleMouseX = evt.stageX;
+		this._middleMouseY = evt.stageY;
+	}
+	
+	private function onMiddleMouseUp(evt:MouseEvent):Void
+	{
+		Lib.current.stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP, onMiddleMouseUp);
+		Lib.current.stage.removeEventListener(MouseEvent.RELEASE_OUTSIDE, onMiddleMouseUpOutside);
+		Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMiddleMouseMove);
+	}
+	
+	private function onMiddleMouseUpOutside(evt:MouseEvent):Void
+	{
+		Lib.current.stage.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP, onMiddleMouseUp);
+		Lib.current.stage.removeEventListener(MouseEvent.RELEASE_OUTSIDE, onMiddleMouseUpOutside);
+		Lib.current.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMiddleMouseMove);
+	}
+	
+	private function onMiddleMouseMove(evt:MouseEvent):Void
+	{
+		var xLoc:Float = evt.stageX;
+		var yLoc:Float = evt.stageY;
+		var moveX:Float = xLoc - this._middleMouseX;
+		var moveY:Float = yLoc - this._middleMouseY;
+		
+		this.cameraX -= moveX;
+		this.cameraY -= moveY;
+		
+		this._middleMouseX = xLoc;
+		this._middleMouseY = yLoc;
 	}
 	
 	private function onEnterFrame(evt:Event):Void
