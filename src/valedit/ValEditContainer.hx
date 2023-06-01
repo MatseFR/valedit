@@ -17,7 +17,6 @@ import starling.events.TouchEvent;
 import starling.events.TouchPhase;
 #end
 import ui.IInteractiveObject;
-import ui.UIConfig;
 import ui.feathers.controls.SelectionBox;
 import ui.shape.PivotIndicator;
 import valedit.util.RegularPropertyName;

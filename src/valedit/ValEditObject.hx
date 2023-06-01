@@ -14,8 +14,8 @@ import valedit.util.PropertyMap;
  */
 class ValEditObject extends EventDispatcher
 {
-	public var clss:ValEditClass;
 	public var className:String;
+	public var clss:ValEditClass;
 	public var id:String;
 	public var object:Dynamic;
 	public var objectType:Int = -1;
