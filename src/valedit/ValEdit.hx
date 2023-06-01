@@ -574,12 +574,12 @@ class ValEdit
 		return valObject;
 	}
 	
-	static public function createTemplateWithClass<T>(clss:Class<T>, ?name:String, ?constructorCollection:ExposedCollection):ValEditTemplate
+	static public function createTemplateWithClass<T>(clss:Class<T>, ?id:String, ?constructorCollection:ExposedCollection):ValEditTemplate
 	{
-		return createTemplateWithClassName(Type.getClassName(clss), name, constructorCollection);
+		return createTemplateWithClassName(Type.getClassName(clss), id, constructorCollection);
 	}
 	
-	static public function createTemplateWithClassName(className:String, ?name:String, ?constructorCollection:ExposedCollection):ValEditTemplate
+	static public function createTemplateWithClassName(className:String, ?id:String, ?constructorCollection:ExposedCollection):ValEditTemplate
 	{
 		var params:Array<Dynamic>;
 		if (constructorCollection != null)
@@ -594,7 +594,7 @@ class ValEdit
 		var object:Dynamic = Type.createInstance(valClass.classReference, params);
 		var collection:ExposedCollection = valClass.getCollection();
 		collection.object = object;
-		var template:ValEditTemplate = new ValEditTemplate(name, object, className, collection, constructorCollection);
+		var template:ValEditTemplate = new ValEditTemplate(valClass, id, object, collection, constructorCollection);
 		
 		registerTemplateInternal(template, valClass);
 		

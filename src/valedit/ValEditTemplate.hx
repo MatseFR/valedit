@@ -7,6 +7,7 @@ package valedit;
 class ValEditTemplate 
 {
 	public var className:String;
+	public var clss:ValEditClass;
 	public var collection:ExposedCollection;
 	public var constructorCollection:ExposedCollection;
 	public var id:String;
@@ -15,11 +16,12 @@ class ValEditTemplate
 	
 	private var _instances:Array<ValEditObject> = new Array<ValEditObject>();
 	
-	public function new(?id:String, ?object:Dynamic, ?className:String, ?collection:ExposedCollection, ?constructorCollection:ExposedCollection) 
+	public function new(clss:ValEditClass, ?id:String, ?object:Dynamic, ?collection:ExposedCollection, ?constructorCollection:ExposedCollection) 
 	{
+		this.clss = clss;
+		this.className = clss.className;
 		this.id = id;
 		this.object = object;
-		this.className = className;
 		this.collection = collection;
 		this.constructorCollection = constructorCollection;
 	}
