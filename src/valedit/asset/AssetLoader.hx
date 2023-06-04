@@ -1,7 +1,7 @@
 package valedit.asset;
 import haxe.Constraints.Function;
 import openfl.utils.Future;
-import utils.ArgumentsCount;
+import valeditor.utils.ArgumentsCount;
 
 /**
  * ...

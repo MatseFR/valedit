@@ -1,7 +1,6 @@
 package valedit;
 import flash.display.DisplayObjectContainer;
 import haxe.Constraints.Function;
-import ui.IInteractiveObject;
 import valedit.util.PropertyMap;
 
 /**
@@ -10,28 +9,21 @@ import valedit.util.PropertyMap;
  */
 class ValEditClass 
 {
-	public var canBeCreated(default, null):Bool;
+	public var canBeCreated:Bool;
 	public var categories(default, null):Array<String> = new Array<String>();
-	public var className(default, null):String;
-	public var classReference(default, null):Class<Dynamic>;
-	public var constructorCollection(default, null):ExposedCollection;
+	public var className:String;
+	public var classReference:Class<Dynamic>;
+	public var constructorCollection:ExposedCollection;
 	public var numInstances(default, null):Int = 0;
 	public var numTemplates(default, null):Int = 0;
 	public var objectType:Int;
-	public var sourceCollection(default, null):ExposedCollection;
+	public var sourceCollection:ExposedCollection;
 	public var superClassNames(default, null):Array<String> = new Array<String>();
 	
 	/** Dynamic->DisplayObjectContainer->Void */
 	public var addToDisplayCustom:Function;
 	/** Dynamic->DisplayObjectContainer->Void */
 	public var removeFromDisplayCustom:Function;
-	
-	public var interactiveFactory:ValEditObject->IInteractiveObject;
-	
-	public var hasPivotProperties:Bool;
-	public var hasTransformProperty:Bool;
-	public var hasTransformationMatrixProperty:Bool;
-	public var hasRadianRotation:Bool;
 	
 	public var proxyClass:Class<Dynamic>;
 	public var proxyFactory:ValEditObject->Dynamic;
@@ -56,7 +48,7 @@ class ValEditClass
 	/**
 	   
 	**/
-	public function new(classReference:Class<Dynamic>, className:String, sourceCollection:ExposedCollection, canBeCreated:Bool, objectType:Int, ?constructorCollection:ExposedCollection) 
+	public function new(?classReference:Class<Dynamic>, ?className:String, ?sourceCollection:ExposedCollection, canBeCreated:Bool = true, objectType:Int = -1, ?constructorCollection:ExposedCollection) 
 	{
 		this.classReference = classReference;
 		this.className = className;
@@ -232,10 +224,10 @@ class ValEditClass
 		collection.object = object;
 		collection.uiContainer = container;
 		
-		if (Std.isOfType(object, ValEditObject))
-		{
-			cast(object, ValEditObject).collection = collection;
-		}
+		//if (Std.isOfType(object, ValEditObject))
+		//{
+			//cast(object, ValEditObject).collection = collection;
+		//}
 		
 		return collection;
 	}
@@ -276,10 +268,10 @@ class ValEditClass
 		{
 			this._containers.remove(container);
 			collection.parentValue = null;
-			if (Std.isOfType(collection.object, ValEditObject))
-			{
-				cast(collection.object, ValEditObject).collection = null;
-			}
+			//if (Std.isOfType(collection.object, ValEditObject))
+			//{
+				//cast(collection.object, ValEditObject).collection = null;
+			//}
 			collection.object = null;
 			collection.uiContainer = null;
 			this._pool.push(collection);

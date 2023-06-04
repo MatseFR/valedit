@@ -1,6 +1,6 @@
 package valedit;
 import haxe.Constraints.Function;
-import ui.IInteractiveObject;
+import valeditor.ui.IInteractiveObject;
 import valedit.util.PropertyMap;
 
 /**
@@ -9,7 +9,7 @@ import valedit.util.PropertyMap;
  */
 class ValEditClassSettings 
 {
-	public var interactiveFactory:ValEditObject->IInteractiveObject;
+	//public var interactiveFactory:ValEditObject->IInteractiveObject;
 	public var proxyClass:Class<Dynamic>;
 	
 	public var propertyMap:PropertyMap;
@@ -28,10 +28,7 @@ class ValEditClassSettings
 
 	public function new()
 	{
-		//if (propertyMap == null) propertyMap = new PropertyMap();
-		//if (proxyPropertyMap == null) proxyPropertyMap = new PropertyMap();
-		//this.propertyMap = propertyMap;
-		//this.proxyPropertyMap = propertyMap;
+		
 	}
 	
 }

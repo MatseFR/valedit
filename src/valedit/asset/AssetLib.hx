@@ -16,7 +16,7 @@ import openfl.utils.Assets;
 import openfl.utils.ByteArray;
 import starling.textures.SubTexture;
 import starling.textures.TextureAtlas;
-import ui.UIConfig;
+import valeditor.ui.UIConfig;
 #if starling
 import starling.textures.Texture;
 #end

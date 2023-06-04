@@ -1,5 +1,5 @@
 package valedit.data.openfl.geom;
-import ui.feathers.variant.TextInputVariant;
+import valeditor.ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloat;

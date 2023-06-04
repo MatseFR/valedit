@@ -3,7 +3,7 @@ import starling.display.BlendMode;
 import starling.display.DisplayObject;
 import starling.textures.TextureSmoothing;
 import starling.utils.Align;
-import ui.feathers.variant.TextInputVariant;
+import valeditor.ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;

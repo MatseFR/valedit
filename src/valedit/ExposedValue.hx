@@ -4,6 +4,9 @@ import openfl.events.EventDispatcher;
 import valedit.events.ValueEvent;
 import valedit.ui.IValueUI;
 import valedit.value.extra.ValueExtraContainer;
+#if valeditor
+import valeditor.ValEditorObject;
+#end
 
 /**
  * ...
@@ -79,11 +82,21 @@ class ExposedValue extends EventDispatcher
 		if (Std.isOfType(value, ValEditObject))
 		{
 			this._valEditObject = cast value;
+			#if valeditor
+			if (Std.isOfType(value, ValEditorObject))
+			{
+				this._valEditorObject = cast value;
+			}
+			#end
 			this._object = this._valEditObject.object;
 			this._extras.object = this._valEditObject.object;
 		}
 		else
 		{
+			this._valEditObject = null;
+			#if valeditor
+			this._valEditorObject = null;
+			#end
 			this._object = value;
 			this._extras.object = value;
 		}
@@ -137,15 +150,20 @@ class ExposedValue extends EventDispatcher
 			if (this.updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
 			this._collection.readValues();
 			
-			if (this._valEditObject != null)
+			#if valeditor
+			if (this._valEditorObject != null)
 			{
-				this._valEditObject.valueChange(this.propertyName);
+				this._valEditorObject.valueChange(this.propertyName);
 			}
+			#end
 		}
 		return value;
 	}
 	
 	private var _valEditObject:ValEditObject;
+	#if valeditor
+	private var _valEditorObject:ValEditorObject;
+	#end
 	private var _storedValue:Dynamic;
 	private var _childValues:Array<ExposedValue> = new Array<ExposedValue>();
 	

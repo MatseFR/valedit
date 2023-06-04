@@ -7,17 +7,17 @@ import haxe.iterators.ArrayIterator;
  */
 class ValEditObjectGroup 
 {
-	public var isMouseDown(get, set):Bool;
-	private var _isMouseDown:Bool;
-	private function get_isMouseDown():Bool { return this._isMouseDown; }
-	private function set_isMouseDown(value:Bool):Bool
-	{
-		for (object in this._objects)
-		{
-			object.isMouseDown = value;
-		}
-		return this._isMouseDown = value;
-	}
+	//public var isMouseDown(get, set):Bool;
+	//private var _isMouseDown:Bool;
+	//private function get_isMouseDown():Bool { return this._isMouseDown; }
+	//private function set_isMouseDown(value:Bool):Bool
+	//{
+		//for (object in this._objects)
+		//{
+			//object.isMouseDown = value;
+		//}
+		//return this._isMouseDown = value;
+	//}
 	
 	public var numObjects(get, never):Int;
 	private function get_numObjects():Int { return this._objects.length; }
@@ -59,20 +59,20 @@ class ValEditObjectGroup
 		return this._objects.remove(object);
 	}
 	
-	public function modifyProperty(regularPropertyName:String, value:Dynamic, objectOnly:Bool = false, dispatchValueChange:Bool = true):Void
-	{
-		for (object in this._objects)
-		{
-			object.modifyProperty(regularPropertyName, value, objectOnly, dispatchValueChange);
-		}
-	}
+	//public function modifyProperty(regularPropertyName:String, value:Dynamic, objectOnly:Bool = false, dispatchValueChange:Bool = true):Void
+	//{
+		//for (object in this._objects)
+		//{
+			//object.modifyProperty(regularPropertyName, value, objectOnly, dispatchValueChange);
+		//}
+	//}
 	
-	public function setProperty(regularPropertyName:String, value:Dynamic, objectOnly:Bool = false, dispatchValueChange:Bool = true):Void
-	{
-		for (object in this._objects)
-		{
-			object.setProperty(regularPropertyName, value, objectOnly, dispatchValueChange);
-		}
-	}
+	//public function setProperty(regularPropertyName:String, value:Dynamic, objectOnly:Bool = false, dispatchValueChange:Bool = true):Void
+	//{
+		//for (object in this._objects)
+		//{
+			//object.setProperty(regularPropertyName, value, objectOnly, dispatchValueChange);
+		//}
+	//}
 	
 }

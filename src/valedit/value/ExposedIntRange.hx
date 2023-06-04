@@ -1,6 +1,6 @@
 package valedit.value;
 
-import ui.feathers.variant.TextInputVariant;
+import valeditor.ui.feathers.variant.TextInputVariant;
 import valedit.ExposedValue;
 
 /**

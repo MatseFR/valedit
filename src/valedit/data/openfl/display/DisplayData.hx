@@ -6,7 +6,7 @@ import openfl.display.StageAlign;
 import openfl.display.StageDisplayState;
 import openfl.display.StageQuality;
 import openfl.display.StageScaleMode;
-import ui.feathers.variant.TextInputVariant;
+import valeditor.ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.data.openfl.text.TextData;
 import valedit.value.ExposedBitmapData;
