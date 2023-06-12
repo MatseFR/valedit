@@ -46,6 +46,7 @@ class SimpleThemeData
 			var fonts:Array<Font> = Font.enumerateFonts(true);
 			for (font in fonts)
 			{
+				// TODO : this throws an error on neko target
 				select.add(font.fontName);
 			}
 			collection.addValue(select, groupName);

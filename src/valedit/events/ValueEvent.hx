@@ -2,13 +2,6 @@ package valedit.events;
 
 import openfl.events.Event;
 import openfl.events.EventType;
-#if !flash
-#if (openfl >= "9.1.0")
-import openfl.utils.ObjectPool;
-#else
-import openfl._internal.utils.ObjectPool;
-#end
-#end
 import openfl.events.IEventDispatcher;
 import valedit.ExposedValue;
 
@@ -23,29 +16,23 @@ class ValueEvent extends Event
 	inline static public var VALUE_CHANGE:EventType<ValueEvent> = "value_change";
 	
 	#if !flash
-	static private var _pool:ObjectPool<ValueEvent> = new ObjectPool<ValueEvent>(() -> return new ValueEvent(null, false, false), (event) -> {
-		event.value = null;
-		event.target = null;
-		event.currentTarget = null;
-		event.__preventDefault = false;
-		event.__isCanceled = false;
-		event.__isCanceledNow = false;
-	});
+	private static var _POOL:Array<ValueEvent> = new Array<ValueEvent>();
+	
+	private static function fromPool(type:String, value:ExposedValue, bubbles:Bool, cancelable:Bool):ValueEvent
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(type, value, bubbles, cancelable);
+		return new ValueEvent(type, value, bubbles, cancelable);
+	}
 	#end
 	
 	static public function dispatch(dispatcher:IEventDispatcher, type:String, value:ExposedValue, bubbles:Bool = false, cancelable:Bool = false):Bool
 	{
 		#if flash
-		var event:ValueEvent = new ValueEvent(type, value, bubbles, cancelable);
-		return dispatcher.dispatchEvent(event);
+		return dispatcher.dispatchEvent(new ValueEvent(type, value, bubbles, cancelable));
 		#else
-		var event:ValueEvent = _pool.get();
-		event.type = type;
-		event.value = value;
-		event.bubbles = bubbles;
-		event.cancelable = cancelable;
+		var event:ValueEvent = fromPool(type, value, bubbles, cancelable);
 		var result:Bool = dispatcher.dispatchEvent(event);
-		_pool.release(event);
+		event.pool();
 		return result;
 		#end
 	}
@@ -60,7 +47,33 @@ class ValueEvent extends Event
 	
 	override public function clone():Event 
 	{
+		#if flash
 		return new ValueEvent(this.type, this.value, this.bubbles, this.cancelable);
+		#else
+		return fromPool(this.type, this.value, this.bubbles, this.cancelable);
+		#end
 	}
+	
+	#if !flash
+	public function pool():Void
+	{
+		this.value = null;
+		this.target = null;
+		this.currentTarget = null;
+		this.__preventDefault = false;
+		this.__isCanceled = false;
+		this.__isCanceledNow = false;
+		_POOL[_POOL.length] = this;
+	}
+	
+	public function setTo(type:String, value:ExposedValue, bubbles:Bool = false, cancelable:Bool = false):ValueEvent
+	{
+		this.type = type;
+		this.value = value;
+		this.bubbles = bubbles;
+		this.cancelable = cancelable;
+		return this;
+	}
+	#end
 	
 }
