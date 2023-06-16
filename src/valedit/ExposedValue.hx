@@ -102,7 +102,6 @@ class ExposedValue extends EventDispatcher
 		}
 		if (nullObject && this._storedValue != null)
 		{
-			//Reflect.setProperty(this._object, propertyName, this._storedValue);
 			var value:Dynamic = this._storedValue;
 			this._storedValue = null;
 			this.value = value;
@@ -147,8 +146,7 @@ class ExposedValue extends EventDispatcher
 			Reflect.setProperty(this._object, this.propertyName, value);
 			this._extras.execute();
 			if (this.parentValue != null) this.parentValue.childValueChanged();
-			if (this.updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
-			this._collection.readValues();
+			if (this.updateCollectionUIOnChange) this._collection.readValues();
 			
 			#if valeditor
 			if (this._valEditorObject != null)
@@ -236,7 +234,6 @@ class ExposedValue extends EventDispatcher
 	public function valueChanged():Void
 	{
 		readValue(false);
-		//if (this._uiControl != null) this._uiControl.updateExposedValue();
 	}
 	
 	/**
@@ -244,12 +241,8 @@ class ExposedValue extends EventDispatcher
 	**/
 	public function childValueChanged():Void
 	{
-		//if (this.updateCollectionUIOnChange) 
-		//{
-			//this._collection.uiCollection.update(this._uiControl);
-			this._collection.readValues();
-			if (this.parentValue != null) this.parentValue.childValueChanged();
-		//}
+		this._collection.readValues();
+		if (this.parentValue != null) this.parentValue.childValueChanged();
 	}
 	
 	/**
