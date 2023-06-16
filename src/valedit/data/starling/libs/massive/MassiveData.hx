@@ -4,7 +4,7 @@ import starling.utils.Align;
 import valedit.ExposedCollection;
 import valedit.data.starling.display.StarlingDisplayData;
 import valedit.value.ExposedBool;
-import valedit.value.ExposedFloat;
+import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedIntRange;
@@ -23,50 +23,50 @@ class MassiveData
 	static private function exposeDisplayData(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var floatRange:ExposedFloatRange;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("x"))
 		{
-			float = new ExposedFloat("x");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			float = new ExposedFloat("y");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("offsetX"))
 		{
-			float = new ExposedFloat("offsetX");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("offsetX");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("offsetY"))
 		{
-			float = new ExposedFloat("offsetY");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("offsetY");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("rotation"))
 		{
-			float = new ExposedFloat("rotation");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("rotation");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("scaleX"))
 		{
-			float = new ExposedFloat("scaleX");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("scaleY"))
 		{
-			float = new ExposedFloat("scaleY");
+			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
 			collection.addValue(float, groupName);
 		}
 		
@@ -105,7 +105,7 @@ class MassiveData
 	
 	static public function exposeFrame(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var func:ExposedFunction;
 		var select:ExposedSelect;
 		
@@ -115,18 +115,18 @@ class MassiveData
 		
 		if (!collection.hasValue("pivotX"))
 		{
-			float = new ExposedFloat("pivotX");
+			floatDrag = new ExposedFloatDrag("pivotX");
 			funcExtra = new FunctionCallExtra("pivotUpdate");
-			float.extras.add(funcExtra);
-			collection.addValue(float, groupName);
+			floatDrag.extras.add(funcExtra);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("pivotY"))
 		{
-			float = new ExposedFloat("pivotY");
+			floatDrag = new ExposedFloatDrag("pivotY");
 			funcExtra = new FunctionCallExtra("pivotUpdate");
-			float.extras.add(funcExtra);
-			collection.addValue(float, groupName);
+			floatDrag.extras.add(funcExtra);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("alignPivot"))
@@ -153,7 +153,7 @@ class MassiveData
 	
 	static public function exposeFrameDataProxy(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var func:ExposedFunction;
 		var select:ExposedSelect;
 		var texture:ExposedStarlingTexture;
@@ -168,14 +168,14 @@ class MassiveData
 		
 		if (!collection.hasValue("pivotX"))
 		{
-			float = new ExposedFloat("pivotX");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("pivotX");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("pivotY"))
 		{
-			float = new ExposedFloat("pivotY");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("pivotY");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("alignPivot"))
@@ -227,7 +227,7 @@ class MassiveData
 	{
 		var bool:ExposedBool;
 		var intRange:ExposedIntRange;
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var floatRange:ExposedFloatRange;
 		var select:ExposedSelect;
 		var texture:ExposedStarlingTexture;
@@ -272,14 +272,14 @@ class MassiveData
 		
 		if (!collection.hasValue("renderOffsetX"))
 		{
-			float = new ExposedFloat("renderOffsetX");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("renderOffsetX");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("renderOffsetY"))
 		{
-			float = new ExposedFloat("renderOffsetY");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("renderOffsetY");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("texture"))
@@ -355,7 +355,7 @@ class MassiveData
 	
 	static public function exposeQuadData(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var func:ExposedFunction;
 		var select:ExposedSelect;
 		
@@ -367,30 +367,30 @@ class MassiveData
 		
 		if (!collection.hasValue("width"))
 		{
-			float = new ExposedFloat("width");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("width");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
-			float = new ExposedFloat("height");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("height");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("pivotX"))
 		{
-			float = new ExposedFloat("pivotX");
+			floatDrag = new ExposedFloatDrag("pivotX");
 			funcExtra = new FunctionCallExtra("pivotUpdate");
-			float.extras.add(funcExtra);
-			collection.addValue(float, groupName);
+			floatDrag.extras.add(funcExtra);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("pivotY"))
 		{
-			float = new ExposedFloat("pivotY");
+			floatDrag = new ExposedFloatDrag("pivotY");
 			funcExtra = new FunctionCallExtra("pivotUpdate");
-			float.extras.add(funcExtra);
-			collection.addValue(float, groupName);
+			floatDrag.extras.add(funcExtra);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("alignPivot"))

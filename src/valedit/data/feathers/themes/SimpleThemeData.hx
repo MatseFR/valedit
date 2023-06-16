@@ -6,7 +6,6 @@ import valedit.value.ExposedColor;
 import valedit.value.ExposedColorReadOnly;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedGroup;
-import valedit.value.ExposedInt;
 import valedit.value.ExposedIntRange;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedSeparator;
@@ -24,7 +23,6 @@ class SimpleThemeData
 		var color:ExposedColor;
 		var colorRead:ExposedColorReadOnly;
 		var floatRange:ExposedFloatRange;
-		var int:ExposedInt;
 		var intRange:ExposedIntRange;
 		var select:ExposedSelect;
 		var subGroup:ExposedGroup;

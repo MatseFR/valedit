@@ -6,20 +6,17 @@ import openfl.display.StageAlign;
 import openfl.display.StageDisplayState;
 import openfl.display.StageQuality;
 import openfl.display.StageScaleMode;
-import valeditor.ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.data.openfl.text.TextData;
 import valedit.value.ExposedBitmapData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
-import valedit.value.ExposedFloat;
-import valedit.value.ExposedFloatRange;
+import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedInt;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
-import valedit.value.NumericMode;
 
 /**
  * ...
@@ -98,8 +95,7 @@ class DisplayData
 	static public function exposeDisplayObject(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
-		var float:ExposedFloat;
-		var floatRange:ExposedFloatRange;
+		var floatDrag:ExposedFloatDrag;
 		var obj:ExposedObject;
 		var objRef:ExposedObjectReference;
 		var select:ExposedSelect;
@@ -115,50 +111,50 @@ class DisplayData
 		
 		if (!collection.hasValue("x"))
 		{
-			float = new ExposedFloat("x");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			float = new ExposedFloat("y");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("width"))
 		{
-			float = new ExposedFloat("width");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("width");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
-			float = new ExposedFloat("height");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("height");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("scaleX"))
 		{
-			float = new ExposedFloat("scaleX");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("scaleY"))
 		{
-			float = new ExposedFloat("scaleY");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("alpha"))
 		{
-			floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("rotation"))
 		{
-			floatRange = new ExposedFloatRange("rotation", null, -180, 180, 1, 2, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("rotation", null, -180, 180, 0.5);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("blendMode"))
@@ -245,20 +241,20 @@ class DisplayData
 	static public function exposeFPSConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var color:ExposedColor;
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("x"))
 		{
-			float = new ExposedFloat("x");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			float = new ExposedFloat("y");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("color"))
@@ -371,7 +367,7 @@ class DisplayData
 	{
 		var bool:ExposedBool;
 		var color:ExposedColor;
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var select:ExposedSelect;
 		
 		if (collection == null) collection = new ExposedCollection();
@@ -409,8 +405,8 @@ class DisplayData
 		
 		if (!collection.hasValue("frameRate"))
 		{
-			float = new ExposedFloat("frameRate", null, 2, NumericMode.Positive);
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("frameRate", null, 0, 120, 0.5, 1);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		// TODO : fullScreenSourceRect

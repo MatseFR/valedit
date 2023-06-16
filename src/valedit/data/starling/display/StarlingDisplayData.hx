@@ -3,19 +3,16 @@ import starling.display.BlendMode;
 import starling.display.DisplayObject;
 import starling.textures.TextureSmoothing;
 import starling.utils.Align;
-import valeditor.ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
-import valedit.value.ExposedFloat;
-import valedit.value.ExposedFloatRange;
+import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedNote;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
-import valedit.value.NumericMode;
 import valedit.value.extra.FunctionCallExtra;
 import valedit.value.starling.ExposedStarlingTexture;
 
@@ -29,8 +26,7 @@ class StarlingDisplayData
 	static public function exposeDisplayObject(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
-		var floatRange:ExposedFloatRange;
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var func:ExposedFunction;
 		var object:ExposedObject;
 		var objectRef:ExposedObjectReference;
@@ -47,74 +43,74 @@ class StarlingDisplayData
 		
 		if (!collection.hasValue("x"))
 		{
-			float = new ExposedFloat("x");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			float = new ExposedFloat("y");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("width"))
 		{
-			float = new ExposedFloat("width");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("width");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
-			float = new ExposedFloat("height");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("height");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("pivotX"))
 		{
-			float = new ExposedFloat("pivotX");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("pivotX");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("pivotY"))
 		{
-			float = new ExposedFloat("pivotY");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("pivotY");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("scaleX"))
 		{
-			float = new ExposedFloat("scaleX");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("scaleY"))
 		{
-			float = new ExposedFloat("scaleY");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("alpha"))
 		{
-			floatRange = new ExposedFloatRange("alpha", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("rotation"))
 		{
-			float = new ExposedFloat("rotation");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.01);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("skewX"))
 		{
-			float = new ExposedFloat("skewX");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("skewX");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("skewY"))
 		{
-			float = new ExposedFloat("skewY");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("skewY");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("blendMode"))
@@ -184,7 +180,7 @@ class StarlingDisplayData
 		
 		if (!collection.hasValue("transformationMatrix"))
 		{
-			object = new ExposedObject("transformationMatrix", null, true, true);
+			object = new ExposedObject("transformationMatrix", null, false, true);
 			collection.addValue(object, groupName);
 		}
 		
@@ -285,8 +281,8 @@ class StarlingDisplayData
 		{
 			func = new ExposedFunction("readjustSize", "readjust size");
 			func.addParameter(new ExposedNote("note", "Set width and height to 0 to match texture dimensions"));
-			func.addParameter(new ExposedFloat("width"));
-			func.addParameter(new ExposedFloat("height"));
+			func.addParameter(new ExposedFloatDrag("width"));
+			func.addParameter(new ExposedFloatDrag("height"));
 			collection.addValueAfter(func, "alignPivot", groupName);
 		}
 		
@@ -304,23 +300,23 @@ class StarlingDisplayData
 	
 	static public function exposeQuadConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var color:ExposedColor;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("width"))
 		{
-			float = new ExposedFloat("width", null, 2, NumericMode.Positive);
-			float.defaultValue = 100;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("width", null, 0);
+			floatDrag.defaultValue = 100;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
-			float = new ExposedFloat("height", null, 2, NumericMode.Positive);
-			float.defaultValue = 100;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("height", null, 0);
+			floatDrag.defaultValue = 100;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("color"))
@@ -343,7 +339,7 @@ class StarlingDisplayData
 	
 	static public function exposeSprite3D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -351,39 +347,39 @@ class StarlingDisplayData
 		
 		if (!collection.hasValue("z"))
 		{
-			float = new ExposedFloat("z");
-			collection.addValueAfter(float, "y", groupName);
+			floatDrag = new ExposedFloatDrag("z");
+			collection.addValueAfter(floatDrag, "y", groupName);
 		}
 		
 		if (!collection.hasValue("pivotZ"))
 		{
-			float = new ExposedFloat("pivotZ");
-			collection.addValueAfter(float, "pivotY", groupName);
+			floatDrag = new ExposedFloatDrag("pivotZ", groupName);
+			collection.addValueAfter(floatDrag, "pivotY", groupName);
 		}
 		
 		if (!collection.hasValue("rotationX"))
 		{
-			float = new ExposedFloat("rotationX");
-			collection.addValueAfter(float, "rotation", groupName);
+			floatDrag = new ExposedFloatDrag("rotationX");
+			collection.addValueAfter(floatDrag, "rotation", groupName);
 			collection.removeValueByName("rotation");
 		}
 		
 		if (!collection.hasValue("rotationY"))
 		{
-			float = new ExposedFloat("rotationY");
-			collection.addValueAfter(float, "rotationX", groupName);
+			floatDrag = new ExposedFloatDrag("rotationY");
+			collection.addValueAfter(floatDrag, "rotationX", groupName);
 		}
 		
 		if (!collection.hasValue("rotationZ"))
 		{
-			float = new ExposedFloat("rotationZ");
-			collection.addValueAfter(float, "rotationY", groupName);
+			floatDrag = new ExposedFloatDrag("rotationZ");
+			collection.addValueAfter(floatDrag, "rotationY", groupName);
 		}
 		
 		if (!collection.hasValue("scaleZ"))
 		{
-			float = new ExposedFloat("scaleZ");
-			collection.addValueAfter(float, "scaleY", groupName);
+			floatDrag = new ExposedFloatDrag("scaleZ");
+			collection.addValueAfter(floatDrag, "scaleY", groupName);
 		}
 		
 		return collection;
