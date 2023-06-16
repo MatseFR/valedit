@@ -31,8 +31,8 @@ class ExposedObject extends ExposedValue
 	   
 	   @param	propertyName
 	   @param	name
-	   @param	storeValue
-	   @param	reassignOnChange
+	   @param	storeValue	set this to true for properties where the object keeps changing such as a regular OpenFL DisplayObject's transform
+	   @param	reassignOnChange	set this to true if the object needs to be reassigned after one of its properties value changed
 	**/
 	public function new(propertyName:String, name:String = null, storeValue:Bool = false, reassignOnChange:Bool = false) 
 	{
@@ -53,8 +53,7 @@ class ExposedObject extends ExposedValue
 	
 	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
-		//this._storedValue = Reflect.getProperty(this._object, this.propertyName);
-		//reloadObject();
+		reloadObject();
 		for (value in this._childValues)
 		{
 			value.readValue(dispatchEventIfChange);
@@ -73,7 +72,7 @@ class ExposedObject extends ExposedValue
 	
 	public function reloadObject():Void
 	{
-		this._storedValue = Reflect.getProperty(_object, propertyName);
+		this._storedValue = Reflect.getProperty(this._object, propertyName);
 		for (value in this._childValues)
 		{
 			value.object = _storedValue;
