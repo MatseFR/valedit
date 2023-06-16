@@ -76,7 +76,7 @@ class ExposedFunction extends ExposedValue
 				str = param;
 				if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
 				{
-					val = _collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
+					val = this._collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
 					this._parameterValues.push(val.value);
 				}
 				else
@@ -101,7 +101,7 @@ class ExposedFunction extends ExposedValue
 		Reflect.callMethod(this._object, this.value, this._parameterValues);
 		this._parameterValues.resize(0);
 		
-		if (this.updateCollectionUIOnChange) this._collection.uiCollection.update(this._uiControl);
+		if (this.updateCollectionUIOnChange) this._collection.readValues();
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
