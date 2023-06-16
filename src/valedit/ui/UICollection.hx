@@ -76,17 +76,4 @@ class UICollection
 		this._uiList.push(control);
 	}
 	
-	/**
-	   
-	   @param	exceptControl
-	**/
-	public function update(exceptControl:IValueUI = null):Void
-	{
-		for (control in this._uiList)
-		{
-			if (control == exceptControl) continue;
-			control.updateExposedValue(exceptControl);
-		}
-	}
-	
 }
