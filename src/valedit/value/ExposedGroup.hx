@@ -90,7 +90,7 @@ class ExposedGroup extends ExposedValue
 	{
 		for (value in this._valueList)
 		{
-			value.readValue();
+			value.readValue(dispatchEventIfChange);
 		}
 	}
 	
