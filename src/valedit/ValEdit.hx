@@ -1,4 +1,5 @@
 package valedit;
+import haxe.Constraints.Function;
 import haxe.ds.Map;
 import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
@@ -91,11 +92,22 @@ class ValEdit
 		
 		if (settings != null)
 		{
+			v.disposeFunctionName = settings.objectDisposeFunctionName;
 			v.proxyClass = settings.proxyClass;
 			v.propertyMap = settings.propertyMap;
 			v.proxyPropertyMap = settings.proxyPropertyMap;
+			v.disposeCustom = settings.disposeCustom;
 			v.addToDisplayCustom = settings.addToDisplayCustom;
 			v.removeFromDisplayCustom = settings.removeFromDisplayCustom;
+		}
+		else
+		{
+			#if starling
+			if (objectType == ObjectType.DISPLAY_STARLING)
+			{
+				v.disposeFunctionName = "dispose";
+			}
+			#end
 		}
 		
 		if (v.propertyMap == null)
@@ -403,10 +415,6 @@ class ValEdit
 		
 		valObject.propertyMap = valClass.proxyPropertyMap != null ? valClass.proxyPropertyMap : valClass.propertyMap;
 		valObject.realPropertyMap = valClass.propertyMap;
-		//valObject.hasPivotProperties = valClass.hasPivotProperties;
-		//valObject.hasTransformProperty = valClass.hasTransformProperty;
-		//valObject.hasTransformationMatrixProperty = valClass.hasTransformationMatrixProperty;
-		//valObject.hasRadianRotation = valClass.hasRadianRotation;
 		
 		valObject.ready();
 		
@@ -508,6 +516,16 @@ class ValEdit
 	
 	static private function destroyObjectInternal(valObject:ValEditObject):Void
 	{
+		if (valObject.clss.disposeFunctionName != null)
+		{
+			var func:Function = Reflect.field(valObject.realObject, valObject.clss.disposeFunctionName);
+			Reflect.callMethod(valObject.realObject, func, []);
+		}
+		else if (valObject.clss.disposeCustom != null)
+		{
+			Reflect.callMethod(valObject.clss.disposeCustom, valObject.clss.disposeCustom, [valObject.realObject]);
+		}
+		
 		unregisterObjectInternal(valObject);
 	}
 	

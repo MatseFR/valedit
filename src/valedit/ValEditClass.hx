@@ -14,12 +14,16 @@ class ValEditClass
 	public var className:String;
 	public var classReference:Class<Dynamic>;
 	public var constructorCollection:ExposedCollection;
+	/** if object has a function that should be called when being destroyed, the function's name should go here */
+	public var disposeFunctionName:String = null;
 	public var numInstances(default, null):Int = 0;
 	public var numTemplates(default, null):Int = 0;
 	public var objectType:Int;
 	public var sourceCollection:ExposedCollection;
 	public var superClassNames(default, null):Array<String> = new Array<String>();
 	
+	/** Dynamic->Void */
+	public var disposeCustom:Function;
 	/** Dynamic->DisplayObjectContainer->Void */
 	public var addToDisplayCustom:Function;
 	/** Dynamic->DisplayObjectContainer->Void */
