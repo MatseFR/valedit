@@ -307,14 +307,14 @@ class StarlingDisplayData
 		
 		if (!collection.hasValue("width"))
 		{
-			floatDrag = new ExposedFloatDrag("width", null, 0);
+			floatDrag = new ExposedFloatDrag("width", null, 1);
 			floatDrag.defaultValue = 100;
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
-			floatDrag = new ExposedFloatDrag("height", null, 0);
+			floatDrag = new ExposedFloatDrag("height", null, 1);
 			floatDrag.defaultValue = 100;
 			collection.addValue(floatDrag, groupName);
 		}
