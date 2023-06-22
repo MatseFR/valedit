@@ -103,13 +103,13 @@ class StarlingDisplayData
 		
 		if (!collection.hasValue("skewX"))
 		{
-			floatDrag = new ExposedFloatDrag("skewX");
+			floatDrag = new ExposedFloatDrag("skewX", null, null, null, 0.005, 0.001);
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("skewY"))
 		{
-			floatDrag = new ExposedFloatDrag("skewY");
+			floatDrag = new ExposedFloatDrag("skewY", null, null, null, 0.005, 0.001);
 			collection.addValue(floatDrag, groupName);
 		}
 		
