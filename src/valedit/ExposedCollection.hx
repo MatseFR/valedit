@@ -105,6 +105,14 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
+	public function restoreDefaultValues():Void
+	{
+		for (value in this._valueList)
+		{
+			value.restoreDefaultValue();
+		}
+	}
+	
 	private function onValueChange(evt:ValueEvent):Void
 	{
 		this.dispatchEvent(evt);
