@@ -12,7 +12,7 @@ import valedit.value.ExposedBitmapData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
-import valedit.value.ExposedInt;
+import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
@@ -153,7 +153,7 @@ class DisplayData
 		
 		if (!collection.hasValue("rotation"))
 		{
-			floatDrag = new ExposedFloatDrag("rotation", null, -180, 180, 0.5);
+			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.5);
 			collection.addValue(floatDrag, groupName);
 		}
 		
@@ -269,7 +269,7 @@ class DisplayData
 	static public function exposeInteractiveObject(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
-		var int:ExposedInt;
+		var intDrag:ExposedIntDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -307,8 +307,8 @@ class DisplayData
 		
 		if (!collection.hasValue("tabIndex"))
 		{
-			int = new ExposedInt("tabIndex");
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("tabIndex", null, -1);
+			collection.addValue(intDrag, groupName);
 		}
 		
 		return collection;

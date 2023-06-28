@@ -359,26 +359,26 @@ class StarlingDisplayData
 		
 		if (!collection.hasValue("rotationX"))
 		{
-			floatDrag = new ExposedFloatDrag("rotationX");
+			floatDrag = new ExposedFloatDrag("rotationX", null, null, null, 0.01);
 			collection.addValueAfter(floatDrag, "rotation", groupName);
 			collection.removeValueByName("rotation");
 		}
 		
 		if (!collection.hasValue("rotationY"))
 		{
-			floatDrag = new ExposedFloatDrag("rotationY");
+			floatDrag = new ExposedFloatDrag("rotationY", null, null, null, 0.01);
 			collection.addValueAfter(floatDrag, "rotationX", groupName);
 		}
 		
 		if (!collection.hasValue("rotationZ"))
 		{
-			floatDrag = new ExposedFloatDrag("rotationZ");
+			floatDrag = new ExposedFloatDrag("rotationZ", null, null, null, 0.01);
 			collection.addValueAfter(floatDrag, "rotationY", groupName);
 		}
 		
 		if (!collection.hasValue("scaleZ"))
 		{
-			floatDrag = new ExposedFloatDrag("scaleZ");
+			floatDrag = new ExposedFloatDrag("scaleZ", null, null, null, 0.05);
 			collection.addValueAfter(floatDrag, "scaleY", groupName);
 		}
 		

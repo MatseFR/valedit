@@ -1,9 +1,8 @@
 package valedit.data.openfl.geom;
-import valeditor.ui.feathers.variant.TextInputVariant;
 import valedit.ExposedCollection;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloat;
-import valedit.value.ExposedFloatRange;
+import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedObject;
 
 /**
@@ -16,7 +15,7 @@ class GeomData
 	static public function exposeColorTransform(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var color:ExposedColor;
-		var floatRange:ExposedFloatRange;
+		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -28,50 +27,50 @@ class GeomData
 		
 		if (!collection.hasValue("redMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("redMultiplier", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("redMultiplier", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("redOffset"))
 		{
-			floatRange = new ExposedFloatRange("redOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("redOffset", null, -255, 255);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("greenMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("greenMultiplier", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("greenMultiplier", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("greenOffset"))
 		{
-			floatRange = new ExposedFloatRange("greenOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("greenOffset", null, -255, 255);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("blueMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("blueMultiplier", null, 0, 1, 0.01, 2, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("blueMultiplier", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("blueOffset"))
 		{
-			floatRange = new ExposedFloatRange("blueOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("blueOffset", null, -255, 255);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("alphaMultiplier"))
 		{
-			floatRange = new ExposedFloatRange("alphaMultiplier", null, 0, 1, 0.01, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("alphaMultiplier", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("alphaOffset"))
 		{
-			floatRange = new ExposedFloatRange("alphaOffset", null, -255, 255, 1, 0, TextInputVariant.NUMERIC_SMALL);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("alphaOffset", null, -255, 255);
+			collection.addValue(floatDrag);
 		}
 		
 		return collection;
@@ -79,44 +78,44 @@ class GeomData
 	
 	static public function exposeMatrix(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("a"))
 		{
-			float = new ExposedFloat("a");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("a");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("b"))
 		{
-			float = new ExposedFloat("b");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("b");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("c"))
 		{
-			float = new ExposedFloat("c");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("c");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("d"))
 		{
-			float = new ExposedFloat("d");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("d");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("tx"))
 		{
-			float = new ExposedFloat("tx");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("tx");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("ty"))
 		{
-			float = new ExposedFloat("ty");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("ty");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		return collection;
@@ -124,50 +123,50 @@ class GeomData
 	
 	static public function exposeMatrixConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("a"))
 		{
-			float = new ExposedFloat("a");
-			float.defaultValue = 1;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("a");
+			floatDrag.defaultValue = 1;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("b"))
 		{
-			float = new ExposedFloat("b");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("b");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("c"))
 		{
-			float = new ExposedFloat("c");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("c");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("d"))
 		{
-			float = new ExposedFloat("d");
-			float.defaultValue = 1;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("d");
+			floatDrag.defaultValue = 1;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("tx"))
 		{
-			float = new ExposedFloat("tx");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("tx");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("ty"))
 		{
-			float = new ExposedFloat("ty");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("ty");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		return collection;
@@ -175,20 +174,20 @@ class GeomData
 	
 	static public function exposePoint(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("x"))
 		{
-			float = new ExposedFloat("x");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			float = new ExposedFloat("y");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		return collection;
@@ -196,22 +195,22 @@ class GeomData
 	
 	static public function exposePointConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("x"))
 		{
-			float = new ExposedFloat("x");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("x");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			float = new ExposedFloat("y");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("y");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		return collection;
@@ -219,57 +218,57 @@ class GeomData
 	
 	static public function exposeRectangle(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var obj:ExposedObject;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("x"))
 		{
-			float = new ExposedFloat("x");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			float = new ExposedFloat("y");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("width"))
 		{
-			float = new ExposedFloat("width");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("width");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
-			float = new ExposedFloat("height");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("height");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("top"))
 		{
-			float = new ExposedFloat("top");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("top");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("bottom"))
 		{
-			float = new ExposedFloat("bottom");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("bottom");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("left"))
 		{
-			float = new ExposedFloat("left");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("left");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("right"))
 		{
-			float = new ExposedFloat("right");
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("right");
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("topLeft"))
@@ -295,36 +294,36 @@ class GeomData
 	
 	static public function exposeRectangleConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("x"))
 		{
-			float = new ExposedFloat("x");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("x");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
-			float = new ExposedFloat("x");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("x");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("width"))
 		{
-			float = new ExposedFloat("width");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("width");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
-			float = new ExposedFloat("height");
-			float.defaultValue = 0;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("height");
+			floatDrag.defaultValue = 0;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		return collection;

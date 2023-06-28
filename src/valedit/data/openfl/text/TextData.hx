@@ -11,9 +11,11 @@ import valedit.data.openfl.display.DisplayData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloat;
+import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedFontName;
 import valedit.value.ExposedInt;
+import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 import valedit.value.ExposedText;
@@ -79,8 +81,8 @@ class TextData
 	{
 		var bool:ExposedBool;
 		var color:ExposedColor;
-		var floatRange:ExposedFloatRange;
-		var int:ExposedInt;
+		var floatDrag:ExposedFloatDrag;
+		var intDrag:ExposedIntDrag;
 		var select:ExposedSelect;
 		var str:ExposedString;
 		var text:ExposedText;
@@ -174,8 +176,8 @@ class TextData
 		
 		if (!collection.hasValue("maxChars"))
 		{
-			int = new ExposedInt("maxChars", null, NumericMode.Positive);
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("maxChars", null, 0);
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("mouseWheelEnabled"))
@@ -190,23 +192,23 @@ class TextData
 			collection.addValue(bool, groupName);
 		}
 		
-		// TODO : Nullable Exposed String
 		if (!collection.hasValue("restrict"))
 		{
 			str = new ExposedString("restrict");
+			str.isNullable = true;
 			collection.addValue(str, groupName);
 		}
 		
 		if (!collection.hasValue("scrollH"))
 		{
-			int = new ExposedInt("scrollH", null, NumericMode.Positive);
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("scrollH", null, 0);
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("scrollV"))
 		{
-			int = new ExposedInt("scrollV", null, NumericMode.Positive);
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("scrollV", null, 0);
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("selectable"))
@@ -217,8 +219,8 @@ class TextData
 		
 		if (!collection.hasValue("sharpness"))
 		{
-			floatRange = new ExposedFloatRange("sharpness", null, -400, 400);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("sharpness", null, -400, 400);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		// TODO : StyleSheet
@@ -256,9 +258,9 @@ class TextData
 	{
 		var bool:ExposedBool;
 		var color:ExposedColor;
-		var float:ExposedFloat;
+		var floatDrag:ExposedFloatDrag;
 		var font:ExposedFontName;
-		var int:ExposedInt;
+		var intDrag:ExposedIntDrag;
 		var select:ExposedSelect;
 		var str:ExposedString;
 		
@@ -273,9 +275,9 @@ class TextData
 		
 		if (!collection.hasValue("size"))
 		{
-			int = new ExposedInt("size");
-			int.isNullable = true;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("size", null, 0);
+			intDrag.isNullable = true;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("color"))
@@ -320,37 +322,37 @@ class TextData
 		
 		if (!collection.hasValue("leftMargin"))
 		{
-			int = new ExposedInt("leftMargin");
-			int.isNullable = true;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("leftMargin");
+			intDrag.isNullable = true;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("rightMargin"))
 		{
-			int = new ExposedInt("rightMargin");
-			int.isNullable = true;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("rightMargin");
+			intDrag.isNullable = true;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("leading"))
 		{
-			int = new ExposedInt("leading");
-			int.isNullable = true;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("leading");
+			intDrag.isNullable = true;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("indent"))
 		{
-			int = new ExposedInt("indent");
-			int.isNullable = true;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("indent");
+			intDrag.isNullable = true;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("blockIndent"))
 		{
-			int = new ExposedInt("blockIndent");
-			int.isNullable = true;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("blockIndent");
+			intDrag.isNullable = true;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("bullet"))
@@ -369,9 +371,9 @@ class TextData
 		
 		if (!collection.hasValue("letterSpacing"))
 		{
-			float = new ExposedFloat("letterSpacing");
-			float.isNullable = true;
-			collection.addValue(float, groupName);
+			floatDrag = new ExposedFloatDrag("letterSpacing");
+			floatDrag.isNullable = true;
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		// TODO : tabStops
@@ -398,7 +400,7 @@ class TextData
 		var bool:ExposedBool;
 		var color:ExposedColor;
 		var font:ExposedFontName;
-		var int:ExposedInt;
+		var intDrag:ExposedIntDrag;
 		var select:ExposedSelect;
 		var str:ExposedString;
 		
@@ -414,10 +416,10 @@ class TextData
 		
 		if (!collection.hasValue("size"))
 		{
-			int = new ExposedInt("size");
-			int.isNullable = true;
-			int.defaultValue = null;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("size", null, 0);
+			intDrag.isNullable = true;
+			intDrag.defaultValue = null;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("color"))
@@ -484,34 +486,34 @@ class TextData
 		
 		if (!collection.hasValue("leftMargin"))
 		{
-			int = new ExposedInt("leftMargin");
-			int.isNullable = true;
-			int.defaultValue = null;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("leftMargin");
+			intDrag.isNullable = true;
+			intDrag.defaultValue = null;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("rightMargin"))
 		{
-			int = new ExposedInt("rightMargin");
-			int.isNullable = true;
-			int.defaultValue = null;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("rightMargin");
+			intDrag.isNullable = true;
+			intDrag.defaultValue = null;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("indent"))
 		{
-			int = new ExposedInt("indent");
-			int.isNullable = true;
-			int.defaultValue = null;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("indent");
+			intDrag.isNullable = true;
+			intDrag.defaultValue = null;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("leading"))
 		{
-			int = new ExposedInt("leading");
-			int.isNullable = true;
-			int.defaultValue = null;
-			collection.addValue(int, groupName);
+			intDrag = new ExposedIntDrag("leading");
+			intDrag.isNullable = true;
+			intDrag.defaultValue = null;
+			collection.addValue(intDrag, groupName);
 		}
 		
 		return collection;

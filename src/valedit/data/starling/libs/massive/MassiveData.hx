@@ -1,13 +1,15 @@
 package valedit.data.starling.libs.massive;
 import massive.data.MassiveConstants;
+import starling.textures.TextureSmoothing;
 import starling.utils.Align;
 import valedit.ExposedCollection;
 import valedit.data.starling.display.StarlingDisplayData;
 import valedit.value.ExposedBool;
+import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
-import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedFunction;
-import valedit.value.ExposedIntRange;
+import valedit.value.ExposedIntDrag;
+import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 import valedit.value.extra.FunctionCallExtra;
@@ -24,7 +26,7 @@ class MassiveData
 	{
 		var bool:ExposedBool;
 		var floatDrag:ExposedFloatDrag;
-		var floatRange:ExposedFloatRange;
+		//var floatRange:ExposedFloatRange;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -54,7 +56,7 @@ class MassiveData
 		
 		if (!collection.hasValue("rotation"))
 		{
-			floatDrag = new ExposedFloatDrag("rotation");
+			floatDrag = new ExposedFloatDrag("rotation", null, null, 0.01);
 			collection.addValue(floatDrag, groupName);
 		}
 		
@@ -67,31 +69,31 @@ class MassiveData
 		if (!collection.hasValue("scaleY"))
 		{
 			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
-			collection.addValue(float, groupName);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("colorRed"))
 		{
-			floatRange = new ExposedFloatRange("colorRed", null, -1, 10, 0.1);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("colorRed", null, -1, 10, 0.1);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("colorGreen"))
 		{
-			floatRange = new ExposedFloatRange("colorGreen", null, -1, 10, 0.1);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("colorGreen", null, -1, 10, 0.1);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("colorBlue"))
 		{
-			floatRange = new ExposedFloatRange("colorBlue", null, -1, 10, 0.1);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("colorBlue", null, -1, 10, 0.1);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("colorAlpha"))
 		{
-			floatRange = new ExposedFloatRange("colorAlpha", null, 0, 1, 0.1);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("colorAlpha", null, 0, 1, 0.1);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("visible"))
@@ -145,13 +147,13 @@ class MassiveData
 			select.add("bottom", Align.BOTTOM);
 			func.addParameter(select);
 			
-			collection.addValue(func);
+			collection.addValue(func, groupName);
 		}
 		
 		return collection;
 	}
 	
-	static public function exposeFrameDataProxy(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	static public function exposeFrameProxy(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var floatDrag:ExposedFloatDrag;
 		var func:ExposedFunction;
@@ -163,7 +165,7 @@ class MassiveData
 		if (!collection.hasValue("texture"))
 		{
 			texture = new ExposedStarlingTexture("texture");
-			collection.addValue(texture);
+			collection.addValue(texture, groupName);
 		}
 		
 		if (!collection.hasValue("pivotX"))
@@ -194,7 +196,13 @@ class MassiveData
 			select.add("bottom", Align.BOTTOM);
 			func.addParameter(select);
 			
-			collection.addValue(func);
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("width"))
+		{
+			floatDrag = new ExposedFloatDrag("width", null, 0);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		return collection;
@@ -220,15 +228,93 @@ class MassiveData
 			collection.addValue(bool, groupName);
 		}
 		
-		return collection
+		return collection;
+	}
+	
+	static public function exposeImageDataProxy(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var floatDrag:ExposedFloatDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("x"))
+		{
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("y"))
+		{
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("offsetX"))
+		{
+			floatDrag = new ExposedFloatDrag("offsetX");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("offsetY"))
+		{
+			floatDrag = new ExposedFloatDrag("offsetY");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("rotation"))
+		{
+			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.01);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleX"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleY"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("visible"))
+		{
+			bool = new ExposedBool("visible");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("invertX"))
+		{
+			bool = new ExposedBool("invertX");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("invertY"))
+		{
+			bool = new ExposedBool("invertY");
+			collection.addValue(bool, groupName);
+		}
+		
+		return collection;
+	}
+	
+	public function exposeImageDataProxyConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var objectRef:ExposedObjectReference;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		return collection;
 	}
 	
 	static private function exposeMassiveDisplayData(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
-		var intRange:ExposedIntRange;
 		var floatDrag:ExposedFloatDrag;
-		var floatRange:ExposedFloatRange;
+		var intDrag:ExposedIntDrag;
 		var select:ExposedSelect;
 		var texture:ExposedStarlingTexture;
 		
@@ -242,32 +328,32 @@ class MassiveData
 		
 		if (!collection.hasValue("bufferSize"))
 		{
-			intRange = new ExposedIntRange("bufferSize", null, 0, MassiveConstants.MAX_QUADS);
-			collection.addValue(intRange, groupName);
+			intDrag = new ExposedIntDrag("bufferSize", null, 0, MassiveConstants.MAX_QUADS);
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("numBuffers"))
 		{
-			intRange = new ExposedIntRange("numBuffers", null, 1, 8);
-			collection.addValue(intRange, groupName);
+			intDrag = new ExposedIntDrag("numBuffers", null, 1, 8);
+			collection.addValue(intDrag, groupName);
 		}
 		
 		if (!collection.hasValue("colorRed"))
 		{
-			floatRange = new ExposedFloatRange("colorRed", null, 0, 10);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("colorRed", null, 0, 10, 0.1);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("colorGreen"))
 		{
-			floatRange = new ExposedFloatRange("colorGreen", null, 0, 10);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("colorGreen", null, 0, 10, 0.1);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("colorBlue"))
 		{
-			floatRange = new ExposedFloatRange("colorBlue", null, 0, 10);
-			collection.addValue(floatRange, groupName);
+			floatDrag = new ExposedFloatDrag("colorBlue", null, 0, 10, 0.1);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("renderOffsetX"))
@@ -339,7 +425,7 @@ class MassiveData
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeMassiveLayer(collection, useGroups);
+		exposeMassiveLayer(collection, groupName);
 		
 		return collection;
 	}
@@ -410,6 +496,118 @@ class MassiveData
 			func.addParameter(select);
 			
 			collection.addValue(func, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeQuadDataProxy(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var floatDrag:ExposedFloatDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("x"))
+		{
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("y"))
+		{
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("offsetX"))
+		{
+			floatDrag = new ExposedFloatDrag("offsetX");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("offsetY"))
+		{
+			floatDrag = new ExposedFloatDrag("offsetY");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("width"))
+		{
+			floatDrag = new ExposedFloatDrag("width");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("height"))
+		{
+			floatDrag = new ExposedFloatDrag("height");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("pivotX"))
+		{
+			floatDrag = new ExposedFloatDrag("pivotX");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("pivotY"))
+		{
+			floatDrag = new ExposedFloatDrag("pivotY");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("rotation"))
+		{
+			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.01);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleX"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleY"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("visible"))
+		{
+			bool = new ExposedBool("visible");
+			collection.addValue(bool, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeQuadDataProxyConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var color:ExposedColor;
+		var floatDrag:ExposedFloatDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("width"))
+		{
+			floatDrag = new ExposedFloatDrag("width");
+			floatDrag.defaultValue = 100;
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("height"))
+		{
+			floatDrag = new ExposedFloatDrag("height");
+			floatDrag.defaultValue = 100;
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			collection.addValue(color);
 		}
 		
 		return collection;
