@@ -1,4 +1,5 @@
 package valedit;
+import openfl.errors.ArgumentError;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 import valedit.events.ValueEvent;
@@ -173,6 +174,10 @@ class ExposedValue extends EventDispatcher
 	public function new(propertyName:String, name:String = null) 
 	{
 		super();
+		if (propertyName == null)
+		{
+			throw new ArgumentError("ExposedValue ::: propertyName cannot be null");
+		}
 		this.propertyName = propertyName;
 		if (name == null) name = propertyName;
 		this.name = name;
@@ -207,6 +212,15 @@ class ExposedValue extends EventDispatcher
 			this._storedValue = val;
 			if (this._uiControl != null) this._uiControl.updateExposedValue();
 			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+		}
+	}
+	
+	public function restoreDefaultValue():Void
+	{
+		if (this._storedValue != null)
+		{
+			this._storedValue = null;
+			if (this._uiControl != null) this._uiControl.updateExposedValue();
 		}
 	}
 	
