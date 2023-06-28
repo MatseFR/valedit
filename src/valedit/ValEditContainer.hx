@@ -2,52 +2,26 @@ package valedit;
 import haxe.ds.ObjectMap;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
-import openfl.errors.Error;
 import valedit.util.StringIndexedMap;
+import valeditor.events.LayerEvent;
 
 /**
  * ...
  * @author Matse
  */
-class ValEditContainer 
+class ValEditContainer implements IValEditContainer
 {
-	public var x(get, set):Float;
-	private var _x:Float = 0;
-	private function get_x():Float { return this._x; }
-	private function set_x(value:Float):Float
-	{
-		if (this._container != null)
-		{
-			this._container.x = value - this._cameraX;
-		}
-		#if starling
-		if (this._containerStarling != null)
-		{
-			this._containerStarling.x = value - this._cameraX;
-		}
-		#end
-		return this._x = value;
-	}
-	
-	public var y(get, set):Float;
-	private var _y:Float = 0;
-	private function get_y():Float { return this._y; }
-	private function set_y(value:Float):Float
-	{
-		if (this._container != null)
-		{
-			this._container.y = value - this._cameraY;
-		}
-		#if starling
-		if (this._containerStarling != null)
-		{
-			this._containerStarling.y = value - this._cameraY;
-		}
-		#end
-		return this._y = value;
-	}
-	
 	public var cameraX(get, set):Float;
+	public var cameraY(get, set):Float;
+	public var currentLayer(get, set):ValEditLayer;
+	public var rootContainer(get, set):DisplayObjectContainer;
+	#if starling
+	public var rootContainerStarling(get, set):starling.display.DisplayObjectContainer;
+	#end
+	public var visible(get, set):Bool;
+	public var x(get, set):Float;
+	public var y(get, set):Float;
+	
 	private var _cameraX:Float = 0;
 	private function get_cameraX():Float { return this._cameraX; }
 	private function set_cameraX(value:Float):Float
@@ -65,7 +39,6 @@ class ValEditContainer
 		return this._cameraX = value;
 	}
 	
-	public var cameraY(get, set):Float;
 	private var _cameraY:Float = 0;
 	private function get_cameraY():Float { return this._cameraY; }
 	private function set_cameraY(value:Float):Float
@@ -83,7 +56,13 @@ class ValEditContainer
 		return this._cameraY = value;
 	}
 	
-	public var rootContainer(get, set):DisplayObjectContainer;
+	private var _currentLayer:ValEditLayer;
+	private function get_currentLayer():ValEditLayer { return this._currentLayer; }
+	private function set_currentLayer(value:ValEditLayer):ValEditLayer
+	{
+		return this._currentLayer = value;
+	}
+	
 	private var _rootContainer:DisplayObjectContainer;
 	private function get_rootContainer():DisplayObjectContainer { return this._rootContainer; }
 	private function set_rootContainer(value:DisplayObjectContainer):DisplayObjectContainer
@@ -94,9 +73,7 @@ class ValEditContainer
 		{
 			if (this._container == null)
 			{
-				this._container = new Sprite();
-				this._container.x = this._x - this._cameraX;
-				this._container.y = this._y - this._cameraY;
+				createContainer();
 			}
 			value.addChild(this._container);
 		}
@@ -112,7 +89,6 @@ class ValEditContainer
 	}
 	
 	#if starling
-	public var rootContainerStarling(get, set):starling.display.DisplayObjectContainer;
 	private var _rootContainerStarling:starling.display.DisplayObjectContainer;
 	private function get_rootContainerStarling():starling.display.DisplayObjectContainer { return this._rootContainerStarling; }
 	private function set_rootContainerStarling(value:starling.display.DisplayObjectContainer):starling.display.DisplayObjectContainer
@@ -123,9 +99,7 @@ class ValEditContainer
 		{
 			if (this._containerStarling == null)
 			{
-				this._containerStarling = new starling.display.Sprite();
-				this._containerStarling.x = this._x - this._cameraX;
-				this._containerStarling.y = this._y - this._cameraY;
+				createContainerStarling();
 			}
 			value.addChild(this._containerStarling);
 		}
@@ -140,6 +114,52 @@ class ValEditContainer
 		return this._rootContainerStarling = value;
 	}
 	#end
+	
+	private var _visible:Bool = true;
+	private function get_visible():Bool { return this._visible; }
+	private function set_visible(value:Bool):Bool
+	{
+		if (this._visible == value) return value;
+		if (this._container != null) this._container.visible = value;
+		#if starling
+		if (this._containerStarling != null) this._containerStarling.visible = value;
+		#end
+		return this._visible = value;
+	}
+	
+	private var _x:Float = 0;
+	private function get_x():Float { return this._x; }
+	private function set_x(value:Float):Float
+	{
+		if (this._container != null)
+		{
+			this._container.x = value - this._cameraX;
+		}
+		#if starling
+		if (this._containerStarling != null)
+		{
+			this._containerStarling.x = value - this._cameraX;
+		}
+		#end
+		return this._x = value;
+	}
+	
+	private var _y:Float = 0;
+	private function get_y():Float { return this._y; }
+	private function set_y(value:Float):Float
+	{
+		if (this._container != null)
+		{
+			this._container.y = value - this._cameraY;
+		}
+		#if starling
+		if (this._containerStarling != null)
+		{
+			this._containerStarling.y = value - this._cameraY;
+		}
+		#end
+		return this._y = value;
+	}
 	
 	private var _container:Sprite;
 	#if starling
@@ -156,22 +176,26 @@ class ValEditContainer
 		
 	}
 	
+	public function clear():Void
+	{
+		
+	}
+	
 	public function addLayer(layer:ValEditLayer):Void
 	{
 		this._layers.set(layer.name, layer);
-		layer.valEditContainer = this;
+		layerRegister(layer);
 	}
 	
 	public function addLayerAt(layer:ValEditLayer, index:Int):Void
 	{
 		this._layers.insert(layer.name, layer, index);
-		layer.valEditContainer = this;
+		layerRegister(layer);
 	}
 	
 	public function destroyLayer(layer:ValEditLayer):Void
 	{
 		removeLayer(layer);
-		
 	}
 	
 	public function getLayer(name:String):ValEditLayer
@@ -182,52 +206,58 @@ class ValEditContainer
 	public function removeLayer(layer:ValEditLayer):Void
 	{
 		this._layers.remove(layer.name);
+		layerUnregister(layer);
+	}
+	
+	private function layerRegister(layer:ValEditLayer):Void
+	{
+		layer.valEditContainer = this;
+		if (this._container != null)
+		{
+			layer.rootContainer = this._container;
+		}
+		#if starling
+		if (this._containerStarling != null)
+		{
+			layer.rootContainerStarling = this._containerStarling;
+		}
+		#end
+		layer.addEventListener(LayerEvent.OBJECT_ADDED, layer_objectAdded);
+		layer.addEventListener(LayerEvent.OBJECT_REMOVED, layer_objectRemoved);
+	}
+	
+	private function layerUnregister(layer:ValEditLayer):Void
+	{
 		layer.valEditContainer = null;
+		if (this._container != null)
+		{
+			layer.rootContainer = null;
+		}
+		#if starling
+		if (this._containerStarling != null)
+		{
+			layer.rootContainerStarling = null;
+		}
+		#end
+		layer.removeEventListener(LayerEvent.OBJECT_ADDED, layer_objectAdded);
+		layer.removeEventListener(LayerEvent.OBJECT_REMOVED, layer_objectRemoved);
+	}
+	
+	private function layer_objectAdded(evt:LayerEvent):Void
+	{
+		this._objects.set(evt.object.id, evt.object);
+		this._objectToValEditObject.set(evt.object.object, evt.object);
+	}
+	
+	private function layer_objectRemoved(evt:LayerEvent):Void
+	{
+		this._objects.remove(evt.object.id);
+		this._objectToValEditObject.remove(evt.object.object);
 	}
 	
 	public function add(object:ValEditObject):Void
 	{
-		switch (object.objectType)
-		{
-			case ObjectType.DISPLAY_OPENFL :
-				if (object.clss.addToDisplayCustom != null)
-				{
-					#if neko
-					Reflect.callMethod(null, object.clss.addToDisplayCustom, [object.object, this._container]);
-					#else
-					object.clss.addToDisplayCustom(object.object, this._container);
-					#end
-				}
-				else
-				{
-					this._container.addChild(object.object);
-				}
-			
-			#if starling
-			case ObjectType.DISPLAY_STARLING :
-				if (object.clss.addToDisplayCustom != null)
-				{
-					#if neko
-					Reflect.callMethod(null, object.clss.addToDisplayCustom, [object.object, this._containerStarling]);
-					#else
-					object.clss.addToDisplayCustom(object.object, this._containerStarling);
-					#end
-				}
-				else
-				{
-					this._containerStarling.addChild(object.object);
-				}
-			#end
-			
-			case ObjectType.OTHER :
-				// nothing here
-			
-			default :
-				throw new Error("ValEditContainer.add ::: unknown object type " + object.objectType);
-		}
-		
-		this._objects.set(object.id, object);
-		this._objectToValEditObject.set(object.object, object);
+		this._currentLayer.add(object);
 	}
 	
 	public function get(objectName:String):ValEditObject
@@ -237,47 +267,35 @@ class ValEditContainer
 	
 	public function remove(object:ValEditObject):Void
 	{
-		switch (object.objectType)
-		{
-			case ObjectType.DISPLAY_OPENFL :
-				if (object.clss.removeFromDisplayCustom != null)
-				{
-					#if neko
-					Reflect.callMethod(null, object.clss.removeFromDisplayCustom, [object.object, this._container]);
-					#else
-					object.clss.removeFromDisplayCustom(object.object, this._container);
-					#end
-				}
-				else
-				{
-					this._container.removeChild(object.object);
-				}
-			
-			#if starling
-			case ObjectType.DISPLAY_STARLING :
-				if (object.clss.removeFromDisplayCustom != null)
-				{
-					#if neko
-					Reflect.callMethod(null, object.clss.removeFromDisplayCustom, [object.object, this._containerStarling]);
-					#else
-					object.clss.removeFromDisplayCustom(object.object, this._containerStarling);
-					#end
-				}
-				else
-				{
-					this._containerStarling.removeChild(object.object);
-				}
-			#end
-			
-			case ObjectType.OTHER :
-				// nothing here
-			
-			default :
-				throw new Error("ValEditContainer.remove ::: unknown object type " + object.objectType);
-		}
-		
-		this._objects.remove(object.id);
-		this._objectToValEditObject.remove(object.object);
+		this._currentLayer.remove(object);
 	}
+	
+	private function createContainer():Void
+	{
+		this._container = new Sprite();
+		this._container.x = this._x - this._cameraX;
+		this._container.y = this._y - this._cameraY;
+		this._container.visible = this._visible;
+		for (layer in this._layers)
+		{
+			layer.rootContainer = this._container;
+		}
+		if (this._rootContainer != null) this._rootContainer.addChild(this._container);
+	}
+	
+	#if starling
+	private function createContainerStarling():Void
+	{
+		this._containerStarling = new starling.display.Sprite();
+		this._containerStarling.x = this._x - this._cameraX;
+		this._containerStarling.y = this._y - this._cameraY;
+		this._containerStarling.visible = this._visible;
+		for (layer in this._layers)
+		{
+			layer.rootContainerStarling = this._containerStarling;
+		}
+		if (this._rootContainerStarling != null) this._rootContainerStarling.addChild(this._containerStarling);
+	}
+	#end
 	
 }
