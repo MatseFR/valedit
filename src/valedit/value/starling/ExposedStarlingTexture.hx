@@ -26,6 +26,7 @@ class ExposedStarlingTexture extends ExposedValue
 	public function new(propertyName:String, name:String=null) 
 	{
 		super(propertyName, name);
+		this.isNullable = true;
 		this.defaultValue = null;
 	}
 	
