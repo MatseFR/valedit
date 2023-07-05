@@ -27,6 +27,7 @@ class ExposedSound extends ExposedValue
 	{
 		super(propertyName, name);
 		this.defaultValue = null;
+		this.isNullable = true;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
