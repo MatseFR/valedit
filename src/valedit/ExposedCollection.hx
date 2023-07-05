@@ -12,10 +12,36 @@ import valedit.value.ExposedGroup;
  */
 class ExposedCollection extends EventDispatcher
 {
+	public var isEditable(get, set):Bool;
+	public var isReadOnly(get, set):Bool;
 	public var object(get, set):Dynamic;
 	public var parentValue(get, set):ExposedValue;
 	public var uiCollection(default, null):UICollection;
 	public var uiContainer(get, set):DisplayObjectContainer;
+	
+	private var _isEditable:Bool = true;
+	private function get_isEditable():Bool { return this._isEditable; }
+	private function set_isEditable(value:Bool):Bool
+	{
+		if (this._isEditable == value) return value;
+		for (val in this._valueList)
+		{
+			val.isEditable = value;
+		}
+		return this._isEditable = value;
+	}
+	
+	private var _isReadOnly:Bool = false;
+	private function get_isReadOnly():Bool { return this._isReadOnly; }
+	private function set_isReadOnly(value:Bool):Bool
+	{
+		if (this._isReadOnly == value) return value;
+		for (val in this._valueList)
+		{
+			val.isReadOnly = value;
+		}
+		return this._isReadOnly = value;
+	}
 	
 	private var _object:Dynamic;
 	private function get_object():Dynamic { return _object; }
@@ -133,6 +159,8 @@ class ExposedCollection extends EventDispatcher
 		}
 		else
 		{
+			value.isEditable = this._isEditable;
+			value.isReadOnly = this._isReadOnly;
 			this._valueList.push(value);
 			this._valueMap[value.propertyName] = value;
 			if (Std.isOfType(value, ExposedGroup))
@@ -159,6 +187,8 @@ class ExposedCollection extends EventDispatcher
 		}
 		else
 		{
+			value.isEditable = this._isEditable;
+			value.isReadOnly = this._isReadOnly;
 			var afterValue:ExposedValue = this._valueMap[afterValueName];
 			if (afterValue == null)
 			{
@@ -191,6 +221,8 @@ class ExposedCollection extends EventDispatcher
 		}
 		else
 		{
+			value.isEditable = this._isEditable;
+			value.isReadOnly = this._isReadOnly;
 			var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 			if (beforeValue == null)
 			{
