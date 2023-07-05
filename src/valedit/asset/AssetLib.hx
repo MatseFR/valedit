@@ -35,7 +35,7 @@ class AssetLib
 	
 	// BINARIES
 	#if valeditor
-	static private var _binaryCollection:ArrayCollection<BinaryAsset>;
+	static public var binaryCollection(default, null):ArrayCollection<BinaryAsset>;
 	#end
 	static private var _binaryList:Array<BinaryAsset> = new Array<BinaryAsset>();
 	static private var _binaryMap:Map<String, BinaryAsset> = new Map<String, BinaryAsset>();
@@ -43,7 +43,7 @@ class AssetLib
 	
 	// BITMAPS
 	#if valeditor
-	static private var _bitmapCollection:ArrayCollection<BitmapAsset>;
+	static public var bitmapCollection(default, null):ArrayCollection<BitmapAsset>;
 	#end
 	static private var _bitmapList:Array<BitmapAsset> = new Array<BitmapAsset>();
 	static private var _bitmapMap:Map<String, BitmapAsset> = new Map<String, BitmapAsset>();
@@ -51,7 +51,7 @@ class AssetLib
 	
 	// SOUNDS
 	#if valeditor
-	static private var _soundCollection:ArrayCollection<SoundAsset>;
+	static public var soundCollection(default, null):ArrayCollection<SoundAsset>;
 	#end
 	static private var _soundList:Array<SoundAsset> = new Array<SoundAsset>();
 	static private var _soundMap:Map<String, SoundAsset> = new Map<String, SoundAsset>();
@@ -59,7 +59,7 @@ class AssetLib
 	
 	// TEXTS
 	#if valeditor
-	static private var _textCollection:ArrayCollection<TextAsset>;
+	static public var textCollection(default, null):ArrayCollection<TextAsset>;
 	#end
 	static private var _textList:Array<TextAsset> = new Array<TextAsset>();
 	static private var _textMap:Map<String, TextAsset> = new Map<String, TextAsset>();
@@ -68,7 +68,7 @@ class AssetLib
 	// STARLING TEXTURES
 	#if starling
 	#if valeditor
-	static private var _starlingTextureCollection:ArrayCollection<StarlingTextureAsset>;
+	static public var starlingTextureCollection(default, null):ArrayCollection<StarlingTextureAsset>;
 	#end
 	static private var _starlingTextureList:Array<StarlingTextureAsset> = new Array<StarlingTextureAsset>();
 	static private var _starlingTextureMap:Map<String, StarlingTextureAsset> = new Map<String, StarlingTextureAsset>();
@@ -78,7 +78,7 @@ class AssetLib
 	// STARLING ATLASES
 	#if starling
 	#if valeditor
-	static private var _starlingAtlasCollection:ArrayCollection<StarlingAtlasAsset>;
+	static public var starlingAtlasCollection(default, null):ArrayCollection<StarlingAtlasAsset>;
 	#end
 	static private var _starlingAtlasList:Array<StarlingAtlasAsset> = new Array<StarlingAtlasAsset>();
 	static private var _starlingAtlasMap:Map<String, StarlingAtlasAsset> = new Map<String, StarlingAtlasAsset>();
@@ -93,6 +93,8 @@ class AssetLib
 	static private var _loadStack:Array<Void->Void>;
 	static private var _loadCompleteCallback:Void->Void;
 	
+	static private var _debug:Bool = true;
+	
 	static public function init(generatePreviews:Bool = true):Void
 	{
 		_generatePreview = generatePreviews;
@@ -105,13 +107,13 @@ class AssetLib
 		}
 		
 		#if valeditor
-		_binaryCollection = new ArrayCollection<BinaryAsset>();
-		_bitmapCollection = new ArrayCollection<BitmapAsset>();
-		_soundCollection = new ArrayCollection<SoundAsset>();
-		_textCollection = new ArrayCollection<TextAsset>();
+		binaryCollection = new ArrayCollection<BinaryAsset>();
+		bitmapCollection = new ArrayCollection<BitmapAsset>();
+		soundCollection = new ArrayCollection<SoundAsset>();
+		textCollection = new ArrayCollection<TextAsset>();
 		#if starling
-		_starlingTextureCollection = new ArrayCollection<StarlingTextureAsset>();
-		_starlingAtlasCollection = new ArrayCollection<StarlingAtlasAsset>();
+		starlingTextureCollection = new ArrayCollection<StarlingTextureAsset>();
+		starlingAtlasCollection = new ArrayCollection<StarlingAtlasAsset>();
 		#end
 		#end
 		
@@ -167,6 +169,7 @@ class AssetLib
 			asset.name = Path.withoutDirectory(id);
 			try
 			{
+				if (_debug) trace("try " + id);
 				bytes = Assets.getBytes(id);
 				asset.content = bytes;
 				asset.source = AssetSource.ASSETS_EMBEDDED;
@@ -174,6 +177,7 @@ class AssetLib
 			}
 			catch (e)
 			{
+				if (_debug) trace("catch " + id);
 				asset.source = AssetSource.ASSETS;
 				asset.isLoaded = false;
 			}
@@ -186,7 +190,7 @@ class AssetLib
 		_binaryList.push(asset);
 		_binaryMap[asset.path] = asset;
 		#if valeditor
-		_binaryCollection.add(asset);
+		binaryCollection.add(asset);
 		#end
 		if (asset.content != null) _binaryToAsset.set(asset.content, asset);
 	}
@@ -196,7 +200,7 @@ class AssetLib
 		_binaryList.remove(asset);
 		_binaryMap.remove(asset.path);
 		#if valeditor
-		_binaryCollection.remove(asset);
+		binaryCollection.remove(asset);
 		#end
 		if (asset.content != null) _binaryToAsset.remove(asset.content);
 	}
@@ -273,7 +277,7 @@ class AssetLib
 		var asset:BitmapAsset;
 		var bmd:BitmapData;
 		var strList:Array<String> = Assets.list(AssetType.IMAGE);
-		trace("AssetLib initBitmaps " + strList);
+		if (_debug) trace("AssetLib initBitmaps " + strList);
 		for (id in strList)
 		{
 			asset = new BitmapAsset();
@@ -281,6 +285,7 @@ class AssetLib
 			asset.name = Path.withoutDirectory(id);
 			try
 			{
+				if (_debug) trace("try " + id);
 				bmd = Assets.getBitmapData(id);
 				asset.content = bmd;
 				asset.source = AssetSource.ASSETS_EMBEDDED;
@@ -289,6 +294,7 @@ class AssetLib
 			}
 			catch (e)
 			{
+				if (_debug) trace("catch " + id);
 				asset.source = AssetSource.ASSETS;
 				asset.isLoaded = false;
 			}
@@ -301,7 +307,7 @@ class AssetLib
 		_bitmapList.push(asset);
 		_bitmapMap[asset.path] = asset;
 		#if valeditor
-		_bitmapCollection.add(asset);
+		bitmapCollection.add(asset);
 		#end
 		if (asset.content != null) _bitmapDataToAsset.set(asset.content, asset);
 	}
@@ -311,7 +317,7 @@ class AssetLib
 		_bitmapList.remove(asset);
 		_bitmapMap.remove(asset.path);
 		#if valeditor
-		_bitmapCollection.remove(asset);
+		bitmapCollection.remove(asset);
 		#end
 		if (asset.content != null) _bitmapDataToAsset.remove(asset.content);
 	}
@@ -420,7 +426,7 @@ class AssetLib
 		var asset:SoundAsset;
 		var sound:Sound;
 		var strList:Array<String> = Assets.list(AssetType.SOUND);
-		trace("AssetLib initSounds " + strList);
+		if (_debug) trace("AssetLib initSounds " + strList);
 		for (id in strList)
 		{
 			asset = new SoundAsset();
@@ -433,7 +439,7 @@ class AssetLib
 				asset.source = AssetSource.ASSETS_EMBEDDED;
 				asset.isLoaded = true;
 			}
-			catch (e:Error)
+			catch (e)
 			{
 				asset.source = AssetSource.ASSETS;
 				asset.isLoaded = false;
@@ -447,7 +453,7 @@ class AssetLib
 		_soundList.push(asset);
 		_soundMap[asset.path] = asset;
 		#if valeditor
-		_soundCollection.add(asset);
+		soundCollection.add(asset);
 		#end
 		if (asset.content != null) _soundToAsset.set(asset.content, asset);
 	}
@@ -457,7 +463,7 @@ class AssetLib
 		_soundList.remove(asset);
 		_soundMap.remove(asset.path);
 		#if valeditor
-		_soundCollection.remove(asset);
+		soundCollection.remove(asset);
 		#end
 		if (asset.content != null) _soundToAsset.remove(asset.content);
 	}
@@ -513,7 +519,7 @@ class AssetLib
 					asset.isLoaded = true;
 					_soundToAsset.set(sound, asset);
 				}
-				catch (e:Error)
+				catch (e)
 				{
 					// do nothing
 				}
@@ -534,7 +540,7 @@ class AssetLib
 		var asset:TextAsset;
 		var text:String;
 		var strList:Array<String> = Assets.list(AssetType.TEXT);
-		trace("AssetLib initTexts " + strList);
+		if (_debug) trace("AssetLib initTexts " + strList);
 		for (id in strList)
 		{
 			asset = new TextAsset();
@@ -547,7 +553,7 @@ class AssetLib
 				asset.source = AssetSource.ASSETS_EMBEDDED;
 				asset.isLoaded = true;
 			}
-			catch (e:Error)
+			catch (e)
 			{
 				asset.source = AssetSource.ASSETS;
 				asset.isLoaded = false;
@@ -560,7 +566,7 @@ class AssetLib
 		_textList.push(asset);
 		_textMap[asset.path] = asset;
 		#if valeditor
-		_textCollection.add(asset);
+		textCollection.add(asset);
 		#end
 		if (asset.content != null) _textToAsset.set(asset.content, asset);
 	}
@@ -570,7 +576,7 @@ class AssetLib
 		_textList.remove(asset);
 		_textMap.remove(asset.path);
 		#if valeditor
-		_textCollection.remove(asset);
+		textCollection.remove(asset);
 		#end
 		if (asset.content != null) _textToAsset.remove(asset.content);
 	}
@@ -626,7 +632,7 @@ class AssetLib
 					asset.isLoaded = true;
 					_textToAsset.set(text, asset);
 				}
-				catch (e:Error)
+				catch (e)
 				{
 					// do nothing
 				}
@@ -648,7 +654,7 @@ class AssetLib
 		_starlingTextureList.push(asset);
 		_starlingTextureMap[asset.path] = asset;
 		#if valeditor
-		_starlingTextureCollection.add(asset);
+		starlingTextureCollection.add(asset);
 		#end
 		if (asset.content != null) _starlingTextureToAsset.set(asset.content, asset);
 	}
@@ -658,7 +664,7 @@ class AssetLib
 		_starlingTextureList.remove(asset);
 		_starlingTextureMap.remove(asset.path);
 		#if valeditor
-		_starlingTextureCollection.remove(asset);
+		starlingTextureCollection.remove(asset);
 		#end
 		if (asset.content != null) _starlingTextureToAsset.remove(asset.content);
 	}
@@ -714,7 +720,7 @@ class AssetLib
 		_starlingAtlasList.push(asset);
 		_starlingAtlasMap[asset.path] = asset;
 		#if valeditor
-		_starlingAtlasCollection.add(asset);
+		starlingAtlasCollection.add(asset);
 		#end
 		if (asset.content != null) 
 		{
@@ -765,7 +771,7 @@ class AssetLib
 		_starlingAtlasList.remove(asset);
 		_starlingAtlasMap.remove(asset.path);
 		#if valeditor
-		_starlingAtlasCollection.remove(asset);
+		starlingAtlasCollection.remove(asset);
 		#end
 		if (asset.content != null)
 		{
