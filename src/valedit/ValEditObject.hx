@@ -10,7 +10,7 @@ class ValEditObject extends EventDispatcher
 {
 	public var className:String;
 	public var clss:ValEditClass;
-	public var id:String;
+	public var id(get, set):String;
 	public var object:Dynamic;
 	public var objectType:Int = -1;
 	/** non-proxy object */
@@ -20,6 +20,13 @@ class ValEditObject extends EventDispatcher
 	public var propertyMap:PropertyMap;
 	public var realPropertyMap:PropertyMap;
 	
+	private var _id:String;
+	private function get_id():String { return this._id; }
+	private function set_id(value:String):String
+	{
+		return this._id = value;
+	}
+	
 	private var _realPropertyName:String;
 	private var _regularPropertyName:String;
 	
@@ -27,7 +34,7 @@ class ValEditObject extends EventDispatcher
 	{
 		super();
 		
-		this.id = id;
+		this._id = id;
 		this.clss = clss;
 		this.className = clss.className;
 		this.objectType = clss.objectType;
