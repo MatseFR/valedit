@@ -10,7 +10,31 @@ class ExposedFunction extends ExposedValue
 {
 	public var parameters:Array<Dynamic>;
 	
-	private var _parameterValues:Array<Dynamic> = new Array<Dynamic>();
+	override function set_isEditable(value:Bool):Bool 
+	{
+		if (this._isEditable == value) return value;
+		for (param in this._parameterValuesAll)
+		{
+			param.isEditable = value;
+		}
+		return super.set_isEditable(value);
+	}
+	
+	override function set_isReadOnly(value:Bool):Bool 
+	{
+		if (this._isReadOnly == value) return value;
+		for (param in this._parameterValues)
+		{
+			param.isReadOnly = value;
+		}
+		return super.set_isReadOnly(value);
+	}
+	
+	private var _parameterValuesAll:Array<ExposedValue> = new Array<ExposedValue>();
+	private var _parameterValues:Array<ExposedValue> = new Array<ExposedValue>();
+	private var _stringParamToValue:Map<String, ExposedValue> = new Map<String, ExposedValue>();
+	
+	private var _values:Array<Dynamic> = new Array<Dynamic>();
 	
 	/**
 	   
@@ -32,7 +56,10 @@ class ExposedFunction extends ExposedValue
 	
 	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
-		// nothing
+		for (param in this._parameterValuesAll)
+		{
+			param.readValue(false);
+		}
 	}
 	
 	/**
@@ -44,16 +71,52 @@ class ExposedFunction extends ExposedValue
 	**/
 	public function addParameter(param:Dynamic):Void
 	{
+		var val:ExposedValue;
 		this.parameters.push(param);
+		if (Std.isOfType(param, String))
+		{
+			var str:String = param;
+			if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
+			{
+				val = this._collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
+				val = val.clone(true);
+				val.isEditable = this._isEditable;
+				val.forceReadOnly(true);
+				val.isReadOnlyLocked = true;
+				val.object = this._object;
+				this._parameterValuesAll.push(val);
+				this._stringParamToValue.set(str, val);
+			}
+		}
+		else if (Std.isOfType(param, ExposedValue))
+		{
+			val = cast param;
+			val.isEditable = this._isEditable;
+			val.isReadOnly = this._isReadOnly;
+			this._parameterValues.push(cast param);
+			this._parameterValuesAll.push(cast param);
+		}
 	}
 	
 	public function getExposedValueParameters(?values:Array<ExposedValue>):Array<ExposedValue>
 	{
 		if (values == null) values = new Array<ExposedValue>();
 		
+		var str:String;
+		var val:ExposedValue;
+		
 		for (param in this.parameters)
 		{
-			if (Std.isOfType(param, ExposedValue))
+			if (Std.isOfType(param, String))
+			{
+				str = param;
+				if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
+				{
+					val = this._stringParamToValue.get(str);
+					values.push(val);
+				}
+			}
+			else if (Std.isOfType(param, ExposedValue))
 			{
 				values.push(cast param);
 			}
@@ -76,12 +139,13 @@ class ExposedFunction extends ExposedValue
 				str = param;
 				if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
 				{
-					val = this._collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
-					this._parameterValues.push(val.value);
+					//val = this._collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
+					val = this._stringParamToValue.get(str);
+					this._values.push(val.value);
 				}
 				else
 				{
-					this._parameterValues.push(param);
+					this._values.push(param);
 				}
 			}
 			else if (Std.isOfType(param, ExposedValue))
@@ -89,17 +153,17 @@ class ExposedFunction extends ExposedValue
 				val = cast param;
 				if (val.isRealValue)
 				{
-					this._parameterValues.push(val.value);
+					this._values.push(val.value);
 				}
 			}
 			else
 			{
-				this._parameterValues.push(param);
+				this._values.push(param);
 			}
 		}
 		
-		Reflect.callMethod(this._object, this.value, this._parameterValues);
-		this._parameterValues.resize(0);
+		Reflect.callMethod(this._object, this.value, this._values);
+		this._values.resize(0);
 		
 		if (this.updateCollectionUIOnChange) this._collection.readValues();
 	}
