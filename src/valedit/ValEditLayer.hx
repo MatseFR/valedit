@@ -25,9 +25,7 @@ class ValEditLayer extends EventDispatcher
 	private function get_name():String { return this._name; }
 	private function set_name(value:String):String
 	{
-		if (value == this._name) return value;
 		this._name = value;
-		// TODO : dispatch event
 		return value;
 	}
 	
@@ -121,7 +119,7 @@ class ValEditLayer extends EventDispatcher
 		switch (object.objectType)
 		{
 			case ObjectType.DISPLAY_OPENFL :
-				if (this._container != null)
+				if (this._container == null)
 				{
 					createContainer();
 				}
@@ -140,7 +138,7 @@ class ValEditLayer extends EventDispatcher
 			
 			#if starling
 			case ObjectType.DISPLAY_STARLING :
-				if (this._containerStarling != null)
+				if (this._containerStarling == null)
 				{
 					createContainerStarling();
 				}
