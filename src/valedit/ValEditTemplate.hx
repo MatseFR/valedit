@@ -1,23 +1,32 @@
 package valedit;
+import openfl.events.EventDispatcher;
 
 /**
  * ...
  * @author Matse
  */
-class ValEditTemplate 
+class ValEditTemplate extends EventDispatcher
 {
 	public var className:String;
 	public var clss:ValEditClass;
 	public var collection:ExposedCollection;
 	public var constructorCollection:ExposedCollection;
-	public var id:String;
+	public var id(get, set):String;
 	public var numInstances(default, null):Int;
 	public var object:Dynamic;
+	
+	private var _id:String;
+	private function get_id():String { return this._id; }
+	private function set_id(value:String):String
+	{
+		return this._id = value;
+	}
 	
 	private var _instances:Array<ValEditObject> = new Array<ValEditObject>();
 	
 	public function new(clss:ValEditClass, ?id:String, ?object:Dynamic, ?collection:ExposedCollection, ?constructorCollection:ExposedCollection) 
 	{
+		super();
 		this.clss = clss;
 		this.className = clss.className;
 		this.id = id;
