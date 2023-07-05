@@ -39,6 +39,7 @@ class ExposedObject extends ExposedValue
 		super(propertyName, name);
 		this.storeValue = storeValue;
 		this.reassignOnChange = reassignOnChange;
+		this.defaultValue = null;
 	}
 	
 	override public function applyToObject(object:Dynamic):Void 
