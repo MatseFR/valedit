@@ -21,14 +21,11 @@ class SimpleThemeData
 	{
 		var bool:ExposedBool;
 		var color:ExposedColor;
-		var colorRead:ExposedColorReadOnly;
 		var floatDrag:ExposedFloatDrag;
-		//var floatRange:ExposedFloatRange;
 		var intDrag:ExposedIntDrag;
-		//var intRange:ExposedIntRange;
 		var select:ExposedSelect;
 		var subGroup:ExposedGroup;
-		var spacing:ExposedSpacing;
+		//var spacing:ExposedSpacing;
 		var sep:ExposedSeparator;
 		
 		if (collection == null) collection = new ExposedCollection();
@@ -191,13 +188,13 @@ class SimpleThemeData
 			floatDrag = new ExposedFloatDrag("darkThemeColorLightenRatio", "lighten ratio", 0, 1, 0.005, 0.001);
 			subGroup.addValue(floatDrag);
 			
-			spacing = new ExposedSpacing();
-			subGroup.addValue(spacing);
+			sep = new ExposedSeparator();
+			subGroup.addValue(sep);
 		}
 		
 		if (!subGroup.hasValue("darkThemeAlternColor"))
 		{
-			color = new ExposedColor("darkThemeAlternColor", "color");
+			color = new ExposedColor("darkThemeAlternColor", "altern color");
 			subGroup.addValue(color);
 			
 			floatDrag = new ExposedFloatDrag("darkThemeAlternColorDarkenRatio", "darken ratio", 0, 1, 0.005, 0.001);
@@ -205,6 +202,9 @@ class SimpleThemeData
 			
 			floatDrag = new ExposedFloatDrag("darkThemeAlternColorLightenRatio", "lighten ratio", 0, 1, 0.005, 0.001);
 			subGroup.addValue(floatDrag);
+			
+			sep = new ExposedSeparator();
+			subGroup.addValue(sep);
 		}
 		
 		if (!subGroup.hasValue("darkThemeLightColor"))
@@ -218,8 +218,8 @@ class SimpleThemeData
 			floatDrag = new ExposedFloatDrag("darkThemeLightColorLightenRatio", "lighten ratio", 0, 1, 0.005, 0.001);
 			subGroup.addValue(floatDrag);
 			
-			spacing = new ExposedSpacing();
-			subGroup.addValue(spacing);
+			sep = new ExposedSeparator();
+			subGroup.addValue(sep);
 		}
 		
 		if (!subGroup.hasValue("darkThemeContrastColor"))
@@ -233,8 +233,8 @@ class SimpleThemeData
 			floatDrag = new ExposedFloatDrag("darkThemeContrastColorLightenRatio", "lighten ratio", 0, 1, 0.005, 0.001);
 			subGroup.addValue(floatDrag);
 			
-			spacing = new ExposedSpacing();
-			subGroup.addValue(spacing);
+			sep = new ExposedSeparator();
+			subGroup.addValue(sep);
 		}
 		
 		if (!subGroup.hasValue("darkThemeDangerColor"))
@@ -248,8 +248,8 @@ class SimpleThemeData
 			floatDrag = new ExposedFloatDrag("darkThemeDangerColorLightenRatio", "lighten ratio", 0, 1, 0.005, 0.001);
 			subGroup.addValue(floatDrag);
 			
-			spacing = new ExposedSpacing();
-			subGroup.addValue(spacing);
+			sep = new ExposedSeparator();
+			subGroup.addValue(sep);
 		}
 		
 		if (!subGroup.hasValue("darkThemeFocusColor"))
