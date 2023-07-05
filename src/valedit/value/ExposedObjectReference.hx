@@ -33,6 +33,7 @@ class ExposedObjectReference extends ExposedValue
 		if (classList == null) classList = new Array<String>();
 		this.classList = classList;
 		this.allowSelfReference = allowSelfReference;
+		this.isNullable = true;
 	}
 	
 	public function addClass(clss:Class<Dynamic>):Void
