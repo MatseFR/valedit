@@ -26,11 +26,22 @@ class ExposedGroup extends ExposedValue
 	
 	override function set_isEditable(value:Bool):Bool 
 	{
+		if (this._isEditable == value) return value;
 		for (val in this._valueList)
 		{
 			val.isEditable = value;
 		}
 		return super.set_isEditable(value);
+	}
+	
+	override function set_isReadOnly(value:Bool):Bool 
+	{
+		if (this._isReadOnly == value) return value;
+		for (val in this._valueList)
+		{
+			val.isReadOnly = value;
+		}
+		return super.set_isReadOnly(value);
 	}
 	
 	override function set_object(value:Dynamic):Dynamic
@@ -110,6 +121,9 @@ class ExposedGroup extends ExposedValue
 			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		}
 		
+		value.isEditable = this._isEditable;
+		value.isReadOnly = this._isReadOnly;
+		
 		this._valueList.push(value);
 		this._valueMap[value.propertyName] = value;
 		
@@ -133,6 +147,9 @@ class ExposedGroup extends ExposedValue
 		{
 			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		}
+		
+		value.isEditable = this._isEditable;
+		value.isReadOnly = this._isReadOnly;
 		
 		var afterValue:ExposedValue = this._valueMap[afterValueName];
 		if (afterValue == null)
@@ -163,6 +180,9 @@ class ExposedGroup extends ExposedValue
 		{
 			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		}
+		
+		value.isEditable = this._isEditable;
+		value.isReadOnly = this._isReadOnly;
 		
 		var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 		if (beforeValue == null)
