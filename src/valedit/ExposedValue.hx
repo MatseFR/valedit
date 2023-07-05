@@ -23,6 +23,8 @@ class ExposedValue extends EventDispatcher
 	public var extras(get, never):ValueExtraContainer;
 	public var isEditable(get, set):Bool;
 	public var isNullable:Bool = false;
+	public var isReadOnly(get, set):Bool;
+	public var isReadOnlyLocked(get, set):Bool;
 	/* tells whether this value is real (true, default) or not (false) */
 	public var isRealValue(get, never):Bool;
 	public var name:String;
@@ -69,6 +71,32 @@ class ExposedValue extends EventDispatcher
 			val.isEditable = this._isEditable;
 		}
 		return this._isEditable;
+	}
+	
+	private var _isReadOnly:Bool = false;
+	private function get_isReadOnly():Bool { return this._isReadOnly; }
+	private function set_isReadOnly(value:Bool):Bool
+	{
+		if (this._isReadOnlyLocked || this._isReadOnly == value) return value;
+		this._isReadOnly = value;
+		ValueEvent.dispatch(this, ValueEvent.ACCESS_CHANGE, this);
+		for (val in this._childValues)
+		{
+			val.isReadOnly = this._isReadOnly;
+		}
+		return this._isReadOnly;
+	}
+	
+	private var _isReadOnlyLocked:Bool = false;
+	private function get_isReadOnlyLocked():Bool { return this._isReadOnlyLocked; }
+	private function set_isReadOnlyLocked(value:Bool):Bool
+	{
+		if (this._isReadOnlyLocked == value) return value;
+		for (val in this._childValues)
+		{
+			val.isReadOnlyLocked = value;
+		}
+		return this._isReadOnlyLocked = value;
 	}
 	
 	private var _isRealValue:Bool = true;
@@ -204,6 +232,35 @@ class ExposedValue extends EventDispatcher
 		}
 	}
 	
+	/** sets isReadOnly even if isReadOnlyLocked is true */
+	public function forceReadOnly(value:Bool):Void
+	{
+		var wasLocked:Bool = this._isReadOnlyLocked;
+		this._isReadOnlyLocked = false;
+		this.isReadOnly = value;
+		this._isReadOnlyLocked = wasLocked;
+		
+		for (val in this._childValues)
+		{
+			val.forceReadOnly(value);
+		}
+	}
+	
+	/** sets isReadOnly value and sets isReadOnlyLocked to true */
+	public function setReadOnlyAndLock(value:Bool):Void
+	{
+		var wasLocked:Bool = this._isReadOnlyLocked;
+		this._isReadOnlyLocked = false;
+		this.isReadOnly = value;
+		this._isReadOnlyLocked = wasLocked;
+		this.isReadOnlyLocked = true;
+		
+		for (val in this._childValues)
+		{
+			val.setReadOnlyAndLock(value);
+		}
+	}
+	
 	public function readValue(dispatchEventIfChange:Bool = true):Void
 	{
 		var val:Dynamic = this.value;
@@ -285,6 +342,8 @@ class ExposedValue extends EventDispatcher
 		}
 		value.isEditable = this._isEditable;
 		value.isNullable = this.isNullable;
+		value.isReadOnly = this.isReadOnly;
+		value.isReadOnlyLocked = this.isReadOnlyLocked;
 		value.updateCollectionUIOnChange = this.updateCollectionUIOnChange;
 		this._extras.clone(value._extras);
 	}
