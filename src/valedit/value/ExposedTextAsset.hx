@@ -26,6 +26,8 @@ class ExposedTextAsset extends ExposedValue
 	public function new(propertyName:String, name:String=null) 
 	{
 		super(propertyName, name);
+		this.isNullable = true;
+		this.defaultValue = null;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
