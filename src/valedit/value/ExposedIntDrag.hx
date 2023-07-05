@@ -10,12 +10,13 @@ class ExposedIntDrag extends ExposedValue
 {
 	public var dragScaleFactor:Float;
 	public var liveDragging:Bool;
+	public var liveTyping:Bool;
 	public var maximum:Float;
 	public var minimum:Float;
 	public var step:Int;
 	
 	public function new(propertyName:String, name:String = null, minimum:Null<Float> = null, maximum:Null<Float> = null,
-						dragScaleFactor:Float = 1, step:Int = 1, liveDragging:Bool = true)
+						dragScaleFactor:Float = 1, step:Int = 1, liveDragging:Bool = true, liveTyping:Bool = true)
 	{
 		super(propertyName, name);
 		
@@ -27,12 +28,13 @@ class ExposedIntDrag extends ExposedValue
 		this.dragScaleFactor = dragScaleFactor;
 		this.step = step;
 		this.liveDragging = liveDragging;
+		this.liveTyping = liveTyping;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var int:ExposedIntDrag = new ExposedIntDrag(this.propertyName, this.name, this.minimum, this.maximum,
-													this.dragScaleFactor, this.step, this.liveDragging);
+													this.dragScaleFactor, this.step, this.liveDragging, this.liveTyping);
 		super.clone_internal(int, copyValue);
 		return int;
 	}
