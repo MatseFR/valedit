@@ -25,7 +25,7 @@ class ValEdit
 	static private var _displayMap:Map<DisplayObjectContainer, ValEditClass> = new Map<DisplayObjectContainer, ValEditClass>();
 	static private var _uiClassMap:Map<String, Void->IValueUI> = new Map<String, Void->IValueUI>();
 	
-	static public function registerClass(type:Class<Dynamic>, collection:ExposedCollection, canBeCreated:Bool = true, objectType:Int = -1, ?constructorCollection:ExposedCollection, ?settings:ValEditClassSettings, ?categoryList:Array<String>, ?v:ValEditClass):ValEditClass
+	static public function registerClass(type:Class<Dynamic>, collection:ExposedCollection, canBeCreated:Bool = true, ?isDisplayObject:Bool, ?displayObjectType:Int, ?constructorCollection:ExposedCollection, ?settings:ValEditClassSettings, ?categoryList:Array<String>, ?v:ValEditClass):ValEditClass
 	{
 		var clss:Class<Dynamic>;
 		var className:String = Type.getClassName(type);
@@ -35,17 +35,19 @@ class ValEdit
 			return null;
 		}
 		
-		if (objectType == -1)
+		if (isDisplayObject == null || (isDisplayObject && displayObjectType == null))
 		{
 			clss = type;
 			if (clss == DisplayObject)
 			{
-				objectType = ObjectType.DISPLAY_OPENFL;
+				isDisplayObject = true;
+				displayObjectType = DisplayObjectType.OPENFL;
 			}
 			#if starling
 			else if (clss == starling.display.DisplayObject)
 			{
-				objectType = ObjectType.DISPLAY_STARLING;
+				isDisplayObject = true;
+				displayObjectType = DisplayObjectType.STARLING;
 			}
 			#end
 			else
@@ -56,28 +58,34 @@ class ValEdit
 					if (clss == null) break;
 					if (clss == DisplayObject)
 					{
-						objectType = ObjectType.DISPLAY_OPENFL;
+						isDisplayObject = true;
+						displayObjectType = DisplayObjectType.OPENFL;
 						break;
 					}
 					#if starling
 					else if (clss == starling.display.DisplayObject)
 					{
-						objectType = ObjectType.DISPLAY_STARLING;
+						isDisplayObject = true;
+						displayObjectType = DisplayObjectType.STARLING;
 						break;
 					}
 					#end
 				}
 			}
 			
-			if (objectType == -1)
+			if (isDisplayObject == null)
 			{
-				objectType = ObjectType.OTHER;
+				isDisplayObject = false;
 			}
 		}
 		
 		if (v == null)
 		{
-			v = new ValEditClass(type, className, collection, canBeCreated, objectType, constructorCollection);
+			v = new ValEditClass(type, className, collection, canBeCreated, isDisplayObject, constructorCollection);
+			if (isDisplayObject)
+			{
+				v.displayObjectType = displayObjectType;
+			}
 		}
 		else
 		{
@@ -85,7 +93,11 @@ class ValEdit
 			v.className = className;
 			v.sourceCollection = collection;
 			v.canBeCreated = canBeCreated;
-			v.objectType = objectType;
+			v.isDisplayObject = isDisplayObject;
+			if (isDisplayObject)
+			{
+				v.displayObjectType = displayObjectType;
+			}
 			v.constructorCollection = constructorCollection;
 		}
 		_classMap.set(className, v);
@@ -103,7 +115,7 @@ class ValEdit
 		else
 		{
 			#if starling
-			if (objectType == ObjectType.DISPLAY_STARLING)
+			if (displayObjectType == DisplayObjectType.STARLING)
 			{
 				v.disposeFunctionName = "dispose";
 			}

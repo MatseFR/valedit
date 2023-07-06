@@ -10,9 +10,11 @@ class ValEditObject extends EventDispatcher
 {
 	public var className:String;
 	public var clss:ValEditClass;
+	public var displayObjectType:Int;
 	public var id(get, set):String;
+	public var isDisplayObject:Bool;
 	public var object:Dynamic;
-	public var objectType:Int = -1;
+	//public var objectType:Int = -1;
 	/** non-proxy object */
 	public var realObject:Dynamic;
 	public var template:ValEditTemplate;
@@ -37,7 +39,8 @@ class ValEditObject extends EventDispatcher
 		this._id = id;
 		this.clss = clss;
 		this.className = clss.className;
-		this.objectType = clss.objectType;
+		this.isDisplayObject = clss.isDisplayObject;
+		this.displayObjectType = clss.displayObjectType;
 	}
 	
 	public function ready():Void

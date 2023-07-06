@@ -116,51 +116,51 @@ class ValEditLayer extends EventDispatcher
 	
 	public function add(object:ValEditObject):Void
 	{
-		switch (object.objectType)
+		if (object.isDisplayObject)
 		{
-			case ObjectType.DISPLAY_OPENFL :
-				if (this._container == null)
-				{
-					createContainer();
-				}
-				if (object.clss.addToDisplayCustom != null)
-				{
-					#if neko
-					Reflect.callMethod(null, object.clss.addToDisplayCustom, [object.object, this._container]);
-					#else
-					object.clss.addToDisplayCustom(object.object, this._container);
-					#end
-				}
-				else
-				{
-					this._container.addChild(object.object);
-				}
-			
-			#if starling
-			case ObjectType.DISPLAY_STARLING :
-				if (this._containerStarling == null)
-				{
-					createContainerStarling();
-				}
-				if (object.clss.addToDisplayCustom != null)
-				{
-					#if neko
-					Reflect.callMethod(null, object.clss.addToDisplayCustom, [object.object, this._containerStarling]);
-					#else
-					object.clss.addToDisplayCustom(object.object, this._containerStarling);
-					#end
-				}
-				else
-				{
-					this._containerStarling.addChild(object.object);
-				}
-			#end
-			
-			case ObjectType.OTHER :
-				// nothing here
-			
-			default :
-				throw new Error("ValEditContainer.add ::: unknown object type " + object.objectType);
+			switch (object.displayObjectType)
+			{
+				case DisplayObjectType.OPENFL :
+					if (this._container == null)
+					{
+						createContainer();
+					}
+					if (object.clss.addToDisplayCustom != null)
+					{
+						#if neko
+						Reflect.callMethod(null, object.clss.addToDisplayCustom, [object.object, this._container]);
+						#else
+						object.clss.addToDisplayCustom(object.object, this._container);
+						#end
+					}
+					else
+					{
+						this._container.addChild(object.object);
+					}
+				
+				#if starling
+				case DisplayObjectType.STARLING :
+					if (this._containerStarling == null)
+					{
+						createContainerStarling();
+					}
+					if (object.clss.addToDisplayCustom != null)
+					{
+						#if neko
+						Reflect.callMethod(null, object.clss.addToDisplayCustom, [object.object, this._containerStarling]);
+						#else
+						object.clss.addToDisplayCustom(object.object, this._containerStarling);
+						#end
+					}
+					else
+					{
+						this._containerStarling.addChild(object.object);
+					}
+				#end
+				
+				default :
+					throw new Error("ValEditContainer.add ::: unknown display object type " + object.displayObjectType);
+			}
 		}
 		
 		this._objects.set(object.id, object);
@@ -170,43 +170,43 @@ class ValEditLayer extends EventDispatcher
 	
 	public function remove(object:ValEditObject):Void
 	{
-		switch (object.objectType)
+		if (object.isDisplayObject)
 		{
-			case ObjectType.DISPLAY_OPENFL :
-				if (object.clss.removeFromDisplayCustom != null)
-				{
-					#if neko
-					Reflect.callMethod(null, object.clss.removeFromDisplayCustom, [object.object, this._container]);
-					#else
-					object.clss.removeFromDisplayCustom(object.object, this._container);
-					#end
-				}
-				else
-				{
-					this._container.removeChild(object.object);
-				}
-			
-			#if starling
-			case ObjectType.DISPLAY_STARLING :
-				if (object.clss.removeFromDisplayCustom != null)
-				{
-					#if neko
-					Reflect.callMethod(null, object.clss.removeFromDisplayCustom, [object.object, this._containerStarling]);
-					#else
-					object.clss.removeFromDisplayCustom(object.object, this._containerStarling);
-					#end
-				}
-				else
-				{
-					this._containerStarling.removeChild(object.object);
-				}
-			#end
-			
-			case ObjectType.OTHER :
-				// nothing here
-			
-			default :
-				throw new Error("ValEditContainer.remove ::: unknown object type " + object.objectType);
+			switch (object.displayObjectType)
+			{
+				case DisplayObjectType.OPENFL :
+					if (object.clss.removeFromDisplayCustom != null)
+					{
+						#if neko
+						Reflect.callMethod(null, object.clss.removeFromDisplayCustom, [object.object, this._container]);
+						#else
+						object.clss.removeFromDisplayCustom(object.object, this._container);
+						#end
+					}
+					else
+					{
+						this._container.removeChild(object.object);
+					}
+				
+				#if starling
+				case DisplayObjectType.STARLING :
+					if (object.clss.removeFromDisplayCustom != null)
+					{
+						#if neko
+						Reflect.callMethod(null, object.clss.removeFromDisplayCustom, [object.object, this._containerStarling]);
+						#else
+						object.clss.removeFromDisplayCustom(object.object, this._containerStarling);
+						#end
+					}
+					else
+					{
+						this._containerStarling.removeChild(object.object);
+					}
+				#end
+				
+				default :
+					throw new Error("ValEditContainer.remove ::: unknown display object type " + object.displayObjectType);
+			}
 		}
 		
 		this._objects.remove(object.id);

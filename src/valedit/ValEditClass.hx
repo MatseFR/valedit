@@ -14,11 +14,12 @@ class ValEditClass
 	public var className:String;
 	public var classReference:Class<Dynamic>;
 	public var constructorCollection:ExposedCollection;
+	public var displayObjectType:Int = DisplayObjectType.NONE;
 	/** if object has a function that should be called when being destroyed, the function's name should go here */
 	public var disposeFunctionName:String = null;
+	public var isDisplayObject:Bool;
 	public var numInstances(default, null):Int = 0;
 	public var numTemplates(default, null):Int = 0;
-	public var objectType:Int;
 	public var sourceCollection:ExposedCollection;
 	public var superClassNames(default, null):Array<String> = new Array<String>();
 	
@@ -52,13 +53,13 @@ class ValEditClass
 	/**
 	   
 	**/
-	public function new(?classReference:Class<Dynamic>, ?className:String, ?sourceCollection:ExposedCollection, canBeCreated:Bool = true, objectType:Int = -1, ?constructorCollection:ExposedCollection) 
+	public function new(?classReference:Class<Dynamic>, ?className:String, ?sourceCollection:ExposedCollection, canBeCreated:Bool = true, isDisplayObject:Bool = false, ?constructorCollection:ExposedCollection) 
 	{
 		this.classReference = classReference;
 		this.className = className;
 		this.sourceCollection = sourceCollection;
 		this.canBeCreated = canBeCreated;
-		this.objectType = objectType;
+		this.isDisplayObject = isDisplayObject;
 		this.constructorCollection = constructorCollection;
 	}
 	
@@ -228,11 +229,6 @@ class ValEditClass
 		collection.object = object;
 		collection.uiContainer = container;
 		
-		//if (Std.isOfType(object, ValEditObject))
-		//{
-			//cast(object, ValEditObject).collection = collection;
-		//}
-		
 		return collection;
 	}
 	
@@ -272,10 +268,6 @@ class ValEditClass
 		{
 			this._containers.remove(container);
 			collection.parentValue = null;
-			//if (Std.isOfType(collection.object, ValEditObject))
-			//{
-				//cast(collection.object, ValEditObject).collection = null;
-			//}
 			collection.object = null;
 			collection.uiContainer = null;
 			this._pool.push(collection);
