@@ -14,7 +14,6 @@ class ValEditObject extends EventDispatcher
 	public var id(get, set):String;
 	public var isDisplayObject:Bool;
 	public var object:Dynamic;
-	//public var objectType:Int = -1;
 	/** non-proxy object */
 	public var realObject:Dynamic;
 	public var template:ValEditTemplate;
