@@ -9,32 +9,26 @@ import valedit.util.PropertyMap;
  */
 class ValEditClass 
 {
+	/** Dynamic->DisplayObjectContainer->Void */
+	public var addToDisplayCustom:Function;
 	public var canBeCreated:Bool;
 	public var categories(default, null):Array<String> = new Array<String>();
 	public var className:String;
 	public var classReference:Class<Dynamic>;
 	public var constructorCollection:ExposedCollection;
 	public var displayObjectType:Int = DisplayObjectType.NONE;
+	/** Dynamic->Void */
+	public var disposeCustom:Function;
 	/** if object has a function that should be called when being destroyed, the function's name should go here */
 	public var disposeFunctionName:String = null;
 	public var isDisplayObject:Bool;
 	public var numInstances(default, null):Int = 0;
 	public var numTemplates(default, null):Int = 0;
-	public var sourceCollection:ExposedCollection;
-	public var superClassNames(default, null):Array<String> = new Array<String>();
-	
-	/** Dynamic->Void */
-	public var disposeCustom:Function;
-	/** Dynamic->DisplayObjectContainer->Void */
-	public var addToDisplayCustom:Function;
+	public var propertyMap:PropertyMap;
 	/** Dynamic->DisplayObjectContainer->Void */
 	public var removeFromDisplayCustom:Function;
-	
-	public var proxyClass:Class<Dynamic>;
-	public var proxyFactory:ValEditObject->Dynamic;
-	
-	public var propertyMap:PropertyMap;
-	public var proxyPropertyMap:PropertyMap;
+	public var sourceCollection:ExposedCollection;
+	public var superClassNames(default, null):Array<String> = new Array<String>();
 	
 	private var _IDToObject:Map<String, ValEditObject> = new Map<String, ValEditObject>();
 	private var _objectIDIndex:Int = -1;
