@@ -168,8 +168,7 @@ class ValEditContainer implements IValEditContainer
 	
 	private var _layers:StringIndexedMap<ValEditLayer> = new StringIndexedMap<ValEditLayer>();
 	private var _objects:StringIndexedMap<ValEditObject> = new StringIndexedMap<ValEditObject>();
-	
-	private var _objectToValEditObject:ObjectMap<Dynamic, ValEditObject> = new ObjectMap<Dynamic, ValEditObject>();
+	private var _objectToLayer:ObjectMap<ValEditObject, ValEditLayer> = new ObjectMap<ValEditObject, ValEditLayer>();
 	
 	public function new() 
 	{
@@ -246,13 +245,13 @@ class ValEditContainer implements IValEditContainer
 	private function layer_objectAdded(evt:LayerEvent):Void
 	{
 		this._objects.set(evt.object.id, evt.object);
-		this._objectToValEditObject.set(evt.object.object, evt.object);
+		this._objectToLayer.set(evt.object, evt.layer);
 	}
 	
 	private function layer_objectRemoved(evt:LayerEvent):Void
 	{
 		this._objects.remove(evt.object.id);
-		this._objectToValEditObject.remove(evt.object.object);
+		this._objectToLayer.remove(evt.object);
 	}
 	
 	public function add(object:ValEditObject):Void
@@ -267,7 +266,8 @@ class ValEditContainer implements IValEditContainer
 	
 	public function remove(object:ValEditObject):Void
 	{
-		this._currentLayer.remove(object);
+		var layer:ValEditLayer = this._objectToLayer.get(object);
+		layer.remove(object);
 	}
 	
 	private function createContainer():Void
