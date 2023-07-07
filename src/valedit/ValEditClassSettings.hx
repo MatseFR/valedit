@@ -9,9 +9,7 @@ import valedit.util.PropertyMap;
 class ValEditClassSettings 
 {
 	public var objectDisposeFunctionName:String;
-	public var proxyClass:Class<Dynamic>;
 	public var propertyMap:PropertyMap;
-	public var proxyPropertyMap:PropertyMap;
 	public var hasRadianRotation:Bool;
 	
 	/**
