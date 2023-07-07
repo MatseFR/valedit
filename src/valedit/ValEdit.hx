@@ -402,7 +402,7 @@ class ValEdit
 		if (params == null) params = [];
 		var valClass:ValEditClass = _classMap.get(className);
 		
-		if (valObject == null) valObject = new ValEditObject(valClass, id);
+		if (valObject == null) valObject = ValEditObject.fromPool(valClass, id);
 		valObject.object = Type.createInstance(valClass.classReference, params);
 		
 		valObject.propertyMap = valClass.propertyMap;
@@ -436,7 +436,7 @@ class ValEdit
 		
 		if (template == null) 
 		{
-			template = new ValEditTemplate(valClass, id, object, collection, constructorCollection);
+			template = ValEditTemplate.fromPool(valClass, id, object, collection, constructorCollection);
 		}
 		else
 		{
@@ -523,7 +523,19 @@ class ValEdit
 	
 	static private function destroyTemplateInternal(template:ValEditTemplate):Void
 	{
+		if (template.clss.disposeFunctionName != null)
+		{
+			var func:Function = Reflect.field(template.object, template.clss.disposeFunctionName);
+			Reflect.callMethod(template.object, func, []);
+		}
+		else if (template.clss.disposeCustom != null)
+		{
+			Reflect.callMethod(template.clss.disposeCustom, template.clss.disposeCustom, [template.object]);
+		}
+		
 		unregisterTemplateInternal(template);
+		
+		template.pool();
 	}
 	
 	static private function unregisterTemplateInternal(template:ValEditTemplate):Void
