@@ -8,18 +8,23 @@ import valedit.util.PropertyMap;
  */
 class ValEditObject extends EventDispatcher
 {
+	static private var _POOL:Array<ValEditObject> = new Array<ValEditObject>();
+	
+	static public function fromPool(clss:ValEditClass, ?id:String):ValEditObject
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(clss, id);
+		return new ValEditObject(clss, id);
+	}
+	
 	public var className:String;
 	public var clss:ValEditClass;
 	public var displayObjectType:Int;
 	public var id(get, set):String;
 	public var isDisplayObject:Bool;
 	public var object:Dynamic;
-	/** non-proxy object */
-	public var realObject:Dynamic;
 	public var template:ValEditTemplate;
 	
 	public var propertyMap:PropertyMap;
-	public var realPropertyMap:PropertyMap;
 	
 	private var _id:String;
 	private function get_id():String { return this._id; }
@@ -35,11 +40,21 @@ class ValEditObject extends EventDispatcher
 	{
 		super();
 		
-		this._id = id;
-		this.clss = clss;
-		this.className = clss.className;
-		this.isDisplayObject = clss.isDisplayObject;
-		this.displayObjectType = clss.displayObjectType;
+		setTo(clss, id);
+	}
+	
+	public function clear():Void
+	{
+		this.clss = null;
+		this.object = null;
+		this.template = null;
+		this.propertyMap = null;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
 	}
 	
 	public function ready():Void
@@ -52,6 +67,17 @@ class ValEditObject extends EventDispatcher
 		this._realPropertyName = this.propertyMap.getObjectPropertyName(regularPropertyName);
 		if (this._realPropertyName == null) this._realPropertyName = regularPropertyName;
 		return Reflect.getProperty(this.object, this._realPropertyName);
+	}
+	
+	private function setTo(clss:ValEditClass, id:String):ValEditObject
+	{
+		this._id = id;
+		this.clss = clss;
+		this.className = clss.className;
+		this.isDisplayObject = clss.isDisplayObject;
+		this.displayObjectType = clss.displayObjectType;
+		
+		return this;
 	}
 	
 }
