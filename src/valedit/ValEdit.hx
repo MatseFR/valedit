@@ -105,9 +105,7 @@ class ValEdit
 		if (settings != null)
 		{
 			v.disposeFunctionName = settings.objectDisposeFunctionName;
-			v.proxyClass = settings.proxyClass;
 			v.propertyMap = settings.propertyMap;
-			v.proxyPropertyMap = settings.proxyPropertyMap;
 			v.disposeCustom = settings.disposeCustom;
 			v.addToDisplayCustom = settings.addToDisplayCustom;
 			v.removeFromDisplayCustom = settings.removeFromDisplayCustom;
@@ -125,11 +123,6 @@ class ValEdit
 		if (v.propertyMap == null)
 		{
 			v.propertyMap = new PropertyMap();
-		}
-		
-		if ((v.proxyClass != null || v.proxyFactory != null) && v.proxyPropertyMap == null)
-		{
-			v.proxyPropertyMap = new PropertyMap();
 		}
 		
 		if (categoryList != null)
@@ -410,24 +403,9 @@ class ValEdit
 		var valClass:ValEditClass = _classMap.get(className);
 		
 		if (valObject == null) valObject = new ValEditObject(valClass, id);
-		valObject.realObject = Type.createInstance(valClass.classReference, params);
+		valObject.object = Type.createInstance(valClass.classReference, params);
 		
-		if (valClass.proxyClass != null)
-		{
-			valObject.object = Type.createInstance(valClass.proxyClass, []);
-		}
-		else if (valClass.proxyFactory != null)
-		{
-			valObject.object = valClass.proxyFactory(valObject);
-		}
-		else
-		{
-			valObject.object = valObject.realObject;
-		}
-		
-		valObject.propertyMap = valClass.proxyPropertyMap != null ? valClass.proxyPropertyMap : valClass.propertyMap;
-		valObject.realPropertyMap = valClass.propertyMap;
-		
+		valObject.propertyMap = valClass.propertyMap;
 		valObject.ready();
 		
 		registerObjectInternal(valObject);
@@ -483,26 +461,11 @@ class ValEdit
 			template.constructorCollection.toValueArray(params);
 		}
 		
-		valObject.realObject = Type.createInstance(valClass.classReference, params);
+		valObject.object = Type.createInstance(valClass.classReference, params);
 		
-		template.collection.applyToObject(valObject.realObject);
+		template.collection.applyToObject(valObject.object);
 		
-		if (valClass.proxyClass != null)
-		{
-			valObject.object = Type.createInstance(valClass.proxyClass, []);
-		}
-		else if (valClass.proxyFactory != null)
-		{
-			valObject.object = valClass.proxyFactory(valObject);
-		}
-		else
-		{
-			valObject.object = valObject.realObject;
-		}
-		
-		valObject.propertyMap = valClass.proxyPropertyMap != null ? valClass.proxyPropertyMap : valClass.propertyMap;
-		valObject.realPropertyMap = valClass.propertyMap;
-		
+		valObject.propertyMap = valClass.propertyMap;
 		valObject.ready();
 		
 		registerObjectInternal(valObject);
@@ -530,15 +493,17 @@ class ValEdit
 	{
 		if (valObject.clss.disposeFunctionName != null)
 		{
-			var func:Function = Reflect.field(valObject.realObject, valObject.clss.disposeFunctionName);
-			Reflect.callMethod(valObject.realObject, func, []);
+			var func:Function = Reflect.field(valObject.object, valObject.clss.disposeFunctionName);
+			Reflect.callMethod(valObject.object, func, []);
 		}
 		else if (valObject.clss.disposeCustom != null)
 		{
-			Reflect.callMethod(valObject.clss.disposeCustom, valObject.clss.disposeCustom, [valObject.realObject]);
+			Reflect.callMethod(valObject.clss.disposeCustom, valObject.clss.disposeCustom, [valObject.object]);
 		}
 		
 		unregisterObjectInternal(valObject);
+		
+		valObject.pool();
 	}
 	
 	static private function unregisterObjectInternal(valObject:ValEditObject):Void
