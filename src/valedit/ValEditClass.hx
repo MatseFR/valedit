@@ -2,6 +2,7 @@ package valedit;
 import flash.display.DisplayObjectContainer;
 import haxe.Constraints.Function;
 import valedit.util.PropertyMap;
+import valedit.value.base.ExposedValueWithChildren;
 
 /**
  * ...
@@ -205,7 +206,7 @@ class ValEditClass
 	   @param	object
 	   @param	parentValue
 	**/
-	public function addContainer(container:DisplayObjectContainer, object:Dynamic, parentValue:ExposedValue = null):ExposedCollection
+	public function addContainer(container:DisplayObjectContainer, object:Dynamic, parentValue:ExposedValueWithChildren = null):ExposedCollection
 	{
 		var collection:ExposedCollection;
 		if (this._pool.length != 0) 
