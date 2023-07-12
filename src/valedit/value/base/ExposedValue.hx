@@ -1,9 +1,11 @@
-package valedit;
+package valedit.value.base;
+import haxe.Constraints.Function;
 import openfl.errors.ArgumentError;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 import valedit.events.ValueEvent;
 import valedit.ui.IValueUI;
+import valedit.value.base.ExposedValueWithChildren;
 import valedit.value.extra.ValueExtraContainer;
 #if valeditor
 import valeditor.ValEditorObject;
@@ -13,8 +15,16 @@ import valeditor.ValEditorObject;
  * ...
  * @author Matse
  */
-class ExposedValue extends EventDispatcher
+abstract class ExposedValue extends EventDispatcher
 {
+	static private var _FACTORIES:Map<String, Function> = new Map<String, Function>();
+	
+	static public function registerFactory(exposedValueClass:Class<Dynamic>, factory:Function):Void
+	{
+		var className:String = Type.getClassName(exposedValueClass);
+		_FACTORIES.set(className, factory);
+	}
+	
 	public var collection(get, set):ExposedCollection;
 	public var concatenatedPropertyName(get, never):String;
 	/* used as value when object is null */
@@ -29,7 +39,7 @@ class ExposedValue extends EventDispatcher
 	public var isRealValue(get, never):Bool;
 	public var name:String;
 	public var object(get, set):Dynamic;
-	public var parentValue:ExposedValue;
+	public var parentValue:ExposedValueWithChildren;
 	public var propertyName:String;
 	public var uiControl(get, set):IValueUI;
 	public var updateCollectionUIOnChange:Bool = true;
@@ -66,10 +76,6 @@ class ExposedValue extends EventDispatcher
 		if (this._isEditable == value) return value;
 		this._isEditable = value;
 		ValueEvent.dispatch(this, ValueEvent.EDITABLE_CHANGE, this);
-		for (val in this._childValues)
-		{
-			val.isEditable = this._isEditable;
-		}
 		return this._isEditable;
 	}
 	
@@ -80,10 +86,6 @@ class ExposedValue extends EventDispatcher
 		if (this._isReadOnlyLocked || this._isReadOnly == value) return value;
 		this._isReadOnly = value;
 		ValueEvent.dispatch(this, ValueEvent.ACCESS_CHANGE, this);
-		for (val in this._childValues)
-		{
-			val.isReadOnly = this._isReadOnly;
-		}
 		return this._isReadOnly;
 	}
 	
@@ -92,10 +94,6 @@ class ExposedValue extends EventDispatcher
 	private function set_isReadOnlyLocked(value:Bool):Bool
 	{
 		if (this._isReadOnlyLocked == value) return value;
-		for (val in this._childValues)
-		{
-			val.isReadOnlyLocked = value;
-		}
 		return this._isReadOnlyLocked = value;
 	}
 	
@@ -149,6 +147,10 @@ class ExposedValue extends EventDispatcher
 		{
 			value.exposedValue = this;
 		}
+		else if (this._uiControl != null)
+		{
+			this._uiControl.exposedValue = null;
+		}
 		return this._uiControl = value;
 	}
 	
@@ -192,7 +194,6 @@ class ExposedValue extends EventDispatcher
 	private var _valEditorObject:ValEditorObject;
 	#end
 	private var _storedValue:Dynamic;
-	private var _childValues:Array<ExposedValue> = new Array<ExposedValue>();
 	
 	/**
 	   
@@ -202,13 +203,7 @@ class ExposedValue extends EventDispatcher
 	public function new(propertyName:String, name:String = null) 
 	{
 		super();
-		if (propertyName == null)
-		{
-			throw new ArgumentError("ExposedValue ::: propertyName cannot be null");
-		}
-		this.propertyName = propertyName;
-		if (name == null) name = propertyName;
-		this.name = name;
+		setNames(propertyName, name);
 		this._extras.owner = this;
 	}
 	
@@ -217,19 +212,40 @@ class ExposedValue extends EventDispatcher
 	**/
 	public function clear():Void
 	{
+		this.collection = null;
+		this.defaultValue = null;
+		this._isEditable = true;
+		this.isNullable = false;
+		this._isReadOnly = false;
+		this._isReadOnlyLocked = false;
+		this.parentValue = null;
+		this._storedValue = null;
 		this._object = null;
 		this._extras.object = null;
+		this.uiControl = null;
+		this._valEditObject = null;
+		#if valeditor
+		this._valEditorObject = null;
+		#end
+	}
+	
+	abstract public function pool():Void;
+	
+	private function setNames(propertyName:String, name:String):Void
+	{
+		if (propertyName == null)
+		{
+			throw new ArgumentError("ExposedValue ::: propertyName cannot be null");
+		}
+		this.propertyName = propertyName;
+		if (name == null) name = propertyName;
+		this.name = name;
 	}
 	
 	public function applyToObject(object:Dynamic):Void
 	{
 		Reflect.setProperty(object, this.propertyName, this.value);
 		this._extras.applyToObject(object);
-		
-		for (value in this._childValues)
-		{
-			value.applyToObject(object);
-		}
 	}
 	
 	/** sets isReadOnly even if isReadOnlyLocked is true */
@@ -239,11 +255,6 @@ class ExposedValue extends EventDispatcher
 		this._isReadOnlyLocked = false;
 		this.isReadOnly = value;
 		this._isReadOnlyLocked = wasLocked;
-		
-		for (val in this._childValues)
-		{
-			val.forceReadOnly(value);
-		}
 	}
 	
 	/** sets isReadOnly value and sets isReadOnlyLocked to true */
@@ -254,11 +265,6 @@ class ExposedValue extends EventDispatcher
 		this.isReadOnly = value;
 		this._isReadOnlyLocked = wasLocked;
 		this.isReadOnlyLocked = true;
-		
-		for (val in this._childValues)
-		{
-			val.setReadOnlyAndLock(value);
-		}
 	}
 	
 	public function readValue(dispatchEventIfChange:Bool = true):Void
@@ -283,37 +289,10 @@ class ExposedValue extends EventDispatcher
 	
 	/**
 	   
-	   @param	value
-	**/
-	public function addChildValue(value:ExposedValue):Void
-	{
-		this._childValues.push(value);
-	}
-	
-	/**
-	   
-	   @param	value
-	**/
-	public function removeChildValue(value:ExposedValue):Void
-	{
-		this._childValues.remove(value);
-	}
-	
-	/**
-	   
 	**/
 	public function valueChanged():Void
 	{
 		readValue(false);
-	}
-	
-	/**
-	   
-	**/
-	public function childValueChanged():Void
-	{
-		this._collection.readValues();
-		if (this.parentValue != null) this.parentValue.childValueChanged();
 	}
 	
 	/**
@@ -375,8 +354,24 @@ class ExposedValue extends EventDispatcher
 	**/
 	static public function valueFromJSON(json:Dynamic):ExposedValue
 	{
-		var clss:Class<Dynamic> = Type.resolveClass(json.clss);
-		var value:ExposedValue = Type.createInstance(clss, []);
+		var value:ExposedValue;
+		var className:String = json.clss;
+		var propName:String = json.propName;
+		var factory:Function = _FACTORIES.get(className);
+		
+		if (factory != null)
+		{
+			#if neko
+			value = Reflect.callMethod(factory, factory, [propName]);
+			#else
+			value = cast factory(propName);
+			#end
+		}
+		else
+		{
+			var clss:Class<Dynamic> = Type.resolveClass(className);
+			value = Type.createInstance(clss, []);
+		}
 		value.fromJSON(json);
 		return value;
 	}
