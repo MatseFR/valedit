@@ -8,6 +8,14 @@ import openfl.display.DisplayObjectContainer;
  */
 class UICollection 
 {
+	static private var _POOL:Array<UICollection> = new Array<UICollection>();
+	
+	static public function fromPool():UICollection
+	{
+		if (_POOL.length != 0) return _POOL.pop();
+		return new UICollection();
+	}
+	
 	public var uiContainer(get, set):DisplayObjectContainer;
 	
 	private var _uiContainer:DisplayObjectContainer;
@@ -64,6 +72,19 @@ class UICollection
 	public function new() 
 	{
 		
+	}
+	
+	public function pool():Void
+	{
+		this.uiContainer = null;
+		for (control in this._uiList)
+		{
+			control.pool();
+		}
+		this._uiList.resize(0);
+		this._displayList.resize(0);
+		
+		_POOL[_POOL.length] = this;
 	}
 	
 	/**
