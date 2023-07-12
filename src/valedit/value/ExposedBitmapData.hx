@@ -2,7 +2,7 @@ package valedit.value;
 
 import valedit.asset.AssetLib;
 import valedit.asset.BitmapAsset;
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -10,6 +10,19 @@ import valedit.ExposedValue;
  */
 class ExposedBitmapData extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedBitmapData> = new Array<ExposedBitmapData>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null):ExposedBitmapData
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name);
+		return new ExposedBitmapData(propertyName, name);
+	}
+	
 	private var _asset:BitmapAsset;
 	
 	override function set_value(value:Dynamic):Dynamic 
@@ -27,12 +40,30 @@ class ExposedBitmapData extends ExposedValue
 	{
 		super(propertyName, name);
 		this.isNullable = true;
-		this.defaultValue = null;
+	}
+	
+	override public function clear():Void 
+	{
+		super.clear();
+		this._asset = null;
+		this.isNullable = true;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String):ExposedBitmapData
+	{
+		setNames(propertyName, name);
+		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var bmd:ExposedBitmapData = new ExposedBitmapData(this.propertyName, this.name);
+		var bmd:ExposedBitmapData = fromPool(this.propertyName, this.name);
 		clone_internal(bmd, copyValue);
 		return bmd;
 	}

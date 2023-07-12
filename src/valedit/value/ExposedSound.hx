@@ -1,6 +1,6 @@
 package valedit.value;
 
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 import valedit.asset.AssetLib;
 import valedit.asset.SoundAsset;
 
@@ -10,6 +10,19 @@ import valedit.asset.SoundAsset;
  */
 class ExposedSound extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedSound> = new Array<ExposedSound>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null):ExposedSound
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name);
+		return new ExposedSound(propertyName, name);
+	}
+	
 	private var _asset:SoundAsset;
 	
 	override function set_value(value:Dynamic):Dynamic 
@@ -26,8 +39,26 @@ class ExposedSound extends ExposedValue
 	public function new(propertyName:String, name:String=null) 
 	{
 		super(propertyName, name);
-		this.defaultValue = null;
 		this.isNullable = true;
+	}
+	
+	override public function clear():Void 
+	{
+		super.clear();
+		this._asset = null;
+		this.isNullable = true;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String):ExposedSound
+	{
+		setNames(propertyName, name);
+		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 

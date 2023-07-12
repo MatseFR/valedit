@@ -1,6 +1,6 @@
 package valedit.value;
 
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -8,6 +8,19 @@ import valedit.ExposedValue;
  */
 class ExposedString extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedString> = new Array<ExposedString>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, inputPercentWidth:Float = 100):ExposedString
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, maxChars, restrict, inputPercentWidth);
+		return new ExposedString(propertyName, name, maxChars, restrict, inputPercentWidth);
+	}
+	
 	/* 0 = unlimited */
 	public var maxChars:Int = 0;
 	public var restrict:String = null;
@@ -27,6 +40,27 @@ class ExposedString extends ExposedValue
 		this.restrict = restrict;
 		this.inputPercentWidth = inputPercentWidth;
 		this.defaultValue = "";
+	}
+	
+	override public function clear():Void 
+	{
+		super.clear();
+		this.defaultValue = "";
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String, maxChars:Int, restrict:String, inputPercentWidth:Float):ExposedString
+	{
+		setNames(propertyName, name);
+		this.maxChars = maxChars;
+		this.restrict = restrict;
+		this.inputPercentWidth = inputPercentWidth;
+		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 

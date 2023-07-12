@@ -1,7 +1,7 @@
 package valedit.value;
 
 import valeditor.ui.feathers.variant.TextInputVariant;
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -9,6 +9,20 @@ import valedit.ExposedValue;
  */
 class ExposedIntRange extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedIntRange> = new Array<ExposedIntRange>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null, min:Int = 0, max:Int = 100,
+									step:Int = 1, inputVariant:String = TextInputVariant.NUMERIC_MEDIUM):ExposedIntRange
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, min, max, step, inputVariant);
+		return new ExposedIntRange(propertyName, name, min, max, step, inputVariant);
+	}
+	
 	public var max(get, set):Int;
 	public var min(get, set):Int;
 	public var step:Int = 1;
@@ -50,9 +64,31 @@ class ExposedIntRange extends ExposedValue
 		this.defaultValue = 0;
 	}
 	
+	override public function clear():Void 
+	{
+		super.clear();
+		this.defaultValue = 0;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String, min:Int, max:Int, step:Int, inputVariant:String):ExposedIntRange
+	{
+		setNames(propertyName, name);
+		this.min = min;
+		this.max = max;
+		this.step = step;
+		this.inputVariant = inputVariant;
+		return this;
+	}
+	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var range:ExposedIntRange = new ExposedIntRange(this.propertyName, this.name, this.min, this.max, this.step, this.inputVariant);
+		var range:ExposedIntRange = fromPool(this.propertyName, this.name, this.min, this.max, this.step, this.inputVariant);
 		super.clone_internal(range, copyValue);
 		return range;
 	}

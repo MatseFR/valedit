@@ -1,6 +1,6 @@
 package valedit.value;
 
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -8,6 +8,19 @@ import valedit.ExposedValue;
  */
 class ExposedSelect extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedSelect> = new Array<ExposedSelect>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null, listPercentWidth:Float = 100):ExposedSelect
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, choiceList, valueList, listPercentWidth);
+		return new ExposedSelect(propertyName, name, choiceList, valueList, listPercentWidth);
+	}
+	
 	public var choiceList(default, null):Array<String>;
 	public var valueList(default, null):Array<Dynamic>;
 	public var listPercentWidth:Float;
@@ -33,9 +46,25 @@ class ExposedSelect extends ExposedValue
 	override public function clear():Void 
 	{
 		super.clear();
-		
-		this.choiceList.resize(0);
-		this.valueList.resize(0);
+		this.choiceList = null;
+		this.valueList = null;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String, choiceList:Array<String>, valueList:Array<Dynamic>, listPercentWidth:Float):ExposedSelect
+	{
+		setNames(propertyName, name);
+		if (choiceList == null) choiceList = new Array<String>();
+		if (valueList == null) valueList = new Array<Dynamic>();
+		this.choiceList = choiceList;
+		this.valueList = valueList;
+		this.listPercentWidth = listPercentWidth;
+		return this;
 	}
 	
 	/**

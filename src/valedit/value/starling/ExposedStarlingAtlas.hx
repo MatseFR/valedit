@@ -1,6 +1,6 @@
 package valedit.value.starling;
 
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 import valedit.asset.AssetLib;
 import valedit.asset.starling.StarlingAtlasAsset;
 
@@ -10,6 +10,19 @@ import valedit.asset.starling.StarlingAtlasAsset;
  */
 class ExposedStarlingAtlas extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedStarlingAtlas> = new Array<ExposedStarlingAtlas>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null):ExposedStarlingAtlas
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name);
+		return new ExposedStarlingAtlas(propertyName, name);
+	}
+	
 	private var _asset:StarlingAtlasAsset;
 	
 	override function set_value(value:Dynamic):Dynamic 
@@ -23,11 +36,29 @@ class ExposedStarlingAtlas extends ExposedValue
 		return super.set_value(value);
 	}
 	
-	public function new(propertyName:String, name:String=null) 
+	public function new(propertyName:String, name:String = null)
 	{
 		super(propertyName, name);
 		this.isNullable = true;
-		this.defaultValue = null;
+	}
+	
+	override public function clear():Void 
+	{
+		super.clear();
+		this._asset = null;
+		this.isNullable = true;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String):ExposedStarlingAtlas
+	{
+		setNames(propertyName, name);
+		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 

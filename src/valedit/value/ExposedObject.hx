@@ -1,13 +1,27 @@
 package valedit.value;
 
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueWithChildren;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedObject extends ExposedValue 
+class ExposedObject extends ExposedValueWithChildren 
 {
+	static private var _POOL:Array<ExposedObject> = new Array<ExposedObject>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null, storeValue:Bool = false, reassignOnChange:Bool = false):ExposedObject
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, storeValue, reassignOnChange);
+		return new ExposedObject(propertyName, name, storeValue, reassignOnChange);
+	}
+	
 	public var reassignOnChange:Bool = false;
 	public var storeValue:Bool = false;
 	
@@ -39,7 +53,20 @@ class ExposedObject extends ExposedValue
 		super(propertyName, name);
 		this.storeValue = storeValue;
 		this.reassignOnChange = reassignOnChange;
-		this.defaultValue = null;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String, storeValue:Bool, reassignOnChange:Bool):ExposedObject
+	{
+		setNames(propertyName, name);
+		this.storeValue = storeValue;
+		this.reassignOnChange = reassignOnChange;
+		return this;
 	}
 	
 	override public function applyToObject(object:Dynamic):Void 
@@ -82,7 +109,7 @@ class ExposedObject extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var object:ExposedObject = new ExposedObject(this.propertyName, this.name, this.storeValue, this.reassignOnChange);
+		var object:ExposedObject = fromPool(this.propertyName, this.name, this.storeValue, this.reassignOnChange);
 		super.clone_internal(object, copyValue);
 		return object;
 	}

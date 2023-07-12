@@ -1,7 +1,7 @@
 package valedit.value;
 
 import openfl.errors.Error;
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 import valedit.ValEditObject;
 
 /**
@@ -10,6 +10,19 @@ import valedit.ValEditObject;
  */
 class ExposedObjectReference extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedObjectReference> = new Array<ExposedObjectReference>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String=null, classList:Array<String> = null, allowSelfReference:Bool = false):ExposedObjectReference
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, classList, allowSelfReference);
+		return new ExposedObjectReference(propertyName, name, classList, allowSelfReference);
+	}
+	
 	/** if false, current object won't be available for selection. Default is false */
 	public var allowSelfReference:Bool;
 	public var classList(default, null):Array<String>;
@@ -36,6 +49,29 @@ class ExposedObjectReference extends ExposedValue
 		this.isNullable = true;
 	}
 	
+	override public function clear():Void 
+	{
+		super.clear();
+		this.classList = null;
+		this._valEditObjectReference = null;
+		this.isNullable = true;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String, classList:Array<String>, allowSelfReference:Bool):ExposedObjectReference
+	{
+		setNames(propertyName, name);
+		if (classList == null) classList = new Array<String>();
+		this.classList = classList;
+		this.allowSelfReference = allowSelfReference;
+		return this;
+	}
+	
 	public function addClass(clss:Class<Dynamic>):Void
 	{
 		var className:String = Type.getClassName(clss);
@@ -49,7 +85,7 @@ class ExposedObjectReference extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var reference:ExposedObjectReference = new ExposedObjectReference(this.propertyName, this.name, this.classList.copy(), this.allowSelfReference);
+		var reference:ExposedObjectReference = fromPool(this.propertyName, this.name, this.classList.copy(), this.allowSelfReference);
 		super.clone_internal(reference, copyValue);
 		return reference;
 	}

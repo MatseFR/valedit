@@ -1,6 +1,6 @@
 package valedit.value;
 
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -8,7 +8,20 @@ import valedit.ExposedValue;
  */
 class ExposedFunction extends ExposedValue 
 {
-	public var parameters:Array<Dynamic>;
+	static private var _POOL:Array<ExposedFunction> = new Array<ExposedFunction>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null, parameters:Array<Dynamic> = null):ExposedFunction
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, parameters);
+		return new ExposedFunction(propertyName, name, parameters);
+	}
+	
+	public var parameters:Array<Dynamic> = new Array<Dynamic>();
 	
 	override function set_isEditable(value:Bool):Bool 
 	{
@@ -46,7 +59,37 @@ class ExposedFunction extends ExposedValue
 		super(propertyName, name);
 		
 		if (parameters == null) parameters = new Array<Dynamic>();
-		this.parameters = parameters;
+		for (param in parameters)
+		{
+			addParameter(param);
+		}
+	}
+	
+	override public function clear():Void 
+	{
+		super.clear();
+		this.parameters.resize(0);
+		this._parameterValuesAll.resize(0);
+		this._parameterValues.resize(0);
+		this._stringParamToValue.clear();
+		this._values.resize(0);
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String, parameters:Array<Dynamic> = null):ExposedFunction
+	{
+		setNames(propertyName, name);
+		if (parameters == null) parameters = new Array<Dynamic>();
+		for (param in parameters)
+		{
+			addParameter(param);
+		}
+		return this;
 	}
 	
 	override public function applyToObject(object:Dynamic):Void 
@@ -170,7 +213,7 @@ class ExposedFunction extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var func:ExposedFunction = new ExposedFunction(this.propertyName, this.name, this.parameters.copy());
+		var func:ExposedFunction = fromPool(this.propertyName, this.name, this.parameters.copy());
 		super.clone_internal(func, copyValue);
 		return func;
 	}

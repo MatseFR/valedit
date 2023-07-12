@@ -1,7 +1,7 @@
 package valedit.value;
-import openfl.net.FileFilter;
 #if desktop
-import valedit.ExposedValue;
+import openfl.net.FileFilter;
+import valedit.value.base.ExposedValue;
 
 /**
  * Desktop targets only (Neko, CPP, Air...)
@@ -9,6 +9,19 @@ import valedit.ExposedValue;
  */
 class ExposedFilePath extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedFilePath> = new Array<ExposedFilePath>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null, fileMustExist:Bool = true, ?fileFilters:Array<FileFilter>, ?dialogTitle:String):ExposedFilePath
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, fileMustExist, fileFilters, dialogTitle);
+		return new ExposedFilePath(propertyName, name, fileMustExist, fileFilters, dialogTitle);
+	}
+	
 	public var dialogTitle:String;
 	public var fileMustExist:Bool;
 	public var fileFilters:Array<FileFilter>;
@@ -20,7 +33,28 @@ class ExposedFilePath extends ExposedValue
 		if (fileFilters == null) fileFilters = new Array<FileFilter>();
 		this.fileFilters = fileFilters;
 		this.dialogTitle = dialogTitle;
-		this.defaultValue = null;
+	}
+	
+	override public function clear():Void 
+	{
+		super.clear();
+		this.fileFilters = null;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String, fileMustExist:Bool, fileFilters:Array<FileFilter>, dialogTitle:String):ExposedFilePath
+	{
+		setNames(propertyName, name);
+		this.fileMustExist = fileMustExist;
+		if (fileFilters == null) fileFilters = new Array<FileFilter>();
+		this.fileFilters = fileFilters;
+		this.dialogTitle = dialogTitle;
+		return this;
 	}
 	
 	public function addFilter(description:String, extension:String, ?macType:String):Void
@@ -31,7 +65,7 @@ class ExposedFilePath extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var file:ExposedFilePath = new ExposedFilePath(this.propertyName, this.name, this.fileMustExist, this.dialogTitle);
+		var file:ExposedFilePath = fromPool(this.propertyName, this.name, this.fileMustExist, this.dialogTitle);
 		for (filter in this.fileFilters)
 		{
 			file.addFilter(filter.description, filter.extension, filter.macType);

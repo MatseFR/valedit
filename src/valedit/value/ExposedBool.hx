@@ -1,6 +1,6 @@
 package valedit.value;
 
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -8,6 +8,18 @@ import valedit.ExposedValue;
  */
 class ExposedBool extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedBool> = new Array<ExposedBool>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null):ExposedBool
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name);
+		return new ExposedBool(propertyName, name);
+	}
 	
 	/**
 	   
@@ -20,9 +32,21 @@ class ExposedBool extends ExposedValue
 		this.defaultValue = false;
 	}
 	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String):ExposedBool
+	{
+		setNames(propertyName, name);
+		return this;
+	}
+	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var bool:ExposedBool = new ExposedBool(this.propertyName, this.name);
+		var bool:ExposedBool = fromPool(this.propertyName, this.name);
 		super.clone_internal(bool, copyValue);
 		return bool;
 	}

@@ -1,6 +1,6 @@
 package valedit.value;
 
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 import valedit.asset.AssetLib;
 import valedit.asset.BinaryAsset;
 
@@ -10,6 +10,19 @@ import valedit.asset.BinaryAsset;
  */
 class ExposedByteArray extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedByteArray> = new Array<ExposedByteArray>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null):ExposedByteArray
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name);
+		return new ExposedByteArray(propertyName, name);
+	}
+	
 	private var _asset:BinaryAsset;
 	
 	override function set_value(value:Dynamic):Dynamic 
@@ -28,9 +41,27 @@ class ExposedByteArray extends ExposedValue
 		super(propertyName, name);
 	}
 	
+	override public function clear():Void 
+	{
+		super.clear();
+		this._asset = null;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String):ExposedByteArray
+	{
+		setNames(propertyName, name);
+		return this;
+	}
+	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var bytes:ExposedByteArray = new ExposedByteArray(this.propertyName, this.name);
+		var bytes:ExposedByteArray = fromPool(this.propertyName, this.name);
 		clone_internal(bytes, copyValue);
 		return bytes;
 	}

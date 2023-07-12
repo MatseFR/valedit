@@ -1,7 +1,7 @@
 package valedit.value;
 import openfl.errors.Error;
 import valedit.ExposedCollection;
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 import valedit.events.ValueEvent;
 import valedit.ui.IGroupUI;
 import valedit.ui.IValueUI;
@@ -12,6 +12,19 @@ import valedit.ui.IValueUI;
  */
 class ExposedGroup extends ExposedValue
 {
+	static private var _POOL:Array<ExposedGroup> = new Array<ExposedGroup>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(name:String, isCollapsable:Bool = true, isCollapsedDefault:Bool = false):ExposedGroup
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(name, isCollapsable, isCollapsedDefault);
+		return new ExposedGroup(name, isCollapsable, isCollapsedDefault);
+	}
+	
 	public var isCollapsable:Bool;
 	public var isCollapsedDefault:Bool;
 	
@@ -87,6 +100,39 @@ class ExposedGroup extends ExposedValue
 		super(name);
 		this.isCollapsable = isCollapsable;
 		this.isCollapsedDefault = isCollapsedDefault;
+	}
+	
+	override public function clear():Void 
+	{
+		super.clear();
+		for (value in this._valueList)
+		{
+			value.pool();
+		}
+		this._groupList.resize(0);
+		this._groupMap.clear();
+		this._valueList.resize(0);
+		this._valueMap.clear();
+		if (this._uiGroup != null)
+		{
+			this._uiGroup.pool();
+			this._uiGroup = null;
+		}
+		this._isUIBuilt = false;
+	}
+	
+	public function pool():Void 
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(name:String, isCollapsable:Bool, isCollapsedDefault:Bool):ExposedGroup
+	{
+		setNames(name, null);
+		this.isCollapsable = isCollapsable;
+		this.isCollapsedDefault = isCollapsedDefault;
+		return this;
 	}
 	
 	override public function applyToObject(object:Dynamic):Void 
@@ -327,7 +373,7 @@ class ExposedGroup extends ExposedValue
 	**/
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var group:ExposedGroup = new ExposedGroup(this.name, this.isCollapsable, this.isCollapsedDefault);
+		var group:ExposedGroup = fromPool(this.name, this.isCollapsable, this.isCollapsedDefault);
 		
 		for (val in this._valueList)
 		{

@@ -1,6 +1,6 @@
 package valedit.value;
 
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -8,11 +8,35 @@ import valedit.ExposedValue;
  */
 class ExposedSeparator extends ExposedValue 
 {
-
+	static private var _POOL:Array<ExposedSeparator> = new Array<ExposedSeparator>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(name:String = ""):ExposedSeparator
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(name);
+		return new ExposedSeparator(name);
+	}
+	
 	public function new(name:String="") 
 	{
 		super(name);
 		this._isRealValue = false;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(name:String):ExposedSeparator
+	{
+		setNames(name, null);
+		return this;
 	}
 	
 	override public function applyToObject(object:Dynamic):Void 

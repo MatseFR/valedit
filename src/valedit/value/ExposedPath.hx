@@ -1,6 +1,6 @@
 package valedit.value;
 #if desktop
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * Desktop targets only (Neko, CPP, Air...)
@@ -8,18 +8,43 @@ import valedit.ExposedValue;
  */
 class ExposedPath extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedPath> = new Array<ExposedPath>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null, ?dialogTitle:String):ExposedPath
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, dialogTitle);
+		return new ExposedPath(propertyName, name, dialogTitle);
+	}
+	
 	public var dialogTitle:String;
 	
 	public function new(propertyName:String, name:String=null, ?dialogTitle:String) 
 	{
 		super(propertyName, name);
 		this.dialogTitle = dialogTitle;
-		this.defaultValue = null;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String, dialogTitle:String):ExposedPath
+	{
+		setNames(propertyName, name);
+		this.dialogTitle = dialogTitle;
+		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var path:ExposedPath = new ExposedPath(this.propertyName, this.name, this.dialogTitle);
+		var path:ExposedPath = fromPool(this.propertyName, this.name, this.dialogTitle);
 		clone_internal(path, copyValue);
 		return path;
 	}

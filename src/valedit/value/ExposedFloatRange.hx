@@ -1,7 +1,7 @@
 package valedit.value;
 
 import valeditor.ui.feathers.variant.TextInputVariant;
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -9,6 +9,19 @@ import valedit.ExposedValue;
  */
 class ExposedFloatRange extends ExposedValue 
 {
+	static private var _POOL:Array<ExposedFloatRange> = new Array<ExposedFloatRange>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool(propertyName:String, name:String = null, min:Float = 0, max:Float = 100, step:Float = 1, precision:Int = 2, inputVariant:String = TextInputVariant.NUMERIC_MEDIUM):ExposedFloatRange
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, min, max, step, precision, inputVariant);
+		return new ExposedFloatRange(propertyName, name, min, max, step, precision, inputVariant);
+	}
+	
 	public var max(get, set):Float;
 	public var min(get, set):Float;
 	public var precision:Int;
@@ -53,9 +66,32 @@ class ExposedFloatRange extends ExposedValue
 		this.defaultValue = 0.0;
 	}
 	
+	override public function clear():Void 
+	{
+		super.clear();
+		this.defaultValue = 0.0;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(propertyName:String, name:String, min:Float, max:Float, step:Float, precision:Int, inputVariant:String):ExposedFloatRange
+	{
+		setNames(propertyName, name);
+		this.min = min;
+		this.max = max;
+		this.step = step;
+		this.precision = precision;
+		this.inputVariant = inputVariant;
+		return this;
+	}
+	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var range:ExposedFloatRange = new ExposedFloatRange(this.propertyName, this.name, this._min, this._max, this.step, this.precision, this.inputVariant);
+		var range:ExposedFloatRange = fromPool(this.propertyName, this.name, this._min, this._max, this.step, this.precision, this.inputVariant);
 		super.clone_internal(range, copyValue);
 		return range;
 	}
