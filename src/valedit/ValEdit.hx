@@ -6,6 +6,8 @@ import openfl.display.DisplayObjectContainer;
 import openfl.errors.Error;
 import valedit.ui.IValueUI;
 import valedit.util.PropertyMap;
+import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueWithChildren;
 
 /**
  * ...
@@ -249,7 +251,7 @@ class ValEdit
 	   @param	object	instance of a registered Class
 	   @param	uiContainer	if left null uiContainerDefault is used
 	**/
-	static public function edit(object:Dynamic, ?container:DisplayObjectContainer, ?parentValue:ExposedValue):ExposedCollection
+	static public function edit(object:Dynamic, ?container:DisplayObjectContainer, ?parentValue:ExposedValueWithChildren):ExposedCollection
 	{
 		if (container == null) container = uiContainerDefault;
 		if (container == null)
