@@ -74,7 +74,7 @@ class UICollection
 		
 	}
 	
-	public function pool():Void
+	public function clear():Void
 	{
 		this.uiContainer = null;
 		for (control in this._uiList)
@@ -83,7 +83,11 @@ class UICollection
 		}
 		this._uiList.resize(0);
 		this._displayList.resize(0);
-		
+	}
+	
+	public function pool():Void
+	{
+		clear();
 		_POOL[_POOL.length] = this;
 	}
 	
