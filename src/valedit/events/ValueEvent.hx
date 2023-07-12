@@ -3,7 +3,7 @@ package valedit.events;
 import openfl.events.Event;
 import openfl.events.EventType;
 import openfl.events.IEventDispatcher;
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
