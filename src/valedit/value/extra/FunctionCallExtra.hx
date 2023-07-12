@@ -1,5 +1,6 @@
 package valedit.value.extra;
 import haxe.Constraints.Function;
+import valedit.value.base.ExposedValue;
 import valedit.value.extra.ValueExtra;
 
 /**

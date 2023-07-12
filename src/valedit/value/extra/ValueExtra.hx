@@ -1,7 +1,7 @@
 package valedit.value.extra;
 import openfl.errors.Error;
 import valedit.ExposedCollection;
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...

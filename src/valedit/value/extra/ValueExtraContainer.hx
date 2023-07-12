@@ -1,6 +1,6 @@
 package valedit.value.extra;
 import valedit.ExposedCollection;
-import valedit.ExposedValue;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
