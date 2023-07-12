@@ -3,13 +3,11 @@ import openfl.text.Font;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
-import valedit.value.ExposedColorReadOnly;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedGroup;
 import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedSeparator;
-import valedit.value.ExposedSpacing;
 
 /**
  * ...
@@ -25,7 +23,6 @@ class SimpleThemeData
 		var intDrag:ExposedIntDrag;
 		var select:ExposedSelect;
 		var subGroup:ExposedGroup;
-		//var spacing:ExposedSpacing;
 		var sep:ExposedSeparator;
 		
 		if (collection == null) collection = new ExposedCollection();
