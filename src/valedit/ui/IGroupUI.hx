@@ -9,5 +9,5 @@ interface IGroupUI
 	function addExposedControlAfter(control:IValueUI, afterControl:IValueUI):Void;
 	function addExposedControlBefore(control:IValueUI, beforeControl:IValueUI):Void;
 	function removeExposedControl(control:IValueUI):Void;
-	
+	function pool():Void;
 }
