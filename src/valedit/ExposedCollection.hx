@@ -5,6 +5,8 @@ import openfl.events.EventDispatcher;
 import valedit.events.ValueEvent;
 import valedit.ui.UICollection;
 import valedit.value.ExposedGroup;
+import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueWithChildren;
 
 /**
  * ...
@@ -15,7 +17,7 @@ class ExposedCollection extends EventDispatcher
 	public var isEditable(get, set):Bool;
 	public var isReadOnly(get, set):Bool;
 	public var object(get, set):Dynamic;
-	public var parentValue(get, set):ExposedValue;
+	public var parentValue(get, set):ExposedValueWithChildren;
 	public var uiCollection(default, null):UICollection;
 	public var uiContainer(get, set):DisplayObjectContainer;
 	
@@ -55,9 +57,9 @@ class ExposedCollection extends EventDispatcher
 		return this._object = value;
 	}
 	
-	private var _parentValue:ExposedValue;
-	private function get_parentValue():ExposedValue { return _parentValue; }
-	private function set_parentValue(value:ExposedValue):ExposedValue
+	private var _parentValue:ExposedValueWithChildren;
+	private function get_parentValue():ExposedValueWithChildren { return _parentValue; }
+	private function set_parentValue(value:ExposedValueWithChildren):ExposedValueWithChildren
 	{
 		if (this._parentValue == value) return value;
 		if (this._parentValue != null)
@@ -74,11 +76,6 @@ class ExposedCollection extends EventDispatcher
 			{
 				value.addChildValue(val);
 			}
-		}
-		
-		for (val in this._valueList)
-		{
-			val.parentValue = value;
 		}
 		return this._parentValue = value;
 	}
