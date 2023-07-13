@@ -14,6 +14,19 @@ import valedit.value.base.ExposedValueWithChildren;
  */
 class ExposedCollection extends EventDispatcher
 {
+	static private var _POOL:Array<ExposedCollection> = new Array<ExposedCollection>();
+	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
+	static public function fromPool():ExposedCollection
+	{
+		if (_POOL.length != 0) return _POOL.pop();
+		return new ExposedCollection();
+	}
+	
 	public var isEditable(get, set):Bool;
 	public var isReadOnly(get, set):Bool;
 	public var object(get, set):Dynamic;
@@ -84,8 +97,19 @@ class ExposedCollection extends EventDispatcher
 	private function get_uiContainer():DisplayObjectContainer { return _uiContainer; }
 	private function set_uiContainer(value:DisplayObjectContainer):DisplayObjectContainer
 	{
-		if (this.uiCollection == null) buildUI();
-		this.uiCollection.uiContainer = value;
+		if (this._uiContainer == value) return value;
+		
+		if (value != null && this.uiCollection == null)
+		{
+			buildUI();
+			this.uiCollection.uiContainer = value;
+		}
+		else if (value == null && this.uiCollection != null)
+		{
+			this.uiCollection.pool();
+			this.uiCollection = null;
+		}
+		//this.uiCollection.uiContainer = value;
 		return this._uiContainer = value;
 	}
 	
@@ -104,13 +128,31 @@ class ExposedCollection extends EventDispatcher
 	
 	public function clear():Void
 	{
-		
+		if (this.uiCollection != null)
+		{
+			this.uiCollection.pool();
+			this.uiCollection = null;
+		}
+		for (value in this._valueList)
+		{
+			value.pool();
+		}
+		this._valueList.resize(0);
+		this._valueMap.clear();
+		this._groupList.resize(0);
+		this._groupMap.clear();
 	}
 	
-	public function dispose():Void
+	public function pool():Void
 	{
-		
+		clear();
+		_POOL[_POOL.length] = this;
 	}
+	
+	//public function dispose():Void
+	//{
+		//
+	//}
 	
 	public function applyToObject(object:Dynamic):Void
 	{
