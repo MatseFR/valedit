@@ -10,6 +10,11 @@ class UICollection
 {
 	static private var _POOL:Array<UICollection> = new Array<UICollection>();
 	
+	static public function disposePool():Void
+	{
+		_POOL.resize(0);
+	}
+	
 	static public function fromPool():UICollection
 	{
 		if (_POOL.length != 0) return _POOL.pop();
@@ -26,10 +31,7 @@ class UICollection
 		
 		if (this._uiGroup != null)
 		{
-			for (control in this._uiList)
-			{
-				this._uiGroup.removeExposedControl(control);
-			}
+			this._uiGroup.removeAllExposedControls();
 			this._uiGroup = null;
 		}
 		else if (this._uiContainer != null)
@@ -45,10 +47,7 @@ class UICollection
 			if (Std.isOfType(value, IGroupUI))
 			{
 				this._uiGroup = cast value;
-				for (control in this._uiList)
-				{
-					this._uiGroup.addExposedControl(control);
-				}
+				this._uiGroup.addExposedControls(this._uiList);
 			}
 			else
 			{
