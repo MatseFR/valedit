@@ -179,10 +179,13 @@ class ExposedGroup extends ExposedValue
 			this._groupMap[value.propertyName] = cast value;
 		}
 		
-		if (this._isUIBuilt && value._uiControl == null)
+		if (this._isUIBuilt)
 		{
-			var control:IValueUI = ValEdit.toUIControl(value);
-			this._uiGroup.addExposedControl(control);
+			if (value._uiControl == null)
+			{
+				ValEdit.toUIControl(value);
+			}
+			this._uiGroup.addExposedControl(value._uiControl);
 		}
 	}
 	
