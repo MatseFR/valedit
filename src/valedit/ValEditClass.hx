@@ -216,7 +216,7 @@ class ValEditClass
 		else
 		{
 			collection = this.sourceCollection.clone();
-			collection.buildUI();
+			//collection.buildUI();
 		}
 		
 		this._containers[container] = collection;
@@ -237,7 +237,7 @@ class ValEditClass
 		else
 		{
 			collection = this.constructorCollection.clone();
-			collection.buildUI();
+			//collection.buildUI();
 		}
 		
 		this._constructorContainers[container] = collection;
