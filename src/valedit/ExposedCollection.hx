@@ -3,10 +3,13 @@ import openfl.display.DisplayObjectContainer;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 import valedit.events.ValueEvent;
-import valedit.ui.UICollection;
 import valedit.value.ExposedGroup;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueWithChildren;
+#if valeditor
+import valeditor.ValEditor;
+import valedit.ui.UICollection;
+#end
 
 /**
  * ...
@@ -31,8 +34,10 @@ class ExposedCollection extends EventDispatcher
 	public var isReadOnly(get, set):Bool;
 	public var object(get, set):Dynamic;
 	public var parentValue(get, set):ExposedValueWithChildren;
+	#if valeditor
 	public var uiCollection(default, null):UICollection;
 	public var uiContainer(get, set):DisplayObjectContainer;
+	#end
 	
 	private var _isEditable:Bool = true;
 	private function get_isEditable():Bool { return this._isEditable; }
@@ -93,6 +98,7 @@ class ExposedCollection extends EventDispatcher
 		return this._parentValue = value;
 	}
 	
+	#if valeditor
 	private var _uiContainer:DisplayObjectContainer;
 	private function get_uiContainer():DisplayObjectContainer { return _uiContainer; }
 	private function set_uiContainer(value:DisplayObjectContainer):DisplayObjectContainer
@@ -109,9 +115,9 @@ class ExposedCollection extends EventDispatcher
 			this.uiCollection.pool();
 			this.uiCollection = null;
 		}
-		//this.uiCollection.uiContainer = value;
 		return this._uiContainer = value;
 	}
+	#end
 	
 	private var _groupList:Array<ExposedGroup> = new Array<ExposedGroup>();
 	private var _groupMap:Map<String, ExposedGroup> = new Map<String, ExposedGroup>();
@@ -128,11 +134,13 @@ class ExposedCollection extends EventDispatcher
 	
 	public function clear():Void
 	{
+		#if valeditor
 		if (this.uiCollection != null)
 		{
 			this.uiCollection.pool();
 			this.uiCollection = null;
 		}
+		#end
 		for (value in this._valueList)
 		{
 			value.pool();
@@ -278,9 +286,7 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
-	/**
-	   
-	**/
+	#if valeditor
 	public function buildUI():Void
 	{
 		if (this.uiCollection != null) return;
@@ -289,9 +295,10 @@ class ExposedCollection extends EventDispatcher
 		
 		for (value in this._valueList)
 		{
-			this.uiCollection.addUI(ValEdit.toUIControl(value));
+			this.uiCollection.addUI(ValEditor.toUIControl(value));
 		}
 	}
+	#end
 	
 	public function getGroup(name:String, includeSubGroups:Bool = false):ExposedGroup
 	{

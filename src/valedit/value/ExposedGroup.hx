@@ -5,6 +5,7 @@ import valedit.value.base.ExposedValue;
 import valedit.events.ValueEvent;
 import valedit.ui.IGroupUI;
 import valedit.ui.IValueUI;
+import valeditor.ValEditor;
 
 /**
  * ...
@@ -66,6 +67,7 @@ class ExposedGroup extends ExposedValue
 		return super.set_object(value);
 	}
 	
+	#if valeditor
 	override function set_uiControl(value:IValueUI):IValueUI 
 	{
 		if (this._uiControl == value) return value;
@@ -81,13 +83,16 @@ class ExposedGroup extends ExposedValue
 		}
 		return value;
 	}
+	#end
 	
 	private var _groupList:Array<ExposedGroup> = new Array<ExposedGroup>();
 	private var _groupMap:Map<String, ExposedGroup> = new Map<String, ExposedGroup>();
-	private var _isUIBuilt:Bool = false;
-	private var _uiGroup:IGroupUI;
 	private var _valueList:Array<ExposedValue> = new Array<ExposedValue>();
 	private var _valueMap:Map<String, ExposedValue> = new Map<String, ExposedValue>();
+	#if valeditor
+	private var _isUIBuilt:Bool = false;
+	private var _uiGroup:IGroupUI;
+	#end
 	
 	/**
 	   
@@ -113,12 +118,14 @@ class ExposedGroup extends ExposedValue
 		this._groupMap.clear();
 		this._valueList.resize(0);
 		this._valueMap.clear();
+		#if valeditor
 		if (this._uiGroup != null)
 		{
 			this._uiGroup.pool();
 			this._uiGroup = null;
 		}
 		this._isUIBuilt = false;
+		#end
 	}
 	
 	public function pool():Void 
@@ -179,14 +186,16 @@ class ExposedGroup extends ExposedValue
 			this._groupMap[value.propertyName] = cast value;
 		}
 		
+		#if valeditor
 		if (this._isUIBuilt)
 		{
 			if (value._uiControl == null)
 			{
-				ValEdit.toUIControl(value);
+				ValEditor.toUIControl(value);
 			}
 			this._uiGroup.addExposedControl(value._uiControl);
 		}
+		#end
 	}
 	
 	
@@ -216,11 +225,13 @@ class ExposedGroup extends ExposedValue
 			this._groupMap[value.propertyName] = cast value;
 		}
 		
+		#if valeditor
 		if (_isUIBuilt && value._uiControl == null)
 		{
-			var control:IValueUI = ValEdit.toUIControl(value);
+			var control:IValueUI = ValEditor.toUIControl(value);
 			this._uiGroup.addExposedControlAfter(control, afterValue._uiControl);
 		}
+		#end
 	}
 	
 	public function addValueBefore(value:ExposedValue, beforeValueName:String):Void
@@ -249,24 +260,28 @@ class ExposedGroup extends ExposedValue
 			this._groupMap[value.propertyName] = cast value;
 		}
 		
+		#if valeditor
 		if (this._isUIBuilt && value._uiControl == null)
 		{
-			var control:IValueUI = ValEdit.toUIControl(value);
+			var control:IValueUI = ValEditor.toUIControl(value);
 			this._uiGroup.addExposedControlBefore(control, beforeValue._uiControl);
 		}
+		#end
 	}
 	
+	#if valeditor
 	private function buildUI():Void
 	{
 		if (this._isUIBuilt) return;
 		var control:IValueUI;
 		for (val in this._valueList)
 		{
-			control = ValEdit.toUIControl(val);
+			control = ValEditor.toUIControl(val);
 			this._uiGroup.addExposedControl(control);
 		}
 		this._isUIBuilt = true;
 	}
+	#end
 	
 	/**
 	   
