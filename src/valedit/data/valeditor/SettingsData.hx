@@ -32,13 +32,13 @@ class SettingsData
 		if (!collection.hasValue("exportAssets"))
 		{
 			bool = new ExposedBool("exportAssets", "include assets");
-			collection.addValue(bool);
+			collection.addValue(bool, groupName);
 		}
 		
 		if (!collection.hasValue("useSimpleJSON"))
 		{
 			bool = new ExposedBool("useSimpleJSON", "simple JSON");
-			collection.addValue(bool);
+			collection.addValue(bool, groupName);
 		}
 		
 		if (!collection.hasValue("useZIP"))
@@ -47,7 +47,7 @@ class SettingsData
 			#if !desktop
 			bool.isEditable = false;
 			#end
-			collection.addValue(bool);
+			collection.addValue(bool, groupName);
 		}
 		
 		return collection;
