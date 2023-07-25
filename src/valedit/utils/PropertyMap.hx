@@ -1,4 +1,4 @@
-package valedit.util;
+package valedit.utils;
 
 /**
  * ...
