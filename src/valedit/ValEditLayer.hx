@@ -3,7 +3,7 @@ import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
-import valedit.util.StringIndexedMap;
+import valedit.utils.StringIndexedMap;
 import valeditor.events.LayerEvent;
 
 /**
@@ -15,7 +15,7 @@ class ValEditLayer extends EventDispatcher
 	public var name(get, set):String;
 	public var rootContainer(get, set):DisplayObjectContainer;
 	public var rootContainerStarling(get, set):starling.display.DisplayObjectContainer;
-	public var timeLine(default, null):ValEditTimeLine = new ValEditTimeLine();
+	public var timeLine(default, null):ValEditTimeLine;
 	public var valEditContainer(get, set):IValEditContainer;
 	public var visible(get, set):Bool;
 	public var x(get, set):Float;
@@ -109,9 +109,11 @@ class ValEditLayer extends EventDispatcher
 	private var _containerStarling:starling.display.Sprite = new starling.display.Sprite();
 	#end
 
-	public function new() 
+	public function new(?timeLine:ValEditTimeLine) 
 	{
 		super();
+		if (timeLine == null) timeLine = ValEditTimeLine.fromPool();
+		this.timeLine = timeLine;
 	}
 	
 	public function add(object:ValEditObject):Void
