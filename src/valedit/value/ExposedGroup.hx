@@ -5,7 +5,10 @@ import valedit.value.base.ExposedValue;
 import valedit.events.ValueEvent;
 import valedit.ui.IGroupUI;
 import valedit.ui.IValueUI;
+
+#if valeditor
 import valeditor.ValEditor;
+#end
 
 /**
  * ...
