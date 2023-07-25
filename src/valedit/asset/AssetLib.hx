@@ -1,27 +1,29 @@
 package valedit.asset;
-#if valeditor
-import feathers.data.ArrayCollection;
-#end
-import feathers.utils.ScaleUtil;
+
 import haxe.ds.ObjectMap;
 import haxe.io.Path;
-import openfl.Vector;
 import openfl.display.BitmapData;
-import openfl.errors.Error;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import openfl.media.Sound;
 import openfl.utils.AssetType;
 import openfl.utils.Assets;
 import openfl.utils.ByteArray;
-import starling.textures.SubTexture;
-import starling.textures.TextureAtlas;
-import valeditor.ui.UIConfig;
+
 #if starling
+import openfl.Vector;
+import starling.textures.SubTexture;
 import starling.textures.Texture;
-#end
+import starling.textures.TextureAtlas;
 import valedit.asset.starling.StarlingAtlasAsset;
 import valedit.asset.starling.StarlingTextureAsset;
+#end
+
+#if valeditor
+import feathers.data.ArrayCollection;
+import feathers.utils.ScaleUtil;
+import valeditor.ui.UIConfig;
+#end
 
 /**
  * ...
@@ -95,8 +97,10 @@ class AssetLib
 	
 	static private var _debug:Bool = true;
 	
+	/** generatePreview has no effect unless valeditor library is available */
 	static public function init(generatePreviews:Bool = true):Void
 	{
+		#if valeditor
 		_generatePreview = generatePreviews;
 		
 		if (_generatePreview)
@@ -105,6 +109,9 @@ class AssetLib
 			_previewRect = new Rectangle(0, 0, UIConfig.ASSET_PREVIEW_SIZE, UIConfig.ASSET_PREVIEW_SIZE);
 			_rect = new Rectangle();
 		}
+		#else
+		_generatePreview = false;
+		#end
 		
 		#if valeditor
 		binaryCollection = new ArrayCollection<BinaryAsset>();
@@ -752,14 +759,19 @@ class AssetLib
 					texHeight = subTexture.height;
 				}
 				
-				scale = ScaleUtil.scaleToFit(texWidth, texHeight, UIConfig.ASSET_PREVIEW_SIZE, UIConfig.ASSET_PREVIEW_SIZE);
-				preview = new BitmapData(Math.ceil(texWidth * scale), Math.ceil(texHeight * scale), true, 0x00ffffff);
-				
-				_rect.setTo(0, 0, texWidth, texHeight);
-				_matrix.identity();
-				_matrix.translate(-subTexture.region.left, -subTexture.region.top);
-				_matrix.scale(scale, scale);
-				preview.draw(asset.bitmapAsset.content, _matrix, null, null, _rect);
+				#if valeditor
+				if (_generatePreview)
+				{
+					scale = ScaleUtil.scaleToFit(texWidth, texHeight, UIConfig.ASSET_PREVIEW_SIZE, UIConfig.ASSET_PREVIEW_SIZE);
+					preview = new BitmapData(Math.ceil(texWidth * scale), Math.ceil(texHeight * scale), true, 0x00ffffff);
+					
+					_rect.setTo(0, 0, texWidth, texHeight);
+					_matrix.identity();
+					_matrix.translate(-subTexture.region.left, -subTexture.region.top);
+					_matrix.scale(scale, scale);
+					preview.draw(asset.bitmapAsset.content, _matrix, null, null, _rect);
+				}
+				#end
 				
 				createStarlingTexture(asset.path + ValEdit.STARLING_SUBTEXTURE_MARKER + name, subTexture, asset.bitmapAsset, name, preview);
 			}
