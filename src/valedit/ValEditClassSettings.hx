@@ -1,6 +1,6 @@
 package valedit;
 import haxe.Constraints.Function;
-import valedit.util.PropertyMap;
+import valedit.utils.PropertyMap;
 
 /**
  * ...

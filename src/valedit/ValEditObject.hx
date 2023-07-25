@@ -1,6 +1,6 @@
 package valedit;
 import openfl.events.EventDispatcher;
-import valedit.util.PropertyMap;
+import valedit.utils.PropertyMap;
 
 /**
  * ...

@@ -1,7 +1,7 @@
 package valedit;
 import flash.display.DisplayObjectContainer;
 import haxe.Constraints.Function;
-import valedit.util.PropertyMap;
+import valedit.utils.PropertyMap;
 import valedit.value.base.ExposedValueWithChildren;
 
 /**

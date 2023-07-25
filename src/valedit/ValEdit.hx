@@ -5,7 +5,7 @@ import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
 import openfl.errors.Error;
 import valedit.ui.IValueUI;
-import valedit.util.PropertyMap;
+import valedit.utils.PropertyMap;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueWithChildren;
 
