@@ -2,8 +2,11 @@ package valedit;
 import haxe.ds.ObjectMap;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
-import valedit.util.StringIndexedMap;
+import valedit.utils.StringIndexedMap;
+
+#if valeditor
 import valeditor.events.LayerEvent;
+#end
 
 /**
  * ...
@@ -221,8 +224,10 @@ class ValEditContainer implements IValEditContainer
 			layer.rootContainerStarling = this._containerStarling;
 		}
 		#end
+		#if valeditor
 		layer.addEventListener(LayerEvent.OBJECT_ADDED, layer_objectAdded);
 		layer.addEventListener(LayerEvent.OBJECT_REMOVED, layer_objectRemoved);
+		#end
 	}
 	
 	private function layerUnregister(layer:ValEditLayer):Void
@@ -238,10 +243,13 @@ class ValEditContainer implements IValEditContainer
 			layer.rootContainerStarling = null;
 		}
 		#end
+		#if valeditor
 		layer.removeEventListener(LayerEvent.OBJECT_ADDED, layer_objectAdded);
 		layer.removeEventListener(LayerEvent.OBJECT_REMOVED, layer_objectRemoved);
+		#end
 	}
 	
+	#if valeditor
 	private function layer_objectAdded(evt:LayerEvent):Void
 	{
 		this._objects.set(evt.object.id, evt.object);
@@ -253,6 +261,7 @@ class ValEditContainer implements IValEditContainer
 		this._objects.remove(evt.object.id);
 		this._objectToLayer.remove(evt.object);
 	}
+	#end
 	
 	public function add(object:ValEditObject):Void
 	{
