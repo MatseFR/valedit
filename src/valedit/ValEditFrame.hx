@@ -1,10 +1,11 @@
 package valedit;
+import openfl.events.EventDispatcher;
 
 /**
  * ...
  * @author Matse
  */
-class ValEditFrame 
+class ValEditFrame extends EventDispatcher
 {
 	static private var _POOL:Array<ValEditFrame> = new Array<ValEditFrame>();
 	
@@ -19,13 +20,14 @@ class ValEditFrame
 	public var indexEnd:Int;
 	public var isEmpty(get, never):Bool;
 	public var isKeyFrame(default, null):Bool = false;
+	public var timeLine:ValEditTimeLine;
 	
 	private function get_hasTween():Bool { return false; }
 	private function get_isEmpty():Bool { return true; }
 	
 	public function new() 
 	{
-		
+		super();
 	}
 	
 	public function clear():Void
