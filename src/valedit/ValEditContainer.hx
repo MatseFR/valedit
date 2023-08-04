@@ -21,6 +21,7 @@ class ValEditContainer implements IValEditContainer
 	#if starling
 	public var rootContainerStarling(get, set):starling.display.DisplayObjectContainer;
 	#end
+	public var timeLine(default, null):ValEditTimeLine = new ValEditTimeLine();
 	public var visible(get, set):Bool;
 	public var x(get, set):Float;
 	public var y(get, set):Float;
@@ -214,6 +215,7 @@ class ValEditContainer implements IValEditContainer
 	private function layerRegister(layer:ValEditLayer):Void
 	{
 		layer.valEditContainer = this;
+		this.timeLine.addChild(layer.timeLine);
 		if (this._container != null)
 		{
 			layer.rootContainer = this._container;
@@ -233,6 +235,7 @@ class ValEditContainer implements IValEditContainer
 	private function layerUnregister(layer:ValEditLayer):Void
 	{
 		layer.valEditContainer = null;
+		this.timeLine.removeChild(layer.timeLine);
 		if (this._container != null)
 		{
 			layer.rootContainer = null;
