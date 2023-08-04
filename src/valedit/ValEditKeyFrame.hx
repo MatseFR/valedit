@@ -14,11 +14,12 @@ class ValEditKeyFrame extends ValEditFrame
 		return new ValEditKeyFrame();
 	}
 	
-	public var addFunction:ValEditObject->Void;
-	public var instances:Array<ValEditInstance> = new Array<ValEditInstance>();
-	public var removeFunction:ValEditObject->Void;
+	public var activateFunction:ValEditObject->Void;
+	public var deactivateFunction:ValEditObject->Void;
+	public var isActive(default, null):Bool;
+	public var objects:Array<ValEditObject> = new Array<ValEditObject>();
 	
-	override function get_isEmpty():Bool { return this.instances.length == 0; }
+	override function get_isEmpty():Bool { return this.objects.length == 0; }
 	
 	public function new() 
 	{
@@ -28,12 +29,13 @@ class ValEditKeyFrame extends ValEditFrame
 	
 	override public function clear():Void
 	{
-		this.addFunction = null;
-		this.removeFunction = null;
-		for (instance in this.instances)
+		this.activateFunction = null;
+		this.deactivateFunction = null;
+		for (object in this.objects)
 		{
-			instance.pool();
+			ValEdit.destroyObject(object);
 		}
+		this.objects.resize(0);
 	}
 	
 	override public function pool():Void
@@ -42,22 +44,40 @@ class ValEditKeyFrame extends ValEditFrame
 		_POOL[_POOL.length] = this;
 	}
 	
+	public function add(object:ValEditObject):Void
+	{
+		this.objects[this.objects.length] = object;
+		if (this.isActive)
+		{
+			activateFunction(object);
+		}
+	}
+	
+	public function remove(object:ValEditObject):Void
+	{
+		this.objects.remove(object);
+		if (this.isActive)
+		{
+			deactivateFunction(object);
+		}
+	}
+	
 	override public function enter():Void
 	{
-		for (instance in instances)
+		for (object in this.objects)
 		{
-			instance.activate();
-			addFunction(instance.object);
+			activateFunction(object);
 		}
+		this.isActive = true;
 	}
 	
 	override public function exit():Void
 	{
-		for (instance in instances)
+		for (object in this.objects)
 		{
-			instance.deactivate();
-			removeFunction(instance.object);
+			deactivateFunction(object);
 		}
+		this.isActive = false;
 	}
 	
 }
