@@ -114,9 +114,21 @@ class ValEditLayer extends EventDispatcher
 		super();
 		if (timeLine == null) timeLine = ValEditTimeLine.fromPool();
 		this.timeLine = timeLine;
+		this.timeLine.activateFunction = this.activate;
+		this.timeLine.deactivateFunction = this.deactivate;
 	}
 	
 	public function add(object:ValEditObject):Void
+	{
+		this.timeLine.add(object);
+	}
+	
+	public function remove(object:ValEditObject):Void
+	{
+		this.timeLine.remove(object);
+	}
+	
+	public function activate(object:ValEditObject):Void
 	{
 		if (object.isDisplayObject)
 		{
@@ -170,7 +182,7 @@ class ValEditLayer extends EventDispatcher
 		LayerEvent.dispatch(this, LayerEvent.OBJECT_ADDED, this, object);
 	}
 	
-	public function remove(object:ValEditObject):Void
+	public function deactivate(object:ValEditObject):Void
 	{
 		if (object.isDisplayObject)
 		{
