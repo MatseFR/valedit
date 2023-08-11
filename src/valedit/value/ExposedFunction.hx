@@ -214,7 +214,7 @@ class ExposedFunction extends ExposedValue
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var func:ExposedFunction = fromPool(this.propertyName, this.name, this.parameters.copy());
-		super.clone_internal(func, copyValue);
+		super.clone_internal(func, false); // don't copy value, whatever the copyValue param says
 		return func;
 	}
 	
