@@ -18,13 +18,21 @@ class ValEditObject extends EventDispatcher
 	
 	public var className:String;
 	public var clss:ValEditClass;
+	public var collection(get, set):ExposedCollection;
 	public var displayObjectType:Int;
 	public var id(get, set):String;
 	public var isDisplayObject:Bool;
 	public var object:Dynamic;
+	public var propertyMap:PropertyMap;
 	public var template:ValEditTemplate;
 	
-	public var propertyMap:PropertyMap;
+	private var _collection:ExposedCollection;
+	private function get_collection():ExposedCollection { return this._collection; }
+	private function set_collection(value:ExposedCollection):ExposedCollection
+	{
+		if (value == this._collection) return value;
+		return this._collection = value;
+	}
 	
 	private var _id:String;
 	private function get_id():String { return this._id; }
@@ -46,6 +54,8 @@ class ValEditObject extends EventDispatcher
 	public function clear():Void
 	{
 		this.clss = null;
+		this._collection.pool();
+		this.collection = null;
 		this.object = null;
 		this.template = null;
 		this.propertyMap = null;
