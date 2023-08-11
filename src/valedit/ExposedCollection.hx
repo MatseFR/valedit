@@ -2,6 +2,7 @@ package valedit;
 import openfl.display.DisplayObjectContainer;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
+import valedit.animation.TweenProperties;
 import valedit.events.ValueEvent;
 import valedit.value.ExposedGroup;
 import valedit.value.base.ExposedValue;
@@ -380,6 +381,37 @@ class ExposedCollection extends EventDispatcher
 		}
 		
 		return values;
+	}
+	
+	public function getTweenProperties(targetCollection:ExposedCollection):TweenProperties
+	{
+		var targetValue:ExposedValue;
+		var tweenProperties:TweenProperties = TweenProperties.fromPool();
+		for (value in this._valueList)
+		{
+			if (value.isGroup)
+			{
+				cast(value, ExposedGroup).getTweenProperties(targetCollection.getGroup(value.name), tweenProperties);
+			}
+			else if (value.isTweenable)
+			{
+				targetValue = targetCollection.getValue(value.name);
+				if (value.value != targetValue.value)
+				{
+					tweenProperties.addProperty(value.name, targetValue.value);
+				}
+			}
+		}
+		
+		if (tweenProperties.numProperties != 0)
+		{
+			return tweenProperties;
+		}
+		else
+		{
+			tweenProperties.pool();
+			return null;
+		}
 	}
 	
 	public function clone(copyValues:Bool = false):ExposedCollection
