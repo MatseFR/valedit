@@ -36,7 +36,8 @@ abstract class ExposedValue extends EventDispatcher
 	public var isNullable:Bool = false;
 	public var isReadOnly(get, set):Bool;
 	public var isReadOnlyLocked(get, set):Bool;
-	/* tells whether this value is real (true, default) or not (false) */
+	/* tells whether this value is real (true, default) or not (false).
+	 * Values that are not "real" : ExposedName, ExposedNote, ExposedSeparator, ExposedSpacing... */
 	public var isRealValue(get, never):Bool;
 	public var isTweenable(get, set):Bool;
 	public var name:String;
