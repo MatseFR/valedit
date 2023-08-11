@@ -2,12 +2,7 @@ package valedit;
 import haxe.Constraints.Function;
 import haxe.ds.Map;
 import openfl.display.DisplayObject;
-import openfl.display.DisplayObjectContainer;
-import openfl.errors.Error;
-import valedit.ui.IValueUI;
 import valedit.utils.PropertyMap;
-import valedit.value.base.ExposedValue;
-import valedit.value.base.ExposedValueWithChildren;
 
 /**
  * ...
@@ -224,13 +219,25 @@ class ValEdit
 		return createObjectWithClassName(Type.getClassName(clss), id, params);
 	}
 	
-	static public function createObjectWithClassName(className:String, ?id:String, ?params:Array<Dynamic>, ?valObject:ValEditObject):ValEditObject
+	static public function createObjectWithClassName(className:String, ?id:String, ?params:Array<Dynamic>, ?valObject:ValEditObject, ?collection:ExposedCollection):ValEditObject
 	{
 		if (params == null) params = [];
 		var valClass:ValEditClass = _classMap.get(className);
 		
 		if (valObject == null) valObject = ValEditObject.fromPool(valClass, id);
 		valObject.object = Type.createInstance(valClass.classReference, params);
+		
+		var collectionProvided:Bool = collection != null;
+		if (collection == null)
+		{
+			collection = valClass.getCollection();
+		}
+		valObject.collection = collection;
+		if (collectionProvided)
+		{
+			collection.applyToObject(valObject.object);
+		}
+		collection.object = valObject;
 		
 		valObject.propertyMap = valClass.propertyMap;
 		valObject.ready();
@@ -277,7 +284,7 @@ class ValEdit
 		return template;
 	}
 	
-	static public function createObjectWithTemplate(template:ValEditTemplate, ?id:String, ?valObject:ValEditObject):ValEditObject
+	static public function createObjectWithTemplate(template:ValEditTemplate, ?id:String, ?valObject:ValEditObject, ?collection:ExposedCollection):ValEditObject
 	{
 		var valClass:ValEditClass = _classMap.get(template.className);
 		
@@ -290,9 +297,18 @@ class ValEdit
 		
 		valObject.object = Type.createInstance(valClass.classReference, params);
 		
-		template.collection.applyToObject(valObject.object);
+		valObject.template = template;
 		
 		valObject.propertyMap = valClass.propertyMap;
+		
+		if (collection == null)
+		{
+			collection = template.collection.clone(true);
+		}
+		valObject.collection = collection;
+		collection.applyToObject(valObject.object);
+		collection.object = valObject;
+		
 		valObject.ready();
 		
 		registerObjectInternal(valObject);
