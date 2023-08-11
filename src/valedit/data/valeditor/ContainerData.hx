@@ -1,7 +1,9 @@
 package valedit.data.valeditor;
+import juggler.animation.Transitions;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedFloatDrag;
+import valedit.value.ExposedSelect;
 
 /**
  * ...
@@ -59,18 +61,24 @@ class ContainerData
 		return collection;
 	}
 	
-	static public function exposeValEditFrame(?collection:ExposedCollection, ?groupName:String):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		return collection;
-	}
-	
 	static public function exposeValEditKeyFrame(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
+		var bool:ExposedBool;
+		var select:ExposedSelect;
+		
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeValEditFrame(collection, groupName);
+		if (!collection.hasValue("tween"))
+		{
+			bool = new ExposedBool("tween");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("transition"))
+		{
+			select = new ExposedSelect("transition", null, Transitions.transitionNames, Transitions.transitionNames);
+			collection.addValue(select, groupName);
+		}
 		
 		return collection;
 	}
