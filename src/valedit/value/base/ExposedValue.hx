@@ -32,11 +32,13 @@ abstract class ExposedValue extends EventDispatcher
 	/* all extras are executed when an ExposedValue's value changes */
 	public var extras(get, never):ValueExtraContainer;
 	public var isEditable(get, set):Bool;
+	public var isGroup(default, null):Bool;
 	public var isNullable:Bool = false;
 	public var isReadOnly(get, set):Bool;
 	public var isReadOnlyLocked(get, set):Bool;
 	/* tells whether this value is real (true, default) or not (false) */
 	public var isRealValue(get, never):Bool;
+	public var isTweenable(get, set):Bool;
 	public var name:String;
 	public var object(get, set):Dynamic;
 	public var parentValue:ExposedValueWithChildren;
@@ -99,6 +101,17 @@ abstract class ExposedValue extends EventDispatcher
 	
 	private var _isRealValue:Bool = true;
 	private function get_isRealValue():Bool { return this._isRealValue; }
+	
+	private var _isTweenable:Bool = false;
+	private function get_isTweenable():Bool { return this._isTweenable; }
+	private function set_isTweenable(value:Bool):Bool
+	{
+		if (value)
+		{
+			throw new Error(Type.getClassName(Type.getClass(this)) + " cannot be tweenable");
+		}
+		return this._isTweenable;
+	}
 	
 	private var _object:Dynamic;
 	private function get_object():Dynamic { return this._object; }
@@ -321,8 +334,9 @@ abstract class ExposedValue extends EventDispatcher
 		}
 		value.isEditable = this._isEditable;
 		value.isNullable = this.isNullable;
-		value.isReadOnly = this.isReadOnly;
-		value.isReadOnlyLocked = this.isReadOnlyLocked;
+		value.isReadOnly = this._isReadOnly;
+		value.isReadOnlyLocked = this._isReadOnlyLocked;
+		value.isTweenable = this._isTweenable;
 		value.updateCollectionUIOnChange = this.updateCollectionUIOnChange;
 		this._extras.clone(value._extras);
 	}
