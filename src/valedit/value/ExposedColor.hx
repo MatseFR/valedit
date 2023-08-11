@@ -1,12 +1,13 @@
 package valedit.value;
 
 import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueTweenable;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedColor extends ExposedValue 
+class ExposedColor extends ExposedValueTweenable 
 {
 	static private var _POOL:Array<ExposedColor> = new Array<ExposedColor>();
 	
