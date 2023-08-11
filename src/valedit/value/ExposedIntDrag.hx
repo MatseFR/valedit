@@ -1,12 +1,13 @@
 package valedit.value;
 
 import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueTweenable;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedIntDrag extends ExposedValue 
+class ExposedIntDrag extends ExposedValueTweenable 
 {
 	static private var _POOL:Array<ExposedIntDrag> = new Array<ExposedIntDrag>();
 	
