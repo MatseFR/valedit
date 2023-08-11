@@ -2,6 +2,7 @@ package valedit;
 import haxe.ds.ObjectMap;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
+import openfl.events.EventDispatcher;
 import valedit.utils.StringIndexedMap;
 
 #if valeditor
@@ -12,7 +13,7 @@ import valeditor.events.LayerEvent;
  * ...
  * @author Matse
  */
-class ValEditContainer implements IValEditContainer
+class ValEditContainer extends EventDispatcher implements IValEditContainer
 {
 	public var cameraX(get, set):Float;
 	public var cameraY(get, set):Float;
@@ -170,30 +171,40 @@ class ValEditContainer implements IValEditContainer
 	private var _containerStarling:starling.display.Sprite;
 	#end
 	
-	private var _layers:StringIndexedMap<ValEditLayer> = new StringIndexedMap<ValEditLayer>();
+	private var _layers:Array<ValEditLayer> = new Array<ValEditLayer>();
+	private var _layerMap:Map<String, ValEditLayer> = new Map<String, ValEditLayer>();
+	
 	private var _objects:StringIndexedMap<ValEditObject> = new StringIndexedMap<ValEditObject>();
 	private var _objectToLayer:ObjectMap<ValEditObject, ValEditLayer> = new ObjectMap<ValEditObject, ValEditLayer>();
 	
 	public function new() 
 	{
-		
+		super();
 	}
 	
 	public function clear():Void
 	{
-		
+		for (layer in this._layers)
+		{
+			layer.clear();
+		}
+		this._layers.resize(0);
+		this._layerMap.clear();
+		this._currentLayer = null;
 	}
 	
 	public function addLayer(layer:ValEditLayer):Void
 	{
-		this._layers.set(layer.name, layer);
-		layerRegister(layer);
+		this._layers[this._layers.length] = layer;
+		this._layerMap.set(layer.name, layer);
+		layerRegister(layer, this._layers.length - 1);
 	}
 	
 	public function addLayerAt(layer:ValEditLayer, index:Int):Void
 	{
-		this._layers.insert(layer.name, layer, index);
-		layerRegister(layer);
+		this._layers.insert(index, layer);
+		this._layerMap.set(layer.name, layer);
+		layerRegister(layer, index);
 	}
 	
 	public function destroyLayer(layer:ValEditLayer):Void
@@ -203,19 +214,32 @@ class ValEditContainer implements IValEditContainer
 	
 	public function getLayer(name:String):ValEditLayer
 	{
-		return this._layers.get(name);
+		return this._layerMap.get(name);
+	}
+	
+	public function getLayerAt(index:Int):ValEditLayer
+	{
+		return this._layers[index];
 	}
 	
 	public function removeLayer(layer:ValEditLayer):Void
 	{
-		this._layers.remove(layer.name);
+		this._layers.remove(layer);
+		this._layerMap.remove(layer.name);
 		layerUnregister(layer);
 	}
 	
-	private function layerRegister(layer:ValEditLayer):Void
+	public function removeLayerAt(index:Int):Void
+	{
+		var layer:ValEditLayer = this._layers.splice(index, 1)[0];
+		this._layerMap.remove(layer.name);
+		layerUnregister(layer);
+	}
+	
+	private function layerRegister(layer:ValEditLayer, index:Int):Void
 	{
 		layer.valEditContainer = this;
-		this.timeLine.addChild(layer.timeLine);
+		this.timeLine.addChildAt(layer.timeLine, index);
 		if (this._container != null)
 		{
 			layer.rootContainer = this._container;
