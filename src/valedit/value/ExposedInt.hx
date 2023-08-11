@@ -1,5 +1,6 @@
 package valedit.value;
 
+import valedit.value.base.ExposedValueTweenable;
 import valeditor.ui.feathers.variant.TextInputVariant;
 import valedit.value.base.ExposedValue;
 
@@ -7,7 +8,7 @@ import valedit.value.base.ExposedValue;
  * ...
  * @author Matse
  */
-class ExposedInt extends ExposedValue 
+class ExposedInt extends ExposedValueTweenable 
 {
 	static private var _POOL:Array<ExposedInt> = new Array<ExposedInt>();
 	
