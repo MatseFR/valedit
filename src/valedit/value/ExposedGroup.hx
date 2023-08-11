@@ -1,6 +1,7 @@
 package valedit.value;
 import openfl.errors.Error;
 import valedit.ExposedCollection;
+import valedit.animation.TweenProperties;
 import valedit.value.base.ExposedValue;
 import valedit.events.ValueEvent;
 import valedit.ui.IGroupUI;
@@ -106,6 +107,7 @@ class ExposedGroup extends ExposedValue
 	public function new(name:String, isCollapsable:Bool = true, isCollapsedDefault:Bool = false) 
 	{
 		super(name);
+		this.isGroup = true;
 		this.isCollapsable = isCollapsable;
 		this.isCollapsedDefault = isCollapsedDefault;
 	}
@@ -385,6 +387,26 @@ class ExposedGroup extends ExposedValue
 		for (value in this._valueList)
 		{
 			value.toValueArray(values);
+		}
+	}
+	
+	public function getTweenProperties(targetGroup:ExposedGroup, tweenProperties:TweenProperties):Void
+	{
+		var targetValue:ExposedValue;
+		for (value in this._valueList)
+		{
+			if (value.isGroup)
+			{
+				cast(value, ExposedGroup).getTweenProperties(targetGroup.getGroup(value.name), tweenProperties);
+			}
+			else if (value.isTweenable)
+			{
+				targetValue = targetGroup.getValue(value.name);
+				if (value.value != targetValue.value)
+				{
+					tweenProperties.addProperty(value.name, targetValue.value);
+				}
+			}
 		}
 	}
 	
