@@ -124,12 +124,14 @@ class DisplayData
 		if (!collection.hasValue("width"))
 		{
 			floatDrag = new ExposedFloatDrag("width");
+			floatDrag.isTweenable = false; // don't tween width since it will become messy with rotation, scaleX will be used instead
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
 			floatDrag = new ExposedFloatDrag("height");
+			floatDrag.isTweenable = false; // don't tween height since it will become messy with rotation, scaleY will be used instead
 			collection.addValue(floatDrag, groupName);
 		}
 		
