@@ -118,6 +118,11 @@ class ValEditLayer extends EventDispatcher
 		this.timeLine.deactivateFunction = this.deactivate;
 	}
 	
+	public function clear():Void
+	{
+		
+	}
+	
 	public function add(object:ValEditObject):Void
 	{
 		this.timeLine.add(object);
