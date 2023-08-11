@@ -5,6 +5,10 @@ package valedit.utils;
  */
 class StringIndexedMap<V>
 {
+	public var length(get, never):Int;
+	
+	private function get_length():Int { return this.keys.length; }
+	
 	private var keys:Array<String> = [];
 	private var values:Array<V> = [];
 	private var map:Map<String, Int> = new Map<String, Int>();
