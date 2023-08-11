@@ -45,6 +45,8 @@ class ValEditClass
 	
 	private var _templateContainers:Map<DisplayObjectContainer, ValEditTemplate> = new Map<DisplayObjectContainer, ValEditTemplate>();
 	
+	private var _collectionsToPool:Map<ExposedCollection, ExposedCollection> = new Map<ExposedCollection, ExposedCollection>();
+	
 	/**
 	   
 	**/
@@ -200,24 +202,20 @@ class ValEditClass
 		this.numTemplates--;
 	}
 	
-	/**
-	   
-	   @param	container
-	   @param	object
-	   @param	parentValue
-	**/
-	public function addContainer(container:DisplayObjectContainer, object:Dynamic, parentValue:ExposedValueWithChildren = null):ExposedCollection
+	public function addContainer(container:DisplayObjectContainer, object:Dynamic, collection:ExposedCollection = null, parentValue:ExposedValueWithChildren = null):ExposedCollection
 	{
-		var collection:ExposedCollection;
-		if (this._pool.length != 0) 
+		if (collection == null)
 		{
-			collection = this._pool.pop();
+			if (this._pool.length != 0) 
+			{
+				collection = this._pool.pop();
+			}
+			else
+			{
+				collection = this.sourceCollection.clone();
+			}
+			this._collectionsToPool.set(collection, collection);
 		}
-		else
-		{
-			collection = this.sourceCollection.clone();
-		}
-		
 		this._containers[container] = collection;
 		collection.parentValue = parentValue;
 		collection.object = object;
@@ -250,10 +248,6 @@ class ValEditClass
 		template.collection.uiContainer = container;
 	}
 	
-	/**
-	   
-	   @param	container
-	**/
 	public function removeContainer(container:DisplayObjectContainer):Void
 	{
 		var collection:ExposedCollection = this._containers[container];
@@ -261,9 +255,13 @@ class ValEditClass
 		{
 			this._containers.remove(container);
 			collection.parentValue = null;
-			collection.object = null;
 			collection.uiContainer = null;
-			this._pool.push(collection);
+			if (this._collectionsToPool.exists(collection))
+			{
+				collection.object = null;
+				this._collectionsToPool.remove(collection);
+				this._pool.push(collection);
+			}
 			return;
 		}
 		
