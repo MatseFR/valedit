@@ -68,6 +68,7 @@ class ValEditKeyFrame extends EventDispatcher
 		}
 		else
 		{
+			resetTweens();
 			clearTweens();
 		}
 		return this._tween = value;
@@ -163,6 +164,7 @@ class ValEditKeyFrame extends EventDispatcher
 						tweenProperties.pool();
 						this._tweens[this._tweens.length] = tween;
 					}
+					break;
 				}
 			}
 		}
@@ -179,24 +181,28 @@ class ValEditKeyFrame extends EventDispatcher
 		this._tweens.resize(0);
 	}
 	
-	private function resetTweens():Void
+	private function rebuildTweens():Void
 	{
+		resetTweens();
 		clearTweens();
 		buildTweens();
 	}
 	
-	@:access(valedit.ValEditTimeLine)
+	//@:access(valedit.ValEditTimeLine)
 	private function updateTweens():Void
 	{
-		//var time:Float = this.timeLine._frameTime;
-		//for (tween in this._tweens)
-		//{
-			//tween.advanceTime(time);
-		//}
 		var ratio:Float = (this._indexCurrent - this.indexStart) / (this.indexEnd - this.indexStart + 1);
 		for (tween in this._tweens)
 		{
 			tween.setRatio(ratio);
+		}
+	}
+	
+	private function resetTweens():Void
+	{
+		for (tween in this._tweens)
+		{
+			tween.setRatio(0);
 		}
 	}
 	
