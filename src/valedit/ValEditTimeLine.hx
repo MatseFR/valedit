@@ -1,12 +1,13 @@
 package valedit;
 import juggler.animation.IAnimatable;
+import openfl.events.EventDispatcher;
 import valedit.utils.ReverseIterator;
 
 /**
  * ...
  * @author Matse
  */
-class ValEditTimeLine implements IAnimatable
+class ValEditTimeLine extends EventDispatcher implements IAnimatable
 {
 	static private var _POOL:Array<ValEditTimeLine> = new Array<ValEditTimeLine>();
 	
@@ -92,6 +93,7 @@ class ValEditTimeLine implements IAnimatable
 	
 	public function new() 
 	{
+		super();
 		this.frameRate = 60;
 	}
 	
