@@ -18,6 +18,7 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	public var cameraX(get, set):Float;
 	public var cameraY(get, set):Float;
 	public var currentLayer(get, set):ValEditLayer;
+	public var numLayers(get, never):Int;
 	public var rootContainer(get, set):DisplayObjectContainer;
 	#if starling
 	public var rootContainerStarling(get, set):starling.display.DisplayObjectContainer;
@@ -67,6 +68,8 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	{
 		return this._currentLayer = value;
 	}
+	
+	private function get_numLayers():Int { return this._layers.length; }
 	
 	private var _rootContainer:DisplayObjectContainer;
 	private function get_rootContainer():DisplayObjectContainer { return this._rootContainer; }
