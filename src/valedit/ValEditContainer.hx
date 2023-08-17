@@ -18,7 +18,15 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	public var cameraX(get, set):Float;
 	public var cameraY(get, set):Float;
 	public var currentLayer(get, set):ValEditLayer;
+	public var frameIndex(get, set):Int;
+	public var frameRate(get, set):Float;
+	public var isPlaying(get, never):Bool;
+	public var isReverse(get, never):Bool;
+	public var loop(get, set):Bool;
 	public var numLayers(get, never):Int;
+	public var numLoops(get, set):Int;
+	/** reverse animation on every odd loop */
+	public var reverse(get, set):Bool;
 	public var rootContainer(get, set):DisplayObjectContainer;
 	#if starling
 	public var rootContainerStarling(get, set):starling.display.DisplayObjectContainer;
@@ -69,7 +77,41 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		return this._currentLayer = value;
 	}
 	
+	private function get_frameIndex():Int { return this.timeLine.frameIndex; }
+	private function set_frameIndex(value:Int):Int
+	{
+		return this.timeLine.frameIndex = value;
+	}
+	
+	private function get_frameRate():Float { return this.timeLine.frameRate; }
+	private function set_frameRate(value:Float):Float
+	{
+		return this.timeLine.frameRate = value;
+	}
+	
+	private function get_isPlaying():Bool { return this.timeLine.isPlaying; }
+	
+	private function get_isReverse():Bool { return this.timeLine.isReverse; }
+	
+	private function get_loop():Bool { return this.timeLine.loop; }
+	private function set_loop(value:Bool):Bool
+	{
+		return this.timeLine.loop = value;
+	}
+	
 	private function get_numLayers():Int { return this._layers.length; }
+	
+	private function get_numLoops():Int { return this.timeLine.numLoops; }
+	private function set_numLoops(value:Int):Int
+	{
+		return this.timeLine.numLoops = value;
+	}
+	
+	private function get_reverse():Bool { return this.timeLine.reverse; }
+	private function set_reverse(value:Bool):Bool
+	{
+		return this.timeLine.reverse = value;
+	}
 	
 	private var _rootContainer:DisplayObjectContainer;
 	private function get_rootContainer():DisplayObjectContainer { return this._rootContainer; }
@@ -194,6 +236,16 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		this._layers.resize(0);
 		this._layerMap.clear();
 		this._currentLayer = null;
+	}
+	
+	public function play():Void
+	{
+		this.timeLine.play();
+	}
+	
+	public function stop():Void
+	{
+		this.timeLine.stop();
 	}
 	
 	public function addLayer(layer:ValEditLayer):Void
