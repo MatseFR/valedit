@@ -31,6 +31,11 @@ abstract class ExposedValue extends EventDispatcher
 	public var defaultValue:Dynamic = null;
 	/* all extras are executed when an ExposedValue's value changes */
 	public var extras(get, never):ValueExtraContainer;
+	/* Tells wether value should be read from the object or not
+	 * if stored value is null it will read from object, otherwise store value is used
+	 * this is especially useful for rotation : on might want to have an animation with many rotations,
+	 * while the object might restrict the value to 180 - -180 or PI - -PI */
+	public var isAbsolute:Bool;
 	public var isEditable(get, set):Bool;
 	public var isGroup(default, null):Bool;
 	public var isNullable:Bool = false;
@@ -176,7 +181,14 @@ abstract class ExposedValue extends EventDispatcher
 		}
 		else
 		{
-			return Reflect.getProperty(this._object, this.propertyName);
+			if (this.isAbsolute && this._storedValue != null)
+			{
+				return this._storedValue;
+			}
+			else
+			{
+				return Reflect.getProperty(this._object, this.propertyName);
+			}
 		}
 	}
 	private function set_value(value:Dynamic):Dynamic
@@ -228,6 +240,7 @@ abstract class ExposedValue extends EventDispatcher
 	{
 		this.collection = null;
 		this.defaultValue = null;
+		this.isAbsolute = false;
 		this._isEditable = true;
 		this.isNullable = false;
 		this._isReadOnly = false;
@@ -283,6 +296,8 @@ abstract class ExposedValue extends EventDispatcher
 	
 	public function readValue(dispatchEventIfChange:Bool = true):Void
 	{
+		if (this.isAbsolute && this._storedValue != null) return;
+		
 		var val:Dynamic = this.value;
 		if (this._storedValue != val)
 		{
@@ -333,6 +348,7 @@ abstract class ExposedValue extends EventDispatcher
 		{
 			value.value = this.value;
 		}
+		value.isAbsolute = this.isAbsolute;
 		value.isEditable = this._isEditable;
 		value.isNullable = this.isNullable;
 		value.isReadOnly = this._isReadOnly;
