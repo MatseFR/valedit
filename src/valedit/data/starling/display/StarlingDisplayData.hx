@@ -100,6 +100,7 @@ class StarlingDisplayData
 		if (!collection.hasValue("rotation"))
 		{
 			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.01);
+			floatDrag.isAbsolute = true;
 			collection.addValue(floatDrag, groupName);
 		}
 		
