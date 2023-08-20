@@ -15,6 +15,7 @@ import valeditor.events.LayerEvent;
  */
 class ValEditContainer extends EventDispatcher implements IValEditContainer
 {
+	public var autoPlay:Bool = true;
 	public var cameraX(get, set):Float;
 	public var cameraY(get, set):Float;
 	public var currentLayer(get, set):ValEditLayer;
@@ -229,6 +230,8 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	
 	public function clear():Void
 	{
+		this.timeLine.clear();
+		
 		for (layer in this._layers)
 		{
 			layer.clear();
@@ -236,6 +239,31 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		this._layers.resize(0);
 		this._layerMap.clear();
 		this._currentLayer = null;
+		
+		if (this._rootContainer != null)
+		{
+			this.rootContainer = null;
+		}
+		
+		if (this._container != null)
+		{
+			this._container = null;
+		}
+		
+		#if starling
+		if (this._containerStarling != null)
+		{
+			this._containerStarling.dispose();
+			this._containerStarling = null;
+		}
+		#end
+		
+		this.autoPlay = true;
+		this.cameraX = 0;
+		this.cameraY = 0;
+		this.visible = true;
+		this.x = 0;
+		this.y = 0;
 	}
 	
 	public function play():Void
