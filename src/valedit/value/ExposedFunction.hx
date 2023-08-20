@@ -92,7 +92,7 @@ class ExposedFunction extends ExposedValue
 		return this;
 	}
 	
-	override public function applyToObject(object:Dynamic):Void 
+	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
 	{
 		// nothing
 	}
@@ -206,9 +206,15 @@ class ExposedFunction extends ExposedValue
 		}
 		
 		Reflect.callMethod(this._object, this.value, this._values);
+		#if valeditor
+		if (this._valEditorObject != null)
+		{
+			this._valEditorObject.functionCalled(this.propertyName, this._values);
+		}
+		#end
 		this._values.resize(0);
 		
-		if (this.updateCollectionUIOnChange) this._collection.readValues();
+		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 

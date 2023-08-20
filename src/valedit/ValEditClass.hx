@@ -25,11 +25,12 @@ class ValEditClass
 	public var isDisplayObject:Bool;
 	public var numInstances(default, null):Int = 0;
 	public var numTemplates(default, null):Int = 0;
+	public var objectCollection:ExposedCollection;
 	public var propertyMap:PropertyMap;
 	/** Dynamic->DisplayObjectContainer->Void */
 	public var removeFromDisplayCustom:Function;
-	public var sourceCollection:ExposedCollection;
 	public var superClassNames(default, null):Array<String> = new Array<String>();
+	public var templateCollection:ExposedCollection;
 	
 	private var _IDToObject:Map<String, ValEditObject> = new Map<String, ValEditObject>();
 	private var _objectIDIndex:Int = -1;
@@ -50,14 +51,15 @@ class ValEditClass
 	/**
 	   
 	**/
-	public function new(?classReference:Class<Dynamic>, ?className:String, ?sourceCollection:ExposedCollection, canBeCreated:Bool = true, isDisplayObject:Bool = false, ?constructorCollection:ExposedCollection) 
+	public function new(?classReference:Class<Dynamic>, ?className:String, ?objectCollection:ExposedCollection, canBeCreated:Bool = true, isDisplayObject:Bool = false, ?constructorCollection:ExposedCollection, ?templateCollection:ExposedCollection) 
 	{
 		this.classReference = classReference;
 		this.className = className;
-		this.sourceCollection = sourceCollection;
+		this.objectCollection = objectCollection;
 		this.canBeCreated = canBeCreated;
 		this.isDisplayObject = isDisplayObject;
 		this.constructorCollection = constructorCollection;
+		this.templateCollection = templateCollection;
 	}
 	
 	/**
@@ -91,9 +93,21 @@ class ValEditClass
 		}
 		else
 		{
-			collection = this.sourceCollection.clone();
+			collection = this.objectCollection.clone();
 		}
 		return collection;
+	}
+	
+	public function getTemplateCollection():ExposedCollection
+	{
+		if (this.templateCollection != null)
+		{
+			return this.templateCollection.clone();
+		}
+		else
+		{
+			return getCollection();
+		}
 	}
 	
 	public function makeObjectID():String
@@ -212,7 +226,7 @@ class ValEditClass
 			}
 			else
 			{
-				collection = this.sourceCollection.clone();
+				collection = this.objectCollection.clone();
 			}
 			this._collectionsToPool.set(collection, collection);
 		}

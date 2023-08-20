@@ -69,13 +69,13 @@ class ExposedObject extends ExposedValueWithChildren
 		return this;
 	}
 	
-	override public function applyToObject(object:Dynamic):Void 
+	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
 	{
 		var realObject:Dynamic = Reflect.getProperty(object, this.propertyName);
 		
 		for (value in this._childValues)
 		{
-			value.applyToObject(realObject);
+			value.applyToObject(realObject, applyIfDefaultValue);
 		}
 	}
 	

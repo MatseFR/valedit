@@ -84,7 +84,7 @@ class ValEdit
 		{
 			v.classReference = type;
 			v.className = className;
-			v.sourceCollection = collection;
+			v.objectCollection = collection;
 			v.canBeCreated = canBeCreated;
 			v.isDisplayObject = isDisplayObject;
 			if (isDisplayObject)
@@ -264,19 +264,24 @@ class ValEdit
 			params = [];
 		}
 		var valClass:ValEditClass = _classMap.get(className);
-		var object:Dynamic = Type.createInstance(valClass.classReference, params);
-		var collection:ExposedCollection = valClass.getCollection();
-		collection.object = object;
+		//var object:Dynamic = Type.createInstance(valClass.classReference, params);
+		var collection:ExposedCollection = valClass.getTemplateCollection();
+		//collection.object = object;
+		if (constructorCollection != null)
+		{
+			constructorCollection.copyValuesTo(collection);
+		}
 		
 		if (template == null) 
 		{
-			template = ValEditTemplate.fromPool(valClass, id, object, collection, constructorCollection);
+			template = ValEditTemplate.fromPool(valClass, id, collection, constructorCollection);
+			template.object = createObjectWithTemplate(template, template.collection, false);
 		}
 		else
 		{
-			template.object = object;
+			//template.object = object;
 			template.collection = collection;
-			template.constructorCollection = constructorCollection;
+			//template.constructorCollection = constructorCollection;
 		}
 		
 		registerTemplateInternal(template);
@@ -284,9 +289,10 @@ class ValEdit
 		return template;
 	}
 	
-	static public function createObjectWithTemplate(template:ValEditTemplate, ?id:String, ?valObject:ValEditObject, ?collection:ExposedCollection):ValEditObject
+	static public function createObjectWithTemplate(template:ValEditTemplate, ?id:String, ?valObject:ValEditObject, ?collection:ExposedCollection, registerToTemplate:Bool = true):ValEditObject
 	{
-		var valClass:ValEditClass = _classMap.get(template.className);
+		//var valClass:ValEditClass = _classMap.get(template.className);
+		var valClass:ValEditClass = template.clss;
 		
 		if (valObject == null) valObject = new ValEditObject(valClass, id);
 		var params:Array<Dynamic> = [];
@@ -298,15 +304,22 @@ class ValEdit
 		valObject.object = Type.createInstance(valClass.classReference, params);
 		
 		valObject.template = template;
+		if (registerToTemplate)
+		{
+			template.addInstance(valObject);
+		}
 		
 		valObject.propertyMap = valClass.propertyMap;
 		
+		template.collection.applyToObject(valObject.object);
+		
 		if (collection == null)
 		{
-			collection = template.collection.clone(true);
+			//collection = template.collection.clone(true);
+			collection = valClass.getCollection();
 		}
 		valObject.collection = collection;
-		collection.applyToObject(valObject.object);
+		//collection.applyToObject(valObject.object);
 		collection.object = valObject;
 		
 		valObject.ready();
@@ -344,6 +357,11 @@ class ValEdit
 			Reflect.callMethod(valObject.clss.disposeCustom, valObject.clss.disposeCustom, [valObject.object]);
 		}
 		
+		if (valObject.template != null)
+		{
+			valObject.template.removeInstance(valObject);
+		}
+		
 		unregisterObjectInternal(valObject);
 		
 		valObject.pool();
@@ -366,15 +384,16 @@ class ValEdit
 	
 	static private function destroyTemplateInternal(template:ValEditTemplate):Void
 	{
-		if (template.clss.disposeFunctionName != null)
-		{
-			var func:Function = Reflect.field(template.object, template.clss.disposeFunctionName);
-			Reflect.callMethod(template.object, func, []);
-		}
-		else if (template.clss.disposeCustom != null)
-		{
-			Reflect.callMethod(template.clss.disposeCustom, template.clss.disposeCustom, [template.object]);
-		}
+		//if (template.clss.disposeFunctionName != null)
+		//{
+			//var func:Function = Reflect.field(template.object, template.clss.disposeFunctionName);
+			//Reflect.callMethod(template.object, func, []);
+		//}
+		//else if (template.clss.disposeCustom != null)
+		//{
+			//Reflect.callMethod(template.clss.disposeCustom, template.clss.disposeCustom, [template.object]);
+		//}
+		destroyObject(template.object);
 		
 		unregisterTemplateInternal(template);
 		

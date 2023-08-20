@@ -50,7 +50,8 @@ abstract class ExposedValue extends EventDispatcher
 	public var parentValue:ExposedValueWithChildren;
 	public var propertyName:String;
 	public var uiControl(get, set):IValueUI;
-	public var updateCollectionUIOnChange:Bool = true;
+	public var updateCollectionOnChange:Bool = true;
+	public var updateCollectionLocked:Bool = false;
 	public var value(get, set):Dynamic;
 	
 	private var _collection:ExposedCollection;
@@ -203,7 +204,7 @@ abstract class ExposedValue extends EventDispatcher
 			Reflect.setProperty(this._object, this.propertyName, value);
 			this._extras.execute();
 			if (this.parentValue != null) this.parentValue.childValueChanged();
-			if (this.updateCollectionUIOnChange) this._collection.readValues();
+			if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
 			
 			#if valeditor
 			if (this._valEditorObject != null)
@@ -269,8 +270,12 @@ abstract class ExposedValue extends EventDispatcher
 		this.name = name;
 	}
 	
-	public function applyToObject(object:Dynamic):Void
+	public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void
 	{
+		if (!applyIfDefaultValue && this._object == null && this._storedValue == null)
+		{
+			return;
+		}
 		Reflect.setProperty(object, this.propertyName, this.value);
 		this._extras.applyToObject(object);
 	}
@@ -354,7 +359,7 @@ abstract class ExposedValue extends EventDispatcher
 		value.isReadOnly = this._isReadOnly;
 		value.isReadOnlyLocked = this._isReadOnlyLocked;
 		value.isTweenable = this._isTweenable;
-		value.updateCollectionUIOnChange = this.updateCollectionUIOnChange;
+		value.updateCollectionOnChange = this.updateCollectionOnChange;
 		this._extras.clone(value._extras);
 	}
 	

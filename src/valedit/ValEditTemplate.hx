@@ -9,11 +9,11 @@ class ValEditTemplate extends EventDispatcher
 {
 	static private var _POOL:Array<ValEditTemplate> = new Array<ValEditTemplate>();
 	
-	static public function fromPool(clss:ValEditClass, ?id:String, ?object:Dynamic, ?collection:ExposedCollection,
+	static public function fromPool(clss:ValEditClass, ?id:String, ?collection:ExposedCollection,
 									?constructorCollection:ExposedCollection):ValEditTemplate
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(clss, id, object, collection, constructorCollection);
-		return new ValEditTemplate(clss, id, object, collection, constructorCollection);
+		if (_POOL.length != 0) return _POOL.pop().setTo(clss, id, collection, constructorCollection);
+		return new ValEditTemplate(clss, id, collection, constructorCollection);
 	}
 	
 	public var className:String;
@@ -22,7 +22,7 @@ class ValEditTemplate extends EventDispatcher
 	public var constructorCollection:ExposedCollection;
 	public var id(get, set):String;
 	public var numInstances(default, null):Int = 0;
-	public var object:Dynamic;
+	public var object(get, set):Dynamic;
 	
 	private var _id:String;
 	private function get_id():String { return this._id; }
@@ -31,12 +31,19 @@ class ValEditTemplate extends EventDispatcher
 		return this._id = value;
 	}
 	
+	private var _object:Dynamic;
+	private function get_object():Dynamic { return this._object; }
+	private function set_object(value:Dynamic):Dynamic
+	{
+		return this._object = value;
+	}
+	
 	private var _instances:Array<ValEditObject> = new Array<ValEditObject>();
 	
-	public function new(clss:ValEditClass, ?id:String, ?object:Dynamic, ?collection:ExposedCollection, ?constructorCollection:ExposedCollection) 
+	public function new(clss:ValEditClass, ?id:String, ?collection:ExposedCollection, ?constructorCollection:ExposedCollection) 
 	{
 		super();
-		setTo(clss, id, object, collection, constructorCollection);
+		setTo(clss, id, collection, constructorCollection);
 	}
 	
 	public function clear():Void
@@ -54,13 +61,12 @@ class ValEditTemplate extends EventDispatcher
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(clss:ValEditClass, id:String, object:Dynamic, collection:ExposedCollection,
+	private function setTo(clss:ValEditClass, id:String, collection:ExposedCollection,
 						   constructorCollection:ExposedCollection):ValEditTemplate
 	{
 		this.clss = clss;
 		this.className = clss.className;
 		this.id = id;
-		this.object = object;
 		this.collection = collection;
 		this.constructorCollection = constructorCollection;
 		
@@ -76,8 +82,11 @@ class ValEditTemplate extends EventDispatcher
 	
 	public function removeInstance(instance:ValEditObject):Void
 	{
-		this._instances.remove(instance);
-		this.numInstances--;
+		instance.template = null;
+		if (this._instances.remove(instance))
+		{
+			this.numInstances--;
+		}
 	}
 	
 	public function getConstructorValues(?values:Array<Dynamic>):Array<Dynamic>

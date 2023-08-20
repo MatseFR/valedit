@@ -31,6 +31,7 @@ class ExposedCollection extends EventDispatcher
 		return new ExposedCollection();
 	}
 	
+	public var applyIfDefaultValue:Bool = false;
 	public var isEditable(get, set):Bool;
 	public var isReadOnly(get, set):Bool;
 	public var object(get, set):Dynamic;
@@ -39,6 +40,8 @@ class ExposedCollection extends EventDispatcher
 	public var uiCollection(default, null):UICollection;
 	public var uiContainer(get, set):DisplayObjectContainer;
 	#end
+	/* when true, prevents a changed value from updating other values in the collection */
+	public var valuesUpdateLocked(get, set):Bool;
 	
 	private var _isEditable:Bool = true;
 	private function get_isEditable():Bool { return this._isEditable; }
@@ -69,10 +72,14 @@ class ExposedCollection extends EventDispatcher
 	private function set_object(value:Dynamic):Dynamic
 	{
 		if (this._object == value) return value;
+		
+		var wasUpdateLocked:Bool = this._valuesUpdateLocked;
+		if (!wasUpdateLocked) this.valuesUpdateLocked = true;
 		for (val in this._valueList)
 		{
 			val.object = value;
 		}
+		this.valuesUpdateLocked = wasUpdateLocked;
 		return this._object = value;
 	}
 	
@@ -120,6 +127,20 @@ class ExposedCollection extends EventDispatcher
 	}
 	#end
 	
+	private var _valuesUpdateLocked:Bool = false;
+	private function get_valuesUpdateLocked():Bool { return this._valuesUpdateLocked; }
+	private function set_valuesUpdateLocked(value:Bool):Bool
+	{
+		if (this._valuesUpdateLocked == value) return value;
+		
+		this._valuesUpdateLocked = value;
+		for (val in this._valueList)
+		{
+			val.updateCollectionLocked = this._valuesUpdateLocked;
+		}
+		return this._valuesUpdateLocked;
+	}
+	
 	private var _groupList:Array<ExposedGroup> = new Array<ExposedGroup>();
 	private var _groupMap:Map<String, ExposedGroup> = new Map<String, ExposedGroup>();
 	private var _valueList:Array<ExposedValue> = new Array<ExposedValue>();
@@ -163,11 +184,46 @@ class ExposedCollection extends EventDispatcher
 		//
 	//}
 	
-	public function applyToObject(object:Dynamic):Void
+	public function applyToObject(object:Dynamic, ?applyIfDefaultValue:Bool):Void
 	{
+		if (applyIfDefaultValue == null)
+		{
+			applyIfDefaultValue = this.applyIfDefaultValue;
+		}
+		
 		for (value in this._valueList)
 		{
-			value.applyToObject(object);
+			value.applyToObject(object, applyIfDefaultValue);
+		}
+	}
+	
+	/* Looks for corresponding exposed values in fromCollection and copies their values */
+	public function copyValuesFrom(fromCollection:ExposedCollection):Void
+	{
+		var fromValue:ExposedValue;
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			fromValue = fromCollection.getValue(value.propertyName);
+			if (fromValue != null)
+			{
+				value.value = fromValue.value;
+			}
+		}
+	}
+	
+	/* Lookks for corresponding exposed values in toCollection and copies its values */
+	public function copyValuesTo(toCollection:ExposedCollection):Void
+	{
+		var toValue:ExposedValue;
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			toValue = toCollection.getValue(value.propertyName);
+			if (toValue != null)
+			{
+				toValue.value = value.value;
+			}
 		}
 	}
 	
@@ -200,7 +256,8 @@ class ExposedCollection extends EventDispatcher
 	public function addValue(value:ExposedValue, groupName:String = null):Void
 	{
 		value.collection = this;
-		value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		value.updateCollectionLocked = this._valuesUpdateLocked;
+		if (value.isRealValue) value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		if (groupName != null)
 		{
 			this._groupMap[groupName].addValue(value);
@@ -228,7 +285,8 @@ class ExposedCollection extends EventDispatcher
 	public function addValueAfter(value:ExposedValue, afterValueName:String, groupName:String = null):Void
 	{
 		value.collection = this;
-		value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		value.updateCollectionLocked = this._valuesUpdateLocked;
+		if (value.isRealValue) value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		if (groupName != null)
 		{
 			this._groupMap[groupName].addValueAfter(value, afterValueName);
@@ -262,7 +320,8 @@ class ExposedCollection extends EventDispatcher
 	public function addValueBefore(value:ExposedValue, beforeValueName:String, groupName:String = null):Void
 	{
 		value.collection = this;
-		value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		value.updateCollectionLocked = this._valuesUpdateLocked;
+		if (value.isRealValue) value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		if (groupName != null)
 		{
 			this._groupMap[groupName].addValueBefore(value, beforeValueName);
@@ -346,11 +405,10 @@ class ExposedCollection extends EventDispatcher
 	
 	public function removeValueByName(propertyName:String):ExposedValue
 	{
-		var value:ExposedValue;
-		value = this._valueMap[propertyName];
+		var value:ExposedValue = this._valueMap[propertyName];
 		if (value != null)
 		{
-			value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+			if (value.isRealValue) value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 			this._valueList.remove(value);
 			this._valueMap.remove(propertyName);
 			return value;
@@ -361,7 +419,7 @@ class ExposedCollection extends EventDispatcher
 			value = group.removeValueByName(propertyName);
 			if (value != null)
 			{
-				value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+				if (value.isRealValue) value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 				return value;
 			}
 		}

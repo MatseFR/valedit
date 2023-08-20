@@ -147,11 +147,11 @@ class ExposedGroup extends ExposedValue
 		return this;
 	}
 	
-	override public function applyToObject(object:Dynamic):Void 
+	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
 	{
 		for (value in this._valueList)
 		{
-			value.applyToObject(object);
+			value.applyToObject(object, applyIfDefaultValue);
 		}
 	}
 	
