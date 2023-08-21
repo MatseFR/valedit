@@ -1,12 +1,13 @@
 package valedit.value;
 
+import valedit.value.base.ExposedNotValue;
 import valedit.value.base.ExposedValue;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedSeparator extends ExposedValue 
+class ExposedSeparator extends ExposedNotValue 
 {
 	static private var _POOL:Array<ExposedSeparator> = new Array<ExposedSeparator>();
 	
@@ -39,30 +40,10 @@ class ExposedSeparator extends ExposedValue
 		return this;
 	}
 	
-	override public function applyToObject(object:Dynamic):Void 
-	{
-		// nothing
-	}
-	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
-	{
-		// nothing
-	}
-	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var separator:ExposedSeparator = new ExposedSeparator(this.name);
 		return separator;
-	}
-	
-	override public function toJSON(json:Dynamic = null):Dynamic 
-	{
-		return null;
-	}
-	
-	override public function toJSONSimple(json:Dynamic):Void 
-	{
-		// nothing
 	}
 	
 }

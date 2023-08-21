@@ -1,12 +1,13 @@
 package valedit.value;
 
+import valedit.value.base.ExposedNotValue;
 import valedit.value.base.ExposedValue;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedNote extends ExposedValue 
+class ExposedNote extends ExposedNotValue 
 {
 	static private var _POOL:Array<ExposedNote> = new Array<ExposedNote>();
 	
@@ -52,30 +53,10 @@ class ExposedNote extends ExposedValue
 		return this;
 	}
 	
-	override public function applyToObject(object:Dynamic):Void 
-	{
-		// nothing
-	}
-	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
-	{
-		// nothing
-	}
-	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var note:ExposedNote = fromPool(this.name, this.text, this.textPercentWidth);
 		return note;
-	}
-	
-	override public function toJSON(json:Dynamic = null):Dynamic 
-	{
-		return null;
-	}
-	
-	override public function toJSONSimple(json:Dynamic):Void 
-	{
-		// nothing
 	}
 	
 }
