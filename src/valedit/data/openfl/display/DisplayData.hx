@@ -24,7 +24,7 @@ import valedit.value.ExposedString;
  */
 class DisplayData 
 {
-	
+	/* data for a Bitmap object */
 	static public function exposeBitmap(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bmd:ExposedBitmapData;
@@ -54,6 +54,50 @@ class DisplayData
 		{
 			bool = new ExposedBool("smoothing");
 			collection.addValue(bool, groupName);
+		}
+		
+		return collection;
+	}
+	
+	/* data for an instance of a Bitmap template */
+	static public function exposeBitmapInstance(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var select:ExposedSelect;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObject(collection, groupName);
+		
+		if (!collection.hasValue("pixelSnapping"))
+		{
+			select = new ExposedSelect("pixelSnapping");
+			select.add("ALWAYS", PixelSnapping.ALWAYS);
+			select.add("AUTO", PixelSnapping.AUTO);
+			select.add("NEVER", PixelSnapping.NEVER);
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("smoothing"))
+		{
+			bool = new ExposedBool("smoothing");
+			collection.addValue(bool, groupName);
+		}
+		
+		return collection;
+	}
+	
+	/* data for a Bitmap template */
+	static public function exposeBitmapTemplate(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bmd:ExposedBitmapData;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("bitmapData"))
+		{
+			bmd = new ExposedBitmapData("bitmapData");
+			collection.addValue(bmd, groupName);
 		}
 		
 		return collection;
