@@ -143,10 +143,10 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		{
 			stop();
 		}
-		for (child in this._children)
-		{
-			child.pool();
-		}
+		//for (child in this._children)
+		//{
+			//child.pool();
+		//}
 		this._children.resize(0);
 		for (frame in this._frames)
 		{
