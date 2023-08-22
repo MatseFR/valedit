@@ -22,7 +22,7 @@ class ValEditTemplate extends EventDispatcher
 	public var constructorCollection:ExposedCollection;
 	public var id(get, set):String;
 	public var numInstances(default, null):Int = 0;
-	public var object(get, set):Dynamic;
+	public var object(get, set):ValEditObject;
 	
 	private var _id:String;
 	private function get_id():String { return this._id; }
