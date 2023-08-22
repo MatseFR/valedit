@@ -115,7 +115,7 @@ class ValEdit
 		
 		if (v.propertyMap == null)
 		{
-			v.propertyMap = new PropertyMap();
+			v.propertyMap = PropertyMap.fromPool();
 		}
 		
 		if (categoryList != null)
@@ -263,10 +263,10 @@ class ValEdit
 		{
 			params = [];
 		}
+		
 		var valClass:ValEditClass = _classMap.get(className);
-		//var object:Dynamic = Type.createInstance(valClass.classReference, params);
 		var collection:ExposedCollection = valClass.getTemplateCollection();
-		//collection.object = object;
+		
 		if (constructorCollection != null)
 		{
 			constructorCollection.copyValuesTo(collection);
@@ -279,9 +279,7 @@ class ValEdit
 		}
 		else
 		{
-			//template.object = object;
 			template.collection = collection;
-			//template.constructorCollection = constructorCollection;
 		}
 		
 		registerTemplateInternal(template);
@@ -291,7 +289,6 @@ class ValEdit
 	
 	static public function createObjectWithTemplate(template:ValEditTemplate, ?id:String, ?valObject:ValEditObject, ?collection:ExposedCollection, registerToTemplate:Bool = true):ValEditObject
 	{
-		//var valClass:ValEditClass = _classMap.get(template.className);
 		var valClass:ValEditClass = template.clss;
 		
 		if (valObject == null) valObject = new ValEditObject(valClass, id);
@@ -315,11 +312,9 @@ class ValEdit
 		
 		if (collection == null)
 		{
-			//collection = template.collection.clone(true);
 			collection = valClass.getCollection();
 		}
 		valObject.collection = collection;
-		//collection.applyToObject(valObject.object);
 		collection.object = valObject;
 		
 		valObject.ready();
@@ -384,15 +379,6 @@ class ValEdit
 	
 	static private function destroyTemplateInternal(template:ValEditTemplate):Void
 	{
-		//if (template.clss.disposeFunctionName != null)
-		//{
-			//var func:Function = Reflect.field(template.object, template.clss.disposeFunctionName);
-			//Reflect.callMethod(template.object, func, []);
-		//}
-		//else if (template.clss.disposeCustom != null)
-		//{
-			//Reflect.callMethod(template.clss.disposeCustom, template.clss.disposeCustom, [template.object]);
-		//}
 		destroyObject(template.object);
 		
 		unregisterTemplateInternal(template);
