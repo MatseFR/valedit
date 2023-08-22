@@ -12,9 +12,19 @@ import valeditor.events.LayerEvent;
  */
 class ValEditLayer extends EventDispatcher
 {
+	static private var _POOL:Array<ValEditLayer> = new Array<ValEditLayer>();
+	
+	static public function fromPool(?timeLine:ValEditTimeLine):ValEditLayer
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(timeLine);
+		return new ValEditLayer(timeLine);
+	}
+	
 	public var name(get, set):String;
 	public var rootContainer(get, set):DisplayObjectContainer;
+	#if starling
 	public var rootContainerStarling(get, set):starling.display.DisplayObjectContainer;
+	#end
 	public var timeLine(default, null):ValEditTimeLine;
 	public var valEditContainer(get, set):IValEditContainer;
 	public var visible(get, set):Bool;
@@ -33,6 +43,7 @@ class ValEditLayer extends EventDispatcher
 	private function get_rootContainer():DisplayObjectContainer { return this._rootContainer; }
 	private function set_rootContainer(value:DisplayObjectContainer):DisplayObjectContainer
 	{
+		if (this._rootContainer == value) return value;
 		if (value != null)
 		{
 			if (this._container != null) value.addChild(this._container);
@@ -49,6 +60,7 @@ class ValEditLayer extends EventDispatcher
 	private function get_rootContainerStarling():starling.display.DisplayObjectContainer { return this._rootContainerStarling; }
 	private function set_rootContainerStarling(value:starling.display.DisplayObjectContainer):starling.display.DisplayObjectContainer
 	{
+		if (this._rootContainerStarling == value) return value;
 		if (value != null)
 		{
 			if (this._containerStarling != null) value.addChild(this._containerStarling);
@@ -120,7 +132,35 @@ class ValEditLayer extends EventDispatcher
 	
 	public function clear():Void
 	{
-		
+		this.name = null;
+		this.rootContainer = null;
+		#if starling
+		this.rootContainerStarling = null;
+		#end
+		if (this.timeLine != null)
+		{
+			this.timeLine.pool();
+			this.timeLine = null;
+		}
+		this.valEditContainer = null;
+		this.visible = true;
+		this.x = 0;
+		this.y = 0;
+		this._objects.clear();
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(timeLine:ValEditTimeLine):ValEditLayer
+	{
+		this.timeLine = timeLine;
+		this.timeLine.activateFunction = this.activate;
+		this.timeLine.deactivateFunction = this.deactivate;
+		return this;
 	}
 	
 	public function add(object:ValEditObject):Void
