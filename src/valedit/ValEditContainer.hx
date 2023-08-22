@@ -15,6 +15,14 @@ import valeditor.events.LayerEvent;
  */
 class ValEditContainer extends EventDispatcher implements IValEditContainer
 {
+	static private var _POOL:Array<ValEditContainer> = new Array<ValEditContainer>();
+	
+	static public function fromPool():ValEditContainer
+	{
+		if (_POOL.length != 0) return _POOL.pop();
+		return new ValEditContainer();
+	}
+	
 	public var autoPlay:Bool = true;
 	public var cameraX(get, set):Float;
 	public var cameraY(get, set):Float;
@@ -264,6 +272,12 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		this.visible = true;
 		this.x = 0;
 		this.y = 0;
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
 	}
 	
 	public function play():Void
