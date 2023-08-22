@@ -32,9 +32,9 @@ abstract class ExposedValue extends EventDispatcher
 	/* all extras are executed when an ExposedValue's value changes */
 	public var extras(get, never):ValueExtraContainer;
 	/* Tells wether value should be read from the object or not
-	 * if stored value is null it will read from object, otherwise store value is used
-	 * this is especially useful for rotation : on might want to have an animation with many rotations,
-	 * while the object might restrict the value to 180 - -180 or PI - -PI */
+	 * if stored value is null it will read from object, otherwise stored value is used
+	 * this is especially useful for rotation : one might want to have an animation with many rotations,
+	 * while the object might restrict the value to 180/-180 or PI/-PI */
 	public var isAbsolute:Bool;
 	public var isEditable(get, set):Bool;
 	public var isGroup(default, null):Bool;
