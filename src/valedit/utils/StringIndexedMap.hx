@@ -14,6 +14,13 @@ class StringIndexedMap<V>
 	private var map:Map<String, Int> = new Map<String, Int>();
 
 	public function new() {}
+	
+	public function clear():Void
+	{
+		this.keys.resize(0);
+		this.values.resize(0);
+		this.map.clear();
+	}
 
 	public function set(key:String, value:V):Void
 	{
