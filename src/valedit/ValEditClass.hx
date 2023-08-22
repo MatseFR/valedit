@@ -10,6 +10,15 @@ import valedit.value.base.ExposedValueWithChildren;
  */
 class ValEditClass 
 {
+	static private var _POOL:Array<ValEditClass> = new Array<ValEditClass>();
+	
+	static public function fromPool(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null, canBeCreated:Bool = true,
+									isDisplayObject:Bool = false, constructorCollection:ExposedCollection = null, templateCollection:ExposedCollection = null) :ValEditClass
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(classReference, className, objectCollection, canBeCreated, isDisplayObject, constructorCollection, templateCollection);
+		return new ValEditClass(classReference, className, objectCollection, canBeCreated, isDisplayObject, constructorCollection, templateCollection);
+	}
+	
 	/** Dynamic->DisplayObjectContainer->Void */
 	public var addToDisplayCustom:Function;
 	public var canBeCreated:Bool;
@@ -17,10 +26,14 @@ class ValEditClass
 	public var className:String;
 	public var classReference:Class<Dynamic>;
 	public var constructorCollection:ExposedCollection;
+	/** Dynamic->Void external function reference, to be called on object creation */
+	public var creationFunction:Function;
+	/** Void->Void object function name, to be called on object creation */
+	public var creationFunctionName:String;
 	public var displayObjectType:Int = DisplayObjectType.NONE;
-	/** Dynamic->Void */
+	/** Dynamic->Void external function reference, to be called on object destruction */
 	public var disposeCustom:Function;
-	/** if object has a function that should be called when being destroyed, the function's name should go here */
+	/** Void->Void object function name, to be called on object destruction */
 	public var disposeFunctionName:String = null;
 	public var isDisplayObject:Bool;
 	public var numInstances(default, null):Int = 0;
@@ -51,7 +64,8 @@ class ValEditClass
 	/**
 	   
 	**/
-	public function new(?classReference:Class<Dynamic>, ?className:String, ?objectCollection:ExposedCollection, canBeCreated:Bool = true, isDisplayObject:Bool = false, ?constructorCollection:ExposedCollection, ?templateCollection:ExposedCollection) 
+	public function new(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null, canBeCreated:Bool = true,
+						isDisplayObject:Bool = false, constructorCollection:ExposedCollection = null, templateCollection:ExposedCollection = null) 
 	{
 		this.classReference = classReference;
 		this.className = className;
@@ -67,11 +81,85 @@ class ValEditClass
 	**/
 	public function clear():Void
 	{
+		this.addToDisplayCustom = null;
+		this.categories.resize(0);
+		this.className = null;
+		this.classReference = null;
+		if (this.constructorCollection != null)
+		{
+			this.constructorCollection.pool();
+			this.constructorCollection = null;
+		}
+		this.creationFunction = null;
+		this.creationFunctionName = null;
+		this.displayObjectType = DisplayObjectType.NONE;
+		this.disposeCustom = null;
+		this.disposeFunctionName = null;
+		this.isDisplayObject = false;
 		this.numInstances = 0;
 		this.numTemplates = 0;
+		if (this.objectCollection != null)
+		{
+			this.objectCollection.pool();
+			this.objectCollection = null;
+		}
+		if (this.propertyMap != null)
+		{
+			this.propertyMap.pool();
+			this.propertyMap = null;
+		}
+		this.removeFromDisplayCustom = null;
+		this.superClassNames.resize(0);
+		if (this.templateCollection != null)
+		{
+			this.templateCollection.pool();
+			this.templateCollection = null;
+		}
 		
 		this._IDToObject.clear();
 		this._objectIDIndex = -1;
+		this._IDToTemplate.clear();
+		this._templateIDIndex = -1;
+		
+		this._containers.clear();
+		for (collection in this._pool)
+		{
+			collection.pool();
+		}
+		this._pool.resize(0);
+		
+		this._constructorContainers.clear();
+		for (collection in this._constructorPool)
+		{
+			collection.pool();
+		}
+		this._constructorPool.resize(0);
+		
+		this._templateContainers.clear();
+		for (collection in this._collectionsToPool)
+		{
+			collection.pool();
+		}
+		this._collectionsToPool.clear();
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null, canBeCreated:Bool = true,
+						   isDisplayObject:Bool = false, constructorCollection:ExposedCollection = null, templateCollection:ExposedCollection = null):ValEditClass
+	{
+		this.classReference = classReference;
+		this.className = className;
+		this.objectCollection = objectCollection;
+		this.canBeCreated = canBeCreated;
+		this.isDisplayObject = isDisplayObject;
+		this.constructorCollection = constructorCollection;
+		this.templateCollection = templateCollection;
+		return this;
 	}
 	
 	public function addCategory(category:String):Void
