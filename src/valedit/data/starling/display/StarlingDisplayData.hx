@@ -190,6 +190,185 @@ class StarlingDisplayData
 		return collection;
 	}
 	
+	static public function exposeDisplayObjectInstance(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var floatDrag:ExposedFloatDrag;
+		var func:ExposedFunction;
+		var object:ExposedObject;
+		var objectRef:ExposedObjectReference;
+		var select:ExposedSelect;
+		var string:ExposedString;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("name"))
+		{
+			string = new ExposedString("name");
+			collection.addValue(string, groupName);
+		}
+		
+		if (!collection.hasValue("x"))
+		{
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("y"))
+		{
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("width"))
+		{
+			floatDrag = new ExposedFloatDrag("width");
+			floatDrag.isTweenable = false; // don't tween width since it will become messy with rotation, scaleX will be used instead
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("height"))
+		{
+			floatDrag = new ExposedFloatDrag("height");
+			floatDrag.isTweenable = false; // don't tween height since it will become messy with rotation, scaleY will be used instead
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleX"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleY"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("alpha"))
+		{
+			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("rotation"))
+		{
+			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.01);
+			floatDrag.isAbsolute = true;
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("skewX"))
+		{
+			floatDrag = new ExposedFloatDrag("skewX", null, null, null, 0.005, 0.001);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("skewY"))
+		{
+			floatDrag = new ExposedFloatDrag("skewY", null, null, null, 0.005, 0.001);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("blendMode"))
+		{
+			select = new ExposedSelect("blendMode");
+			select.add("ADD", BlendMode.ADD);
+			select.add("AUTO", BlendMode.AUTO);
+			select.add("BELOW", BlendMode.BELOW);
+			select.add("ERASE", BlendMode.ERASE);
+			select.add("MASK", BlendMode.MASK);
+			select.add("MULTIPLY", BlendMode.MULTIPLY);
+			select.add("NONE", BlendMode.NONE);
+			select.add("NORMAL", BlendMode.NORMAL);
+			select.add("SCREEN", BlendMode.SCREEN);
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("mask"))
+		{
+			objectRef = new ExposedObjectReference("mask");
+			objectRef.addClass(DisplayObject);
+			collection.addValue(objectRef, groupName);
+		}
+		
+		if (!collection.hasValue("maskInverted"))
+		{
+			bool = new ExposedBool("maskInverted");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("visible"))
+		{
+			bool = new ExposedBool("visible");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("transformationMatrix"))
+		{
+			object = new ExposedObject("transformationMatrix", null, false, true);
+			collection.addValue(object, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeDisplayObjectTemplate(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var floatDrag:ExposedFloatDrag;
+		var func:ExposedFunction;
+		var select:ExposedSelect;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("pivotX"))
+		{
+			floatDrag = new ExposedFloatDrag("pivotX");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("pivotY"))
+		{
+			floatDrag = new ExposedFloatDrag("pivotY");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("touchable"))
+		{
+			bool = new ExposedBool("touchable");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("useHandCursor"))
+		{
+			bool = new ExposedBool("useHandCursor");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("alignPivot"))
+		{
+			func = new ExposedFunction("alignPivot", "align pivot");
+			
+			select = new ExposedSelect("horizontal align");
+			select.add("center", Align.CENTER);
+			select.add("left", Align.LEFT);
+			select.add("right", Align.RIGHT);
+			func.addParameter(select);
+			
+			select = new ExposedSelect("vertical align");
+			select.add("center", Align.CENTER);
+			select.add("top", Align.TOP);
+			select.add("bottom", Align.BOTTOM);
+			func.addParameter(select);
+			
+			collection.addValue(func, groupName);
+		}
+		
+		return collection;
+	}
+	
 	static public function exposeDisplayObjectContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
@@ -207,11 +386,55 @@ class StarlingDisplayData
 		return collection;
 	}
 	
+	static public function exposeDisplayObjectContainerInstance(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObjectInstance(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function exposeDisplayObjectContainerTemplate(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObjectTemplate(collection, groupName);
+		
+		if (!collection.hasValue("touchGroup"))
+		{
+			bool = new ExposedBool("touchGroup");
+			collection.addValueAfter(bool, "touchable", groupName);
+		}
+		
+		return collection;
+	}
+	
 	static public function exposeImage(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
 		exposeMesh(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function exposeImageInstance(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeMeshInstance(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function exposeImageTemplate(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeMeshTemplate(collection, groupName);
 		
 		return collection;
 	}
@@ -292,11 +515,100 @@ class StarlingDisplayData
 		return collection;
 	}
 	
+	static public function exposeMeshInstance(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var color:ExposedColor;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObjectInstance(collection, groupName);
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			collection.addValueBefore(color, "blendMode", groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeMeshTemplate(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var func:ExposedFunction;
+		var select:ExposedSelect;
+		var texture:ExposedStarlingTexture;
+		
+		var funcExtra:FunctionCallExtra;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("texture"))
+		{
+			texture = new ExposedStarlingTexture("texture");
+			funcExtra = new FunctionCallExtra("readjustSize");
+			texture.extras.add(funcExtra);
+			collection.addValue(texture, groupName);
+		}
+		
+		if (!collection.hasValue("textureSmoothing"))
+		{
+			select = new ExposedSelect("textureSmoothing");
+			select.add("BILINEAR", TextureSmoothing.BILINEAR);
+			select.add("NONE", TextureSmoothing.NONE);
+			select.add("TRILINEAR", TextureSmoothing.TRILINEAR);
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("textureRepeat"))
+		{
+			bool = new ExposedBool("textureRepeat");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("pixelSnapping"))
+		{
+			bool = new ExposedBool("pixelSnapping");
+			collection.addValue(bool, groupName);
+		}
+		
+		exposeDisplayObjectTemplate(collection, groupName);
+		
+		if (!collection.hasValue("readjustSize"))
+		{
+			func = new ExposedFunction("readjustSize", "readjust size");
+			func.addParameter(new ExposedNote("note", "Set width and height to 0 to match texture dimensions"));
+			func.addParameter(new ExposedFloatDrag("width"));
+			func.addParameter(new ExposedFloatDrag("height"));
+			collection.addValueAfter(func, "alignPivot", groupName);
+		}
+		
+		return collection;
+	}
+	
 	static public function exposeQuad(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
 		exposeMesh(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function exposeQuadInstance(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeMeshInstance(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function exposeQuadTemplate(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeMeshTemplate(collection, groupName);
 		
 		return collection;
 	}
