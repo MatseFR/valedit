@@ -184,12 +184,12 @@ class ValEditLayer extends EventDispatcher
 					{
 						createContainer();
 					}
-					if (object.clss.addToDisplayCustom != null)
+					if (object.clss.addToDisplayFunction != null)
 					{
 						#if neko
-						Reflect.callMethod(null, object.clss.addToDisplayCustom, [object.object, this._container]);
+						Reflect.callMethod(null, object.clss.addToDisplayFunction, [object.object, this._container]);
 						#else
-						object.clss.addToDisplayCustom(object.object, this._container);
+						object.clss.addToDisplayFunction(object.object, this._container);
 						#end
 					}
 					else
@@ -203,12 +203,12 @@ class ValEditLayer extends EventDispatcher
 					{
 						createContainerStarling();
 					}
-					if (object.clss.addToDisplayCustom != null)
+					if (object.clss.addToDisplayFunction != null)
 					{
 						#if neko
-						Reflect.callMethod(null, object.clss.addToDisplayCustom, [object.object, this._containerStarling]);
+						Reflect.callMethod(null, object.clss.addToDisplayFunction, [object.object, this._containerStarling]);
 						#else
-						object.clss.addToDisplayCustom(object.object, this._containerStarling);
+						object.clss.addToDisplayFunction(object.object, this._containerStarling);
 						#end
 					}
 					else
@@ -234,12 +234,12 @@ class ValEditLayer extends EventDispatcher
 			switch (object.displayObjectType)
 			{
 				case DisplayObjectType.OPENFL :
-					if (object.clss.removeFromDisplayCustom != null)
+					if (object.clss.removeFromDisplayFunction != null)
 					{
 						#if neko
-						Reflect.callMethod(null, object.clss.removeFromDisplayCustom, [object.object, this._container]);
+						Reflect.callMethod(null, object.clss.removeFromDisplayFunction, [object.object, this._container]);
 						#else
-						object.clss.removeFromDisplayCustom(object.object, this._container);
+						object.clss.removeFromDisplayFunction(object.object, this._container);
 						#end
 					}
 					else
@@ -249,12 +249,12 @@ class ValEditLayer extends EventDispatcher
 				
 				#if starling
 				case DisplayObjectType.STARLING :
-					if (object.clss.removeFromDisplayCustom != null)
+					if (object.clss.removeFromDisplayFunction != null)
 					{
 						#if neko
-						Reflect.callMethod(null, object.clss.removeFromDisplayCustom, [object.object, this._containerStarling]);
+						Reflect.callMethod(null, object.clss.removeFromDisplayFunction, [object.object, this._containerStarling]);
 						#else
-						object.clss.removeFromDisplayCustom(object.object, this._containerStarling);
+						object.clss.removeFromDisplayFunction(object.object, this._containerStarling);
 						#end
 					}
 					else

@@ -18,9 +18,63 @@ class ValEdit
 	static private var _baseClassToClassList:Map<String, Array<String>> = new Map<String, Array<String>>();
 	static private var _classMap:Map<String, ValEditClass> = new Map<String, ValEditClass>();
 	
-	static public function registerClass(type:Class<Dynamic>, collection:ExposedCollection, canBeCreated:Bool = true, ?isDisplayObject:Bool, ?displayObjectType:Int, ?constructorCollection:ExposedCollection, ?settings:ValEditClassSettings, ?categoryList:Array<String>, ?v:ValEditClass):ValEditClass
+	static public function getClassSettings(type:Class<Dynamic>, settings:ValEditClassSettings = null):ValEditClassSettings
 	{
-		var clss:Class<Dynamic>;
+		if (settings == null) settings = ValEditClassSettings.fromPool();
+		
+		getClassDisplayObjectSettings(type, settings);
+		
+		#if starling
+		if (settings.isDisplayObject && settings.displayObjectType == DisplayObjectType.STARLING)
+		{
+			settings.disposeFunctionName = "dispose";
+		}
+		#end
+		
+		return settings;
+	}
+	
+	static public function getClassDisplayObjectSettings(type:Class<Dynamic>, settings:ValEditClassSettings):Void
+	{
+		var clss:Class<Dynamic> = type;
+		if (clss == DisplayObject)
+		{
+			settings.isDisplayObject = true;
+			settings.displayObjectType = DisplayObjectType.OPENFL;
+		}
+		#if starling
+		if (clss == starling.display.DisplayObject)
+		{
+			settings.isDisplayObject = true;
+			settings.displayObjectType = DisplayObjectType.STARLING;
+		}
+		#end
+		else
+		{
+			while (true)
+			{
+				clss = Type.getSuperClass(clss);
+				if (clss == null) break;
+				if (clss == DisplayObject)
+				{
+					settings.isDisplayObject = true;
+					settings.displayObjectType = DisplayObjectType.OPENFL;
+					break;
+				}
+				#if starling
+				else if (clss == starling.display.DisplayObject)
+				{
+					settings.isDisplayObject = true;
+					settings.displayObjectType = DisplayObjectType.STARLING;
+					break;
+				}
+				#end
+			}
+		}
+	}
+	
+	static public function registerClass(type:Class<Dynamic>, settings:ValEditClassSettings, ?v:ValEditClass):ValEditClass
+	{
 		var className:String = Type.getClassName(type);
 		if (_classMap.exists(className))
 		{
@@ -28,105 +82,36 @@ class ValEdit
 			return null;
 		}
 		
-		if (isDisplayObject == null || (isDisplayObject && displayObjectType == null))
-		{
-			clss = type;
-			if (clss == DisplayObject)
-			{
-				isDisplayObject = true;
-				displayObjectType = DisplayObjectType.OPENFL;
-			}
-			#if starling
-			else if (clss == starling.display.DisplayObject)
-			{
-				isDisplayObject = true;
-				displayObjectType = DisplayObjectType.STARLING;
-			}
-			#end
-			else
-			{
-				while (true)
-				{
-					clss = Type.getSuperClass(clss);
-					if (clss == null) break;
-					if (clss == DisplayObject)
-					{
-						isDisplayObject = true;
-						displayObjectType = DisplayObjectType.OPENFL;
-						break;
-					}
-					#if starling
-					else if (clss == starling.display.DisplayObject)
-					{
-						isDisplayObject = true;
-						displayObjectType = DisplayObjectType.STARLING;
-						break;
-					}
-					#end
-				}
-			}
-			
-			if (isDisplayObject == null)
-			{
-				isDisplayObject = false;
-			}
-		}
-		
 		if (v == null)
 		{
-			v = new ValEditClass(type, className, collection, canBeCreated, isDisplayObject, constructorCollection);
-			if (isDisplayObject)
-			{
-				v.displayObjectType = displayObjectType;
-			}
+			v = ValEditClass.fromPool(type);
 		}
-		else
-		{
-			v.classReference = type;
-			v.className = className;
-			v.objectCollection = collection;
-			v.canBeCreated = canBeCreated;
-			v.isDisplayObject = isDisplayObject;
-			if (isDisplayObject)
-			{
-				v.displayObjectType = displayObjectType;
-			}
-			v.constructorCollection = constructorCollection;
-		}
-		_classMap.set(className, v);
 		
-		if (settings != null)
-		{
-			v.disposeFunctionName = settings.objectDisposeFunctionName;
-			v.propertyMap = settings.propertyMap;
-			v.disposeCustom = settings.disposeCustom;
-			v.addToDisplayCustom = settings.addToDisplayCustom;
-			v.removeFromDisplayCustom = settings.removeFromDisplayCustom;
-		}
-		else
-		{
-			#if starling
-			if (displayObjectType == DisplayObjectType.STARLING)
-			{
-				v.disposeFunctionName = "dispose";
-			}
-			#end
-		}
+		v.addToDisplayFunction = settings.addToDisplayFunction;
+		v.addToDisplayFunctionName = settings.addToDisplayFunctionName;
+		v.className = className;
+		v.constructorCollection = settings.constructorCollection;
+		v.creationFunction = settings.creationFunction;
+		v.creationInitFunction = settings.creationInitFunction;
+		v.creationInitFunctionName = settings.creationInitFunctionName;
+		v.displayObjectType = settings.displayObjectType;
+		v.disposeFunction = settings.disposeFunction;
+		v.disposeFunctionName = settings.disposeFunctionName;
+		v.isDisplayObject = settings.isDisplayObject;
+		v.objectCollection = settings.objectCollection;
+		v.propertyMap = settings.propertyMap;
+		v.removeFromDisplayFunction = settings.removeFromDisplayFunction;
+		v.removeFromDisplayFunctionName = settings.removeFromDisplayFunctionName;
+		v.templateCollection = settings.templateCollection;
 		
 		if (v.propertyMap == null)
 		{
 			v.propertyMap = PropertyMap.fromPool();
 		}
 		
-		if (categoryList != null)
-		{
-			for (category in categoryList)
-			{
-				v.addCategory(category);
-			}
-		}
+		_classMap.set(className, v);
 		
-		clss = type;
+		var clss:Class<Dynamic> = type;
 		var superName:String;
 		var nameList:Array<String>;
 		
@@ -159,6 +144,159 @@ class ValEdit
 		return v;
 	}
 	
+	static public function registerClassSimple(type:Class<Dynamic>, objectCollection:ExposedCollection, templateCollection:ExposedCollection = null, constructorCollection:ExposedCollection = null, ?v:ValEditClass):ValEditClass
+	{
+		var settings:ValEditClassSettings = ValEditClassSettings.fromPool();
+		settings.objectCollection = objectCollection;
+		settings.templateCollection = templateCollection;
+		settings.constructorCollection = constructorCollection;
+		getClassSettings(type, settings);
+		
+		v = registerClass(type, settings, v);
+		
+		settings.pool();
+		return v;
+		//var clss:Class<Dynamic>;
+		//var className:String = Type.getClassName(type);
+		//if (_classMap.exists(className))
+		//{
+			//trace("ValEdit.registerClassSimple ::: Class " + className + " already registered");
+			//return null;
+		//}
+		//
+		//if (isDisplayObject == null || (isDisplayObject && displayObjectType == null))
+		//{
+			//clss = type;
+			//if (clss == DisplayObject)
+			//{
+				//isDisplayObject = true;
+				//displayObjectType = DisplayObjectType.OPENFL;
+			//}
+			//#if starling
+			//else if (clss == starling.display.DisplayObject)
+			//{
+				//isDisplayObject = true;
+				//displayObjectType = DisplayObjectType.STARLING;
+			//}
+			//#end
+			//else
+			//{
+				//while (true)
+				//{
+					//clss = Type.getSuperClass(clss);
+					//if (clss == null) break;
+					//if (clss == DisplayObject)
+					//{
+						//isDisplayObject = true;
+						//displayObjectType = DisplayObjectType.OPENFL;
+						//break;
+					//}
+					//#if starling
+					//else if (clss == starling.display.DisplayObject)
+					//{
+						//isDisplayObject = true;
+						//displayObjectType = DisplayObjectType.STARLING;
+						//break;
+					//}
+					//#end
+				//}
+			//}
+			//
+			//if (isDisplayObject == null)
+			//{
+				//isDisplayObject = false;
+			//}
+		//}
+		//
+		//if (v == null)
+		//{
+			//v = new ValEditClass(type, className, collection, canBeCreated, isDisplayObject, constructorCollection);
+			//if (isDisplayObject)
+			//{
+				//v.displayObjectType = displayObjectType;
+			//}
+		//}
+		//else
+		//{
+			//v.classReference = type;
+			//v.className = className;
+			//v.objectCollection = collection;
+			////v.canBeCreated = canBeCreated;
+			//v.isDisplayObject = isDisplayObject;
+			//if (isDisplayObject)
+			//{
+				//v.displayObjectType = displayObjectType;
+			//}
+			//v.constructorCollection = constructorCollection;
+		//}
+		//_classMap.set(className, v);
+		//
+		//if (settings != null)
+		//{
+			//v.addToDisplayFunction = settings.addToDisplayFunction;
+			//v.addToDisplayFunctionName = settings.addToDisplayFunctionName;
+			//v.disposeFunction = settings.disposeFunction;
+			//v.disposeFunctionName = settings.disposeFunctionName;
+			//v.propertyMap = settings.propertyMap;
+			//v.removeFromDisplayFunction = settings.removeFromDisplayFunction;
+			//v.removeFromDisplayFunctionName = settings.removeFromDisplayFunctionName;
+		//}
+		//else
+		//{
+			//#if starling
+			//if (displayObjectType == DisplayObjectType.STARLING)
+			//{
+				//v.disposeFunctionName = "dispose";
+			//}
+			//#end
+		//}
+		//
+		//if (v.propertyMap == null)
+		//{
+			//v.propertyMap = PropertyMap.fromPool();
+		//}
+		//
+		////if (categoryList != null)
+		////{
+			////for (category in categoryList)
+			////{
+				////v.addCategory(category);
+			////}
+		////}
+		//
+		//clss = type;
+		//var superName:String;
+		//var nameList:Array<String>;
+		//
+		//nameList = _baseClassToClassList.get(className);
+		//if (nameList == null)
+		//{
+			//nameList = new Array<String>();
+			//_baseClassToClassList.set(className, nameList);
+		//}
+		//nameList.push(className);
+		//
+		//while (true)
+		//{
+			//clss = Type.getSuperClass(clss);
+			//if (clss == null) break;
+			//superName = Type.getClassName(clss);
+			//
+			//v.addSuperClassName(superName);
+			//
+			//nameList = _baseClassToClassList.get(superName);
+			//if (nameList == null)
+			//{
+				//nameList = new Array<String>();
+				//nameList.push(superName);
+				//_baseClassToClassList.set(superName, nameList);
+			//}
+			//nameList.push(className);
+		//}
+		//
+		//return v;
+	}
+	
 	static public function unregisterClass(type:Class<Dynamic>):Void
 	{
 		var className:String = Type.getClassName(type);
@@ -173,20 +311,20 @@ class ValEdit
 		
 		var objectList:Array<ValEditObject> = valClass.getObjectList();
 		
-		if (valClass.canBeCreated)
-		{
+		//if (valClass.canBeCreated)
+		//{
 			for (obj in objectList)
 			{
 				destroyObjectInternal(obj);
 			}
-		}
-		else
-		{
-			for (obj in objectList)
-			{
-				unregisterObjectInternal(obj);
-			}
-		}
+		//}
+		//else
+		//{
+			//for (obj in objectList)
+			//{
+				//unregisterObjectInternal(obj);
+			//}
+		//}
 		
 		var nameList:Array<String>;
 		
@@ -347,9 +485,10 @@ class ValEdit
 			var func:Function = Reflect.field(valObject.object, valObject.clss.disposeFunctionName);
 			Reflect.callMethod(valObject.object, func, []);
 		}
-		else if (valObject.clss.disposeCustom != null)
+		
+		if (valObject.clss.disposeFunction != null)
 		{
-			Reflect.callMethod(valObject.clss.disposeCustom, valObject.clss.disposeCustom, [valObject.object]);
+			Reflect.callMethod(valObject.clss.disposeFunction, valObject.clss.disposeFunction, [valObject.object]);
 		}
 		
 		if (valObject.template != null)

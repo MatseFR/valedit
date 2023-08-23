@@ -12,27 +12,27 @@ class ValEditClass
 {
 	static private var _POOL:Array<ValEditClass> = new Array<ValEditClass>();
 	
-	static public function fromPool(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null, canBeCreated:Bool = true,
+	static public function fromPool(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null,
 									isDisplayObject:Bool = false, constructorCollection:ExposedCollection = null, templateCollection:ExposedCollection = null) :ValEditClass
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(classReference, className, objectCollection, canBeCreated, isDisplayObject, constructorCollection, templateCollection);
-		return new ValEditClass(classReference, className, objectCollection, canBeCreated, isDisplayObject, constructorCollection, templateCollection);
+		if (_POOL.length != 0) return _POOL.pop().setTo(classReference, className, objectCollection, isDisplayObject, constructorCollection, templateCollection);
+		return new ValEditClass(classReference, className, objectCollection, isDisplayObject, constructorCollection, templateCollection);
 	}
 	
 	/** Dynamic->DisplayObjectContainer->Void */
-	public var addToDisplayCustom:Function;
-	public var canBeCreated:Bool;
-	public var categories(default, null):Array<String> = new Array<String>();
+	public var addToDisplayFunction:Function;
+	public var addToDisplayFunctionName:String;
 	public var className:String;
 	public var classReference:Class<Dynamic>;
 	public var constructorCollection:ExposedCollection;
-	/** Dynamic->Void external function reference, to be called on object creation */
 	public var creationFunction:Function;
+	/** Dynamic->Void external function reference, to be called on object creation */
+	public var creationInitFunction:Function;
 	/** Void->Void object function name, to be called on object creation */
-	public var creationFunctionName:String;
+	public var creationInitFunctionName:String;
 	public var displayObjectType:Int = DisplayObjectType.NONE;
 	/** Dynamic->Void external function reference, to be called on object destruction */
-	public var disposeCustom:Function;
+	public var disposeFunction:Function;
 	/** Void->Void object function name, to be called on object destruction */
 	public var disposeFunctionName:String = null;
 	public var isDisplayObject:Bool;
@@ -41,7 +41,8 @@ class ValEditClass
 	public var objectCollection:ExposedCollection;
 	public var propertyMap:PropertyMap;
 	/** Dynamic->DisplayObjectContainer->Void */
-	public var removeFromDisplayCustom:Function;
+	public var removeFromDisplayFunction:Function;
+	public var removeFromDisplayFunctionName:String;
 	public var superClassNames(default, null):Array<String> = new Array<String>();
 	public var templateCollection:ExposedCollection;
 	
@@ -64,13 +65,12 @@ class ValEditClass
 	/**
 	   
 	**/
-	public function new(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null, canBeCreated:Bool = true,
+	public function new(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null,
 						isDisplayObject:Bool = false, constructorCollection:ExposedCollection = null, templateCollection:ExposedCollection = null) 
 	{
 		this.classReference = classReference;
 		this.className = className;
 		this.objectCollection = objectCollection;
-		this.canBeCreated = canBeCreated;
 		this.isDisplayObject = isDisplayObject;
 		this.constructorCollection = constructorCollection;
 		this.templateCollection = templateCollection;
@@ -81,8 +81,8 @@ class ValEditClass
 	**/
 	public function clear():Void
 	{
-		this.addToDisplayCustom = null;
-		this.categories.resize(0);
+		this.addToDisplayFunction = null;
+		this.addToDisplayFunctionName = null;
 		this.className = null;
 		this.classReference = null;
 		if (this.constructorCollection != null)
@@ -91,9 +91,10 @@ class ValEditClass
 			this.constructorCollection = null;
 		}
 		this.creationFunction = null;
-		this.creationFunctionName = null;
+		this.creationInitFunction = null;
+		this.creationInitFunctionName = null;
 		this.displayObjectType = DisplayObjectType.NONE;
-		this.disposeCustom = null;
+		this.disposeFunction = null;
 		this.disposeFunctionName = null;
 		this.isDisplayObject = false;
 		this.numInstances = 0;
@@ -108,7 +109,8 @@ class ValEditClass
 			this.propertyMap.pool();
 			this.propertyMap = null;
 		}
-		this.removeFromDisplayCustom = null;
+		this.removeFromDisplayFunction = null;
+		this.removeFromDisplayFunctionName = null;
 		this.superClassNames.resize(0);
 		if (this.templateCollection != null)
 		{
@@ -149,22 +151,16 @@ class ValEditClass
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null, canBeCreated:Bool = true,
+	private function setTo(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null,
 						   isDisplayObject:Bool = false, constructorCollection:ExposedCollection = null, templateCollection:ExposedCollection = null):ValEditClass
 	{
 		this.classReference = classReference;
 		this.className = className;
 		this.objectCollection = objectCollection;
-		this.canBeCreated = canBeCreated;
 		this.isDisplayObject = isDisplayObject;
 		this.constructorCollection = constructorCollection;
 		this.templateCollection = templateCollection;
 		return this;
-	}
-	
-	public function addCategory(category:String):Void
-	{
-		this.categories.push(category);
 	}
 	
 	public function addSuperClassName(superClassName:String):Void
