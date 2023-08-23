@@ -76,7 +76,7 @@ class ValEditClassSettings
 		this.creationFunction = null;
 		this.creationInitFunction = null;
 		this.creationInitFunctionName = null;
-		this.displayObjectType = DisplayObjectType.UNKNOWN;
+		this.displayObjectType = DisplayObjectType.NONE;
 		this.disposeFunction = null;
 		this.disposeFunctionName = null;
 		this.isDisplayObject = false;
