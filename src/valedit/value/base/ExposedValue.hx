@@ -25,6 +25,7 @@ abstract class ExposedValue extends EventDispatcher
 		_FACTORIES.set(className, factory);
 	}
 	
+	public var canCopyValueOnClone:Bool = true;
 	public var collection(get, set):ExposedCollection;
 	public var concatenatedPropertyName(get, never):String;
 	/* used as value when object is null */
@@ -53,6 +54,7 @@ abstract class ExposedValue extends EventDispatcher
 	public var updateCollectionOnChange:Bool = true;
 	public var updateCollectionLocked:Bool = false;
 	public var value(get, set):Dynamic;
+	public var visible(get, set):Bool;
 	
 	private var _collection:ExposedCollection;
 	private function get_collection():ExposedCollection { return this._collection; }
@@ -153,7 +155,7 @@ abstract class ExposedValue extends EventDispatcher
 			this._storedValue = null;
 			this.value = value;
 		}
-		this._storedValue = null;
+		if (!this.isAbsolute) this._storedValue = null;
 		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE, this);
 		return this._object;
 	}
@@ -216,6 +218,14 @@ abstract class ExposedValue extends EventDispatcher
 		return value;
 	}
 	
+	private var _visible:Bool = true;
+	private function get_visible():Bool { return this._visible; }
+	private function set_visible(value:Bool):Bool
+	{
+		if (this._visible == value) return value;
+		return this._visible = value;
+	}
+	
 	private var _valEditObject:ValEditObject;
 	#if valeditor
 	private var _valEditorObject:ValEditorObject;
@@ -239,6 +249,7 @@ abstract class ExposedValue extends EventDispatcher
 	**/
 	public function clear():Void
 	{
+		this.canCopyValueOnClone = true;
 		this.collection = null;
 		this.defaultValue = null;
 		this.isAbsolute = false;
@@ -349,7 +360,7 @@ abstract class ExposedValue extends EventDispatcher
 	private function clone_internal(value:ExposedValue, copyValue:Bool = false):Void
 	{
 		value.defaultValue = this.defaultValue;
-		if (copyValue)
+		if (copyValue && canCopyValueOnClone)
 		{
 			value.value = this.value;
 		}
@@ -360,6 +371,7 @@ abstract class ExposedValue extends EventDispatcher
 		value.isReadOnlyLocked = this._isReadOnlyLocked;
 		value.isTweenable = this._isTweenable;
 		value.updateCollectionOnChange = this.updateCollectionOnChange;
+		value.visible = this._visible;
 		this._extras.clone(value._extras);
 	}
 	
