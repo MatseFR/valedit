@@ -17,9 +17,9 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		return new ValEditTimeLine();
 	}
 	
-	public var activateFunction:ValEditObject->Void;
+	public var activateFunction(get, set):ValEditObject->Void;
 	public var children(get, never):Array<ValEditTimeLine>;
-	public var deactivateFunction:ValEditObject->Void;
+	public var deactivateFunction(get, set):ValEditObject->Void;
 	public var frameCurrent(get, never):ValEditKeyFrame;
 	public var frameIndex(get, set):Int;
 	public var frameRate(get, set):Float;
@@ -27,15 +27,39 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	public var frameTime(get, never):Float;
 	public var isPlaying(get, never):Bool;
 	public var isReverse(get, never):Bool;
+	public var keyFrames(get, never):Array<ValEditKeyFrame>;
 	public var lastFrameIndex(get, never):Int;
 	public var loop(get, set):Bool;
+	public var numFrames(get, set):Int;
 	/** 0 = infinite */
 	public var numLoops(get, set):Int;
 	public var parent(get, set):ValEditTimeLine;
 	public var reverse(get, set):Bool;
 	
+	private var _activateFunction:ValEditObject->Void;
+	private function get_activateFunction():ValEditObject->Void { return this._activateFunction; }
+	private function set_activateFunction(value:ValEditObject->Void):ValEditObject->Void
+	{
+		for (keyFrame in this._keyFrames)
+		{
+			keyFrame.activateFunction = value;
+		}
+		return this._activateFunction = value;
+	}
+	
 	private var _children:Array<ValEditTimeLine> = new Array<ValEditTimeLine>();
 	private function get_children():Array<ValEditTimeLine> { return this._children; }
+	
+	private var _deactivateFunction:ValEditObject->Void;
+	private function get_deactivateFunction():ValEditObject->Void { return this._deactivateFunction; }
+	private function set_deactivateFunction(value:ValEditObject->Void):ValEditObject->Void
+	{
+		for (keyFrame in this._keyFrames)
+		{
+			keyFrame.deactivateFunction = value;
+		}
+		return this._deactivateFunction = value;
+	}
 	
 	private var _frameCurrent:ValEditKeyFrame;
 	private function get_frameCurrent():ValEditKeyFrame { return this._frameCurrent; }
@@ -83,6 +107,9 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	private var _isReverse:Bool;
 	private function get_isReverse():Bool { return this._isReverse; }
 	
+	private var _keyFrames:Array<ValEditKeyFrame> = new Array<ValEditKeyFrame>();
+	private function get_keyFrames():Array<ValEditKeyFrame> { return this._keyFrames; }
+	
 	private var _lastFrameIndex:Int;
 	private function get_lastFrameIndex():Int { return this._lastFrameIndex; }
 	
@@ -95,6 +122,44 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 			child.loop = value;
 		}
 		return this._loop = value;
+	}
+	
+	private var _numFrames:Int = 0;
+	private function get_numFrames():Int { return this._numFrames; }
+	private function set_numFrames(value:Int):Int
+	{
+		if (this._numFrames == value) return value;
+		
+		if (value < this._numFrames)
+		{
+			for (i in value...this._numFrames)
+			{
+				if (this._frames[i] != null)
+				{
+					if (this._frames[i].indexStart == i)
+					{
+						unregisterKeyFrame(this._frames[i]);
+						this._frames[i].pool();
+					}
+					else
+					{
+						this._frames[i].indexEnd--;
+					}
+				}
+			}
+			this._frames.resize(value);
+		}
+		else
+		{
+			for (i in this._numFrames...value)
+			{
+				this._frames[i] = null;
+			}
+		}
+		
+		// TODO : set numFrames on children too ?
+		
+		return this._numFrames = value;
 	}
 	
 	private var _numLoops:Int = 0;
@@ -126,8 +191,6 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		return this._reverse = value;
 	}
 	
-	private var _numFrames:Int = 0;
-	
 	private var _playTime:Float;
 	private var _loopCount:Int;
 	
@@ -148,13 +211,14 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 			//child.pool();
 		//}
 		this._children.resize(0);
-		for (frame in this._frames)
+		for (frame in this._keyFrames)
 		{
 			frame.pool();
 		}
 		this._frameCurrent = null;
 		this._frameIndex = -1;
 		this._frames.resize(0);
+		this._keyFrames.resize(0);
 		this.activateFunction = null;
 		this.deactivateFunction = null;
 	}
@@ -271,6 +335,12 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		keyFrame.timeLine = this;
 		keyFrame.activateFunction = this.activateFunction;
 		keyFrame.deactivateFunction = this.deactivateFunction;
+		this._keyFrames[this._keyFrames.length] = keyFrame;
+	}
+	
+	public function unregisterKeyFrame(keyFrame:ValEditKeyFrame):Void
+	{
+		this._keyFrames.remove(keyFrame);
 	}
 	
 	private function setFrameCurrent(frame:ValEditKeyFrame):Void
@@ -321,15 +391,19 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		return this._children.splice(index, 1)[0];
 	}
 	
-	private function updateLastFrameIndex():Void
+	public function updateLastFrameIndex():Void
 	{
+		this._lastFrameIndex = 0;
 		if (this._frames.length != 0)
 		{
-			this._lastFrameIndex = this._frames[this._frames.length - 1].indexEnd;
-		}
-		else
-		{
-			this._lastFrameIndex = 0;
+			for (i in new ReverseIterator(this._frames.length - 1, 0))
+			{
+				if (this._frames[i] != null)
+				{
+					this._lastFrameIndex = i;
+					break;
+				}
+			}
 		}
 		
 		for (timeLine in this._children)
