@@ -12,11 +12,10 @@ class ValEditClass
 {
 	static private var _POOL:Array<ValEditClass> = new Array<ValEditClass>();
 	
-	static public function fromPool(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null,
-									isDisplayObject:Bool = false, constructorCollection:ExposedCollection = null, templateCollection:ExposedCollection = null) :ValEditClass
+	static public function fromPool(classReference:Class<Dynamic>):ValEditClass
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(classReference, className, objectCollection, isDisplayObject, constructorCollection, templateCollection);
-		return new ValEditClass(classReference, className, objectCollection, isDisplayObject, constructorCollection, templateCollection);
+		if (_POOL.length != 0) return _POOL.pop().setTo(classReference);
+		return new ValEditClass(classReference);
 	}
 	
 	/** Dynamic->DisplayObjectContainer->Void */
@@ -65,15 +64,9 @@ class ValEditClass
 	/**
 	   
 	**/
-	public function new(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null,
-						isDisplayObject:Bool = false, constructorCollection:ExposedCollection = null, templateCollection:ExposedCollection = null) 
+	public function new(classReference:Class<Dynamic>) 
 	{
 		this.classReference = classReference;
-		this.className = className;
-		this.objectCollection = objectCollection;
-		this.isDisplayObject = isDisplayObject;
-		this.constructorCollection = constructorCollection;
-		this.templateCollection = templateCollection;
 	}
 	
 	/**
