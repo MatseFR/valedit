@@ -168,9 +168,6 @@ class ExposedFunction extends ExposedValue
 		return values;
 	}
 	
-	/**
-	   
-	**/
 	public function execute():Void
 	{
 		var str:String;
@@ -213,6 +210,13 @@ class ExposedFunction extends ExposedValue
 		}
 		#end
 		this._values.resize(0);
+		
+		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
+	}
+	
+	public function executeWithParameters(parameters:Array<Dynamic>):Void
+	{
+		Reflect.callMethod(this._object, this.value, parameters);
 		
 		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
 	}
