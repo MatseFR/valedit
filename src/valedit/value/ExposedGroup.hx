@@ -147,6 +147,34 @@ class ExposedGroup extends ExposedValue
 		return this;
 	}
 	
+	public function checkVisibility():Void
+	{
+		if (this._visible)
+		{
+			for (value in this._valueList)
+			{
+				if (value.visible) return;
+			}
+			this.visible = false;
+		}
+		else
+		{
+			for (value in this._valueList)
+			{
+				if (value.visible)
+				{
+					this.visible = true;
+					return;
+				}
+			}
+		}
+		
+		for (group in this._groupList)
+		{
+			group.checkVisibility();
+		}
+	}
+	
 	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
 	{
 		for (value in this._valueList)
