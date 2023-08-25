@@ -60,47 +60,38 @@ class DisplayData
 	}
 	
 	/* data for an instance of a Bitmap template */
-	static public function exposeBitmapInstance(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	static public function exposeBitmapInstance(?collection:ExposedCollection):ExposedCollection
 	{
-		var bool:ExposedBool;
-		var select:ExposedSelect;
-		
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeDisplayObject(collection, groupName);
-		
-		if (!collection.hasValue("pixelSnapping"))
-		{
-			select = new ExposedSelect("pixelSnapping");
-			select.add("ALWAYS", PixelSnapping.ALWAYS);
-			select.add("AUTO", PixelSnapping.AUTO);
-			select.add("NEVER", PixelSnapping.NEVER);
-			collection.addValue(select, groupName);
-		}
-		
-		if (!collection.hasValue("smoothing"))
-		{
-			bool = new ExposedBool("smoothing");
-			collection.addValue(bool, groupName);
-		}
+		exposeBitmap(collection);
+		collection.setVisibleAll(false);
+		applyBitmapInstance(collection);
 		
 		return collection;
+	}
+	
+	static private function applyBitmapInstance(collection:ExposedCollection):Void
+	{
+		applyDisplayObjectInstance(collection);
 	}
 	
 	/* data for a Bitmap template */
 	static public function exposeBitmapTemplate(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var bmd:ExposedBitmapData;
-		
 		if (collection == null) collection = new ExposedCollection();
 		
-		if (!collection.hasValue("bitmapData"))
-		{
-			bmd = new ExposedBitmapData("bitmapData");
-			collection.addValue(bmd, groupName);
-		}
+		exposeBitmap(collection);
+		collection.setVisibleAll(false);
+		applyBitmapTemplate(collection);
 		
 		return collection;
+	}
+	
+	static private function applyBitmapTemplate(collection:ExposedCollection):Void
+	{
+		applyDisplayObjectTemplate(collection);
+		collection.setVisibleArray(["bitmapData", "pixelSnapping", "smoothing"], true);
 	}
 	
 	static public function exposeBitmapConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -253,6 +244,38 @@ class DisplayData
 		return collection;
 	}
 	
+	static public function exposeDisplayObjectInstance(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObject(collection);
+		collection.setVisibleAll(false);
+		applyDisplayObjectInstance(collection);
+		
+		return collection;
+	}
+	
+	static private function applyDisplayObjectInstance(collection:ExposedCollection):Void
+	{
+		collection.setVisibleArray(["name", "x", "y", "width", "height", "scaleX", "scaleY", "alpha", "rotation", "blendMode", "mask", "transform", "cacheAsBitmap", "visible"], true);
+	}
+	
+	static public function exposeDisplayObjectTemplate(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObject(collection);
+		collection.setVisibleAll(false);
+		applyDisplayObjectTemplate(collection);
+		
+		return collection;
+	}
+	
+	static private function applyDisplayObjectTemplate(collection:ExposedCollection):Void
+	{
+		// nothing ?
+	}
+	
 	static public function exposeDisplayObjectContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
@@ -274,6 +297,39 @@ class DisplayData
 		}
 		
 		return collection;
+	}
+	
+	static public function exposeDisplayObjectContainerInstance(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObjectContainer(collection);
+		collection.setVisibleAll(false);
+		applyDisplayObjectContainerInstance(collection);
+		
+		return collection;
+	}
+	
+	static private function applyDisplayObjectContainerInstance(collection:ExposedCollection):Void
+	{
+		applyDisplayObjectInstance(collection);
+		collection.setVisibleArray(["mouseChildren", "tabChildren"], true);
+	}
+	
+	static public function exposeDisplayObjectContainerTemplate(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObjectContainer(collection);
+		collection.setVisibleAll(false);
+		applyDisplayObjectContainerTemplate(collection);
+		
+		return collection;
+	}
+	
+	static private function applyDisplayObjectContainerTemplate(collection:ExposedCollection):Void
+	{
+		applyDisplayObjectTemplate(collection);
 	}
 	
 	static public function exposeFPS(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -361,6 +417,39 @@ class DisplayData
 		return collection;
 	}
 	
+	static public function exposeInteractiveObjectInstance(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeInteractiveObject(collection);
+		collection.setVisibleAll(false);
+		applyInteractiveObjectInstance(collection);
+		
+		return collection;
+	}
+	
+	static private function applyInteractiveObjectInstance(collection:ExposedCollection):Void
+	{
+		applyDisplayObjectInstance(collection);
+		collection.setVisibleArray(["doubleClickEnabled", "focusRect", "mouseEnabled", "needsSoftKeyboard", "tabEnabled", "tabIndex"], true);
+	}
+	
+	static public function exposeInteractiveObjectTemplate(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeInteractiveObject(collection);
+		collection.setVisibleAll(false);
+		applyInteractiveObjectTemplate(collection);
+		
+		return collection;
+	}
+	
+	static private function applyInteractiveObjectTemplate(collection:ExposedCollection):Void
+	{
+		applyDisplayObjectTemplate(collection);
+	}
+	
 	static public function exposeMovieClip(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
@@ -376,6 +465,39 @@ class DisplayData
 		}
 		
 		return collection;
+	}
+	
+	static public function exposeMovieClipInstance(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeMovieClip(collection);
+		collection.setVisibleAll(false);
+		applyMovieClipInstance(collection);
+		
+		return collection;
+	}
+	
+	static private function applyMovieClipInstance(collection:ExposedCollection):Void
+	{
+		applySpriteInstance(collection);
+		collection.setVisibleArray(["enabled"], true);
+	}
+	
+	static public function exposeMovieClipTemplate(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeMovieClip(collection);
+		collection.setVisibleAll(false);
+		applyMovieClipTemplate(collection);
+		
+		return collection;
+	}
+	
+	static private function applyMovieClipTemplate(collection:ExposedCollection):Void
+	{
+		applySpriteTemplate(collection);
 	}
 	
 	static public function exposeShape(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -408,6 +530,39 @@ class DisplayData
 		}
 		
 		return collection;
+	}
+	
+	static public function exposeSpriteInstance(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeSprite(collection);
+		collection.setVisibleAll(false);
+		applySpriteInstance(collection);
+		
+		return collection;
+	}
+	
+	static private function applySpriteInstance(collection:ExposedCollection):Void
+	{
+		applyDisplayObjectContainerInstance(collection);
+	}
+	
+	static public function exposeSpriteTemplate(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeSprite(collection);
+		collection.setVisibleAll(false);
+		applySpriteTemplate(collection);
+		
+		return collection;
+	}
+	
+	static private function applySpriteTemplate(collection:ExposedCollection):Void
+	{
+		applyDisplayObjectContainerTemplate(collection);
+		collection.setVisibleArray(["buttonMode", "useHandCursor"], true);
 	}
 	
 	static public function exposeStage(?collection:ExposedCollection, ?groupName:String):ExposedCollection
