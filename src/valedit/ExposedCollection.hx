@@ -271,7 +271,7 @@ class ExposedCollection extends EventDispatcher
 			if (Std.isOfType(value, ExposedGroup))
 			{
 				this._groupList.push(cast value);
-				this._groupMap[value.name] = cast value;
+				this._groupMap[value.propertyName] = cast value;
 			}
 		}
 	}
@@ -302,11 +302,11 @@ class ExposedCollection extends EventDispatcher
 			}
 			var index:Int = this._valueList.indexOf(afterValue);
 			this._valueList.insert(index + 1, value);
-			this._valueMap[value.name] = value;
+			this._valueMap[value.propertyName] = value;
 			if (Std.isOfType(value, ExposedGroup))
 			{
 				this._groupList.push(cast value);
-				this._groupMap[value.name] = cast value;
+				this._groupMap[value.propertyName] = cast value;
 			}
 		}
 	}
@@ -337,11 +337,11 @@ class ExposedCollection extends EventDispatcher
 			}
 			var index:Int = this._valueList.indexOf(beforeValue);
 			this._valueList.insert(index, value);
-			this._valueMap[value.name] = value;
+			this._valueMap[value.propertyName] = value;
 			if (Std.isOfType(value, ExposedGroup))
 			{
 				this._groupList.push(cast value);
-				this._groupMap[value.name] = cast value;
+				this._groupMap[value.propertyName] = cast value;
 			}
 		}
 	}
@@ -351,11 +351,69 @@ class ExposedCollection extends EventDispatcher
 	{
 		if (this.uiCollection != null) return;
 		
-		this.uiCollection = new UICollection();
+		this.uiCollection = UICollection.fromPool();
 		
 		for (value in this._valueList)
 		{
+			if (!value.visible) continue;
 			this.uiCollection.addUI(ValEditor.toUIControl(value));
+		}
+	}
+	
+	private function checkGroupsVisibility():Void
+	{
+		for (group in this._groupList)
+		{
+			group.checkVisibility();
+		}
+	}
+	
+	public function setVisible(propertyName:String, visible:Bool):Void
+	{
+		var value:ExposedValue = getValue(propertyName);
+		value.visible = visible;
+		checkGroupsVisibility();
+		
+		if (this.uiCollection != null)
+		{
+			var container:DisplayObjectContainer = this._uiContainer;
+			this.uiContainer = null;
+			this.uiContainer = container;
+		}
+	}
+	
+	public function setVisibleAll(visible:Bool):Void
+	{
+		for (value in this._valueList)
+		{
+			value.visible = visible;
+		}
+		checkGroupsVisibility();
+		
+		if (this.uiCollection != null)
+		{
+			var container:DisplayObjectContainer = this._uiContainer;
+			this.uiContainer = null;
+			this.uiContainer = container;
+		}
+	}
+	
+	public function setVisibleArray(propertyNames:Array<String>, visible:Bool):Void
+	{
+		var value:ExposedValue;
+		for (propertyName in propertyNames)
+		{
+			value = getValue(propertyName);
+			value.visible = visible;
+		}
+		
+		checkGroupsVisibility();
+		
+		if (this.uiCollection != null)
+		{
+			var container:DisplayObjectContainer = this._uiContainer;
+			this.uiContainer = null;
+			this.uiContainer = container;
 		}
 	}
 	#end
