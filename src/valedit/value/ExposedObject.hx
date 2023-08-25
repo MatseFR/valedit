@@ -53,6 +53,13 @@ class ExposedObject extends ExposedValueWithChildren
 		super(propertyName, name);
 		this.storeValue = storeValue;
 		this.reassignOnChange = reassignOnChange;
+		this.canCopyValueOnClone = false;
+	}
+	
+	override public function clear():Void 
+	{
+		super.clear();
+		this.canCopyValueOnClone = false;
 	}
 	
 	public function pool():Void
