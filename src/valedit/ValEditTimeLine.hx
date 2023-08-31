@@ -1,6 +1,8 @@
 package valedit;
 import juggler.animation.IAnimatable;
+import juggler.animation.Juggler;
 import openfl.events.EventDispatcher;
+import valedit.events.PlayEvent;
 import valedit.utils.ReverseIterator;
 
 /**
@@ -27,6 +29,7 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	public var frameTime(get, never):Float;
 	public var isPlaying(get, never):Bool;
 	public var isReverse(get, never):Bool;
+	public var juggler(get, set):Juggler;
 	public var keyFrames(get, never):Array<ValEditKeyFrame>;
 	public var lastFrameIndex(get, never):Int;
 	public var loop(get, set):Bool;
@@ -69,6 +72,10 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	private function set_frameIndex(value:Int):Int
 	{
 		if (this._frameIndex == value) return value;
+		if (value >= this._numFrames)
+		{
+			value = this._numFrames -1;
+		}
 		
 		this._frameIndex = value;
 		
@@ -106,6 +113,13 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	
 	private var _isReverse:Bool;
 	private function get_isReverse():Bool { return this._isReverse; }
+	
+	private var _juggler:Juggler;
+	private function get_juggler():Juggler { return this._juggler; }
+	private function set_juggler(value:Juggler):Juggler
+	{
+		return this._juggler = value;
+	}
 	
 	private var _keyFrames:Array<ValEditKeyFrame> = new Array<ValEditKeyFrame>();
 	private function get_keyFrames():Array<ValEditKeyFrame> { return this._keyFrames; }
@@ -157,7 +171,11 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 			}
 		}
 		
-		// TODO : set numFrames on children too ?
+		// set numFrames on children too
+		for (child in this._children)
+		{
+			child.numFrames = value;
+		}
 		
 		return this._numFrames = value;
 	}
@@ -206,10 +224,7 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		{
 			stop();
 		}
-		//for (child in this._children)
-		//{
-			//child.pool();
-		//}
+		// WARNING : children are NOT pooled since the typical case is children time lines are owned by layers
 		this._children.resize(0);
 		for (frame in this._keyFrames)
 		{
@@ -242,6 +257,8 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		this._loopCount = 0;
 		this._isReverse = false;
 		this._isPlaying = true;
+		this._juggler.add(this);
+		PlayEvent.dispatch(this, PlayEvent.PLAY);
 	}
 	
 	public function stop():Void
@@ -249,6 +266,8 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		if (!this._isPlaying) return;
 		
 		this._isPlaying = false;
+		this._juggler.remove(this);
+		PlayEvent.dispatch(this, PlayEvent.STOP);
 	}
 	
 	public function advanceTime(time:Float):Void
@@ -373,6 +392,7 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		timeLine.frameIndex = this._frameIndex;
 		timeLine.frameRate = this._frameRate;
 		timeLine.loop = this._loop;
+		timeLine.numFrames = this.numFrames;
 		timeLine.numLoops = this._numLoops;
 		timeLine.reverse = this._reverse;
 		return timeLine;
