@@ -1,6 +1,7 @@
 package valedit;
 import flash.display.DisplayObjectContainer;
 import haxe.Constraints.Function;
+import haxe.ds.ObjectMap;
 import valedit.utils.PropertyMap;
 import valedit.value.base.ExposedValueWithChildren;
 
@@ -47,6 +48,8 @@ class ValEditClass
 	
 	private var _IDToObject:Map<String, ValEditObject> = new Map<String, ValEditObject>();
 	private var _objectIDIndex:Int = -1;
+	
+	private var _objectToValEditObject:ObjectMap<Dynamic, ValEditObject> = new ObjectMap<Dynamic, ValEditObject>();
 	
 	private var _IDToTemplate:Map<String, ValEditTemplate> = new Map<String, ValEditTemplate>();
 	private var _templateIDIndex:Int = -1;
@@ -113,6 +116,7 @@ class ValEditClass
 		
 		this._IDToObject.clear();
 		this._objectIDIndex = -1;
+		this._objectToValEditObject.clear();
 		this._IDToTemplate.clear();
 		this._templateIDIndex = -1;
 		
@@ -208,6 +212,7 @@ class ValEditClass
 	{
 		if (object.id == null) object.id = makeObjectID();
 		this._IDToObject.set(object.id, object);
+		this._objectToValEditObject.set(object.object, object);
 		this.numInstances++;
 	}
 	
@@ -228,15 +233,23 @@ class ValEditClass
 		return objList;
 	}
 	
+	public function getValEditObjectFromObject(object:Dynamic):ValEditObject
+	{
+		return this._objectToValEditObject.get(object);
+	}
+	
 	public function removeObject(object:ValEditObject):Void
 	{
 		this._IDToObject.remove(object.id);
+		this._objectToValEditObject.remove(object.object);
 		this.numInstances--;
 	}
 	
 	public function removeObjectByID(id:String):Void
 	{
+		var object:ValEditObject = this._IDToObject.get(id);
 		this._IDToObject.remove(id);
+		this._objectToValEditObject.remove(object.object);
 		this.numInstances--;
 	}
 	
