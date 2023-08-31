@@ -188,7 +188,6 @@ class ValEditKeyFrame extends EventDispatcher
 		buildTweens();
 	}
 	
-	//@:access(valedit.ValEditTimeLine)
 	private function updateTweens():Void
 	{
 		var ratio:Float = (this._indexCurrent - this.indexStart) / (this.indexEnd - this.indexStart + 1);
