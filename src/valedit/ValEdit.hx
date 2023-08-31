@@ -422,15 +422,22 @@ class ValEdit
 		return Type.getClassName(Type.getClass(object));
 	}
 	
-	static public function getObjectWithClass(name:String, clss:Class<Dynamic>):Dynamic
+	static public function getObjectWithClass(name:String, clss:Class<Dynamic>):ValEditObject
 	{
 		var className:String = Type.getClassName(clss);
 		return _classMap.get(className).getObjectByID(name);
 	}
 	
-	static public function getObjectWithClassName(name:String, className:String):Dynamic
+	static public function getObjectWithClassName(name:String, className:String):ValEditObject
 	{
 		return _classMap.get(className).getObjectByID(name);
+	}
+	
+	static public function getValEditObjectFromObject(object:Dynamic):ValEditObject
+	{
+		var clss:ValEditClass = getValEditClassByClassName(getObjectClassName(object));
+		if (clss == null) return null;
+		return clss.getValEditObjectFromObject(object);
 	}
 	
 }
