@@ -17,6 +17,7 @@ import valedit.value.ExposedObject;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
+import valedit.value.extra.ReadValuesExtra;
 
 /**
  * ...
@@ -29,6 +30,7 @@ class DisplayData
 	{
 		var bmd:ExposedBitmapData;
 		var bool:ExposedBool;
+		var readExtra:ReadValuesExtra;
 		var select:ExposedSelect;
 		
 		if (collection == null) collection = new ExposedCollection();
@@ -38,6 +40,8 @@ class DisplayData
 		if (!collection.hasValue("bitmapData"))
 		{
 			bmd = new ExposedBitmapData("bitmapData");
+			readExtra = new ReadValuesExtra(false, ["width", "height"]);
+			bmd.extras.add(readExtra);
 			collection.addValue(bmd, groupName);
 		}
 		
