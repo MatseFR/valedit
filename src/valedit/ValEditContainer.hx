@@ -1,8 +1,10 @@
 package valedit;
 import haxe.ds.ObjectMap;
+import juggler.animation.Juggler;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
 import openfl.events.EventDispatcher;
+import valedit.events.PlayEvent;
 import valedit.utils.StringIndexedMap;
 
 #if valeditor
@@ -31,7 +33,10 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	public var frameRate(get, set):Float;
 	public var isPlaying(get, never):Bool;
 	public var isReverse(get, never):Bool;
+	public var juggler(get, set):Juggler;
+	public var lastFrameIndex(get, never):Int;
 	public var loop(get, set):Bool;
+	public var numFrames(get, set):Int;
 	public var numLayers(get, never):Int;
 	public var numLoops(get, set):Int;
 	/** reverse animation on every odd loop */
@@ -40,7 +45,7 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	#if starling
 	public var rootContainerStarling(get, set):starling.display.DisplayObjectContainer;
 	#end
-	public var timeLine(default, null):ValEditTimeLine = new ValEditTimeLine();
+	public var timeLine(default, null):ValEditTimeLine;
 	public var visible(get, set):Bool;
 	public var x(get, set):Float;
 	public var y(get, set):Float;
@@ -102,10 +107,24 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	
 	private function get_isReverse():Bool { return this.timeLine.isReverse; }
 	
+	private function get_juggler():Juggler { return this.timeLine.juggler; }
+	private function set_juggler(value:Juggler):Juggler
+	{
+		return this.timeLine.juggler = value;
+	}
+	
+	private function get_lastFrameIndex():Int { return this.timeLine.lastFrameIndex; }
+	
 	private function get_loop():Bool { return this.timeLine.loop; }
 	private function set_loop(value:Bool):Bool
 	{
 		return this.timeLine.loop = value;
+	}
+	
+	private function get_numFrames():Int { return this.timeLine.numFrames; }
+	private function set_numFrames(value:Int):Int
+	{
+		return this.timeLine.numFrames = value;
 	}
 	
 	private function get_numLayers():Int { return this._layers.length; }
@@ -234,6 +253,12 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	public function new() 
 	{
 		super();
+		if (this.timeLine == null)
+		{
+			this.timeLine = new ValEditTimeLine();
+		}
+		this.timeLine.addEventListener(PlayEvent.PLAY, onPlay);
+		this.timeLine.addEventListener(PlayEvent.STOP, onStop);
 	}
 	
 	public function clear():Void
@@ -430,5 +455,15 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		if (this._rootContainerStarling != null) this._rootContainerStarling.addChild(this._containerStarling);
 	}
 	#end
+	
+	private function onPlay(evt:PlayEvent):Void
+	{
+		PlayEvent.dispatch(this, PlayEvent.PLAY);
+	}
+	
+	private function onStop(evt:PlayEvent):Void
+	{
+		PlayEvent.dispatch(this, PlayEvent.STOP);
+	}
 	
 }
