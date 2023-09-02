@@ -65,7 +65,7 @@ class ContainerData
 		
 		if (!collection.hasValue("frameIndex"))
 		{
-			intDrag = new ExposedIntDrag("frameIndex");
+			intDrag = new ExposedIntDrag("frameIndex", null, 0);
 			collection.addValue(intDrag, groupName);
 		}
 		
