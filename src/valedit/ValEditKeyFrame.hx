@@ -137,6 +137,7 @@ class ValEditKeyFrame extends EventDispatcher
 			deactivateFunction(object);
 		}
 		this.isActive = false;
+		this._indexCurrent = -1;
 	}
 	
 	private function buildTweens():Void
@@ -183,6 +184,7 @@ class ValEditKeyFrame extends EventDispatcher
 	
 	private function rebuildTweens():Void
 	{
+		if (!this._tween) return;
 		resetTweens();
 		clearTweens();
 		buildTweens();
