@@ -428,11 +428,16 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		
 		for (timeLine in this._children)
 		{
-			timeLine.updateLastFrameIndex();
+			//timeLine.updateLastFrameIndex(true);
 			if (timeLine._lastFrameIndex > this._lastFrameIndex)
 			{
 				this._lastFrameIndex = timeLine._lastFrameIndex;
 			}
+		}
+		
+		if (this._parent != null)
+		{
+			this._parent.updateLastFrameIndex();
 		}
 	}
 	
