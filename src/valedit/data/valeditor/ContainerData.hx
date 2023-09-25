@@ -2,6 +2,7 @@ package valedit.data.valeditor;
 import juggler.animation.Transitions;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
+import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedSelect;
@@ -108,6 +109,7 @@ class ContainerData
 	static public function exposeValEditKeyFrame(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
+		var float:ExposedFloat;
 		var select:ExposedSelect;
 		
 		if (collection == null) collection = new ExposedCollection();
@@ -122,6 +124,13 @@ class ContainerData
 		{
 			select = new ExposedSelect("transition", null, Transitions.transitionNames, Transitions.transitionNames);
 			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("duration"))
+		{
+			float = new ExposedFloat("duration", null, 4);
+			float.isReadOnly = true;
+			collection.addValue(float, groupName);
 		}
 		
 		return collection;
