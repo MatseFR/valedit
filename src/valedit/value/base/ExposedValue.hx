@@ -41,7 +41,7 @@ abstract class ExposedValue extends EventDispatcher
 	public var isGroup(default, null):Bool;
 	public var isNullable:Bool = false;
 	public var isReadOnly(get, set):Bool;
-	public var isReadOnlyLocked(get, set):Bool;
+	private var isReadOnlyInternal(get, set):Bool;
 	/* tells whether this value is real (true, default) or not (false).
 	 * Values that are not "real" : ExposedName, ExposedNote, ExposedSeparator, ExposedSpacing... */
 	public var isRealValue(get, never):Bool;
@@ -94,18 +94,20 @@ abstract class ExposedValue extends EventDispatcher
 	private function get_isReadOnly():Bool { return this._isReadOnly; }
 	private function set_isReadOnly(value:Bool):Bool
 	{
-		if (this._isReadOnlyLocked || this._isReadOnly == value) return value;
+		if (this._isReadOnly == value) return value;
 		this._isReadOnly = value;
 		ValueEvent.dispatch(this, ValueEvent.ACCESS_CHANGE, this);
 		return this._isReadOnly;
 	}
 	
-	private var _isReadOnlyLocked:Bool = false;
-	private function get_isReadOnlyLocked():Bool { return this._isReadOnlyLocked; }
-	private function set_isReadOnlyLocked(value:Bool):Bool
+	private var _isReadOnlyInternal:Bool = false;
+	private function get_isReadOnlyInternal():Bool { return this._isReadOnlyInternal; }
+	private function set_isReadOnlyInternal(value:Bool):Bool
 	{
-		if (this._isReadOnlyLocked == value) return value;
-		return this._isReadOnlyLocked = value;
+		if (this._isReadOnlyInternal == value) return value;
+		this._isReadOnlyInternal = value;
+		ValueEvent.dispatch(this, ValueEvent.ACCESS_CHANGE, this);
+		return this._isReadOnlyInternal;
 	}
 	
 	private var _isRealValue:Bool = true;
@@ -256,7 +258,7 @@ abstract class ExposedValue extends EventDispatcher
 		this._isEditable = true;
 		this.isNullable = false;
 		this._isReadOnly = false;
-		this._isReadOnlyLocked = false;
+		this._isReadOnlyInternal = false;
 		this.parentValue = null;
 		this._storedValue = null;
 		this._object = null;
@@ -289,25 +291,6 @@ abstract class ExposedValue extends EventDispatcher
 		}
 		Reflect.setProperty(object, this.propertyName, this.value);
 		this._extras.applyToObject(object);
-	}
-	
-	/** sets isReadOnly even if isReadOnlyLocked is true */
-	public function forceReadOnly(value:Bool):Void
-	{
-		var wasLocked:Bool = this._isReadOnlyLocked;
-		this._isReadOnlyLocked = false;
-		this.isReadOnly = value;
-		this._isReadOnlyLocked = wasLocked;
-	}
-	
-	/** sets isReadOnly value and sets isReadOnlyLocked to true */
-	public function setReadOnlyAndLock(value:Bool):Void
-	{
-		var wasLocked:Bool = this._isReadOnlyLocked;
-		this._isReadOnlyLocked = false;
-		this.isReadOnly = value;
-		this._isReadOnlyLocked = wasLocked;
-		this.isReadOnlyLocked = true;
 	}
 	
 	public function readValue(dispatchEventIfChange:Bool = true):Void
@@ -368,7 +351,8 @@ abstract class ExposedValue extends EventDispatcher
 		value.isEditable = this._isEditable;
 		value.isNullable = this.isNullable;
 		value.isReadOnly = this._isReadOnly;
-		value.isReadOnlyLocked = this._isReadOnlyLocked;
+		value.isReadOnlyInternal = this._isReadOnlyInternal;
+		//value.isReadOnlyLocked = this._isReadOnlyLocked;
 		value.isTweenable = this._isTweenable;
 		value.updateCollectionOnChange = this.updateCollectionOnChange;
 		value.visible = this._visible;

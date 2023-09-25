@@ -16,6 +16,7 @@ import valedit.ui.UICollection;
  * ...
  * @author Matse
  */
+@:access(valedit.value.base.ExposedValue)
 class ExposedCollection extends EventDispatcher
 {
 	static private var _POOL:Array<ExposedCollection> = new Array<ExposedCollection>();
@@ -62,7 +63,7 @@ class ExposedCollection extends EventDispatcher
 		if (this._isReadOnly == value) return value;
 		for (val in this._valueList)
 		{
-			val.isReadOnly = value;
+			val.isReadOnlyInternal = value;
 		}
 		return this._isReadOnly = value;
 	}
@@ -265,7 +266,7 @@ class ExposedCollection extends EventDispatcher
 		else
 		{
 			value.isEditable = this._isEditable;
-			value.isReadOnly = this._isReadOnly;
+			value.isReadOnlyInternal = this._isReadOnly;
 			this._valueList.push(value);
 			this._valueMap[value.propertyName] = value;
 			if (Std.isOfType(value, ExposedGroup))
@@ -294,7 +295,7 @@ class ExposedCollection extends EventDispatcher
 		else
 		{
 			value.isEditable = this._isEditable;
-			value.isReadOnly = this._isReadOnly;
+			value.isReadOnlyInternal = this._isReadOnly;
 			var afterValue:ExposedValue = this._valueMap[afterValueName];
 			if (afterValue == null)
 			{
@@ -329,7 +330,7 @@ class ExposedCollection extends EventDispatcher
 		else
 		{
 			value.isEditable = this._isEditable;
-			value.isReadOnly = this._isReadOnly;
+			value.isReadOnlyInternal = this._isReadOnly;
 			var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 			if (beforeValue == null)
 			{

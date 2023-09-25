@@ -124,8 +124,7 @@ class ExposedFunction extends ExposedValue
 				val = this._collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
 				val = val.clone(true);
 				val.isEditable = this._isEditable;
-				val.forceReadOnly(true);
-				val.isReadOnlyLocked = true;
+				val.isReadOnlyInternal = true;
 				val.object = this._object;
 				this._parameterValuesAll.push(val);
 				this._stringParamToValue.set(str, val);
@@ -136,6 +135,7 @@ class ExposedFunction extends ExposedValue
 			val = cast param;
 			val.isEditable = this._isEditable;
 			val.isReadOnly = this._isReadOnly;
+			val.isReadOnlyInternal = this._isReadOnlyInternal;
 			this._parameterValues.push(cast param);
 			this._parameterValuesAll.push(cast param);
 		}
@@ -179,7 +179,6 @@ class ExposedFunction extends ExposedValue
 				str = param;
 				if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
 				{
-					//val = this._collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
 					val = this._stringParamToValue.get(str);
 					this._values.push(val.value);
 				}

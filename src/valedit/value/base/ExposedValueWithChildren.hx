@@ -23,7 +23,7 @@ abstract class ExposedValueWithChildren extends ExposedValue
 	
 	override function set_isReadOnly(value:Bool):Bool 
 	{
-		if (this._isReadOnlyLocked || this._isReadOnly == value) return value;
+		if (this._isReadOnly == value) return value;
 		this._isReadOnly = value;
 		ValueEvent.dispatch(this, ValueEvent.ACCESS_CHANGE, this);
 		for (val in this._childValues)
@@ -33,14 +33,16 @@ abstract class ExposedValueWithChildren extends ExposedValue
 		return this._isReadOnly;
 	}
 	
-	override function set_isReadOnlyLocked(value:Bool):Bool 
+	override function set_isReadOnlyInternal(value:Bool):Bool 
 	{
-		if (this._isReadOnlyLocked == value) return value;
+		if (this._isReadOnlyInternal == value) return value;
+		this._isReadOnlyInternal = value;
+		ValueEvent.dispatch(this, ValueEvent.ACCESS_CHANGE, this);
 		for (val in this._childValues)
 		{
-			val.isReadOnlyLocked = value;
+			val.isReadOnlyInternal = this._isReadOnlyInternal;
 		}
-		return this._isReadOnlyLocked = value;
+		return this._isReadOnlyInternal;
 	}
 	
 	private var _childValues:Array<ExposedValue> = new Array<ExposedValue>();
@@ -85,26 +87,6 @@ abstract class ExposedValueWithChildren extends ExposedValue
 		for (value in this._childValues)
 		{
 			value.readValue(dispatchEventIfChange);
-		}
-	}
-	
-	override public function forceReadOnly(value:Bool):Void 
-	{
-		super.forceReadOnly(value);
-		
-		for (val in this._childValues)
-		{
-			val.forceReadOnly(value);
-		}
-	}
-	
-	override public function setReadOnlyAndLock(value:Bool):Void 
-	{
-		super.setReadOnlyAndLock(value);
-		
-		for (val in this._childValues)
-		{
-			val.setReadOnlyAndLock(value);
 		}
 	}
 	
