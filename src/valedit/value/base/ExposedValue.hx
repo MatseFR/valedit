@@ -53,6 +53,10 @@ abstract class ExposedValue extends EventDispatcher
 	public var uiControl(get, set):IValueUI;
 	public var updateCollectionOnChange:Bool = true;
 	public var updateCollectionLocked:Bool = false;
+	#if valeditor
+	/* When set to true, ValEditor will check that value to decide if 2 objects should be considered the same or not. Default is false. */
+	public var useForObjectMatching:Bool = false;
+	#end
 	public var value(get, set):Dynamic;
 	public var visible(get, set):Bool;
 	
@@ -264,6 +268,9 @@ abstract class ExposedValue extends EventDispatcher
 		this._object = null;
 		this._extras.object = null;
 		this.uiControl = null;
+		#if valeditor
+		this.useForObjectMatching = false;
+		#end
 		this._valEditObject = null;
 		#if valeditor
 		this._valEditorObject = null;
@@ -352,9 +359,11 @@ abstract class ExposedValue extends EventDispatcher
 		value.isNullable = this.isNullable;
 		value.isReadOnly = this._isReadOnly;
 		value.isReadOnlyInternal = this._isReadOnlyInternal;
-		//value.isReadOnlyLocked = this._isReadOnlyLocked;
 		value.isTweenable = this._isTweenable;
 		value.updateCollectionOnChange = this.updateCollectionOnChange;
+		#if valeditor
+		value.useForObjectMatching = this.useForObjectMatching;
+		#end
 		value.visible = this._visible;
 		this._extras.clone(value._extras);
 	}
