@@ -198,17 +198,58 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
-	/* Looks for corresponding exposed values in fromCollection and copies their values */
-	public function copyValuesFrom(fromCollection:ExposedCollection):Void
+	public function checkForObjectMatch(otherCollection:ExposedCollection):Bool
 	{
-		var fromValue:ExposedValue;
+		var otherGroup:ExposedGroup;
+		var otherValue:ExposedValue;
+		var group:ExposedGroup;
+		
 		for (value in this._valueList)
 		{
 			if (!value.isRealValue) continue;
-			fromValue = fromCollection.getValue(value.propertyName);
-			if (fromValue != null)
+			if (value.isGroup)
 			{
-				value.value = fromValue.value;
+				group = cast value;
+				otherGroup = otherCollection.getGroup(group.name);
+				if (!group.checkForObjectMatch(otherGroup)) return false;
+			}
+			else if (value.useForObjectMatching)
+			{
+				otherValue = otherCollection.getValue(value.propertyName);
+				if (value.value != otherValue.value) return false;
+			}
+		}
+		
+		return true;
+		
+	}
+	
+	/* Looks for corresponding exposed values in fromCollection and copies their values */
+	public function copyValuesFrom(fromCollection:ExposedCollection):Void
+	{
+		var fromGroup:ExposedGroup;
+		var fromValue:ExposedValue;
+		var group:ExposedGroup;
+		
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			if (value.isGroup)
+			{
+				group = cast value;
+				fromGroup = fromCollection.getGroup(group.name);
+				if (fromGroup != null)
+				{
+					group.copyValuesFrom(fromGroup);
+				}
+			}
+			else
+			{
+				fromValue = fromCollection.getValue(value.propertyName);
+				if (fromValue != null)
+				{
+					value.value = fromValue.value;
+				}
 			}
 		}
 	}
@@ -216,14 +257,29 @@ class ExposedCollection extends EventDispatcher
 	/* Lookks for corresponding exposed values in toCollection and copies its values */
 	public function copyValuesTo(toCollection:ExposedCollection):Void
 	{
+		var toGroup:ExposedGroup;
 		var toValue:ExposedValue;
+		var group:ExposedGroup;
+		
 		for (value in this._valueList)
 		{
 			if (!value.isRealValue) continue;
-			toValue = toCollection.getValue(value.propertyName);
-			if (toValue != null)
+			if (value.isGroup)
 			{
-				toValue.value = value.value;
+				group = cast value;
+				toGroup = toCollection.getGroup(group.name);
+				if (toGroup != null)
+				{
+					group.copyValuesTo(toGroup);
+				}
+			}
+			else
+			{
+				toValue = toCollection.getValue(value.propertyName);
+				if (toValue != null)
+				{
+					toValue.value = value.value;
+				}
 			}
 		}
 	}
