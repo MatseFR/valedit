@@ -183,6 +183,89 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	
+	public function checkForObjectMatch(otherGroup:ExposedGroup):Bool
+	{
+		var otherGrp:ExposedGroup;
+		var otherValue:ExposedValue;
+		var group:ExposedGroup;
+		
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			if (value.isGroup)
+			{
+				group = cast value;
+				otherGrp = otherGroup.getGroup(group.name);
+				if (!group.checkForObjectMatch(otherGrp)) return false;
+			}
+			else if (value.useForObjectMatching)
+			{
+				otherValue = otherGroup.getValue(value.propertyName);
+				if (value.value != otherValue.value) return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public function copyValuesFrom(fromGroup:ExposedGroup):Void
+	{
+		var fromGrp:ExposedGroup;
+		var fromValue:ExposedValue;
+		var group:ExposedGroup;
+		
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			if (value.isGroup)
+			{
+				group = cast value;
+				fromGrp = fromGroup.getGroup(group.name);
+				if (fromGrp != null)
+				{
+					group.copyValuesFrom(fromGrp);
+				}
+			}
+			else
+			{
+				fromValue = fromGroup.getValue(value.propertyName);
+				if (fromValue != null)
+				{
+					value.value = fromValue.value;
+				}
+			}
+		}
+	}
+	
+	public function copyValuesTo(toGroup:ExposedGroup):Void
+	{
+		var toGrp:ExposedGroup;
+		var toValue:ExposedValue;
+		var group:ExposedGroup;
+		
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			if (value.isGroup)
+			{
+				group = cast value;
+				toGrp = toGroup.getGroup(group.name);
+				if (toGrp != null)
+				{
+					group.copyValuesTo(toGrp);
+				}
+			}
+			else
+			{
+				toValue = toGroup.getValue(value.propertyName);
+				if (toValue != null)
+				{
+					toValue.value = value.value;
+				}
+			}
+		}
+	}
+	
 	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
 		for (value in this._valueList)
