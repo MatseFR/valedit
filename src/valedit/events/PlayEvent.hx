@@ -61,7 +61,7 @@ class PlayEvent extends Event
 		_POOL[_POOL.length] = this;
 	}
 	
-	public function setTo(type:String, bubbles:Bool = false, cancelable:Bool = false):DefaultEvent
+	public function setTo(type:String, bubbles:Bool = false, cancelable:Bool = false):PlayEvent
 	{
 		this.type = type;
 		this.bubbles = bubbles;
