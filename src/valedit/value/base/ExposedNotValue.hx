@@ -23,6 +23,11 @@ abstract class ExposedNotValue extends ExposedValue
 		// nothing
 	}
 	
+	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
+	{
+		// nothing
+	}
+	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		return null;

@@ -56,6 +56,7 @@ abstract class ExposedValue extends EventDispatcher
 	#if valeditor
 	/* When set to true, ValEditor will check that value to decide if 2 objects should be considered the same or not. Default is false. */
 	public var useForObjectMatching:Bool = false;
+	public var valEditorObject(get, set):ValEditorObject;
 	#end
 	public var value(get, set):Dynamic;
 	public var visible(get, set):Bool;
@@ -133,35 +134,55 @@ abstract class ExposedValue extends EventDispatcher
 	private function set_object(value:Dynamic):Dynamic
 	{
 		if (this._object == value) return value;
-		var nullObject:Bool = this._object == null;
-		if (Std.isOfType(value, ValEditObject))
-		{
-			this._valEditObject = cast value;
-			#if valeditor
-			if (Std.isOfType(value, ValEditorObject))
-			{
-				this._valEditorObject = cast value;
-			}
-			#end
-			this._object = this._valEditObject.object;
-			this._extras.object = this._valEditObject.object;
-		}
-		else
-		{
-			this._valEditObject = null;
-			#if valeditor
-			this._valEditorObject = null;
-			#end
-			this._object = value;
-			this._extras.object = value;
-		}
-		if (nullObject && this._storedValue != null)
-		{
-			var value:Dynamic = this._storedValue;
-			this._storedValue = null;
-			this.value = value;
-		}
-		if (!this.isAbsolute) this._storedValue = null;
+		//var nullObject:Bool = this._object == null;
+		//if (Std.isOfType(value, ValEditObject))
+		//{
+			//this._valEditObject = cast value;
+			//#if valeditor
+			//if (Std.isOfType(value, ValEditorObject))
+			//{
+				//this._valEditorObject = cast value;
+			//}
+			//#end
+			//this._object = this._valEditObject.object;
+			//this._extras.object = this._valEditObject.object;
+		//}
+		//else
+		//{
+			//this._valEditObject = null;
+			//#if valeditor
+			//this._valEditorObject = null;
+			//#end
+			//this._object = value;
+			//this._extras.object = value;
+		//}
+		//if (nullObject && this._storedValue != null)
+		//{
+			//var value:Dynamic = this._storedValue;
+			//this._storedValue = null;
+			//this.value = value;
+		//}
+		//if (!this.isAbsolute) this._storedValue = null;
+		//if (Std.isOfType(value, ValEditObject))
+		//{
+			//this._valEditObject = cast value;
+			//#if valeditor
+			//this._valEditorObject = cast value;
+			//#end
+			//this._object = this._valEditObject.object;
+			//this._extras.object = this._valEditObject.object;
+		//}
+		//else
+		//{
+			//this._valEditObject = null;
+			//#if valeditor
+			//this._valEditorObject = null;
+			//#end
+			//this._object = value;
+			//this._extras.object = value;
+		//}
+		this._object = value;
+		this._extras.object = value;
 		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE, this);
 		return this._object;
 	}
@@ -181,6 +202,15 @@ abstract class ExposedValue extends EventDispatcher
 		}
 		return this._uiControl = value;
 	}
+	
+	#if valeditor
+	private var _valEditorObject:ValEditorObject;
+	private function get_valEditorObject():ValEditorObject { return this._valEditorObject; }
+	private function set_valEditorObject(value:ValEditorObject):ValEditorObject
+	{
+		return this._valEditorObject = value;
+	}
+	#end
 	
 	private function get_value():Dynamic
 	{
@@ -232,10 +262,6 @@ abstract class ExposedValue extends EventDispatcher
 		return this._visible = value;
 	}
 	
-	private var _valEditObject:ValEditObject;
-	#if valeditor
-	private var _valEditorObject:ValEditorObject;
-	#end
 	private var _storedValue:Dynamic;
 	
 	/**
@@ -270,9 +296,6 @@ abstract class ExposedValue extends EventDispatcher
 		this.uiControl = null;
 		#if valeditor
 		this.useForObjectMatching = false;
-		#end
-		this._valEditObject = null;
-		#if valeditor
 		this._valEditorObject = null;
 		#end
 	}
@@ -305,6 +328,19 @@ abstract class ExposedValue extends EventDispatcher
 		if (this.isAbsolute && this._storedValue != null) return;
 		
 		var val:Dynamic = this.value;
+		if (this._storedValue != val)
+		{
+			this._storedValue = val;
+			if (this._uiControl != null) this._uiControl.updateExposedValue();
+			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+		}
+	}
+	
+	public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void
+	{
+		if (this.isAbsolute && this._storedValue != null) return;
+		
+		var val:Dynamic = Reflect.getProperty(object, this.propertyName);
 		if (this._storedValue != val)
 		{
 			this._storedValue = val;

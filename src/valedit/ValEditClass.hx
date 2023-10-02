@@ -4,6 +4,7 @@ import haxe.Constraints.Function;
 import haxe.ds.ObjectMap;
 import valedit.utils.PropertyMap;
 import valedit.value.base.ExposedValueWithChildren;
+import valeditor.ValEditorObject;
 
 /**
  * ...
@@ -319,10 +320,18 @@ class ValEditClass
 				collection = this.objectCollection.clone();
 			}
 			this._collectionsToPool.set(collection, collection);
+			if (Std.isOfType(object, ValEditorObject))
+			{
+				collection.readAndSetObject(cast(object, ValEditorObject).object);
+			}
+			else
+			{
+				collection.readAndSetObject(object);
+			}
 		}
 		this._containers[container] = collection;
 		collection.parentValue = parentValue;
-		collection.object = object;
+		//collection.readAndSetObject(object);
 		collection.uiContainer = container;
 		
 		return collection;

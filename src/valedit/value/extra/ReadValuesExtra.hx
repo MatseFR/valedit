@@ -45,7 +45,7 @@ class ReadValuesExtra extends ValueExtra
 		var collection:ExposedCollection = null;
 		if (Std.isOfType(object, ValEditObject))
 		{
-			collection = cast(object, ValEditObject).collection;
+			collection = cast(object, ValEditObject).currentCollection;
 		}
 		else
 		{
@@ -54,7 +54,7 @@ class ReadValuesExtra extends ValueExtra
 			{
 				return;
 			}
-			collection = valObject.collection;
+			collection = valObject.currentCollection;
 		}
 		
 		var value:ExposedValue;

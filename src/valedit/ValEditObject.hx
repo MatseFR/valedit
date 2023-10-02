@@ -18,7 +18,9 @@ class ValEditObject extends EventDispatcher
 	
 	public var className:String;
 	public var clss:ValEditClass;
-	public var collection(get, set):ExposedCollection;
+	public var currentCollection(default, null):ExposedCollection;
+	public var currentKeyFrame(default, null):ValEditKeyFrame;
+	public var defaultCollection(get, set):ExposedCollection;
 	public var displayObjectType:Int;
 	public var id(get, set):String;
 	public var isDisplayObject:Bool;
@@ -26,12 +28,15 @@ class ValEditObject extends EventDispatcher
 	public var propertyMap:PropertyMap;
 	public var template:ValEditTemplate;
 	
-	private var _collection:ExposedCollection;
-	private function get_collection():ExposedCollection { return this._collection; }
-	private function set_collection(value:ExposedCollection):ExposedCollection
+	private var _defaultCollection:ExposedCollection;
+	private function get_defaultCollection():ExposedCollection { return this._defaultCollection; }
+	private function set_defaultCollection(value:ExposedCollection):ExposedCollection
 	{
-		if (value == this._collection) return value;
-		return this._collection = value;
+		if (this.currentCollection == null)
+		{
+			this.currentCollection = value;
+		}
+		return this._defaultCollection = value;
 	}
 	
 	private var _id:String;
@@ -40,6 +45,8 @@ class ValEditObject extends EventDispatcher
 	{
 		return this._id = value;
 	}
+	
+	private var _keyFrameToCollection:Map<ValEditKeyFrame, ExposedCollection> = new Map<ValEditKeyFrame, ExposedCollection>();
 	
 	private var _realPropertyName:String;
 	private var _regularPropertyName:String;
@@ -54,17 +61,85 @@ class ValEditObject extends EventDispatcher
 	public function clear():Void
 	{
 		this.clss = null;
-		this._collection.pool();
-		this.collection = null;
+		this.currentCollection = null;
+		if (this._defaultCollection != null)
+		{
+			this._defaultCollection.pool();
+			this._defaultCollection = null;
+		}
 		this.object = null;
 		this.template = null;
 		this.propertyMap = null;
+		
+		for (collection in this._keyFrameToCollection)
+		{
+			collection.pool();
+		}
+		this._keyFrameToCollection.clear();
+		
 	}
 	
 	public function pool():Void
 	{
 		clear();
 		_POOL[_POOL.length] = this;
+	}
+	
+	public function addKeyFrame(keyFrame:ValEditKeyFrame, collection:ExposedCollection = null):Void
+	{
+		if (collection == null)
+		{
+			var previousFrame:ValEditKeyFrame = keyFrame.timeLine.getPreviousKeyFrame(keyFrame);
+			if (previousFrame != null && this._keyFrameToCollection.exists(previousFrame))
+			{
+				collection = this._keyFrameToCollection.get(previousFrame).clone(true);
+			}
+			
+			if (collection == null)
+			{
+				//if (this.template != null)
+				//{
+					//collection = this.template.collection.clone(true);
+				//}
+				//else
+				//{
+					collection = this.clss.getCollection();
+				//}
+				collection.readValuesFromObject(this.object);
+			}
+		}
+		
+		this._keyFrameToCollection.set(keyFrame, collection);
+	}
+	
+	public function getCollectionForKeyFrame(keyFrame:ValEditKeyFrame):ExposedCollection
+	{
+		return this._keyFrameToCollection.get(keyFrame);
+	}
+	
+	public function hasKeyFrame(keyFrame:ValEditKeyFrame):Bool
+	{
+		return this._keyFrameToCollection.exists(keyFrame);
+	}
+	
+	public function removeKeyFrame(keyFrame:ValEditKeyFrame, poolCollection:Bool = true):Void
+	{
+		if (poolCollection)
+		{
+			this._keyFrameToCollection.get(keyFrame).pool();
+		}
+		this._keyFrameToCollection.remove(keyFrame);
+	}
+	
+	public function setKeyFrame(keyFrame:ValEditKeyFrame):Void
+	{
+		if (this.currentKeyFrame == keyFrame) return;
+		if (this.currentCollection != null) this.currentCollection.object = null;
+		this.currentCollection = this._keyFrameToCollection.get(keyFrame);
+		this.currentKeyFrame = keyFrame;
+		//this.currentCollection.applyToObject(this.object, true);
+		//this.currentCollection.object = this.object;
+		this.currentCollection.applyAndSetObject(this.object);
 	}
 	
 	public function ready():Void

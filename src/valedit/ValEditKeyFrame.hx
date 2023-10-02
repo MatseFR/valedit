@@ -28,7 +28,7 @@ class ValEditKeyFrame extends EventDispatcher
 	public var isEmpty(get, never):Bool;
 	public var objects:Array<ValEditObject> = new Array<ValEditObject>();
 	public var timeLine:ValEditTimeLine;
-	public var transition(get, set):String;// = Transitions.LINEAR;
+	public var transition(get, set):String;
 	public var tween(get, set):Bool;
 	
 	private function get_duration():Float { return (this.indexEnd - this.indexStart + 1) / this.timeLine.frameRate; }
@@ -74,7 +74,7 @@ class ValEditKeyFrame extends EventDispatcher
 		return this._tween = value;
 	}
 	
-	private var _tweenObjectMap:Map<ValEditObject, ValEditObject> = new Map<ValEditObject, ValEditObject>();
+	//private var _tweenObjectMap:Map<ValEditObject, ValEditObject> = new Map<ValEditObject, ValEditObject>();
 	private var _tweens:Array<FrameTween> = new Array<FrameTween>();
 	
 	public function new() 
@@ -106,8 +106,10 @@ class ValEditKeyFrame extends EventDispatcher
 	public function add(object:ValEditObject):Void
 	{
 		this.objects[this.objects.length] = object;
+		object.addKeyFrame(this);
 		if (this.isActive)
 		{
+			object.setKeyFrame(this);
 			activateFunction(object);
 		}
 	}
@@ -115,6 +117,7 @@ class ValEditKeyFrame extends EventDispatcher
 	public function remove(object:ValEditObject):Void
 	{
 		this.objects.remove(object);
+		object.removeKeyFrame(this);
 		if (this.isActive)
 		{
 			deactivateFunction(object);
@@ -125,6 +128,7 @@ class ValEditKeyFrame extends EventDispatcher
 	{
 		for (object in this.objects)
 		{
+			object.setKeyFrame(this);
 			activateFunction(object);
 		}
 		this.isActive = true;
@@ -145,32 +149,47 @@ class ValEditKeyFrame extends EventDispatcher
 		var nextFrame:ValEditKeyFrame = this.timeLine.getNextKeyFrame(this);
 		if (nextFrame == null) return;
 		var duration:Float = this.duration;
+		var collection:ExposedCollection;
+		var nextCollection:ExposedCollection;
 		var tween:FrameTween;
 		var tweenProperties:TweenProperties;
 		
 		for (object in this.objects)
 		{
-			for (nextObject in nextFrame.objects)
+			nextCollection = object.getCollectionForKeyFrame(nextFrame);
+			if (nextCollection != null)
 			{
-				if (this._tweenObjectMap.exists(nextObject)) continue;
-				
-				if (object.clss == nextObject.clss && object.template == nextObject.template)
+				collection = object.getCollectionForKeyFrame(this);
+				tweenProperties = collection.getTweenProperties(nextCollection);
+				if (tweenProperties != null)
 				{
-					this._tweenObjectMap.set(nextObject, nextObject);
-					tweenProperties = object.collection.getTweenProperties(nextObject.collection);
-					if (tweenProperties != null)
-					{
-						tween = FrameTween.fromPool(object.object, duration, this._transition);
-						tweenProperties.applyToTween(tween);
-						tweenProperties.pool();
-						this._tweens[this._tweens.length] = tween;
-					}
-					break;
+					tween = FrameTween.fromPool(object.object, duration, this._transition);
+					tweenProperties.applyToTween(tween);
+					tweenProperties.pool();
+					this._tweens[this._tweens.length] = tween;
 				}
 			}
+			//for (nextObject in nextFrame.objects)
+			//{
+				//if (this._tweenObjectMap.exists(nextObject)) continue;
+				//
+				//if (object.clss == nextObject.clss && object.template == nextObject.template)
+				//{
+					//this._tweenObjectMap.set(nextObject, nextObject);
+					//tweenProperties = object.collection.getTweenProperties(nextObject.collection);
+					//if (tweenProperties != null)
+					//{
+						//tween = FrameTween.fromPool(object.object, duration, this._transition);
+						//tweenProperties.applyToTween(tween);
+						//tweenProperties.pool();
+						//this._tweens[this._tweens.length] = tween;
+					//}
+					//break;
+				//}
+			//}
 		}
 		
-		this._tweenObjectMap.clear();
+		//this._tweenObjectMap.clear();
 	}
 	
 	private function clearTweens():Void
@@ -185,7 +204,7 @@ class ValEditKeyFrame extends EventDispatcher
 	private function rebuildTweens():Void
 	{
 		if (!this._tween) return;
-		resetTweens();
+		//resetTweens();
 		clearTweens();
 		buildTweens();
 	}

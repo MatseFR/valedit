@@ -9,6 +9,7 @@ import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueWithChildren;
 #if valeditor
 import valeditor.ValEditor;
+import valeditor.ValEditorObject;
 import valedit.ui.UICollection;
 #end
 
@@ -40,6 +41,7 @@ class ExposedCollection extends EventDispatcher
 	#if valeditor
 	public var uiCollection(default, null):UICollection;
 	public var uiContainer(get, set):DisplayObjectContainer;
+	public var valEditorObject(get, set):ValEditorObject;
 	#end
 	/* when true, prevents a changed value from updating other values in the collection */
 	public var valuesUpdateLocked(get, set):Bool;
@@ -126,6 +128,19 @@ class ExposedCollection extends EventDispatcher
 		}
 		return this._uiContainer = value;
 	}
+	
+	private var _valEditorObject:ValEditorObject;
+	private function get_valEditorObject():ValEditorObject { return this._valEditorObject; }
+	private function set_valEditorObject(value:ValEditorObject):ValEditorObject
+	{
+		if (this._valEditorObject == value) return value;
+		
+		for (val in this._valueList)
+		{
+			val.valEditorObject = value;
+		}
+		return this._valEditorObject = value;
+	}
 	#end
 	
 	private var _valuesUpdateLocked:Bool = false;
@@ -184,6 +199,18 @@ class ExposedCollection extends EventDispatcher
 	//{
 		//
 	//}
+	
+	public function applyAndSetObject(object:Dynamic, ?applyIfDefaultValue:Bool):Void
+	{
+		applyToObject(object, applyIfDefaultValue);
+		this.object = object;
+	}
+	
+	public function readAndSetObject(object:Dynamic):Void
+	{
+		readValuesFromObject(object);
+		this.object = object;
+	}
 	
 	public function applyToObject(object:Dynamic, ?applyIfDefaultValue:Bool):Void
 	{
@@ -254,7 +281,7 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
-	/* Lookks for corresponding exposed values in toCollection and copies its values */
+	/* Looks for corresponding exposed values in toCollection and copies its values */
 	public function copyValuesTo(toCollection:ExposedCollection):Void
 	{
 		var toGroup:ExposedGroup;
@@ -289,6 +316,14 @@ class ExposedCollection extends EventDispatcher
 		for (value in this._valueList)
 		{
 			value.readValue();
+		}
+	}
+	
+	public function readValuesFromObject(object:Dynamic):Void
+	{
+		for (value in this._valueList)
+		{
+			value.readValueFromObject(object);
 		}
 	}
 	

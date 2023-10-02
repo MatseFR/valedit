@@ -231,12 +231,15 @@ class ValEdit
 		{
 			collection = valClass.getCollection();
 		}
-		valObject.collection = collection;
+		valObject.defaultCollection = collection;
 		if (collectionProvided)
 		{
-			collection.applyToObject(valObject.object);
+			collection.applyAndSetObject(valObject.object);
 		}
-		collection.object = valObject;
+		else
+		{
+			collection.readAndSetObject(valObject.object);
+		}
 		
 		valObject.propertyMap = valClass.propertyMap;
 		valObject.ready();
@@ -275,7 +278,7 @@ class ValEdit
 		{
 			template = ValEditTemplate.fromPool(valClass, id, collection, constructorCollection);
 			template.object = createObjectWithTemplate(template, template.collection, false);
-			template.object.collection.readValues();
+			template.object.currentCollection.readValues();
 		}
 		else
 		{
@@ -314,8 +317,8 @@ class ValEdit
 		{
 			collection = valClass.getCollection();
 		}
-		valObject.collection = collection;
-		collection.object = valObject;
+		valObject.defaultCollection = collection;
+		collection.readAndSetObject(valObject.object);
 		
 		valObject.ready();
 		
