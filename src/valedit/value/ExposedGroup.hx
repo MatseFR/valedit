@@ -1,6 +1,7 @@
 package valedit.value;
 import openfl.errors.Error;
 import valedit.ExposedCollection;
+import valedit.animation.TweenData;
 import valedit.animation.TweenProperties;
 import valedit.value.base.ExposedValue;
 import valedit.events.ValueEvent;
@@ -501,21 +502,29 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	
-	public function getTweenProperties(targetGroup:ExposedGroup, tweenProperties:TweenProperties):Void
+	public function getTweenData(tweenData:TweenData, tweenProperties:TweenProperties, targetGroup:ExposedGroup):Void
 	{
 		var targetValue:ExposedValue;
+		
 		for (value in this._valueList)
 		{
 			if (value.isGroup)
 			{
-				cast(value, ExposedGroup).getTweenProperties(targetGroup.getGroup(value.name), tweenProperties);
+				cast(value, ExposedGroup).getTweenData(tweenData, tweenProperties, targetGroup.getGroup(value.propertyName));
 			}
 			else if (value.isTweenable)
 			{
-				targetValue = targetGroup.getValue(value.name);
-				if (value.value != targetValue.value)
+				if (Std.isOfType(value, ExposedObject))
 				{
-					tweenProperties.addProperty(value.name, targetValue.value);
+					cast(value, ExposedObject).getTweenData(tweenData, cast targetGroup.getValue(value.propertyName));
+				}
+				else
+				{
+					targetValue = targetGroup.getValue(value.propertyName);
+					if (value.value != targetValue.value)
+					{
+						tweenProperties.addProperty(value.propertyName, targetValue.value);
+					}
 				}
 			}
 		}
