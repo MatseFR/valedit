@@ -40,6 +40,18 @@ class FrameTween extends Tween
 			
 			this.__updateFuncs[i](this.__properties[i], this.__startValues[i], this.__endValues[i]);
 		}
+		
+		if (this.__onUpdate != null)
+		{
+			if (this.__onUpdateArgs != null)
+			{
+				Reflect.callMethod(this.__onUpdate, this.__onUpdate, this.__onUpdateArgs);
+			}
+			else
+			{
+				this.__onUpdate();
+			}
+		}
 	}
 	
 	override public function pool():Void
