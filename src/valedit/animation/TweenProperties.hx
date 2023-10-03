@@ -1,4 +1,5 @@
 package valedit.animation;
+import haxe.Constraints.Function;
 import juggler.animation.Tween;
 
 /**
@@ -22,6 +23,9 @@ class TweenProperties
 	
 	public var names(default, null):Array<String> = new Array<String>();
 	public var numProperties(get, never):Int;
+	public var object:Dynamic;
+	public var onUpdate:Function;
+	public var onUpdateArgs:Array<Dynamic>;
 	public var values(default, null):Array<Float> = new Array<Float>();
 	
 	private function get_numProperties():Int { return this.names.length; }
@@ -34,6 +38,9 @@ class TweenProperties
 	public function clear():Void
 	{
 		this.names.resize(0);
+		this.object = null;
+		this.onUpdate = null;
+		this.onUpdateArgs = null;
 		this.values.resize(0);
 	}
 	
@@ -56,6 +63,8 @@ class TweenProperties
 		{
 			tween.animate(this.names[i], this.values[i]);
 		}
+		tween.onUpdate = this.onUpdate;
+		tween.onUpdateArgs = this.onUpdateArgs;
 	}
 	
 }
