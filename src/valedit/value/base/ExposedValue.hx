@@ -319,7 +319,14 @@ abstract class ExposedValue extends EventDispatcher
 		{
 			return;
 		}
-		Reflect.setProperty(object, this.propertyName, this.value);
+		if (this._storedValue == null)
+		{
+			Reflect.setProperty(object, this.propertyName, this.value);
+		}
+		else
+		{
+			Reflect.setProperty(object, this.propertyName, this._storedValue);
+		}
 		this._extras.applyToObject(object);
 	}
 	
