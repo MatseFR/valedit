@@ -34,7 +34,6 @@ class ExposedNote extends ExposedNotValue
 	public function new(name:String="", text:String="", textPercentWidth:Float = 100) 
 	{
 		super(name);
-		this._isRealValue = false;
 		this.text = text;
 		this.textPercentWidth = textPercentWidth;
 	}

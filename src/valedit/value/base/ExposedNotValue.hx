@@ -10,7 +10,7 @@ abstract class ExposedNotValue extends ExposedValue
 	public function new(propertyName:String, name:String=null) 
 	{
 		super(propertyName, name);
-		
+		this._isRealValue = false;
 	}
 	
 	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 

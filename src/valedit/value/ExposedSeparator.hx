@@ -25,7 +25,6 @@ class ExposedSeparator extends ExposedNotValue
 	public function new(name:String="") 
 	{
 		super(name);
-		this._isRealValue = false;
 	}
 	
 	public function pool():Void
