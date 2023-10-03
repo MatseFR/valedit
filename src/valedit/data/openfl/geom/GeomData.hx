@@ -3,7 +3,6 @@ import openfl.geom.Matrix3D;
 import openfl.geom.Vector3D;
 import valedit.ExposedCollection;
 import valedit.value.ExposedColor;
-import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedObject;
@@ -26,6 +25,7 @@ class GeomData
 		if (!collection.hasValue("color"))
 		{
 			color = new ExposedColor("color");
+			color.isTweenable = false;
 			collection.addValue(color, groupName);
 		}
 		
@@ -88,37 +88,39 @@ class GeomData
 		
 		if (!collection.hasValue("a"))
 		{
-			floatDrag = new ExposedFloatDrag("a");
+			floatDrag = new ExposedFloatDrag("a", null, null, null, 0.05);
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("b"))
 		{
-			floatDrag = new ExposedFloatDrag("b");
+			floatDrag = new ExposedFloatDrag("b", null, null, null, 0.05);
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("c"))
 		{
-			floatDrag = new ExposedFloatDrag("c");
+			floatDrag = new ExposedFloatDrag("c", null, null, null, 0.05);
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("d"))
 		{
-			floatDrag = new ExposedFloatDrag("d");
+			floatDrag = new ExposedFloatDrag("d", null, null, null, 0.05);
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("tx"))
 		{
 			floatDrag = new ExposedFloatDrag("tx");
+			floatDrag.isTweenable = false; // this should be covered by "x" property
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("ty"))
 		{
 			floatDrag = new ExposedFloatDrag("ty");
+			floatDrag.isTweenable = false; // this should be covered by "y" property
 			collection.addValue(floatDrag, groupName);
 		}
 		
