@@ -2,9 +2,11 @@ package valedit;
 import openfl.display.DisplayObjectContainer;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
+import valedit.animation.TweenData;
 import valedit.animation.TweenProperties;
 import valedit.events.ValueEvent;
 import valedit.value.ExposedGroup;
+import valedit.value.ExposedObject;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueWithChildren;
 #if valeditor
@@ -195,21 +197,16 @@ class ExposedCollection extends EventDispatcher
 		_POOL[_POOL.length] = this;
 	}
 	
-	//public function dispose():Void
-	//{
-		//
-	//}
-	
 	public function applyAndSetObject(object:Dynamic, ?applyIfDefaultValue:Bool):Void
 	{
-		applyToObject(object, applyIfDefaultValue);
 		this.object = object;
+		applyToObject(object, applyIfDefaultValue);
 	}
 	
 	public function readAndSetObject(object:Dynamic):Void
 	{
-		readValuesFromObject(object);
 		this.object = object;
+		readValuesFromObject(object);
 	}
 	
 	public function applyToObject(object:Dynamic, ?applyIfDefaultValue:Bool):Void
@@ -591,35 +588,36 @@ class ExposedCollection extends EventDispatcher
 		return values;
 	}
 	
-	public function getTweenProperties(targetCollection:ExposedCollection):TweenProperties
+	public function getTweenData(targetCollection:ExposedCollection, tweenData:TweenData = null):TweenData
 	{
+		if (tweenData == null) tweenData = TweenData.fromPool();
 		var targetValue:ExposedValue;
-		var tweenProperties:TweenProperties = TweenProperties.fromPool();
+		var tweenProperties:TweenProperties = tweenData.addObject(this._object);
+		
 		for (value in this._valueList)
 		{
 			if (value.isGroup)
 			{
-				cast(value, ExposedGroup).getTweenProperties(targetCollection.getGroup(value.name), tweenProperties);
+				cast(value, ExposedGroup).getTweenData(tweenData, tweenProperties, targetCollection.getGroup(value.propertyName));
 			}
 			else if (value.isTweenable)
 			{
-				targetValue = targetCollection.getValue(value.name);
-				if (value.value != targetValue.value)
+				if (Std.isOfType(value, ExposedObject))
 				{
-					tweenProperties.addProperty(value.name, targetValue.value);
+					cast(value, ExposedObject).getTweenData(tweenData, cast targetCollection.getValue(value.propertyName));
+				}
+				else
+				{
+					targetValue = targetCollection.getValue(value.propertyName);
+					if (value.value != targetValue.value)
+					{
+						tweenProperties.addProperty(value.propertyName, targetValue.value);
+					}
 				}
 			}
 		}
 		
-		if (tweenProperties.numProperties != 0)
-		{
-			return tweenProperties;
-		}
-		else
-		{
-			tweenProperties.pool();
-			return null;
-		}
+		return tweenData;
 	}
 	
 	public function clone(copyValues:Bool = false):ExposedCollection
