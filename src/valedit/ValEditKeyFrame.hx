@@ -2,6 +2,7 @@ package valedit;
 import juggler.animation.Transitions;
 import openfl.events.EventDispatcher;
 import valedit.animation.FrameTween;
+import valedit.animation.TweenData;
 import valedit.animation.TweenProperties;
 
 /**
@@ -53,6 +54,7 @@ class ValEditKeyFrame extends EventDispatcher
 		{
 			tween.transition = value;
 		}
+		if (this.isActive && this._tween) updateTweens();
 		return this._transition = value;
 	}
 	
@@ -74,7 +76,8 @@ class ValEditKeyFrame extends EventDispatcher
 		return this._tween = value;
 	}
 	
-	//private var _tweenObjectMap:Map<ValEditObject, ValEditObject> = new Map<ValEditObject, ValEditObject>();
+	private var _remainingObjects:Array<ValEditObject> = new Array<ValEditObject>();
+	private var _tweenObjectMap:Map<ValEditObject, ValEditObject> = new Map<ValEditObject, ValEditObject>();
 	private var _tweens:Array<FrameTween> = new Array<FrameTween>();
 	
 	public function new() 
@@ -151,8 +154,7 @@ class ValEditKeyFrame extends EventDispatcher
 		var duration:Float = this.duration;
 		var collection:ExposedCollection;
 		var nextCollection:ExposedCollection;
-		var tween:FrameTween;
-		var tweenProperties:TweenProperties;
+		var tweenData:TweenData = TweenData.fromPool();
 		
 		for (object in this.objects)
 		{
@@ -160,36 +162,37 @@ class ValEditKeyFrame extends EventDispatcher
 			if (nextCollection != null)
 			{
 				collection = object.getCollectionForKeyFrame(this);
-				tweenProperties = collection.getTweenProperties(nextCollection);
-				if (tweenProperties != null)
-				{
-					tween = FrameTween.fromPool(object.object, duration, this._transition);
-					tweenProperties.applyToTween(tween);
-					tweenProperties.pool();
-					this._tweens[this._tweens.length] = tween;
-				}
+				collection.getTweenData(nextCollection, tweenData);
+				tweenData.buildTweens(duration, this._transition, this._tweens);
+				tweenData.clear();
+				this._tweenObjectMap.set(object, object);
 			}
-			//for (nextObject in nextFrame.objects)
-			//{
-				//if (this._tweenObjectMap.exists(nextObject)) continue;
-				//
-				//if (object.clss == nextObject.clss && object.template == nextObject.template)
-				//{
-					//this._tweenObjectMap.set(nextObject, nextObject);
-					//tweenProperties = object.collection.getTweenProperties(nextObject.collection);
-					//if (tweenProperties != null)
-					//{
-						//tween = FrameTween.fromPool(object.object, duration, this._transition);
-						//tweenProperties.applyToTween(tween);
-						//tweenProperties.pool();
-						//this._tweens[this._tweens.length] = tween;
-					//}
-					//break;
-				//}
-			//}
+			else
+			{
+				this._remainingObjects[this._remainingObjects.length] = object;
+			}
 		}
 		
-		//this._tweenObjectMap.clear();
+		for (object in this._remainingObjects)
+		{
+			for (nextObject in nextFrame.objects)
+			{
+				if (this._tweenObjectMap.exists(nextObject)) continue;
+				
+				if (object.clss == nextObject.clss && object.template == nextObject.template)
+				{
+					collection = object.getCollectionForKeyFrame(this);
+					nextCollection = nextObject.getCollectionForKeyFrame(nextFrame);
+					collection.getTweenData(nextCollection, tweenData);
+					tweenData.buildTweens(duration, this._transition, this._tweens);
+					tweenData.clear();
+					this._tweenObjectMap.set(nextObject, nextObject);
+				}
+			}
+		}
+		
+		this._tweenObjectMap.clear();
+		this._remainingObjects.resize(0);
 	}
 	
 	private function clearTweens():Void
