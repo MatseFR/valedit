@@ -1,7 +1,11 @@
 package valedit.value;
 
+import valedit.ExposedCollection;
+import valedit.animation.TweenData;
+import valedit.animation.TweenProperties;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueWithChildren;
+import valeditor.ValEditor;
 
 /**
  * ...
@@ -22,8 +26,28 @@ class ExposedObject extends ExposedValueWithChildren
 		return new ExposedObject(propertyName, name, storeValue, reassignOnChange);
 	}
 	
+	public var objectCollection(default, null):ExposedCollection;
 	public var reassignOnChange:Bool = false;
 	public var storeValue:Bool = false;
+	
+	override function set_isTweenable(value:Bool):Bool 
+	{
+		return this._isTweenable = value;
+	}
+	
+	override function set_object(value:Dynamic):Dynamic 
+	{
+		if (this._object == value) return value;
+		if (value != null && this.objectCollection == null)
+		{
+			this._storedValue = Reflect.getProperty(value, this.propertyName);
+			this.objectCollection = ValEditor.getCollectionForObject(this._storedValue);
+			this.objectCollection.parentValue = this;
+			this.objectCollection.readAndSetObject(this._storedValue);
+			if (!this.storeValue) this._storedValue = null;
+		}
+		return super.set_object(value);
+	}
 	
 	override function get_value():Dynamic 
 	{
@@ -51,6 +75,7 @@ class ExposedObject extends ExposedValueWithChildren
 	public function new(propertyName:String, name:String = null, storeValue:Bool = false, reassignOnChange:Bool = false) 
 	{
 		super(propertyName, name);
+		this._isTweenable = true;
 		this.storeValue = storeValue;
 		this.reassignOnChange = reassignOnChange;
 		this.canCopyValueOnClone = false;
@@ -58,6 +83,12 @@ class ExposedObject extends ExposedValueWithChildren
 	
 	override public function clear():Void 
 	{
+		this._isTweenable = true;
+		if (this.objectCollection != null)
+		{
+			this.objectCollection.pool();
+			this.objectCollection = null;
+		}
 		super.clear();
 		this.canCopyValueOnClone = false;
 	}
@@ -76,13 +107,49 @@ class ExposedObject extends ExposedValueWithChildren
 		return this;
 	}
 	
+	public function getTweenData(tweenData:TweenData, targetValue:ExposedObject):Void
+	{
+		if (this.objectCollection != null && targetValue.objectCollection != null)
+		{
+			this.objectCollection.getTweenData(targetValue.objectCollection, tweenData);
+			if (this.reassignOnChange)
+			{
+				var properties:TweenProperties = tweenData.getPropertiesForObject(this.value);
+				if (properties != null)
+				{
+					properties.onUpdate = reassignObject;
+				}
+			}
+		}
+	}
+	
 	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
 	{
-		var realObject:Dynamic = Reflect.getProperty(object, this.propertyName);
-		
-		for (value in this._childValues)
+		if (this.objectCollection != null)
 		{
-			value.applyToObject(realObject, applyIfDefaultValue);
+			if (this._object == null || this._object == object)
+			{
+				this.objectCollection.applyToObject(this.value, applyIfDefaultValue);
+			}
+			else
+			{
+				var realObject:Dynamic = Reflect.getProperty(object, this.propertyName);
+				
+				this.objectCollection.applyToObject(realObject, applyIfDefaultValue);
+			}
+			
+			if (this.reassignOnChange)
+			{
+				if (this._object == null || this._object == object)
+				{
+					reassignObject();
+				}
+				else
+				{
+					var realObject:Dynamic = Reflect.getProperty(object, this.propertyName);
+					Reflect.setProperty(object, this.propertyName, realObject);
+				}
+			}
 		}
 	}
 	
@@ -97,21 +164,30 @@ class ExposedObject extends ExposedValueWithChildren
 	
 	override public function childValueChanged():Void 
 	{
-		if (this.reassignOnChange && this._object != null)
+		if (this.reassignOnChange)
 		{
-			Reflect.setProperty(this._object, this.propertyName, this.value);
+			reassignObject();
 		}
 		
 		super.childValueChanged();
 	}
 	
+	public function reassignObject():Void
+	{
+		if (this._object != null)
+		{
+			Reflect.setProperty(this._object, this.propertyName, this.value);
+		}
+	}
+	
 	public function reloadObject():Void
 	{
 		this._storedValue = Reflect.getProperty(this._object, propertyName);
-		for (value in this._childValues)
-		{
-			value.object = _storedValue;
-		}
+		this.objectCollection.readAndSetObject(this._storedValue);
+		//for (value in this._childValues)
+		//{
+			//value.object = _storedValue;
+		//}
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
