@@ -588,11 +588,19 @@ class ExposedCollection extends EventDispatcher
 		return values;
 	}
 	
-	public function getTweenData(targetCollection:ExposedCollection, tweenData:TweenData = null):TweenData
+	public function getTweenData(targetCollection:ExposedCollection, tweenData:TweenData = null, object:Dynamic = null):TweenData
 	{
 		if (tweenData == null) tweenData = TweenData.fromPool();
 		var targetValue:ExposedValue;
-		var tweenProperties:TweenProperties = tweenData.addObject(this._object);
+		var tweenProperties:TweenProperties;
+		if (object == null)
+		{
+			tweenProperties = tweenData.addObject(this._object);
+		}
+		else
+		{
+			tweenProperties = tweenData.addObject(object);
+		}
 		
 		for (value in this._valueList)
 		{
