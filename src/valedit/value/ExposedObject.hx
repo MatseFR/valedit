@@ -3,9 +3,11 @@ package valedit.value;
 import valedit.ExposedCollection;
 import valedit.animation.TweenData;
 import valedit.animation.TweenProperties;
+import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueWithChildren;
 import valeditor.ValEditor;
+import valeditor.ValEditorObject;
 
 /**
  * ...
@@ -31,6 +33,17 @@ class ExposedObject extends ExposedValueWithChildren
 	public var reassignOnChange:Bool = false;
 	public var storeValue:Bool = false;
 	
+	#if valeditor
+	override function set_valEditorObject(value:ValEditorObject):ValEditorObject 
+	{
+		if (this.objectCollection != null)
+		{
+			this.objectCollection.valEditorObject = value;
+		}
+		return super.set_valEditorObject(value);
+	}
+	#end
+	
 	override function set_isTweenable(value:Bool):Bool 
 	{
 		return this._isTweenable = value;
@@ -44,7 +57,9 @@ class ExposedObject extends ExposedValueWithChildren
 			this._storedValue = Reflect.getProperty(value, this.propertyName);
 			this.objectCollection = ValEditor.getCollectionForObject(this._storedValue);
 			this.objectCollection.parentValue = this;
+			this.objectCollection.valEditorObject = this._valEditorObject;
 			this.objectCollection.readAndSetObject(this._storedValue);
+			this.objectCollection.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 			if (!this.storeValue) this._storedValue = null;
 		}
 		return super.set_object(value);
@@ -89,6 +104,7 @@ class ExposedObject extends ExposedValueWithChildren
 		this.isUIOpen = false;
 		if (this.objectCollection != null)
 		{
+			this.objectCollection.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 			this.objectCollection.pool();
 			this.objectCollection = null;
 		}
@@ -192,6 +208,11 @@ class ExposedObject extends ExposedValueWithChildren
 		//{
 			//value.object = _storedValue;
 		//}
+	}
+	
+	private function onValueChange(evt:ValueEvent):Void
+	{
+		dispatchEvent(evt);
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
