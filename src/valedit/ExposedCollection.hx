@@ -180,6 +180,7 @@ class ExposedCollection extends EventDispatcher
 			this.uiCollection.pool();
 			this.uiCollection = null;
 		}
+		this._valEditorObject = null;
 		#end
 		for (value in this._valueList)
 		{
