@@ -87,13 +87,18 @@ class ValEditKeyFrame extends EventDispatcher
 	
 	public function clear():Void
 	{
-		this.activateFunction = null;
-		this.deactivateFunction = null;
 		for (object in this.objects)
 		{
-			ValEdit.destroyObject(object);
+			object.removeKeyFrame(this);
+			if (this.isActive)
+			{
+				deactivateFunction(object);
+			}
+			if (object.canBeDestroyed()) ValEdit.destroyObject(object);
 		}
 		this.objects.resize(0);
+		this.activateFunction = null;
+		this.deactivateFunction = null;
 		this.timeLine = null;
 		this._transition = Transitions.LINEAR;
 		this.tween = false;
@@ -162,7 +167,7 @@ class ValEditKeyFrame extends EventDispatcher
 			if (nextCollection != null)
 			{
 				collection = object.getCollectionForKeyFrame(this);
-				collection.getTweenData(nextCollection, tweenData);
+				collection.getTweenData(nextCollection, tweenData, object.object);
 				tweenData.buildTweens(duration, this._transition, this._tweens);
 				tweenData.clear();
 				this._tweenObjectMap.set(object, object);
@@ -183,7 +188,7 @@ class ValEditKeyFrame extends EventDispatcher
 				{
 					collection = object.getCollectionForKeyFrame(this);
 					nextCollection = nextObject.getCollectionForKeyFrame(nextFrame);
-					collection.getTweenData(nextCollection, tweenData);
+					collection.getTweenData(nextCollection, tweenData, object.object);
 					tweenData.buildTweens(duration, this._transition, this._tweens);
 					tweenData.clear();
 					this._tweenObjectMap.set(nextObject, nextObject);
