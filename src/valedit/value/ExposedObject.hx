@@ -20,12 +20,13 @@ class ExposedObject extends ExposedValueWithChildren
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, storeValue:Bool = false, reassignOnChange:Bool = false):ExposedObject
+	static public function fromPool(propertyName:String, name:String = null, storeValue:Bool = false, reassignOnChange:Bool = false, isUIOpen:Bool = false):ExposedObject
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, storeValue, reassignOnChange);
-		return new ExposedObject(propertyName, name, storeValue, reassignOnChange);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, storeValue, reassignOnChange, isUIOpen);
+		return new ExposedObject(propertyName, name, storeValue, reassignOnChange, isUIOpen);
 	}
 	
+	public var isUIOpen:Bool = false;
 	public var objectCollection(default, null):ExposedCollection;
 	public var reassignOnChange:Bool = false;
 	public var storeValue:Bool = false;
@@ -72,18 +73,20 @@ class ExposedObject extends ExposedValueWithChildren
 	   @param	storeValue	set this to true for properties where the object keeps changing such as a regular OpenFL DisplayObject's transform
 	   @param	reassignOnChange	set this to true if the object needs to be reassigned after one of its properties value changed
 	**/
-	public function new(propertyName:String, name:String = null, storeValue:Bool = false, reassignOnChange:Bool = false) 
+	public function new(propertyName:String, name:String = null, storeValue:Bool = false, reassignOnChange:Bool = false, isUIOpen:Bool = false) 
 	{
 		super(propertyName, name);
 		this._isTweenable = true;
 		this.storeValue = storeValue;
 		this.reassignOnChange = reassignOnChange;
+		this.isUIOpen = isUIOpen;
 		this.canCopyValueOnClone = false;
 	}
 	
 	override public function clear():Void 
 	{
 		this._isTweenable = true;
+		this.isUIOpen = false;
 		if (this.objectCollection != null)
 		{
 			this.objectCollection.pool();
@@ -99,11 +102,12 @@ class ExposedObject extends ExposedValueWithChildren
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, storeValue:Bool, reassignOnChange:Bool):ExposedObject
+	private function setTo(propertyName:String, name:String, storeValue:Bool, reassignOnChange:Bool, isUIOpen:Bool):ExposedObject
 	{
 		setNames(propertyName, name);
 		this.storeValue = storeValue;
 		this.reassignOnChange = reassignOnChange;
+		this.isUIOpen = isUIOpen;
 		return this;
 	}
 	
