@@ -24,6 +24,7 @@ class ValEditObject extends EventDispatcher
 	public var displayObjectType:Int;
 	public var id(get, set):String;
 	public var isDisplayObject:Bool;
+	public var numKeyFrames(default, null):Int = 0;
 	public var object:Dynamic;
 	public var propertyMap:PropertyMap;
 	public var template:ValEditTemplate;
@@ -60,6 +61,11 @@ class ValEditObject extends EventDispatcher
 	
 	public function clear():Void
 	{
+		for (keyFrame in this._keyFrameToCollection.keys())
+		{
+			keyFrame.remove(this);
+		}
+		
 		this.clss = null;
 		this.currentCollection = null;
 		if (this._defaultCollection != null)
@@ -67,15 +73,16 @@ class ValEditObject extends EventDispatcher
 			this._defaultCollection.pool();
 			this._defaultCollection = null;
 		}
+		this.numKeyFrames = 0;
 		this.object = null;
 		this.template = null;
 		this.propertyMap = null;
 		
-		for (collection in this._keyFrameToCollection)
-		{
-			collection.pool();
-		}
-		this._keyFrameToCollection.clear();
+		//for (collection in this._keyFrameToCollection)
+		//{
+			//collection.pool();
+		//}
+		//this._keyFrameToCollection.clear();
 		
 	}
 	
@@ -83,6 +90,11 @@ class ValEditObject extends EventDispatcher
 	{
 		clear();
 		_POOL[_POOL.length] = this;
+	}
+	
+	public function canBeDestroyed():Bool
+	{
+		return this.numKeyFrames == 0;
 	}
 	
 	public function addKeyFrame(keyFrame:ValEditKeyFrame, collection:ExposedCollection = null):Void
@@ -97,19 +109,13 @@ class ValEditObject extends EventDispatcher
 			
 			if (collection == null)
 			{
-				//if (this.template != null)
-				//{
-					//collection = this.template.collection.clone(true);
-				//}
-				//else
-				//{
-					collection = this.clss.getCollection();
-				//}
+				collection = this.clss.getCollection();
 				collection.readValuesFromObject(this.object);
 			}
 		}
 		
 		this._keyFrameToCollection.set(keyFrame, collection);
+		this.numKeyFrames++;
 	}
 	
 	public function getCollectionForKeyFrame(keyFrame:ValEditKeyFrame):ExposedCollection
@@ -129,6 +135,12 @@ class ValEditObject extends EventDispatcher
 			this._keyFrameToCollection.get(keyFrame).pool();
 		}
 		this._keyFrameToCollection.remove(keyFrame);
+		this.numKeyFrames--;
+		
+		if (this.currentKeyFrame == keyFrame)
+		{
+			setKeyFrame(null);
+		}
 	}
 	
 	public function setKeyFrame(keyFrame:ValEditKeyFrame):Void
@@ -137,9 +149,10 @@ class ValEditObject extends EventDispatcher
 		if (this.currentCollection != null) this.currentCollection.object = null;
 		this.currentCollection = this._keyFrameToCollection.get(keyFrame);
 		this.currentKeyFrame = keyFrame;
-		//this.currentCollection.applyToObject(this.object, true);
-		//this.currentCollection.object = this.object;
-		this.currentCollection.applyAndSetObject(this.object);
+		if (this.currentCollection != null)
+		{
+			this.currentCollection.applyAndSetObject(this.object);
+		}
 	}
 	
 	public function ready():Void
