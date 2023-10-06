@@ -309,19 +309,19 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
-	public function readValues():Void
+	public function readValues(dispatchEventIfChange:Bool = true):Void
 	{
 		for (value in this._valueList)
 		{
-			value.readValue();
+			value.readValue(dispatchEventIfChange);
 		}
 	}
 	
-	public function readValuesFromObject(object:Dynamic):Void
+	public function readValuesFromObject(object:Dynamic, dispatchEventIfChange:Bool = true):Void
 	{
 		for (value in this._valueList)
 		{
-			value.readValueFromObject(object);
+			value.readValueFromObject(object, dispatchEventIfChange);
 		}
 	}
 	
