@@ -53,12 +53,23 @@ class ValEditTemplate extends EventDispatcher
 		this.constructorCollection = null;
 		this.numInstances = 0;
 		this.object = null;
+		
+		for (instance in this._instances)
+		{
+			ValEdit.destroyObject(instance);
+		}
+		this._instances.resize(0);
 	}
 	
 	public function pool():Void
 	{
 		clear();
 		_POOL[_POOL.length] = this;
+	}
+	
+	public function canBeDestroyed():Bool
+	{
+		return this.numInstances == 0;
 	}
 	
 	private function setTo(clss:ValEditClass, id:String, collection:ExposedCollection,
