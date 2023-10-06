@@ -111,6 +111,11 @@ class ValEditKeyFrame extends EventDispatcher
 		_POOL[_POOL.length] = this;
 	}
 	
+	public function canBeDestroyed():Bool
+	{
+		return this.timeLine == null;
+	}
+	
 	public function add(object:ValEditObject):Void
 	{
 		this.objects[this.objects.length] = object;
@@ -192,6 +197,7 @@ class ValEditKeyFrame extends EventDispatcher
 					tweenData.buildTweens(duration, this._transition, this._tweens);
 					tweenData.clear();
 					this._tweenObjectMap.set(nextObject, nextObject);
+					break;
 				}
 			}
 		}
