@@ -29,9 +29,28 @@ class ExposedObject extends ExposedValueWithChildren
 	}
 	
 	public var isUIOpen:Bool = false;
-	public var objectCollection(default, null):ExposedCollection;
+	public var objectCollection(get, set):ExposedCollection;
 	public var reassignOnChange:Bool = false;
 	public var storeValue:Bool = false;
+	
+	private var _objectCollection:ExposedCollection;
+	private function get_objectCollection() { return this._objectCollection; }
+	private function set_objectCollection(value:ExposedCollection):ExposedCollection
+	{
+		if (this._objectCollection == value) return value;
+		if (this._objectCollection != null)
+		{
+			this._objectCollection.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		}
+		this._objectCollection = value;
+		if (this._objectCollection != null)
+		{
+			this._objectCollection.parentValue = this;
+			this._objectCollection.valEditorObject = this._valEditorObject;
+			this._objectCollection.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		}
+		return this._objectCollection;
+	}
 	
 	#if valeditor
 	override function set_valEditorObject(value:ValEditorObject):ValEditorObject 
@@ -52,14 +71,19 @@ class ExposedObject extends ExposedValueWithChildren
 	override function set_object(value:Dynamic):Dynamic 
 	{
 		if (this._object == value) return value;
-		if (value != null && this.objectCollection == null)
+		if (value != null)
 		{
 			this._storedValue = Reflect.getProperty(value, this.propertyName);
-			this.objectCollection = ValEditor.getCollectionForObject(this._storedValue);
-			this.objectCollection.parentValue = this;
-			this.objectCollection.valEditorObject = this._valEditorObject;
-			this.objectCollection.readAndSetObject(this._storedValue);
-			this.objectCollection.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+			if (this._objectCollection == null)
+			{
+				var objectCollection:ExposedCollection = ValEditor.getCollectionForObject(this._storedValue);
+				objectCollection.readAndSetObject(this._storedValue);
+				this.objectCollection = objectCollection;
+			}
+			else
+			{
+				this._objectCollection.object = this._storedValue;
+			}
 			if (!this.storeValue) this._storedValue = null;
 		}
 		return super.set_object(value);
@@ -104,7 +128,6 @@ class ExposedObject extends ExposedValueWithChildren
 		this.isUIOpen = false;
 		if (this.objectCollection != null)
 		{
-			this.objectCollection.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 			this.objectCollection.pool();
 			this.objectCollection = null;
 		}
@@ -176,10 +199,14 @@ class ExposedObject extends ExposedValueWithChildren
 	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
 		reloadObject();
-		for (value in this._childValues)
+		if (this._objectCollection != null)
 		{
-			value.readValue(dispatchEventIfChange);
+			this._objectCollection.readValues(dispatchEventIfChange);
 		}
+		//for (value in this._childValues)
+		//{
+			//value.readValue(dispatchEventIfChange);
+		//}
 	}
 	
 	override public function childValueChanged():Void 
@@ -203,11 +230,10 @@ class ExposedObject extends ExposedValueWithChildren
 	public function reloadObject():Void
 	{
 		this._storedValue = Reflect.getProperty(this._object, propertyName);
-		this.objectCollection.readAndSetObject(this._storedValue);
-		//for (value in this._childValues)
-		//{
-			//value.object = _storedValue;
-		//}
+		if (this._objectCollection != null)
+		{
+			this._objectCollection.readAndSetObject(this._storedValue);
+		}
 	}
 	
 	private function onValueChange(evt:ValueEvent):Void
@@ -218,6 +244,10 @@ class ExposedObject extends ExposedValueWithChildren
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var object:ExposedObject = fromPool(this.propertyName, this.name, this.storeValue, this.reassignOnChange);
+		if (this._objectCollection != null)
+		{
+			object.objectCollection = this._objectCollection.clone(true);
+		}
 		super.clone_internal(object, copyValue);
 		return object;
 	}
