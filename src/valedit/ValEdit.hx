@@ -316,9 +316,13 @@ class ValEdit
 		if (collection == null)
 		{
 			collection = valClass.getCollection();
+			collection.readAndSetObject(valObject.object);
+		}
+		else
+		{
+			collection.applyAndSetObject(valObject.object);
 		}
 		valObject.defaultCollection = collection;
-		collection.readAndSetObject(valObject.object);
 		
 		valObject.ready();
 		
