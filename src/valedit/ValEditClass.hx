@@ -297,14 +297,18 @@ class ValEditClass
 	
 	public function removeTemplate(template:ValEditTemplate):Void
 	{
-		this._IDToTemplate.remove(template.id);
-		this.numTemplates--;
+		if (this._IDToTemplate.remove(template.id))
+		{
+			this.numTemplates--;
+		}
 	}
 	
 	public function removeTemplateByID(id:String):Void
 	{
-		this._IDToTemplate.remove(id);
-		this.numTemplates--;
+		if (this._IDToTemplate.remove(id))
+		{
+			this.numTemplates--;
+		}
 	}
 	
 	public function addContainer(container:DisplayObjectContainer, object:Dynamic, collection:ExposedCollection = null, parentValue:ExposedValueWithChildren = null):ExposedCollection
@@ -331,7 +335,6 @@ class ValEditClass
 		}
 		this._containers[container] = collection;
 		collection.parentValue = parentValue;
-		//collection.readAndSetObject(object);
 		collection.uiContainer = container;
 		
 		return collection;
@@ -410,6 +413,11 @@ class ValEditClass
 			this._templateContainers.remove(container);
 			template.collection.uiContainer = null;
 		}
+	}
+	
+	public function loadComplete():Void
+	{
+		
 	}
 	
 }
