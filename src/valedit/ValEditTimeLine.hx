@@ -230,12 +230,20 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		{
 			frame.pool();
 		}
-		this._frameCurrent = null;
-		this._frameIndex = -1;
-		this._frames.resize(0);
 		this._keyFrames.resize(0);
+		
 		this.activateFunction = null;
 		this.deactivateFunction = null;
+		this._frameCurrent = null;
+		this._frameIndex = -1;
+		this.frameRate = 60;
+		this._frames.resize(0);
+		this._juggler = null;
+		this._loop = false;
+		this._numFrames = 0;
+		this._numLoops = 0;
+		this._parent = null;
+		this._reverse = false;
 	}
 	
 	public function pool():Void
@@ -349,6 +357,15 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		this._frameCurrent.remove(object);
 	}
 	
+	public function addKeyFrame(keyFrame:ValEditKeyFrame):Void
+	{
+		registerKeyFrame(keyFrame);
+		for (i in keyFrame.indexStart...keyFrame.indexEnd)
+		{
+			this._frames[i] = keyFrame;
+		}
+	}
+	
 	public function registerKeyFrame(keyFrame:ValEditKeyFrame):Void
 	{
 		keyFrame.timeLine = this;
@@ -428,7 +445,6 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		
 		for (timeLine in this._children)
 		{
-			//timeLine.updateLastFrameIndex(true);
 			if (timeLine._lastFrameIndex > this._lastFrameIndex)
 			{
 				this._lastFrameIndex = timeLine._lastFrameIndex;
