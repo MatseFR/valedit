@@ -181,11 +181,12 @@ class StarlingDisplayData
 			collection.addValue(func, groupName);
 		}
 		
-		if (!collection.hasValue("transformationMatrix"))
-		{
-			object = new ExposedObject("transformationMatrix", null, false, true);
-			collection.addValue(object, groupName);
-		}
+		// this should not be needed since all values are accessible from the object itself + it resets pivotX/pivotY to 0
+		//if (!collection.hasValue("transformationMatrix"))
+		//{
+			//object = new ExposedObject("transformationMatrix", null, false, true);
+			//collection.addValue(object, groupName);
+		//}
 		
 		return collection;
 	}
@@ -203,7 +204,8 @@ class StarlingDisplayData
 	
 	static private function applyDisplayObjectInstance(collection:ExposedCollection):Void
 	{
-		collection.setVisibleArray(["name", "x", "y", "width", "height", "scaleX", "scaleY", "alpha", "rotation", "skewX", "skewY", "blendMode", "mask", "maskInverted", "visible", "transformationMatrix"], true);
+		//collection.setVisibleArray(["name", "x", "y", "width", "height", "scaleX", "scaleY", "alpha", "rotation", "skewX", "skewY", "blendMode", "mask", "maskInverted", "visible", "transformationMatrix"], true);
+		collection.setVisibleArray(["name", "x", "y", "width", "height", "scaleX", "scaleY", "alpha", "rotation", "skewX", "skewY", "blendMode", "mask", "maskInverted", "visible"], true);
 	}
 	
 	static public function exposeDisplayObjectTemplate(?collection:ExposedCollection):ExposedCollection
