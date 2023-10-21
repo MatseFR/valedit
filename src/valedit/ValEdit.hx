@@ -17,6 +17,7 @@ class ValEdit
 	
 	static private var _baseClassToClassList:Map<String, Array<String>> = new Map<String, Array<String>>();
 	static private var _classMap:Map<String, ValEditClass> = new Map<String, ValEditClass>();
+	static private var _templateMap:Map<String, ValEditTemplate> = new Map<String, ValEditTemplate>();
 	
 	static public function getClassSettings(type:Class<Dynamic>, settings:ValEditClassSettings = null):ValEditClassSettings
 	{
@@ -340,6 +341,7 @@ class ValEdit
 	static private function registerTemplateInternal(template:ValEditTemplate):Void
 	{
 		template.clss.addTemplate(template);
+		_templateMap.set(template.id, template);
 	}
 	
 	static public function destroyObject(valObject:ValEditObject):Void
@@ -417,6 +419,11 @@ class ValEdit
 	static public function getValEditClassByClassName(className:String):ValEditClass
 	{
 		return _classMap.get(className);
+	}
+	
+	static public function getTemplate(id:String):ValEditTemplate
+	{
+		return _templateMap.get(id);
 	}
 	
 	static public function getObjectClass(object:Dynamic):Class<Dynamic>
