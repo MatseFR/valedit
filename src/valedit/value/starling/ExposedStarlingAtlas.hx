@@ -97,6 +97,20 @@ class ExposedStarlingAtlas extends ExposedValue
 		return super.toJSON(json);
 	}
 	
+	override public function fromJSONSave(json:Dynamic):Void 
+	{
+		this.value = AssetLib.getStarlingAtlasAssetFromPath(json.asset);
+	}
+	
+	override public function toJSONSave(json:Dynamic):Void 
+	{
+		if (this._asset != null)
+		{
+			var data:Dynamic = {asset:this._asset.path};
+			Reflect.setField(json, this.propertyName, data);
+		}
+	}
+	
 	override public function toJSONSimple(json:Dynamic):Void 
 	{
 		if (this._asset != null)

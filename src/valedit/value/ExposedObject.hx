@@ -52,6 +52,8 @@ class ExposedObject extends ExposedValueWithChildren
 		return this._objectCollection;
 	}
 	
+	private var _objectCollectionSaveData:Dynamic;
+	
 	#if valeditor
 	override function set_valEditorObject(value:ValEditorObject):ValEditorObject 
 	{
@@ -77,8 +79,23 @@ class ExposedObject extends ExposedValueWithChildren
 			if (this._objectCollection == null)
 			{
 				var objectCollection:ExposedCollection = ValEditor.getCollectionForObject(this._storedValue);
-				objectCollection.readAndSetObject(this._storedValue);
-				this.objectCollection = objectCollection;
+				if (this._objectCollectionSaveData == null)
+				{
+					objectCollection.readAndSetObject(this._storedValue);
+					this.objectCollection = objectCollection;
+				}
+				else
+				{
+					objectCollection.fromJSONSave(this._objectCollectionSaveData);
+					objectCollection.applyAndSetObject(this._storedValue);
+					this.objectCollection = objectCollection;
+					if (this.reassignOnChange) 
+					{
+						this._object = value;
+						reassignObject();
+					}
+				}
+				
 			}
 			else
 			{
@@ -267,6 +284,19 @@ class ExposedObject extends ExposedValueWithChildren
 		}
 	}
 	
+	override public function fromJSONSave(json:Dynamic):Void 
+	{
+		if (this._objectCollection == null)
+		{
+			// store collection data, it will be applied to the collection when it will be created
+			this._objectCollectionSaveData = json.collection;
+		}
+		else
+		{
+			this._objectCollection.fromJSONSave(json.collection);
+		}
+	}
+	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
@@ -282,6 +312,18 @@ class ExposedObject extends ExposedValueWithChildren
 			json.childValues = data;
 		}
 		return super.toJSON(json);
+	}
+	
+	override public function toJSONSave(json:Dynamic):Void
+	{
+		var data:Dynamic = {};
+		if (this._objectCollection != null)
+		{
+			var collectionData:Dynamic = {};
+			this._objectCollection.toJSONSave(collectionData);
+			data.collection = collectionData;
+		}
+		Reflect.setField(json, this.propertyName, data);
 	}
 	
 	override public function toJSONSimple(json:Dynamic):Void 

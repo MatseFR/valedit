@@ -641,6 +641,17 @@ class ExposedCollection extends EventDispatcher
 		return collection;
 	}
 	
+	public function loadComplete():Void
+	{
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue)
+			{
+				value.loadComplete();
+			}
+		}
+	}
+	
 	public function fromJSON(json:Dynamic):Void
 	{
 		if (json.values != null)
@@ -651,6 +662,20 @@ class ExposedCollection extends EventDispatcher
 			{
 				value = ExposedValue.valueFromJSON(node);
 				addValue(value);
+			}
+		}
+	}
+	
+	public function fromJSONSave(json:Dynamic):Void
+	{
+		var data:Dynamic;
+		var values:Dynamic = json.values;
+		for (value in this._valueList)
+		{
+			data = Reflect.field(values, value.propertyName);
+			if (data != null)
+			{
+				value.fromJSONSave(data);
 			}
 		}
 	}
@@ -670,6 +695,38 @@ class ExposedCollection extends EventDispatcher
 			}
 			json.values = data;
 		}
+		
+		return json;
+	}
+	
+	/**
+	   
+	   @param	json
+	   @param	includeNotVisible	if true, exposed values with visible = false are included
+	   @param	refCollection	if not null, only exposed values with different values are included
+	   @return
+	**/
+	public function toJSONSave(json:Dynamic = null, includeNotVisible:Bool = false, refCollection:ExposedCollection = null):Dynamic
+	{
+		if (json == null) json = {};
+		
+		var refValue:ExposedValue;
+		var values:Dynamic = {};
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			if (!includeNotVisible && !value.visible) continue;
+			if (refCollection != null)
+			{
+				refValue = refCollection.getValue(value.propertyName);
+				if (refValue.value == value.value)
+				{
+					continue;
+				}
+			}
+			value.toJSONSave(values);
+		}
+		json.values = values;
 		
 		return json;
 	}

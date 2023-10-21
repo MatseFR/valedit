@@ -395,7 +395,14 @@ abstract class ExposedValue extends EventDispatcher
 		value.defaultValue = this.defaultValue;
 		if (copyValue && canCopyValueOnClone)
 		{
-			value.value = this.value;
+			if (this._storedValue != null)
+			{
+				value.value = this._storedValue;
+			}
+			else
+			{
+				value.value = this.value;
+			}
 		}
 		value.isAbsolute = this.isAbsolute;
 		value.isEditable = this._isEditable;
@@ -411,10 +418,20 @@ abstract class ExposedValue extends EventDispatcher
 		this._extras.clone(value._extras);
 	}
 	
+	public function loadComplete():Void
+	{
+		
+	}
+	
 	public function fromJSON(json:Dynamic):Void
 	{
 		this.propertyName = json.propName;
 		this._extras.fromJSON(json.extras);
+	}
+	
+	public function fromJSONSave(json:Dynamic):Void
+	{
+		this.value = json.value;
 	}
 	
 	public function toJSON(json:Dynamic = null):Dynamic
@@ -424,6 +441,12 @@ abstract class ExposedValue extends EventDispatcher
 		json.propName = this.propertyName;
 		json.extras = this._extras.toJSON();
 		return json;
+	}
+	
+	public function toJSONSave(json:Dynamic):Void
+	{
+		var data:Dynamic = {value:this.value};
+		Reflect.setField(json, this.propertyName, data);
 	}
 	
 	public function toJSONSimple(json:Dynamic):Void

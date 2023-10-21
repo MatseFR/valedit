@@ -120,6 +120,32 @@ class ExposedText extends ExposedValue
 		return super.toJSON(json);
 	}
 	
+	override public function fromJSONSave(json:Dynamic):Void 
+	{
+		if (json.asset != null)
+		{
+			this.value = AssetLib.getTextFromPath(json.asset);
+		}
+		else
+		{
+			this.value = json.value;
+		}
+	}
+	
+	override public function toJSONSave(json:Dynamic):Void 
+	{
+		var data:Dynamic;
+		if (this._asset != null)
+		{
+			data = {asset:this._asset.path};
+		}
+		else
+		{
+			data = {value:this.value};
+		}
+		Reflect.setField(json, this.propertyName, data);
+	}
+	
 	override public function toJSONSimple(json:Dynamic):Void 
 	{
 		if (this._asset != null)

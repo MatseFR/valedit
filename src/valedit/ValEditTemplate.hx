@@ -21,6 +21,7 @@ class ValEditTemplate extends EventDispatcher
 	public var collection:ExposedCollection;
 	public var constructorCollection:ExposedCollection;
 	public var id(get, set):String;
+	public var instances(get, never):Array<ValEditObject>;
 	public var numInstances(default, null):Int = 0;
 	public var object(get, set):ValEditObject;
 	
@@ -31,6 +32,9 @@ class ValEditTemplate extends EventDispatcher
 		return this._id = value;
 	}
 	
+	private var _instances:Array<ValEditObject> = new Array<ValEditObject>();
+	private function get_instances():Array<ValEditObject> { return this._instances; }
+	
 	private var _object:Dynamic;
 	private function get_object():Dynamic { return this._object; }
 	private function set_object(value:Dynamic):Dynamic
@@ -38,7 +42,7 @@ class ValEditTemplate extends EventDispatcher
 		return this._object = value;
 	}
 	
-	private var _instances:Array<ValEditObject> = new Array<ValEditObject>();
+	private var _instanceMap:Map<String, ValEditObject> = new Map<String, ValEditObject>();
 	
 	public function new(clss:ValEditClass, ?id:String, ?collection:ExposedCollection, ?constructorCollection:ExposedCollection) 
 	{
@@ -52,6 +56,8 @@ class ValEditTemplate extends EventDispatcher
 		this.collection = null;
 		this.constructorCollection = null;
 		this.numInstances = 0;
+		
+		ValEdit.destroyObject(this.object);
 		this.object = null;
 		
 		for (instance in this._instances)
@@ -59,6 +65,7 @@ class ValEditTemplate extends EventDispatcher
 			ValEdit.destroyObject(instance);
 		}
 		this._instances.resize(0);
+		this._instanceMap.clear();
 	}
 	
 	public function pool():Void
@@ -87,8 +94,14 @@ class ValEditTemplate extends EventDispatcher
 	public function addInstance(instance:ValEditObject):Void
 	{
 		instance.template = this;
-		this._instances.push(instance);
+		this._instances[this._instances.length] = instance;
+		this._instanceMap.set(instance.id, instance);
 		this.numInstances++;
+	}
+	
+	public function getInstance(id:String):ValEditObject
+	{
+		return this._instanceMap.get(id);
 	}
 	
 	public function removeInstance(instance:ValEditObject):Void
@@ -98,6 +111,7 @@ class ValEditTemplate extends EventDispatcher
 		{
 			this.numInstances--;
 		}
+		this._instanceMap.remove(instance.id);
 	}
 	
 	public function getConstructorValues(?values:Array<Dynamic>):Array<Dynamic>
@@ -108,6 +122,14 @@ class ValEditTemplate extends EventDispatcher
 			this.constructorCollection.toValueArray(values);
 		}
 		return values;
+	}
+	
+	public function loadComplete():Void
+	{
+		for (instance in this._instances)
+		{
+			instance.loadComplete();
+		}
 	}
 	
 }

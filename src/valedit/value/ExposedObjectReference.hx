@@ -29,6 +29,11 @@ class ExposedObjectReference extends ExposedValue
 	
 	private var _valEditObjectReference:ValEditObject;
 	
+	// LOADING
+	private var _objectID:String;
+	private var _objectClassName:String;
+	//\LOADING
+	
 	override function set_value(value:Dynamic):Dynamic 
 	{
 		if (Std.isOfType(value, ValEditObject))
@@ -55,6 +60,8 @@ class ExposedObjectReference extends ExposedValue
 		this.classList = null;
 		this._valEditObjectReference = null;
 		this.isNullable = true;
+		this._objectID = null;
+		this._objectClassName = null;
 	}
 	
 	public function pool():Void
@@ -90,6 +97,14 @@ class ExposedObjectReference extends ExposedValue
 		return reference;
 	}
 	
+	override public function loadComplete():Void 
+	{
+		if (this._objectID != null)
+		{
+			this.value = ValEdit.getObjectWithClassName(this._objectID, this._objectClassName);
+		}
+	}
+	
 	override public function fromJSON(json:Dynamic):Void 
 	{
 		super.fromJSON(json);
@@ -119,6 +134,21 @@ class ExposedObjectReference extends ExposedValue
 			}
 		}
 		return super.toJSON(json);
+	}
+	
+	override public function fromJSONSave(json:Dynamic):Void 
+	{
+		this._objectID = json.value;
+		this._objectClassName = json.clss;
+	}
+	
+	override public function toJSONSave(json:Dynamic):Void 
+	{
+		if (this.value != null)
+		{
+			var data:Dynamic = {value:this._valEditObjectReference.id, clss:this._valEditObjectReference.className};
+			Reflect.setField(json, this.propertyName, data);
+		}
 	}
 	
 	override public function toJSONSimple(json:Dynamic):Void 

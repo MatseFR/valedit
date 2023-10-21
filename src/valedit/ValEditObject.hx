@@ -178,4 +178,17 @@ class ValEditObject extends EventDispatcher
 		return this;
 	}
 	
+	public function loadComplete():Void
+	{
+		if (this.defaultCollection != null)
+		{
+			this.defaultCollection.loadComplete();
+		}
+		
+		for (collection in this._keyFrameToCollection)
+		{
+			collection.loadComplete();
+		}
+	}
+	
 }
