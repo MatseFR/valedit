@@ -27,7 +27,7 @@ class ValEditKeyFrame extends EventDispatcher
 	public var indexStart:Int;
 	public var isActive(default, null):Bool;
 	public var isEmpty(get, never):Bool;
-	public var objects:Array<ValEditObject> = new Array<ValEditObject>();
+	public var objects(default, null):Array<ValEditObject> = new Array<ValEditObject>();
 	public var timeLine:ValEditTimeLine;
 	public var transition(get, set):String;
 	public var tween(get, set):Bool;
@@ -76,6 +76,7 @@ class ValEditKeyFrame extends EventDispatcher
 		return this._tween = value;
 	}
 	
+	// helper vars
 	private var _remainingObjects:Array<ValEditObject> = new Array<ValEditObject>();
 	private var _tweenObjectMap:Map<ValEditObject, ValEditObject> = new Map<ValEditObject, ValEditObject>();
 	private var _tweens:Array<FrameTween> = new Array<FrameTween>();
@@ -97,8 +98,10 @@ class ValEditKeyFrame extends EventDispatcher
 			if (object.canBeDestroyed()) ValEdit.destroyObject(object);
 		}
 		this.objects.resize(0);
+		
 		this.activateFunction = null;
 		this.deactivateFunction = null;
+		this.isActive = false;
 		this.timeLine = null;
 		this._transition = Transitions.LINEAR;
 		this.tween = false;
@@ -116,10 +119,10 @@ class ValEditKeyFrame extends EventDispatcher
 		return this.timeLine == null;
 	}
 	
-	public function add(object:ValEditObject):Void
+	public function add(object:ValEditObject, collection:ExposedCollection = null):Void
 	{
 		this.objects[this.objects.length] = object;
-		object.addKeyFrame(this);
+		object.addKeyFrame(this, collection);
 		if (this.isActive)
 		{
 			object.setKeyFrame(this);
