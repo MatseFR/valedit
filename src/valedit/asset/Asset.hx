@@ -1,10 +1,11 @@
 package valedit.asset;
+import haxe.zip.Entry;
 
 /**
  * ...
  * @author Matse
  */
-class Asset 
+abstract class Asset 
 {
 	public var name:String;
 	public var path:String;
@@ -15,5 +16,17 @@ class Asset
 	{
 		
 	}
+	
+	public function toJSONSave(json:Dynamic = null):Dynamic
+	{
+		if (json == null) json = {};
+		
+		json.name = this.name;
+		json.path = this.path;
+		
+		return json;
+	}
+	
+	abstract public function toZIPEntry():Entry;
 	
 }
