@@ -132,6 +132,18 @@ class AssetLib
 		initTexts();
 	}
 	
+	static public function reset():Void
+	{
+		resetBinaries();
+		resetBitmaps();
+		resetSounds();
+		resetTexts();
+		#if starling
+		resetStarlingAtlases();
+		resetStarlingTextures();
+		#end
+	}
+	
 	static public function load(completeCallback:Void->Void):Void
 	{
 		_loadCompleteCallback = completeCallback;
@@ -190,6 +202,23 @@ class AssetLib
 				asset.isLoaded = false;
 			}
 			addBinary(asset);
+		}
+	}
+	
+	static private function resetBinaries():Void
+	{
+		var assetsToRemove:Array<BinaryAsset> = [];
+		for (asset in binaryList)
+		{
+			if (asset.source == AssetSource.EXTERNAL)
+			{
+				assetsToRemove.push(asset);
+			}
+		}
+		
+		for (asset in assetsToRemove)
+		{
+			removeBinary(asset);
 		}
 	}
 	
@@ -310,6 +339,23 @@ class AssetLib
 		}
 	}
 	
+	static private function resetBitmaps():Void
+	{
+		var assetsToRemove:Array<BitmapAsset> = [];
+		for (asset in bitmapList)
+		{
+			if (asset.source == AssetSource.EXTERNAL)
+			{
+				assetsToRemove.push(asset);
+			}
+		}
+		
+		for (asset in assetsToRemove)
+		{
+			removeBitmap(asset);
+		}
+	}
+	
 	static public function addBitmap(asset:BitmapAsset):Void
 	{
 		bitmapList.push(asset);
@@ -327,7 +373,11 @@ class AssetLib
 		#if valeditor
 		bitmapCollection.remove(asset);
 		#end
-		if (asset.content != null) _bitmapDataToAsset.remove(asset.content);
+		if (asset.content != null)
+		{
+			_bitmapDataToAsset.remove(asset.content);
+			asset.content.dispose();
+		}
 	}
 	
 	static public function createBitmap(path:String, bmd:BitmapData, data:ByteArray):Void
@@ -457,6 +507,23 @@ class AssetLib
 		}
 	}
 	
+	static private function resetSounds():Void
+	{
+		var assetsToRemove:Array<SoundAsset> = [];
+		for (asset in soundList)
+		{
+			if (asset.source == AssetSource.EXTERNAL)
+			{
+				assetsToRemove.push(asset);
+			}
+		}
+		
+		for (asset in assetsToRemove)
+		{
+			removeSound(asset);
+		}
+	}
+	
 	static public function addSound(asset:SoundAsset):Void
 	{
 		soundList.push(asset);
@@ -572,6 +639,23 @@ class AssetLib
 		}
 	}
 	
+	static private function resetTexts():Void
+	{
+		var assetsToRemove:Array<TextAsset> = [];
+		for (asset in textList)
+		{
+			if (asset.source == AssetSource.EXTERNAL)
+			{
+				assetsToRemove.push(asset);
+			}
+		}
+		
+		for (asset in assetsToRemove)
+		{
+			removeText(asset);
+		}
+	}
+	
 	static public function addText(asset:TextAsset):Void
 	{
 		textList.push(asset);
@@ -660,6 +744,23 @@ class AssetLib
 	// STARLING TEXTURES
 	//####################################################################################################
 	#if starling
+	static private function resetStarlingTextures():Void
+	{
+		var assetsToRemove:Array<StarlingTextureAsset> = [];
+		for (asset in starlingTextureList)
+		{
+			if (asset.source == AssetSource.EXTERNAL)
+			{
+				assetsToRemove.push(asset);
+			}
+		}
+		
+		for (asset in assetsToRemove)
+		{
+			removeStarlingTexture(asset);
+		}
+	}
+	
 	static public function addStarlingTexture(asset:StarlingTextureAsset):Void
 	{
 		starlingTextureList.push(asset);
@@ -677,7 +778,11 @@ class AssetLib
 		#if valeditor
 		starlingTextureCollection.remove(asset);
 		#end
-		if (asset.content != null) _starlingTextureToAsset.remove(asset.content);
+		if (asset.content != null) 
+		{
+			_starlingTextureToAsset.remove(asset.content);
+			asset.content.dispose();
+		}
 	}
 	
 	static public function createStarlingTexture(path:String, texture:Texture, textureParams:TextureCreationParameters, bitmapAsset:BitmapAsset, ?name:String, ?preview:BitmapData):Void
@@ -727,6 +832,23 @@ class AssetLib
 	// STARLING ATLASES
 	//####################################################################################################
 	#if starling
+	static private function resetStarlingAtlases():Void
+	{
+		var assetsToRemove:Array<StarlingAtlasAsset> = [];
+		for (asset in starlingAtlasList)
+		{
+			if (asset.source == AssetSource.EXTERNAL)
+			{
+				assetsToRemove.push(asset);
+			}
+		}
+		
+		for (asset in assetsToRemove)
+		{
+			removeStarlingAtlas(asset);
+		}
+	}
+	
 	static public function addStarlingAtlas(asset:StarlingAtlasAsset):Void
 	{
 		starlingAtlasList.push(asset);
@@ -807,6 +929,8 @@ class AssetLib
 				textureAsset = getStarlingTextureAssetFromTexture(texture);
 				if (textureAsset != null) removeStarlingTexture(textureAsset);
 			}
+			
+			asset.content.dispose();
 		}
 	}
 	
