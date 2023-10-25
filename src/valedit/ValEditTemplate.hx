@@ -57,8 +57,11 @@ class ValEditTemplate extends EventDispatcher
 		this.constructorCollection = null;
 		this.numInstances = 0;
 		
-		ValEdit.destroyObject(this.object);
-		this.object = null;
+		if (this.object != null)
+		{
+			ValEdit.destroyObject(this.object);
+			this.object = null;
+		}
 		
 		for (instance in this._instances)
 		{
