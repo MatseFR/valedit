@@ -23,9 +23,7 @@ class StarlingTextureAsset extends Asset
 	
 	override public function toJSONSave(json:Dynamic = null):Dynamic 
 	{
-		if (json == null) json = {};
-		
-		json.name = this.name;
+		json = super.toJSONSave(json);
 		json.bitmapPath = this.bitmapAsset.path;
 		json.textureParams = this.textureParams.toJSON();
 		
