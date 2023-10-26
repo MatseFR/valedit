@@ -55,7 +55,7 @@ class ValEditTemplate extends EventDispatcher
 		this.clss = null;
 		this.collection = null;
 		this.constructorCollection = null;
-		this.numInstances = 0;
+		//this.numInstances = 0;
 		
 		if (this.object != null)
 		{
