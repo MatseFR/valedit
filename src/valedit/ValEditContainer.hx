@@ -278,6 +278,13 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 			this.rootContainer = null;
 		}
 		
+		#if starling
+		if (this._rootContainerStarling != null)
+		{
+			this.rootContainerStarling = null;
+		}
+		#end
+		
 		if (this._container != null)
 		{
 			this._container = null;
