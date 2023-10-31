@@ -1,5 +1,6 @@
 package valedit.value;
 
+import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
 
 /**
@@ -23,8 +24,20 @@ class ExposedString extends ExposedValue
 	
 	/* 0 = unlimited */
 	public var maxChars:Int = 0;
+	public var prompt(get, set):String;
 	public var restrict:String = null;
 	public var inputPercentWidth:Float;
+	
+	private var _prompt:String;
+	private function get_prompt():String { return this._prompt; }
+	private function set_prompt(value:String):String
+	{
+		if (this._prompt == value) return value;
+		
+		this._prompt = value;
+		ValueEvent.dispatch(this, ValueEvent.PROPERTY_CHANGE, this);
+		return this._prompt;
+	}
 	
 	/**
 	   
