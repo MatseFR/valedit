@@ -59,9 +59,9 @@ class SettingsData
 			collection.addValue(bool, groupName);
 		}
 		
-		if (!collection.hasValue("useZIP"))
+		if (!collection.hasValue("useZip"))
 		{
-			bool = new ExposedBool("useZIP", "ZIP");
+			bool = new ExposedBool("useZip", "ZIP");
 			#if !desktop
 			bool.isEditable = false;
 			#end
