@@ -459,36 +459,40 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	
 	public function getNextKeyFrame(frame:ValEditKeyFrame):ValEditKeyFrame
 	{
-		for (i in frame.indexEnd + 1...this._numFrames)
+		var keyFrameIndex:Int = this._keyFrames.indexOf(frame);
+		if (keyFrameIndex != -1 && keyFrameIndex < this._keyFrames.length - 1)
 		{
-			if (this._frames[i] != null && this._frames[i] != frame) return cast this._frames[i];
+			return this._keyFrames[keyFrameIndex + 1];
 		}
 		return null;
 	}
 	
 	public function getNextKeyFrameFromIndex(index:Int):ValEditKeyFrame
 	{
-		for (i in index...this._numFrames)
+		var keyFrameIndex:Int = this._keyFrames.indexOf(this._frames[index]);
+		if (keyFrameIndex != -1 && keyFrameIndex < this._keyFrames.length - 1)
 		{
-			if (this._frames[i] != null) return cast this._frames[i];
+			return this._keyFrames[keyFrameIndex + 1];
 		}
 		return null;
 	}
 	
 	public function getPreviousKeyFrame(frame:ValEditKeyFrame):ValEditKeyFrame
 	{
-		for (i in new ReverseIterator(frame.indexStart -1, 0))
+		var keyFrameIndex:Int = this._keyFrames.indexOf(frame);
+		if (keyFrameIndex > 0)
 		{
-			if (this._frames[i] != null && this._frames[i] != frame) return cast this._frames[i];
+			return this._keyFrames[keyFrameIndex - 1];
 		}
 		return null;
 	}
 	
 	public function getPreviousKeyFrameFromIndex(index:Int):ValEditKeyFrame
 	{
-		for (i in new ReverseIterator(index, 0))
+		var keyFrameIndex:Int = this._keyFrames.indexOf(this._frames[index]);
+		if (keyFrameIndex > 0)
 		{
-			if (this._frames[i] != null) return cast this._frames[i];
+			return this._keyFrames[keyFrameIndex - 1];
 		}
 		return null;
 	}
