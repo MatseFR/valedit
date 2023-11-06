@@ -620,7 +620,7 @@ class ExposedCollection extends EventDispatcher
 					targetValue = targetCollection.getValue(value.propertyName);
 					if (value.value != targetValue.value)
 					{
-						tweenProperties.addProperty(value.propertyName, targetValue.value);
+						tweenProperties.addProperty(value.propertyName, value.value, targetValue.value);
 					}
 				}
 			}
