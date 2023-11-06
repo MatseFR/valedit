@@ -523,7 +523,7 @@ class ExposedGroup extends ExposedValue
 					targetValue = targetGroup.getValue(value.propertyName);
 					if (value.value != targetValue.value)
 					{
-						tweenProperties.addProperty(value.propertyName, targetValue.value);
+						tweenProperties.addProperty(value.propertyName, value.value, targetValue.value);
 					}
 				}
 			}
