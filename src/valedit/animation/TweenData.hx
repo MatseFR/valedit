@@ -49,7 +49,6 @@ class TweenData
 		var properties:TweenProperties = TweenProperties.fromPool();
 		properties.object = object;
 		this._objectToProperties.set(object, properties);
-		//this._properties[this._properties.length] = properties;
 		this._properties.unshift(properties);
 		return properties;
 	}
@@ -79,7 +78,7 @@ class TweenData
 		var tween:FrameTween;
 		for (properties in this._properties)
 		{
-			if (properties.numProperties == 0 && properties.onUpdate == null) continue;
+			if (properties.numProperties == 0)/* && properties.onUpdate == null)*/ continue;
 			tween = FrameTween.fromPool(properties.object, duration, transition);
 			properties.applyToTween(tween);
 			tweens[tweens.length] = tween;
