@@ -1,9 +1,8 @@
 package valedit.value;
 
 import openfl.display.Bitmap;
-import valedit.value.base.ExposedValue;
-import valedit.asset.AssetLib;
 import valedit.asset.BitmapAsset;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -96,7 +95,7 @@ class ExposedBitmap extends ExposedValue
 	{
 		if (json.asset != null)
 		{
-			this.value = AssetLib.getBitmapFromPath(json.asset);
+			this.value = ValEdit.assetLib.getBitmapFromPath(json.asset);
 		}
 		super.fromJSON(json);
 	}
@@ -113,7 +112,7 @@ class ExposedBitmap extends ExposedValue
 	
 	override public function fromJSONSave(json:Dynamic):Void 
 	{
-		this.value = AssetLib.getBitmapFromPath(json.asset);
+		this.value = ValEdit.assetLib.getBitmapFromPath(json.asset);
 	}
 	
 	override public function toJSONSave(json:Dynamic):Void 

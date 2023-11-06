@@ -1,8 +1,7 @@
 package valedit.value.starling;
 
-import valedit.value.base.ExposedValue;
-import valedit.asset.AssetLib;
 import valedit.asset.starling.StarlingAtlasAsset;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -83,7 +82,7 @@ class ExposedStarlingAtlas extends ExposedValue
 		super.fromJSON(json);
 		if (json.asset != null)
 		{
-			this.value = AssetLib.getStarlingAtlasAssetFromPath(json.asset);
+			this.value = ValEdit.assetLib.getStarlingAtlasAssetFromPath(json.asset);
 		}
 	}
 	
@@ -99,7 +98,7 @@ class ExposedStarlingAtlas extends ExposedValue
 	
 	override public function fromJSONSave(json:Dynamic):Void 
 	{
-		this.value = AssetLib.getStarlingAtlasAssetFromPath(json.asset);
+		this.value = ValEdit.assetLib.getStarlingAtlasAssetFromPath(json.asset);
 	}
 	
 	override public function toJSONSave(json:Dynamic):Void 

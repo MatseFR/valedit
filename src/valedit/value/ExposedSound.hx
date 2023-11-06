@@ -1,8 +1,7 @@
 package valedit.value;
 
-import valedit.value.base.ExposedValue;
-import valedit.asset.AssetLib;
 import valedit.asset.SoundAsset;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -82,7 +81,7 @@ class ExposedSound extends ExposedValue
 	{
 		if (json.asset != null)
 		{
-			this.value = AssetLib.getSoundFromPath(json.asset);
+			this.value = ValEdit.assetLib.getSoundFromPath(json.asset);
 		}
 		super.fromJSON(json);
 	}
@@ -99,7 +98,7 @@ class ExposedSound extends ExposedValue
 	
 	override public function fromJSONSave(json:Dynamic):Void 
 	{
-		this.value = AssetLib.getSoundFromPath(json.asset);
+		this.value = ValEdit.assetLib.getSoundFromPath(json.asset);
 	}
 	
 	override public function toJSONSave(json:Dynamic):Void 

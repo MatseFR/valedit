@@ -98,7 +98,7 @@ class ExposedText extends ExposedValue
 		super.fromJSON(json);
 		if (json.asset != null)
 		{
-			this.value = AssetLib.getTextFromPath(json.asset);
+			this.value = ValEdit.assetLib.getTextFromPath(json.asset);
 		}
 		else
 		{
@@ -124,7 +124,7 @@ class ExposedText extends ExposedValue
 	{
 		if (json.asset != null)
 		{
-			this.value = AssetLib.getTextFromPath(json.asset);
+			this.value = ValEdit.assetLib.getTextFromPath(json.asset);
 		}
 		else
 		{

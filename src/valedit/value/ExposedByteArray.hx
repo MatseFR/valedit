@@ -1,8 +1,7 @@
 package valedit.value;
 
-import valedit.value.base.ExposedValue;
-import valedit.asset.AssetLib;
 import valedit.asset.BinaryAsset;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -81,7 +80,7 @@ class ExposedByteArray extends ExposedValue
 		super.fromJSON(json);
 		if (json.asset != null)
 		{
-			this.value = AssetLib.getBitmapFromPath(json.asset);
+			this.value = ValEdit.assetLib.getBitmapFromPath(json.asset);
 		}
 	}
 	
@@ -97,7 +96,7 @@ class ExposedByteArray extends ExposedValue
 	
 	override public function fromJSONSave(json:Dynamic):Void 
 	{
-		this.value = AssetLib.getBinaryFromPath(json.asset);
+		this.value = ValEdit.assetLib.getBinaryFromPath(json.asset);
 	}
 	
 	override public function toJSONSave(json:Dynamic):Void 

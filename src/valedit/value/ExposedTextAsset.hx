@@ -1,8 +1,7 @@
 package valedit.value;
 
-import valedit.value.base.ExposedValue;
-import valedit.asset.AssetLib;
 import valedit.asset.TextAsset;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -83,7 +82,7 @@ class ExposedTextAsset extends ExposedValue
 		super.fromJSON(json);
 		if (json.asset != null)
 		{
-			this.value = AssetLib.getTextFromPath(json.asset);
+			this.value = ValEdit.assetLib.getTextFromPath(json.asset);
 		}
 	}
 	
@@ -99,7 +98,7 @@ class ExposedTextAsset extends ExposedValue
 	
 	override public function fromJSONSave(json:Dynamic):Void 
 	{
-		this.value = AssetLib.getTextFromPath(json.asset);
+		this.value = ValEdit.assetLib.getTextFromPath(json.asset);
 	}
 	
 	override public function toJSONSave(json:Dynamic):Void 
