@@ -160,7 +160,7 @@ class ValEditKeyFrame extends EventDispatcher
 		this._indexCurrent = -1;
 	}
 	
-	private function buildTweens():Void
+	public function buildTweens():Void
 	{
 		var nextFrame:ValEditKeyFrame = this.timeLine.getNextKeyFrame(this);
 		if (nextFrame == null) return;
