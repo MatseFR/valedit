@@ -26,7 +26,8 @@ class TweenProperties
 	public var object:Dynamic;
 	public var onUpdate:Function;
 	public var onUpdateArgs:Array<Dynamic>;
-	public var values(default, null):Array<Float> = new Array<Float>();
+	public var startValues(default, null):Array<Float> = new Array<Float>();
+	public var targetValues(default, null):Array<Float> = new Array<Float>();
 	
 	private function get_numProperties():Int { return this.names.length; }
 	
@@ -41,7 +42,8 @@ class TweenProperties
 		this.object = null;
 		this.onUpdate = null;
 		this.onUpdateArgs = null;
-		this.values.resize(0);
+		this.startValues.resize(0);
+		this.targetValues.resize(0);
 	}
 	
 	public function pool():Void
@@ -50,10 +52,11 @@ class TweenProperties
 		_POOL[_POOL.length] = this;
 	}
 	
-	public function addProperty(name:String, value:Float):Void
+	public function addProperty(name:String, startValue:Float, targetValue:Float):Void
 	{
 		this.names[this.names.length] = name;
-		this.values[this.values.length] = value;
+		this.startValues[this.startValues.length] = startValue;
+		this.targetValues[this.targetValues.length] = targetValue;
 	}
 	
 	public function applyToTween(tween:Tween):Void
@@ -61,7 +64,7 @@ class TweenProperties
 		var count:Int = this.names.length;
 		for (i in 0...count)
 		{
-			tween.animate(this.names[i], this.values[i]);
+			tween.animateStartEnd(this.names[i], this.startValues[i], this.targetValues[i]);
 		}
 		tween.onUpdate = this.onUpdate;
 		tween.onUpdateArgs = this.onUpdateArgs;
