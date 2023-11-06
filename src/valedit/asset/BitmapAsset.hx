@@ -3,7 +3,6 @@ import haxe.crypto.Crc32;
 import haxe.io.Bytes;
 import haxe.zip.Entry;
 import openfl.display.BitmapData;
-import openfl.utils.ByteArray;
 
 /**
  * ...
@@ -12,7 +11,7 @@ import openfl.utils.ByteArray;
 class BitmapAsset extends Asset 
 {
 	public var content:BitmapData;
-	public var data:ByteArray;
+	public var data:Bytes;
 	public var preview:BitmapData;
 	
 	public function new() 
