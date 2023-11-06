@@ -489,6 +489,11 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	
 	public function getPreviousKeyFrameFromIndex(index:Int):ValEditKeyFrame
 	{
+		if (this._frames[index] == null)
+		{
+			return this._keyFrames[this._keyFrames.length - 1];
+		}
+		
 		var keyFrameIndex:Int = this._keyFrames.indexOf(this._frames[index]);
 		if (keyFrameIndex > 0)
 		{
