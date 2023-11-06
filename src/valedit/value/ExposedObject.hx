@@ -75,7 +75,7 @@ class ExposedObject extends ExposedValueWithChildren
 		if (this._object == value) return value;
 		if (value != null)
 		{
-			this._storedValue = Reflect.getProperty(value, this.propertyName);
+			if (this._storedValue == null) this._storedValue = Reflect.getProperty(value, this.propertyName);
 			if (this._objectCollection == null)
 			{
 				var objectCollection:ExposedCollection = ValEditor.getCollectionForObject(this._storedValue);
