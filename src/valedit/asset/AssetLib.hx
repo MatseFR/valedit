@@ -1,6 +1,7 @@
 package valedit.asset;
 
 import haxe.ds.ObjectMap;
+import haxe.io.Bytes;
 import haxe.io.Path;
 import openfl.display.BitmapData;
 import openfl.geom.Matrix;
@@ -32,96 +33,104 @@ import valeditor.ui.UIConfig;
  */
 class AssetLib 
 {
-	static public var generatePreviews(get, never):Bool;
-	static private var _generatePreview:Bool;
-	static private function get_generatePreviews():Bool { return _generatePreview; }
+	public var generatePreviews(get, never):Bool;
+	
+	private var _generatePreview:Bool;
+	private function get_generatePreviews():Bool { return this._generatePreview; }
+	
+	private var _registeredExtensions:Map<String, String> = new Map<String, String>();
 	
 	// BINARIES
 	#if valeditor
-	static public var binaryCollection(default, null):ArrayCollection<BinaryAsset>;
+	public var binaryCollection(default, null):ArrayCollection<BinaryAsset>;
 	#end
-	static public var binaryList(default, null):Array<BinaryAsset> = new Array<BinaryAsset>();
-	static private var _binaryMap:Map<String, BinaryAsset> = new Map<String, BinaryAsset>();
-	static private var _binaryToAsset:ObjectMap<ByteArray, BinaryAsset> = new ObjectMap<ByteArray, BinaryAsset>();
+	public var binaryList(default, null):Array<BinaryAsset> = new Array<BinaryAsset>();
+	private var _binaryMap:Map<String, BinaryAsset> = new Map<String, BinaryAsset>();
+	private var _binaryToAsset:ObjectMap<ByteArray, BinaryAsset> = new ObjectMap<ByteArray, BinaryAsset>();
 	
 	// BITMAPS
 	#if valeditor
-	static public var bitmapCollection(default, null):ArrayCollection<BitmapAsset>;
+	public var bitmapCollection(default, null):ArrayCollection<BitmapAsset>;
 	#end
-	static public var bitmapList(default, null):Array<BitmapAsset> = new Array<BitmapAsset>();
-	static private var _bitmapMap:Map<String, BitmapAsset> = new Map<String, BitmapAsset>();
-	static private var _bitmapDataToAsset:ObjectMap<BitmapData, BitmapAsset> = new ObjectMap<BitmapData, BitmapAsset>();
+	public var bitmapList(default, null):Array<BitmapAsset> = new Array<BitmapAsset>();
+	private var _bitmapMap:Map<String, BitmapAsset> = new Map<String, BitmapAsset>();
+	private var _bitmapDataToAsset:ObjectMap<BitmapData, BitmapAsset> = new ObjectMap<BitmapData, BitmapAsset>();
 	
 	// SOUNDS
 	#if valeditor
-	static public var soundCollection(default, null):ArrayCollection<SoundAsset>;
+	public var soundCollection(default, null):ArrayCollection<SoundAsset>;
 	#end
-	static public var soundList(default, null):Array<SoundAsset> = new Array<SoundAsset>();
-	static private var _soundMap:Map<String, SoundAsset> = new Map<String, SoundAsset>();
-	static private var _soundToAsset:ObjectMap<Sound, SoundAsset> = new ObjectMap<Sound, SoundAsset>();
+	public var soundList(default, null):Array<SoundAsset> = new Array<SoundAsset>();
+	private var _soundMap:Map<String, SoundAsset> = new Map<String, SoundAsset>();
+	private var _soundToAsset:ObjectMap<Sound, SoundAsset> = new ObjectMap<Sound, SoundAsset>();
 	
 	// TEXTS
 	#if valeditor
-	static public var textCollection(default, null):ArrayCollection<TextAsset>;
+	public var textCollection(default, null):ArrayCollection<TextAsset>;
 	#end
-	static public var textList(default, null):Array<TextAsset> = new Array<TextAsset>();
-	static private var _textMap:Map<String, TextAsset> = new Map<String, TextAsset>();
-	static private var _textToAsset:Map<String, TextAsset> = new Map<String, TextAsset>();
+	public var textList(default, null):Array<TextAsset> = new Array<TextAsset>();
+	private var _textMap:Map<String, TextAsset> = new Map<String, TextAsset>();
+	private var _textToAsset:Map<String, TextAsset> = new Map<String, TextAsset>();
 	
 	// STARLING TEXTURES
 	#if starling
 	#if valeditor
-	static public var starlingTextureCollection(default, null):ArrayCollection<StarlingTextureAsset>;
+	public var starlingTextureCollection(default, null):ArrayCollection<StarlingTextureAsset>;
 	#end
-	static public var starlingTextureList(default, null):Array<StarlingTextureAsset> = new Array<StarlingTextureAsset>();
-	static private var _starlingTextureMap:Map<String, StarlingTextureAsset> = new Map<String, StarlingTextureAsset>();
-	static private var _starlingTextureToAsset:ObjectMap<starling.textures.Texture, StarlingTextureAsset> = new ObjectMap<starling.textures.Texture, StarlingTextureAsset>();
+	public var starlingTextureList(default, null):Array<StarlingTextureAsset> = new Array<StarlingTextureAsset>();
+	private var _starlingTextureMap:Map<String, StarlingTextureAsset> = new Map<String, StarlingTextureAsset>();
+	private var _starlingTextureToAsset:ObjectMap<starling.textures.Texture, StarlingTextureAsset> = new ObjectMap<starling.textures.Texture, StarlingTextureAsset>();
 	#end
 	
 	// STARLING ATLASES
 	#if starling
 	#if valeditor
-	static public var starlingAtlasCollection(default, null):ArrayCollection<StarlingAtlasAsset>;
+	public var starlingAtlasCollection(default, null):ArrayCollection<StarlingAtlasAsset>;
 	#end
-	static public var starlingAtlasList(default, null):Array<StarlingAtlasAsset> = new Array<StarlingAtlasAsset>();
-	static private var _starlingAtlasMap:Map<String, StarlingAtlasAsset> = new Map<String, StarlingAtlasAsset>();
-	static private var _starlingAtlasToAsset:ObjectMap<starling.textures.TextureAtlas, StarlingAtlasAsset> = new ObjectMap<starling.textures.TextureAtlas, StarlingAtlasAsset>();
-	static private var _starlingAtlasTextureToAsset:ObjectMap<starling.textures.Texture, StarlingAtlasAsset> = new ObjectMap<starling.textures.Texture, StarlingAtlasAsset>();
+	public var starlingAtlasList(default, null):Array<StarlingAtlasAsset> = new Array<StarlingAtlasAsset>();
+	private var _starlingAtlasMap:Map<String, StarlingAtlasAsset> = new Map<String, StarlingAtlasAsset>();
+	private var _starlingAtlasToAsset:ObjectMap<starling.textures.TextureAtlas, StarlingAtlasAsset> = new ObjectMap<starling.textures.TextureAtlas, StarlingAtlasAsset>();
+	private var _starlingAtlasTextureToAsset:ObjectMap<starling.textures.Texture, StarlingAtlasAsset> = new ObjectMap<starling.textures.Texture, StarlingAtlasAsset>();
 	#end
 	
-	static private var _matrix:Matrix;
-	static private var _previewRect:Rectangle;
-	static private var _rect:Rectangle;
+	private var _matrix:Matrix;
+	private var _previewRect:Rectangle;
+	private var _rect:Rectangle;
 	
-	static private var _loadStack:Array<Void->Void>;
-	static private var _loadCompleteCallback:Void->Void;
+	private var _loadStack:Array<Void->Void>;
+	private var _loadCompleteCallback:Void->Void;
 	
-	static private var _debug:Bool = true;
+	private var _debug:Bool = true;
+	
+	public function new() 
+	{
+		
+	}
 	
 	/** generatePreview has no effect unless valeditor library is available */
-	static public function init(generatePreviews:Bool = true):Void
+	public function init(generatePreviews:Bool = true):Void
 	{
 		#if valeditor
-		_generatePreview = generatePreviews;
+		this._generatePreview = generatePreviews;
 		
-		if (_generatePreview)
+		if (this._generatePreview)
 		{
-			_matrix = new Matrix();
-			_previewRect = new Rectangle(0, 0, UIConfig.ASSET_PREVIEW_SIZE, UIConfig.ASSET_PREVIEW_SIZE);
-			_rect = new Rectangle();
+			this._matrix = new Matrix();
+			this._previewRect = new Rectangle(0, 0, UIConfig.ASSET_PREVIEW_SIZE, UIConfig.ASSET_PREVIEW_SIZE);
+			this._rect = new Rectangle();
 		}
 		#else
-		_generatePreview = false;
+		this._generatePreview = false;
 		#end
 		
 		#if valeditor
-		binaryCollection = new ArrayCollection<BinaryAsset>();
-		bitmapCollection = new ArrayCollection<BitmapAsset>();
-		soundCollection = new ArrayCollection<SoundAsset>();
-		textCollection = new ArrayCollection<TextAsset>();
+		this.binaryCollection = new ArrayCollection<BinaryAsset>();
+		this.bitmapCollection = new ArrayCollection<BitmapAsset>();
+		this.soundCollection = new ArrayCollection<SoundAsset>();
+		this.textCollection = new ArrayCollection<TextAsset>();
 		#if starling
-		starlingTextureCollection = new ArrayCollection<StarlingTextureAsset>();
-		starlingAtlasCollection = new ArrayCollection<StarlingAtlasAsset>();
+		this.starlingTextureCollection = new ArrayCollection<StarlingTextureAsset>();
+		this.starlingAtlasCollection = new ArrayCollection<StarlingAtlasAsset>();
 		#end
 		#end
 		
@@ -132,7 +141,7 @@ class AssetLib
 		initTexts();
 	}
 	
-	static public function reset():Void
+	public function reset():Void
 	{
 		resetBinaries();
 		resetBitmaps();
@@ -144,39 +153,70 @@ class AssetLib
 		#end
 	}
 	
-	static public function load(completeCallback:Void->Void):Void
+	public function load(completeCallback:Void->Void):Void
 	{
-		_loadCompleteCallback = completeCallback;
+		this._loadCompleteCallback = completeCallback;
 		
-		_loadStack = [];
-		_loadStack.push(loadBinaries);
-		_loadStack.push(loadBitmaps);
-		_loadStack.push(loadSounds);
-		_loadStack.push(loadTexts);
+		this._loadStack = [];
+		this._loadStack.push(loadBinaries);
+		this._loadStack.push(loadBitmaps);
+		this._loadStack.push(loadSounds);
+		this._loadStack.push(loadTexts);
 		
 		loadNext();
 	}
 	
-	static private function loadNext():Void
+	private function loadNext():Void
 	{
-		if (_loadStack.length != 0)
+		if (this._loadStack.length != 0)
 		{
-			var func:Void->Void = _loadStack.pop();
+			var func:Void->Void = this._loadStack.pop();
 			func();
 		}
 		else
 		{
-			if (_loadCompleteCallback != null)
+			if (this._loadCompleteCallback != null)
 			{
-				_loadCompleteCallback();
+				this._loadCompleteCallback();
 			}
 		}
+	}
+	
+	public function isValidExtension(fileExtension:String):Bool
+	{
+		return this._registeredExtensions.exists(fileExtension);
+	}
+	
+	public function getAssetTypeForExtension(fileExtension:String):String
+	{
+		return this._registeredExtensions.get(fileExtension);
+	}
+	
+	/**
+	   
+	   @param	fileExtension	should be lowercase, AssetLib will automatically register the uppercase version of the extension
+	   @param	assetType
+	**/
+	public function registerExtension(fileExtension:String, assetType:String):Void
+	{
+		this._registeredExtensions.set(fileExtension, assetType);
+		this._registeredExtensions.set(fileExtension.toUpperCase(), assetType);
+	}
+	
+	/**
+	   
+	   @param	fileExtension	should be lowercase, AssetLib will automatically unregister the uppercase version of the extension
+	**/
+	public function unregisterExtension(fileExtension:String):Void
+	{
+		this._registeredExtensions.remove(fileExtension);
+		this._registeredExtensions.remove(fileExtension.toUpperCase());
 	}
 	
 	//####################################################################################################
 	// BINARIES
 	//####################################################################################################
-	static private function initBinaries():Void
+	private function initBinaries():Void
 	{
 		var asset:BinaryAsset;
 		var bytes:ByteArray;
@@ -189,7 +229,7 @@ class AssetLib
 			asset.name = Path.withoutDirectory(id);
 			try
 			{
-				if (_debug) trace("try " + id);
+				if (this._debug) trace("try " + id);
 				bytes = Assets.getBytes(id);
 				asset.content = bytes;
 				asset.source = AssetSource.ASSETS_EMBEDDED;
@@ -197,7 +237,7 @@ class AssetLib
 			}
 			catch (e)
 			{
-				if (_debug) trace("catch " + id);
+				if (this._debug) trace("catch " + id);
 				asset.source = AssetSource.ASSETS;
 				asset.isLoaded = false;
 			}
@@ -205,10 +245,10 @@ class AssetLib
 		}
 	}
 	
-	static private function resetBinaries():Void
+	private function resetBinaries():Void
 	{
 		var assetsToRemove:Array<BinaryAsset> = [];
-		for (asset in binaryList)
+		for (asset in this.binaryList)
 		{
 			if (asset.source == AssetSource.EXTERNAL)
 			{
@@ -222,27 +262,27 @@ class AssetLib
 		}
 	}
 	
-	static public function addBinary(asset:BinaryAsset):Void
+	public function addBinary(asset:BinaryAsset):Void
 	{
-		binaryList.push(asset);
-		_binaryMap[asset.path] = asset;
+		this.binaryList.push(asset);
+		this._binaryMap[asset.path] = asset;
 		#if valeditor
-		binaryCollection.add(asset);
+		this.binaryCollection.add(asset);
 		#end
-		if (asset.content != null) _binaryToAsset.set(asset.content, asset);
+		if (asset.content != null) this._binaryToAsset.set(asset.content, asset);
 	}
 	
-	static public function removeBinary(asset:BinaryAsset):Void
+	public function removeBinary(asset:BinaryAsset):Void
 	{
-		binaryList.remove(asset);
-		_binaryMap.remove(asset.path);
+		this.binaryList.remove(asset);
+		this._binaryMap.remove(asset.path);
 		#if valeditor
-		binaryCollection.remove(asset);
+		this.binaryCollection.remove(asset);
 		#end
-		if (asset.content != null) _binaryToAsset.remove(asset.content);
+		if (asset.content != null) this._binaryToAsset.remove(asset.content);
 	}
 	
-	static public function createBinary(path:String, bytes:ByteArray):Void
+	public function createBinary(path:String, bytes:ByteArray):Void
 	{
 		var asset:BinaryAsset = new BinaryAsset();
 		path = Path.normalize(path);
@@ -254,20 +294,20 @@ class AssetLib
 		addBinary(asset);
 	}
 	
-	static public function getBinaryFromByteArray(bytes:ByteArray):BinaryAsset
+	public function getBinaryFromByteArray(bytes:ByteArray):BinaryAsset
 	{
-		return _binaryToAsset.get(bytes);
+		return this._binaryToAsset.get(bytes);
 	}
 	
-	static public function getBinaryFromPath(path:String):BinaryAsset
+	public function getBinaryFromPath(path:String):BinaryAsset
 	{
-		return _binaryMap[path];
+		return this._binaryMap[path];
 	}
 	
-	static private function loadBinaries():Void
+	private function loadBinaries():Void
 	{
 		var idList:Array<String> = new Array<String>();
-		for (asset in binaryList)
+		for (asset in this.binaryList)
 		{
 			if (!asset.isLoaded && asset.source == AssetSource.ASSETS)
 			{
@@ -279,10 +319,10 @@ class AssetLib
 		loader.start();
 	}
 	
-	static private function loadBinariesComplete():Void
+	private function loadBinariesComplete():Void
 	{
 		var bytes:ByteArray;
-		for (asset in binaryList)
+		for (asset in this.binaryList)
 		{
 			if (!asset.isLoaded && asset.source == AssetSource.ASSETS)
 			{
@@ -291,7 +331,7 @@ class AssetLib
 					bytes = Assets.getBytes(asset.path);
 					asset.content = bytes;
 					asset.isLoaded = true;
-					_binaryToAsset.set(bytes, asset);
+					this._binaryToAsset.set(bytes, asset);
 				}
 				catch (e)
 				{
@@ -309,7 +349,7 @@ class AssetLib
 	//####################################################################################################
 	// BITMAPS
 	//####################################################################################################
-	static private function initBitmaps():Void
+	private function initBitmaps():Void
 	{
 		var asset:BitmapAsset;
 		var bmd:BitmapData;
@@ -322,16 +362,16 @@ class AssetLib
 			asset.name = Path.withoutDirectory(id);
 			try
 			{
-				if (_debug) trace("try " + id);
+				if (this._debug) trace("try " + id);
 				bmd = Assets.getBitmapData(id);
 				asset.content = bmd;
 				asset.source = AssetSource.ASSETS_EMBEDDED;
-				if (_generatePreview) makeBitmapPreview(asset);
+				if (this._generatePreview) makeBitmapPreview(asset);
 				asset.isLoaded = true;
 			}
 			catch (e)
 			{
-				if (_debug) trace("catch " + id);
+				if (this._debug) trace("catch " + id);
 				asset.source = AssetSource.ASSETS;
 				asset.isLoaded = false;
 			}
@@ -339,10 +379,10 @@ class AssetLib
 		}
 	}
 	
-	static private function resetBitmaps():Void
+	private function resetBitmaps():Void
 	{
 		var assetsToRemove:Array<BitmapAsset> = [];
-		for (asset in bitmapList)
+		for (asset in this.bitmapList)
 		{
 			if (asset.source == AssetSource.EXTERNAL)
 			{
@@ -356,31 +396,31 @@ class AssetLib
 		}
 	}
 	
-	static public function addBitmap(asset:BitmapAsset):Void
+	public function addBitmap(asset:BitmapAsset):Void
 	{
-		bitmapList.push(asset);
-		_bitmapMap[asset.path] = asset;
+		this.bitmapList.push(asset);
+		this._bitmapMap[asset.path] = asset;
 		#if valeditor
-		bitmapCollection.add(asset);
+		this.bitmapCollection.add(asset);
 		#end
-		if (asset.content != null) _bitmapDataToAsset.set(asset.content, asset);
+		if (asset.content != null) this._bitmapDataToAsset.set(asset.content, asset);
 	}
 	
-	static public function removeBitmap(asset:BitmapAsset):Void
+	public function removeBitmap(asset:BitmapAsset):Void
 	{
-		bitmapList.remove(asset);
-		_bitmapMap.remove(asset.path);
+		this.bitmapList.remove(asset);
+		this._bitmapMap.remove(asset.path);
 		#if valeditor
-		bitmapCollection.remove(asset);
+		this.bitmapCollection.remove(asset);
 		#end
 		if (asset.content != null)
 		{
-			_bitmapDataToAsset.remove(asset.content);
+			this._bitmapDataToAsset.remove(asset.content);
 			asset.content.dispose();
 		}
 	}
 	
-	static public function createBitmap(path:String, bmd:BitmapData, data:ByteArray):Void
+	public function createBitmap(path:String, bmd:BitmapData, data:Bytes):Void
 	{
 		var asset:BitmapAsset = new BitmapAsset();
 		path = Path.normalize(path);
@@ -389,25 +429,25 @@ class AssetLib
 		asset.content = bmd;
 		asset.source = AssetSource.EXTERNAL;
 		asset.data = data;
-		if (_generatePreview) makeBitmapPreview(asset);
+		if (this._generatePreview) makeBitmapPreview(asset);
 		asset.isLoaded = true;
 		addBitmap(asset);
 	}
 	
-	static public function getBitmapFromBitmapData(bmd:BitmapData):BitmapAsset
+	public function getBitmapFromBitmapData(bmd:BitmapData):BitmapAsset
 	{
-		return _bitmapDataToAsset.get(bmd);
+		return this._bitmapDataToAsset.get(bmd);
 	}
 	
-	static public function getBitmapFromPath(path:String):BitmapAsset
+	public function getBitmapFromPath(path:String):BitmapAsset
 	{
-		return _bitmapMap[path];
+		return this._bitmapMap[path];
 	}
 	
-	static private function loadBitmaps():Void
+	private function loadBitmaps():Void
 	{
 		var idList:Array<String> = new Array<String>();
-		for (asset in bitmapList)
+		for (asset in this.bitmapList)
 		{
 			if (!asset.isLoaded && asset.source == AssetSource.ASSETS)
 			{
@@ -419,7 +459,7 @@ class AssetLib
 		loader.start();
 	}
 	
-	static private function loadBitmapsComplete():Void
+	private function loadBitmapsComplete():Void
 	{
 		var bmd:BitmapData;
 		for (asset in bitmapList)
@@ -430,9 +470,9 @@ class AssetLib
 				{
 					bmd = Assets.getBitmapData(asset.path);
 					asset.content = bmd;
-					if (_generatePreview) makeBitmapPreview(asset);
+					if (this._generatePreview) makeBitmapPreview(asset);
 					asset.isLoaded = true;
-					_bitmapDataToAsset.set(bmd, asset);
+					this._bitmapDataToAsset.set(bmd, asset);
 				}
 				catch (e)
 				{
@@ -444,9 +484,9 @@ class AssetLib
 		loadNext();
 	}
 	
-	static private function makeBitmapPreview(asset:BitmapAsset):Void
+	private function makeBitmapPreview(asset:BitmapAsset):Void
 	{
-		ScaleUtil.fitRectangle(asset.content.rect, _previewRect, _rect);
+		ScaleUtil.fitRectangle(asset.content.rect, this._previewRect, this._rect);
 		var bmd:BitmapData;
 		if (asset.content.transparent)
 		{
@@ -457,9 +497,9 @@ class AssetLib
 			bmd = new BitmapData(Math.ceil(_rect.width), Math.ceil(_rect.height), false, 0x000000);
 		}
 		var scale = bmd.width / asset.content.width;
-		_matrix.identity();
-		_matrix.scale(scale, scale);
-		bmd.draw(asset.content, _matrix);
+		this._matrix.identity();
+		this._matrix.scale(scale, scale);
+		bmd.draw(asset.content, this._matrix);
 		asset.preview = bmd;
 	}
 	//####################################################################################################
@@ -469,7 +509,7 @@ class AssetLib
 	//####################################################################################################
 	// MOVIE CLIPS
 	//####################################################################################################
-	static private function initMovieClips():Void
+	private function initMovieClips():Void
 	{
 		var strList:Array<String> = Assets.list(AssetType.MOVIE_CLIP);
 	}
@@ -480,7 +520,7 @@ class AssetLib
 	//####################################################################################################
 	// SOUNDS
 	//####################################################################################################
-	static private function initSounds():Void
+	private function initSounds():Void
 	{
 		var asset:SoundAsset;
 		var sound:Sound;
@@ -507,10 +547,10 @@ class AssetLib
 		}
 	}
 	
-	static private function resetSounds():Void
+	private function resetSounds():Void
 	{
 		var assetsToRemove:Array<SoundAsset> = [];
-		for (asset in soundList)
+		for (asset in this.soundList)
 		{
 			if (asset.source == AssetSource.EXTERNAL)
 			{
@@ -524,27 +564,27 @@ class AssetLib
 		}
 	}
 	
-	static public function addSound(asset:SoundAsset):Void
+	public function addSound(asset:SoundAsset):Void
 	{
-		soundList.push(asset);
-		_soundMap[asset.path] = asset;
+		this.soundList.push(asset);
+		this._soundMap[asset.path] = asset;
 		#if valeditor
-		soundCollection.add(asset);
+		this.soundCollection.add(asset);
 		#end
-		if (asset.content != null) _soundToAsset.set(asset.content, asset);
+		if (asset.content != null) this._soundToAsset.set(asset.content, asset);
 	}
 	
-	static public function removeSound(asset:SoundAsset):Void
+	public function removeSound(asset:SoundAsset):Void
 	{
-		soundList.remove(asset);
-		_soundMap.remove(asset.path);
+		this.soundList.remove(asset);
+		this._soundMap.remove(asset.path);
 		#if valeditor
-		soundCollection.remove(asset);
+		this.soundCollection.remove(asset);
 		#end
-		if (asset.content != null) _soundToAsset.remove(asset.content);
+		if (asset.content != null) this._soundToAsset.remove(asset.content);
 	}
 	
-	static public function createSound(path:String, sound:Sound, data:ByteArray):Void
+	public function createSound(path:String, sound:Sound, data:Bytes):Void
 	{
 		var asset:SoundAsset = new SoundAsset();
 		path = Path.normalize(path);
@@ -557,20 +597,20 @@ class AssetLib
 		addSound(asset);
 	}
 	
-	static public function getSoundFromPath(path:String):SoundAsset
+	public function getSoundFromPath(path:String):SoundAsset
 	{
-		return _soundMap[path];
+		return this._soundMap[path];
 	}
 	
-	static public function getSoundFromSound(sound:Sound):SoundAsset
+	public function getSoundFromSound(sound:Sound):SoundAsset
 	{
-		return _soundToAsset.get(sound);
+		return this._soundToAsset.get(sound);
 	}
 	
-	static private function loadSounds():Void
+	private function loadSounds():Void
 	{
 		var idList:Array<String> = new Array<String>();
-		for (asset in soundList)
+		for (asset in this.soundList)
 		{
 			if (!asset.isLoaded && asset.source == AssetSource.ASSETS)
 			{
@@ -582,10 +622,10 @@ class AssetLib
 		loader.start();
 	}
 	
-	static private function loadSoundsComplete():Void
+	private function loadSoundsComplete():Void
 	{
 		var sound:Sound;
-		for (asset in soundList)
+		for (asset in this.soundList)
 		{
 			if (!asset.isLoaded && asset.source == AssetSource.ASSETS)
 			{
@@ -612,7 +652,7 @@ class AssetLib
 	//####################################################################################################
 	// TEXTS
 	//####################################################################################################
-	static private function initTexts():Void
+	private function initTexts():Void
 	{
 		var asset:TextAsset;
 		var text:String;
@@ -639,10 +679,10 @@ class AssetLib
 		}
 	}
 	
-	static private function resetTexts():Void
+	private function resetTexts():Void
 	{
 		var assetsToRemove:Array<TextAsset> = [];
-		for (asset in textList)
+		for (asset in this.textList)
 		{
 			if (asset.source == AssetSource.EXTERNAL)
 			{
@@ -656,27 +696,27 @@ class AssetLib
 		}
 	}
 	
-	static public function addText(asset:TextAsset):Void
+	public function addText(asset:TextAsset):Void
 	{
-		textList.push(asset);
-		_textMap[asset.path] = asset;
+		this.textList.push(asset);
+		this._textMap[asset.path] = asset;
 		#if valeditor
-		textCollection.add(asset);
+		this.textCollection.add(asset);
 		#end
-		if (asset.content != null) _textToAsset.set(asset.content, asset);
+		if (asset.content != null) this._textToAsset.set(asset.content, asset);
 	}
 	
-	static public function removeText(asset:TextAsset):Void
+	public function removeText(asset:TextAsset):Void
 	{
-		textList.remove(asset);
-		_textMap.remove(asset.path);
+		this.textList.remove(asset);
+		this._textMap.remove(asset.path);
 		#if valeditor
-		textCollection.remove(asset);
+		this.textCollection.remove(asset);
 		#end
-		if (asset.content != null) _textToAsset.remove(asset.content);
+		if (asset.content != null) this._textToAsset.remove(asset.content);
 	}
 	
-	static public function createText(path:String, text:String):Void
+	public function createText(path:String, text:String):Void
 	{
 		var asset:TextAsset = new TextAsset();
 		path = Path.normalize(path);
@@ -688,20 +728,20 @@ class AssetLib
 		addText(asset);
 	}
 	
-	static public function getTextFromPath(path:String):TextAsset
+	public function getTextFromPath(path:String):TextAsset
 	{
-		return _textMap[path];
+		return this._textMap[path];
 	}
 	
-	static public function getTextFromText(text:String):TextAsset
+	public function getTextFromText(text:String):TextAsset
 	{
-		return _textToAsset[text];
+		return this._textToAsset[text];
 	}
 	
-	static private function loadTexts():Void
+	private function loadTexts():Void
 	{
 		var idList:Array<String> = new Array<String>();
-		for (asset in textList)
+		for (asset in this.textList)
 		{
 			if (!asset.isLoaded && asset.source == AssetSource.ASSETS)
 			{
@@ -713,10 +753,10 @@ class AssetLib
 		loader.start();
 	}
 	
-	static private function loadTextsComplete():Void
+	private function loadTextsComplete():Void
 	{
 		var text:String;
-		for (asset in textList)
+		for (asset in this.textList)
 		{
 			if (!asset.isLoaded && asset.source == AssetSource.ASSETS)
 			{
@@ -744,10 +784,10 @@ class AssetLib
 	// STARLING TEXTURES
 	//####################################################################################################
 	#if starling
-	static private function resetStarlingTextures():Void
+	private function resetStarlingTextures():Void
 	{
 		var assetsToRemove:Array<StarlingTextureAsset> = [];
-		for (asset in starlingTextureList)
+		for (asset in this.starlingTextureList)
 		{
 			if (asset.source == AssetSource.EXTERNAL)
 			{
@@ -761,31 +801,31 @@ class AssetLib
 		}
 	}
 	
-	static public function addStarlingTexture(asset:StarlingTextureAsset):Void
+	public function addStarlingTexture(asset:StarlingTextureAsset):Void
 	{
-		starlingTextureList.push(asset);
-		_starlingTextureMap[asset.path] = asset;
+		this.starlingTextureList.push(asset);
+		this._starlingTextureMap[asset.path] = asset;
 		#if valeditor
-		starlingTextureCollection.add(asset);
+		this.starlingTextureCollection.add(asset);
 		#end
-		if (asset.content != null) _starlingTextureToAsset.set(asset.content, asset);
+		if (asset.content != null) this._starlingTextureToAsset.set(asset.content, asset);
 	}
 	
-	static public function removeStarlingTexture(asset:StarlingTextureAsset):Void
+	public function removeStarlingTexture(asset:StarlingTextureAsset):Void
 	{
-		starlingTextureList.remove(asset);
-		_starlingTextureMap.remove(asset.path);
+		this.starlingTextureList.remove(asset);
+		this._starlingTextureMap.remove(asset.path);
 		#if valeditor
-		starlingTextureCollection.remove(asset);
+		this.starlingTextureCollection.remove(asset);
 		#end
 		if (asset.content != null) 
 		{
-			_starlingTextureToAsset.remove(asset.content);
+			this._starlingTextureToAsset.remove(asset.content);
 			asset.content.dispose();
 		}
 	}
 	
-	static public function createStarlingTexture(path:String, texture:Texture, textureParams:TextureCreationParameters, bitmapAsset:BitmapAsset, ?name:String, ?preview:BitmapData):Void
+	public function createStarlingTexture(path:String, texture:Texture, textureParams:TextureCreationParameters, bitmapAsset:BitmapAsset, ?name:String, ?preview:BitmapData):Void
 	{
 		var asset:StarlingTextureAsset = new StarlingTextureAsset();
 		path = Path.normalize(path);
@@ -814,14 +854,14 @@ class AssetLib
 		addStarlingTexture(asset);
 	}
 	
-	static public function getStarlingTextureAssetFromPath(path:String):StarlingTextureAsset
+	public function getStarlingTextureAssetFromPath(path:String):StarlingTextureAsset
 	{
-		return _starlingTextureMap[path];
+		return this._starlingTextureMap[path];
 	}
 	
-	static public function getStarlingTextureAssetFromTexture(texture:Texture):StarlingTextureAsset
+	public function getStarlingTextureAssetFromTexture(texture:Texture):StarlingTextureAsset
 	{
-		return _starlingTextureToAsset.get(texture);
+		return this._starlingTextureToAsset.get(texture);
 	}
 	#end
 	//####################################################################################################
@@ -832,10 +872,10 @@ class AssetLib
 	// STARLING ATLASES
 	//####################################################################################################
 	#if starling
-	static private function resetStarlingAtlases():Void
+	private function resetStarlingAtlases():Void
 	{
 		var assetsToRemove:Array<StarlingAtlasAsset> = [];
-		for (asset in starlingAtlasList)
+		for (asset in this.starlingAtlasList)
 		{
 			if (asset.source == AssetSource.EXTERNAL)
 			{
@@ -849,17 +889,17 @@ class AssetLib
 		}
 	}
 	
-	static public function addStarlingAtlas(asset:StarlingAtlasAsset):Void
+	public function addStarlingAtlas(asset:StarlingAtlasAsset):Void
 	{
-		starlingAtlasList.push(asset);
-		_starlingAtlasMap[asset.path] = asset;
+		this.starlingAtlasList.push(asset);
+		this._starlingAtlasMap[asset.path] = asset;
 		#if valeditor
-		starlingAtlasCollection.add(asset);
+		this.starlingAtlasCollection.add(asset);
 		#end
 		if (asset.content != null) 
 		{
-			_starlingAtlasToAsset.set(asset.content, asset);
-			_starlingAtlasTextureToAsset.set(asset.content.texture, asset);
+			this._starlingAtlasToAsset.set(asset.content, asset);
+			this._starlingAtlasTextureToAsset.set(asset.content.texture, asset);
 			
 			var names:Vector<String> = asset.content.getNames();
 			var name:String;
@@ -887,16 +927,16 @@ class AssetLib
 				}
 				
 				#if valeditor
-				if (_generatePreview)
+				if (this._generatePreview)
 				{
 					scale = ScaleUtil.scaleToFit(texWidth, texHeight, UIConfig.ASSET_PREVIEW_SIZE, UIConfig.ASSET_PREVIEW_SIZE);
 					preview = new BitmapData(Math.ceil(texWidth * scale), Math.ceil(texHeight * scale), true, 0x00ffffff);
 					
-					_rect.setTo(0, 0, texWidth, texHeight);
-					_matrix.identity();
-					_matrix.translate(-subTexture.region.left, -subTexture.region.top);
-					_matrix.scale(scale, scale);
-					preview.draw(asset.bitmapAsset.content, _matrix, null, null, _rect);
+					this._rect.setTo(0, 0, texWidth, texHeight);
+					this._matrix.identity();
+					this._matrix.translate(-subTexture.region.left, -subTexture.region.top);
+					this._matrix.scale(scale, scale);
+					preview.draw(asset.bitmapAsset.content, this._matrix, null, null, this._rect);
 				}
 				#end
 				
@@ -905,17 +945,17 @@ class AssetLib
 		}
 	}
 	
-	static public function removeStarlingAtlas(asset:StarlingAtlasAsset):Void
+	public function removeStarlingAtlas(asset:StarlingAtlasAsset):Void
 	{
-		starlingAtlasList.remove(asset);
-		_starlingAtlasMap.remove(asset.path);
+		this.starlingAtlasList.remove(asset);
+		this._starlingAtlasMap.remove(asset.path);
 		#if valeditor
-		starlingAtlasCollection.remove(asset);
+		this.starlingAtlasCollection.remove(asset);
 		#end
 		if (asset.content != null)
 		{
-			_starlingAtlasToAsset.remove(asset.content);
-			_starlingAtlasTextureToAsset.remove(asset.content.texture);
+			this._starlingAtlasToAsset.remove(asset.content);
+			this._starlingAtlasTextureToAsset.remove(asset.content.texture);
 			
 			var names:Vector<String> = asset.content.getNames();
 			var name:String;
@@ -934,7 +974,7 @@ class AssetLib
 		}
 	}
 	
-	static public function createStarlingAtlas(path:String, atlas:TextureAtlas, textureParams:TextureCreationParameters, bitmapAsset:BitmapAsset, textAsset:TextAsset):Void
+	public function createStarlingAtlas(path:String, atlas:TextureAtlas, textureParams:TextureCreationParameters, bitmapAsset:BitmapAsset, textAsset:TextAsset):Void
 	{
 		var asset:StarlingAtlasAsset = new StarlingAtlasAsset();
 		path = Path.normalize(path);
@@ -950,19 +990,19 @@ class AssetLib
 		addStarlingAtlas(asset);
 	}
 	
-	static public function getStarlingAtlasAssetFromAtlas(atlas:TextureAtlas):StarlingAtlasAsset
+	public function getStarlingAtlasAssetFromAtlas(atlas:TextureAtlas):StarlingAtlasAsset
 	{
-		return _starlingAtlasToAsset.get(atlas);
+		return this._starlingAtlasToAsset.get(atlas);
 	}
 	
-	static public function getStarlingAtlasAssetFromPath(path:String):StarlingAtlasAsset
+	public function getStarlingAtlasAssetFromPath(path:String):StarlingAtlasAsset
 	{
-		return _starlingAtlasMap[path];
+		return this._starlingAtlasMap[path];
 	}
 	
-	static public function getStarlingAtlasAssetFromTexture(texture:Texture):StarlingAtlasAsset
+	public function getStarlingAtlasAssetFromTexture(texture:Texture):StarlingAtlasAsset
 	{
-		return _starlingAtlasTextureToAsset.get(texture);
+		return this._starlingAtlasTextureToAsset.get(texture);
 	}
 	#end
 	//####################################################################################################
