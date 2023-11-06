@@ -2,6 +2,7 @@ package valedit;
 import haxe.Constraints.Function;
 import haxe.ds.Map;
 import openfl.display.DisplayObject;
+import valedit.asset.AssetLib;
 import valedit.utils.PropertyMap;
 
 /**
@@ -15,9 +16,22 @@ class ValEdit
 	static public var STARLING_SUBTEXTURE_MARKER:String = "@@@";
 	#end
 	
+	static public var assetLib:AssetLib;
+	
 	static private var _baseClassToClassList:Map<String, Array<String>> = new Map<String, Array<String>>();
 	static private var _classMap:Map<String, ValEditClass> = new Map<String, ValEditClass>();
 	static private var _templateMap:Map<String, ValEditTemplate> = new Map<String, ValEditTemplate>();
+	
+	static public function init(completeCallback:Void->Void):Void
+	{
+		if (assetLib == null)
+		{
+			assetLib = new AssetLib();
+			assetLib.init(false);
+		}
+		
+		assetLib.load(completeCallback);
+	}
 	
 	static public function getClassSettings(type:Class<Dynamic>, settings:ValEditClassSettings = null):ValEditClassSettings
 	{
