@@ -15,22 +15,72 @@ import valeditor.utils.starling.TextureCreationParameters;
  */
 class StarlingAtlasAsset extends Asset 
 {
-	public var bitmapAsset:BitmapAsset;
-	public var textAsset:TextAsset;
+	public var bitmapAsset(get, set):BitmapAsset;
+	public var textAsset(get, set):TextAsset;
 	public var content:TextureAtlas;
 	public var preview:BitmapData;
 	public var textureParams:TextureCreationParameters;
+	
+	private var _bitmapAsset:BitmapAsset;
+	private function get_bitmapAsset():BitmapAsset { return this._bitmapAsset; }
+	private function set_bitmapAsset(value:BitmapAsset):BitmapAsset
+	{
+		if (this._bitmapAsset == value) return value;
+		
+		if (this._bitmapAsset != null)
+		{
+			this._bitmapAsset.unregisterAsset(this);
+		}
+		if (value != null)
+		{
+			value.registerAsset(this);
+		}
+		return this._bitmapAsset = value;
+	}
+	
+	private var _textAsset:TextAsset;
+	private function get_textAsset():TextAsset { return this._textAsset; }
+	private function set_textAsset(value:TextAsset):TextAsset
+	{
+		if (this._textAsset == value) return value;
+		
+		if (this._textAsset != null)
+		{
+			this._textAsset.unregisterAsset(this);
+		}
+		if (value != null)
+		{
+			value.registerAsset(this);
+		}
+		return this._textAsset = value;
+	}
 
 	public function new() 
 	{
 		super();
 	}
 	
+	override public function assetUpdate(asset:Asset):Void 
+	{
+		super.assetUpdate(asset);
+		
+		if (Std.isOfType(asset, BitmapAsset))
+		{
+			this.bitmapAsset = cast asset;
+		}
+		else
+		{
+			this.textAsset = cast asset;
+		}
+		
+		
+	}
+	
 	override public function toJSONSave(json:Dynamic = null):Dynamic 
 	{
 		json = super.toJSONSave(json);
-		json.bitmapPath = this.bitmapAsset.path;
-		json.textPath = this.textAsset.path;
+		json.bitmapPath = this._bitmapAsset.path;
+		json.textPath = this._textAsset.path;
 		json.textureParams = this.textureParams.toJSON();
 		
 		return json;
