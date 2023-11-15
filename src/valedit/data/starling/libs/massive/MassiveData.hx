@@ -305,7 +305,11 @@ class MassiveData
 	{
 		var objectRef:ExposedObjectReference;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		return collection;
 	}
@@ -588,7 +592,11 @@ class MassiveData
 		var color:ExposedColor;
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("width"))
 		{

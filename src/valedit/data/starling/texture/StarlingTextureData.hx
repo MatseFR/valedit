@@ -118,7 +118,11 @@ class StarlingTextureData
 		var floatDrag:ExposedFloatDrag;
 		var select:ExposedSelect;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("scale"))
 		{

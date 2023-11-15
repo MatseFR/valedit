@@ -131,7 +131,11 @@ class GeomData
 	{
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("a"))
 		{
@@ -378,7 +382,11 @@ class GeomData
 	
 	static public function exposePerspectiveProjectionConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		return collection;
 	}
@@ -408,7 +416,11 @@ class GeomData
 	{
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("x"))
 		{
@@ -507,7 +519,11 @@ class GeomData
 	{
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("x"))
 		{
@@ -647,7 +663,11 @@ class GeomData
 	{
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("x"))
 		{

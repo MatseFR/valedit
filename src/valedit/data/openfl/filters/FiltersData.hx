@@ -53,7 +53,11 @@ class FiltersData
 	
 	static public function exposeBlurFilterConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		var floatDrag:ExposedFloatDrag;
 		var intDrag:ExposedIntDrag;
@@ -174,7 +178,11 @@ class FiltersData
 	
 	static public function exposeDropShadowFilterConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		var bool:ExposedBool;
 		var color:ExposedColor;
@@ -337,7 +345,11 @@ class FiltersData
 	
 	static public function exposeGlowFilterConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		var bool:ExposedBool;
 		var color:ExposedColor;

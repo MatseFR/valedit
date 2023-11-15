@@ -158,7 +158,11 @@ class StarlingStylesData
 	{
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("softness"))
 		{
@@ -218,7 +222,11 @@ class StarlingStylesData
 	
 	static public function exposeMeshStyleConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		return collection;
 	}

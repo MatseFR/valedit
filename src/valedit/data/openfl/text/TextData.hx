@@ -66,7 +66,11 @@ class TextData
 	{
 		var str:ExposedString;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("name"))
 		{
@@ -404,7 +408,11 @@ class TextData
 		var select:ExposedSelect;
 		var str:ExposedString;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("font"))
 		{

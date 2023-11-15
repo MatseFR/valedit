@@ -121,7 +121,11 @@ class StarlingTextData
 		var object:ExposedObject;
 		var text:ExposedText;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("width"))
 		{
@@ -251,7 +255,11 @@ class StarlingTextData
 		var font:ExposedFontName;
 		var select:ExposedSelect;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("font"))
 		{
@@ -377,7 +385,11 @@ class StarlingTextData
 	{
 		var bool:ExposedBool;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("wordWrap"))
 		{

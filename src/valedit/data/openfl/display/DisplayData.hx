@@ -104,7 +104,11 @@ class DisplayData
 		var bool:ExposedBool;
 		var select:ExposedSelect;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) 
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("bitmapData"))
 		{
@@ -350,7 +354,11 @@ class DisplayData
 		var color:ExposedColor;
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) 
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("x"))
 		{

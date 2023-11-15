@@ -52,7 +52,11 @@ class StarlingFilterData
 	{
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("blurX"))
 		{
@@ -146,7 +150,11 @@ class StarlingFilterData
 	
 	static public function exposeColorMatrixFilterConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		return collection;
 	}
@@ -239,7 +247,11 @@ class StarlingFilterData
 		var select:ExposedSelect;
 		var texture:ExposedStarlingTexture;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("mapTexture"))
 		{
@@ -351,7 +363,11 @@ class StarlingFilterData
 		var color:ExposedColor;
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("distance"))
 		{
@@ -442,7 +458,11 @@ class StarlingFilterData
 	
 	static public function exposeFilterChainConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		return collection;
 	}
@@ -558,7 +578,11 @@ class StarlingFilterData
 		var color:ExposedColor;
 		var floatDrag:ExposedFloatDrag;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("color"))
 		{

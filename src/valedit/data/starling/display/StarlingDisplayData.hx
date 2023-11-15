@@ -319,7 +319,11 @@ class StarlingDisplayData
 	{
 		var texture:ExposedStarlingTexture;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("texture"))
 		{
@@ -471,7 +475,11 @@ class StarlingDisplayData
 		var floatDrag:ExposedFloatDrag;
 		var color:ExposedColor;
 		
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
 		
 		if (!collection.hasValue("width"))
 		{
