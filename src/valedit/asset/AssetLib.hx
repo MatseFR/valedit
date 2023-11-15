@@ -417,6 +417,12 @@ class AssetLib
 		{
 			this._bitmapDataToAsset.remove(asset.content);
 			asset.content.dispose();
+			asset.content = null;
+		}
+		if (asset.preview != null)
+		{
+			asset.preview.dispose();
+			asset.preview = null;
 		}
 	}
 	
@@ -501,6 +507,38 @@ class AssetLib
 		this._matrix.scale(scale, scale);
 		bmd.draw(asset.content, this._matrix);
 		asset.preview = bmd;
+	}
+	
+	public function updateBitmap(asset:BitmapAsset, path:String, bmd:BitmapData, data:Bytes):Void
+	{
+		this._bitmapMap.remove(asset.path);
+		
+		if (asset.content != null)
+		{
+			this._bitmapDataToAsset.remove(asset.content);
+			asset.content.dispose();
+			asset.content = null;
+		}
+		if (asset.preview != null)
+		{
+			asset.preview.dispose();
+			asset.preview = null;
+		}
+		
+		path = Path.normalize(path);
+		asset.path = path;
+		asset.name = path.substr(path.lastIndexOf("/") + 1);
+		asset.content = bmd;
+		asset.data = data;
+		if (asset.content != null) this._bitmapDataToAsset.set(asset.content, asset);
+		if (this._generatePreview) makeBitmapPreview(asset);
+		this._bitmapMap.set(asset.path, asset);
+		
+		#if valeditor
+		this.bitmapCollection.updateAt(this.bitmapCollection.indexOf(asset));
+		#end
+		
+		asset.update();
 	}
 	//####################################################################################################
 	//\BITMAPS
@@ -862,6 +900,70 @@ class AssetLib
 	public function getStarlingTextureAssetFromTexture(texture:Texture):StarlingTextureAsset
 	{
 		return this._starlingTextureToAsset.get(texture);
+	}
+	
+	public function updateStarlingTexture(asset:StarlingTextureAsset, bitmapAsset:BitmapAsset, ?path:String, ?texture:Texture, ?textureParams:TextureCreationParameters, ?name:String, ?preview:BitmapData):Void
+	{
+		this._starlingTextureMap.remove(asset.path);
+		if (asset.content != null)
+		{
+			this._starlingTextureToAsset.remove(asset.content);
+		}
+		
+		if (asset.content != null)
+		{
+			asset.content.dispose();
+			asset.content = null;
+		}
+		
+		if (path == null)
+		{
+			path = bitmapAsset.path;
+		}
+		//else
+		//{
+			//path = Path.normalize(path);
+		//}
+		asset.path = path;
+		if (name == null)
+		{
+			asset.name = Path.withoutDirectory(path);
+		}
+		else
+		{
+			asset.name = name;
+		}
+		
+		if (texture == null)
+		{
+			if (textureParams != null)
+			{
+				texture = Texture.fromBitmapData(bitmapAsset.content, textureParams.generateMipMaps, textureParams.optimizeForRenderToTexture, textureParams.scale, textureParams.format, textureParams.forcePotTexture);
+			}
+			else
+			{
+				texture = Texture.fromBitmapData(bitmapAsset.content);
+			}
+		}
+		asset.content = texture;
+		asset.bitmapAsset = bitmapAsset;
+		asset.textureParams = textureParams;
+		if (preview == null)
+		{
+			asset.preview = bitmapAsset.preview;
+		}
+		else
+		{
+			asset.preview = preview;
+		}
+		
+		this._starlingTextureMap.set(asset.path, asset);
+		this._starlingTextureToAsset.set(asset.content, asset);
+		#if valeditor
+		this.starlingTextureCollection.updateAt(this.starlingTextureCollection.indexOf(asset));
+		#end
+		
+		asset.update();
 	}
 	#end
 	//####################################################################################################
