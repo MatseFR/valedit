@@ -24,14 +24,71 @@ class ExposedSound extends ExposedValue
 	
 	private var _asset:SoundAsset;
 	
+	override function set_isConstructor(value:Bool):Bool 
+	{
+		if (this._isConstructor == value) return value;
+		
+		if (value)
+		{
+			if (this._asset != null)
+			{
+				this._asset.unregisterValue(this);
+				this._asset.registerConstructorValue(this);
+			}
+		}
+		else
+		{
+			if (this._asset != null)
+			{
+				this._asset.unregisterConstructorValue(this);
+				this._asset.registerValue(this);
+			}
+		}
+		
+		return super.set_isConstructor(value);
+	}
+	
 	override function set_value(value:Dynamic):Dynamic 
 	{
 		if (Std.isOfType(value, SoundAsset))
 		{
-			this._asset = cast value;
+			if (this._asset != value)
+			{
+				if (this._asset != null)
+				{
+					if (this._isConstructor)
+					{
+						this._asset.unregisterConstructorValue(this);
+					}
+					else
+					{
+						this._asset.unregisterValue(this);
+					}
+				}
+				this._asset = cast value;
+				if (this._isConstructor)
+				{
+					this._asset.registerConstructorValue(this);
+				}
+				else
+				{
+					this._asset.registerValue(this);
+				}
+			}
 			return super.set_value(this._asset.content);
 		}
-		this._asset = null;
+		if (this._asset != null)
+		{
+			if (this._isConstructor)
+			{
+				this._asset.unregisterConstructorValue(this);
+			}
+			else
+			{
+				this._asset.unregisterValue(this);
+			}
+			this._asset = null;
+		}
 		return super.set_value(value);
 	}
 	
@@ -43,8 +100,22 @@ class ExposedSound extends ExposedValue
 	
 	override public function clear():Void 
 	{
+		if (this._asset != null)
+		{
+			if (this._isConstructor)
+			{
+				this._asset.unregisterConstructorValue(this);
+			}
+			else
+			{
+				this._asset.unregisterValue(this);
+			}
+			
+			this._asset = null;
+		}
+		
 		super.clear();
-		this._asset = null;
+		
 		this.isNullable = true;
 	}
 	
@@ -67,14 +138,26 @@ class ExposedSound extends ExposedValue
 		return snd;
 	}
 	
-	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
+	//override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
+	//{
+		//if (copyValue && this._asset != null)
+		//{
+			//value.value = this._asset;
+			//copyValue = false;
+		//}
+		//super.clone_internal(value, copyValue);
+	//}
+	
+	override function cloneValue(toValue:ExposedValue):Void 
 	{
-		if (copyValue && this._asset != null)
+		if (this._asset != null)
 		{
-			value.value = this._asset;
-			copyValue = false;
+			toValue.value = this._asset;
 		}
-		super.clone_internal(value, copyValue);
+		else
+		{
+			super.cloneValue(toValue);
+		}
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 
