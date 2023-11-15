@@ -36,6 +36,7 @@ class ExposedCollection extends EventDispatcher
 	}
 	
 	public var applyIfDefaultValue:Bool = false;
+	public var isConstructor(get, set):Bool;
 	public var isEditable(get, set):Bool;
 	public var isReadOnly(get, set):Bool;
 	public var object(get, set):Dynamic;
@@ -47,6 +48,18 @@ class ExposedCollection extends EventDispatcher
 	#end
 	/* when true, prevents a changed value from updating other values in the collection */
 	public var valuesUpdateLocked(get, set):Bool;
+	
+	private var _isConstructor:Bool = false;
+	private function get_isConstructor():Bool { return this._isConstructor; }
+	private function set_isConstructor(value:Bool):Bool
+	{
+		if (this._isConstructor == value) return value;
+		for (val in this._valueList)
+		{
+			val.isConstructor = value;
+		}
+		return this._isConstructor = value;
+	}
 	
 	private var _isEditable:Bool = true;
 	private function get_isEditable():Bool { return this._isEditable; }
@@ -174,12 +187,21 @@ class ExposedCollection extends EventDispatcher
 	
 	public function clear():Void
 	{
+		this.applyIfDefaultValue = false;
+		this._isConstructor = false;
+		this._isEditable = true;
+		this._isReadOnly = false;
+		this._object = null;
+		this._parentValue = null;
+		this._valuesUpdateLocked = false;
+		
 		#if valeditor
-		if (this.uiCollection != null)
-		{
-			this.uiCollection.pool();
-			this.uiCollection = null;
-		}
+		//if (this.uiCollection != null)
+		//{
+			//this.uiCollection.pool();
+			//this.uiCollection = null;
+		//}
+		this.uiContainer = null;
 		this._valEditorObject = null;
 		#end
 		for (value in this._valueList)
@@ -196,6 +218,14 @@ class ExposedCollection extends EventDispatcher
 	{
 		clear();
 		_POOL[_POOL.length] = this;
+	}
+	
+	public function apply():Void
+	{
+		for (value in this._valueList)
+		{
+			value.apply();
+		}
 	}
 	
 	public function applyAndSetObject(object:Dynamic, ?applyIfDefaultValue:Bool):Void
@@ -273,7 +303,8 @@ class ExposedCollection extends EventDispatcher
 				fromValue = fromCollection.getValue(value.propertyName);
 				if (fromValue != null)
 				{
-					value.value = fromValue.value;
+					//value.value = fromValue.value;
+					fromValue.cloneValue(value);
 				}
 			}
 		}
@@ -303,7 +334,7 @@ class ExposedCollection extends EventDispatcher
 				toValue = toCollection.getValue(value.propertyName);
 				if (toValue != null)
 				{
-					toValue.value = value.value;
+					value.cloneValue(toValue);
 				}
 			}
 		}
@@ -354,6 +385,7 @@ class ExposedCollection extends EventDispatcher
 		}
 		else
 		{
+			value.isConstructor = this._isConstructor;
 			value.isEditable = this._isEditable;
 			value.isReadOnlyInternal = this._isReadOnly;
 			this._valueList.push(value);
@@ -383,6 +415,7 @@ class ExposedCollection extends EventDispatcher
 		}
 		else
 		{
+			value.isConstructor = this._isConstructor;
 			value.isEditable = this._isEditable;
 			value.isReadOnlyInternal = this._isReadOnly;
 			var afterValue:ExposedValue = this._valueMap[afterValueName];
@@ -418,6 +451,7 @@ class ExposedCollection extends EventDispatcher
 		}
 		else
 		{
+			value.isConstructor = this._isConstructor;
 			value.isEditable = this._isEditable;
 			value.isReadOnlyInternal = this._isReadOnly;
 			var beforeValue:ExposedValue = this._valueMap[beforeValueName];
@@ -613,7 +647,8 @@ class ExposedCollection extends EventDispatcher
 			{
 				if (Std.isOfType(value, ExposedObject))
 				{
-					cast(value, ExposedObject).getTweenData(tweenData, cast targetCollection.getValue(value.propertyName));
+					targetValue = targetCollection.getValue(value.propertyName);
+					cast(value, ExposedObject).getTweenData(tweenData, cast targetValue);
 				}
 				else
 				{
@@ -632,6 +667,11 @@ class ExposedCollection extends EventDispatcher
 	public function clone(copyValues:Bool = false):ExposedCollection
 	{
 		var collection:ExposedCollection = new ExposedCollection();
+		collection.applyIfDefaultValue = this.applyIfDefaultValue;
+		collection.isConstructor = this.isConstructor;
+		collection.isEditable = this.isEditable;
+		collection.isReadOnly = this.isReadOnly;
+		//collection.valuesUpdateLocked = this.valuesUpdateLocked;
 		
 		for (val in this._valueList)
 		{
