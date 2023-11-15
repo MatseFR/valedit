@@ -3,7 +3,6 @@ import juggler.animation.Transitions;
 import openfl.events.EventDispatcher;
 import valedit.animation.FrameTween;
 import valedit.animation.TweenData;
-import valedit.animation.TweenProperties;
 
 /**
  * ...
@@ -221,12 +220,21 @@ class ValEditKeyFrame extends EventDispatcher
 	private function rebuildTweens():Void
 	{
 		if (!this._tween) return;
-		//resetTweens();
+		
+		var reset:Bool = this.isActive && this._indexCurrent != this.indexStart;
+		if (reset)
+		{
+			resetTweens();
+		}
 		clearTweens();
 		buildTweens();
+		if (reset)
+		{
+			updateTweens();
+		}
 	}
 	
-	private function updateTweens():Void
+	public function updateTweens():Void
 	{
 		var ratio:Float = (this._indexCurrent - this.indexStart) / (this.indexEnd - this.indexStart + 1);
 		for (tween in this._tweens)
@@ -235,7 +243,7 @@ class ValEditKeyFrame extends EventDispatcher
 		}
 	}
 	
-	private function resetTweens():Void
+	public function resetTweens():Void
 	{
 		for (tween in this._tweens)
 		{
