@@ -16,6 +16,7 @@ import valeditor.ValEditor;
  * ...
  * @author Matse
  */
+@:access(valedit.value.base.ExposedValue)
 class ExposedGroup extends ExposedValue
 {
 	static private var _POOL:Array<ExposedGroup> = new Array<ExposedGroup>();
@@ -41,6 +42,16 @@ class ExposedGroup extends ExposedValue
 			val.collection = value;
 		}
 		return super.set_collection(value);
+	}
+	
+	override function set_isConstructor(value:Bool):Bool 
+	{
+		if (this._isConstructor == value) return value;
+		for (val in this._valueList)
+		{
+			val.isConstructor = value;
+		}
+		return super.set_isConstructor(value);
 	}
 	
 	override function set_isEditable(value:Bool):Bool 
@@ -176,6 +187,14 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	
+	override public function apply():Void 
+	{
+		for (value in this._valueList)
+		{
+			value.apply();
+		}
+	}
+	
 	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
 	{
 		for (value in this._valueList)
@@ -232,7 +251,7 @@ class ExposedGroup extends ExposedValue
 				fromValue = fromGroup.getValue(value.propertyName);
 				if (fromValue != null)
 				{
-					value.value = fromValue.value;
+					fromValue.cloneValue(value);
 				}
 			}
 		}
@@ -261,7 +280,7 @@ class ExposedGroup extends ExposedValue
 				toValue = toGroup.getValue(value.propertyName);
 				if (toValue != null)
 				{
-					toValue.value = value.value;
+					value.cloneValue(toValue);
 				}
 			}
 		}
@@ -291,6 +310,7 @@ class ExposedGroup extends ExposedValue
 			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		}
 		
+		value.isConstructor = this.isConstructor;
 		value.isEditable = this._isEditable;
 		value.isReadOnly = this._isReadOnly;
 		
@@ -323,6 +343,7 @@ class ExposedGroup extends ExposedValue
 			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		}
 		
+		value.isConstructor = this.isConstructor;
 		value.isEditable = this._isEditable;
 		value.isReadOnly = this._isReadOnly;
 		
@@ -358,6 +379,7 @@ class ExposedGroup extends ExposedValue
 			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		}
 		
+		value.isConstructor = this.isConstructor;
 		value.isEditable = this._isEditable;
 		value.isReadOnly = this._isReadOnly;
 		
