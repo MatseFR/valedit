@@ -1,6 +1,7 @@
 package valedit.value;
 
 import valedit.asset.TextAsset;
+import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
 
 /**
@@ -130,22 +131,92 @@ class ExposedTextAsset extends ExposedValue
 		return this;
 	}
 	
+	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	{
+		var val:TextAsset = this.value;
+		var asset:TextAsset = val;
+		
+		if (asset != this._asset)
+		{
+			if (this._asset != null)
+			{
+				if (this._isConstructor)
+				{
+					this._asset.unregisterConstructorValue(this);
+				}
+				else
+				{
+					this._asset.unregisterValue(this);
+				}
+			}
+			this._asset = asset;
+			if (this._asset != null)
+			{
+				if (this._isConstructor)
+				{
+					this._asset.registerConstructorValue(this);
+				}
+				else
+				{
+					this._asset.registerValue(this);
+				}
+			}
+		}
+		
+		if (this._storedValue != val)
+		{
+			this._storedValue = val;
+			if (this._uiControl != null) this._uiControl.updateExposedValue();
+			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+		}
+	}
+	
+	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
+	{
+		var val:TextAsset = Reflect.getProperty(object, this.propertyName);
+		var asset:TextAsset = val;
+		
+		if (asset != this._asset)
+		{
+			if (this._asset != null)
+			{
+				if (this._isConstructor)
+				{
+					this._asset.unregisterConstructorValue(this);
+				}
+				else
+				{
+					this._asset.unregisterValue(this);
+				}
+			}
+			this._asset = asset;
+			if (this._asset != null)
+			{
+				if (this._isConstructor)
+				{
+					this._asset.registerConstructorValue(this);
+				}
+				else
+				{
+					this._asset.registerValue(this);
+				}
+			}
+		}
+		
+		if (this._storedValue != val)
+		{
+			this._storedValue = val;
+			if (this._uiControl != null) this._uiControl.updateExposedValue();
+			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+		}
+	}
+	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var text:ExposedTextAsset = new ExposedTextAsset(this.propertyName, this.name);
 		clone_internal(text, copyValue);
 		return text;
 	}
-	
-	//override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
-	//{
-		//if (copyValue && this._asset != null)
-		//{
-			//value.value = this._asset;
-			//copyValue = false;
-		//}
-		//super.clone_internal(value, copyValue);
-	//}
 	
 	override function cloneValue(toValue:ExposedValue):Void 
 	{

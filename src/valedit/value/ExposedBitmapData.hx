@@ -1,5 +1,6 @@
 package valedit.value;
 
+import openfl.display.BitmapData;
 import valedit.asset.BitmapAsset;
 import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
@@ -133,7 +134,7 @@ class ExposedBitmapData extends ExposedValue
 	
 	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
-		var val:Dynamic = this.value;
+		var val:BitmapData = this.value;
 		var asset:BitmapAsset = null;
 		if (val != null)
 		{
@@ -177,7 +178,7 @@ class ExposedBitmapData extends ExposedValue
 	
 	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
 	{
-		var val:Dynamic = Reflect.getProperty(object, this.propertyName);
+		var val:BitmapData = Reflect.getProperty(object, this.propertyName);
 		var asset:BitmapAsset = null;
 		if (val != null)
 		{
@@ -225,16 +226,6 @@ class ExposedBitmapData extends ExposedValue
 		clone_internal(bmd, copyValue);
 		return bmd;
 	}
-	
-	//override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
-	//{
-		////if (copyValue && this._asset != null)
-		////{
-			////value.value = this._asset;
-			////copyValue = false;
-		////}
-		//super.clone_internal(value, copyValue);
-	//}
 	
 	override function cloneValue(toValue:ExposedValue):Void 
 	{
