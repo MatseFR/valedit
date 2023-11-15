@@ -37,6 +37,7 @@ abstract class ExposedValue extends EventDispatcher
 	 * this is especially useful for rotation : one might want to have an animation with many rotations,
 	 * while the object might restrict the value to 180/-180 or PI/-PI */
 	public var isAbsolute:Bool;
+	public var isConstructor(get, set):Bool;
 	public var isEditable(get, set):Bool;
 	public var isGroup(default, null):Bool;
 	public var isNullable:Bool = false;
@@ -84,6 +85,13 @@ abstract class ExposedValue extends EventDispatcher
 	
 	private var _extras:ValueExtraContainer = new ValueExtraContainer();
 	private function get_extras():ValueExtraContainer { return this._extras; }
+	
+	private var _isConstructor:Bool = false;
+	private function get_isConstructor():Bool { return this._isConstructor; }
+	private function set_isConstructor(value:Bool):Bool
+	{
+		return this._isConstructor = value;
+	}
 	
 	private var _isEditable:Bool = true;
 	private function get_isEditable():Bool { return this._isEditable; }
@@ -134,53 +142,7 @@ abstract class ExposedValue extends EventDispatcher
 	private function set_object(value:Dynamic):Dynamic
 	{
 		if (this._object == value) return value;
-		//var nullObject:Bool = this._object == null;
-		//if (Std.isOfType(value, ValEditObject))
-		//{
-			//this._valEditObject = cast value;
-			//#if valeditor
-			//if (Std.isOfType(value, ValEditorObject))
-			//{
-				//this._valEditorObject = cast value;
-			//}
-			//#end
-			//this._object = this._valEditObject.object;
-			//this._extras.object = this._valEditObject.object;
-		//}
-		//else
-		//{
-			//this._valEditObject = null;
-			//#if valeditor
-			//this._valEditorObject = null;
-			//#end
-			//this._object = value;
-			//this._extras.object = value;
-		//}
-		//if (nullObject && this._storedValue != null)
-		//{
-			//var value:Dynamic = this._storedValue;
-			//this._storedValue = null;
-			//this.value = value;
-		//}
-		//if (!this.isAbsolute) this._storedValue = null;
-		//if (Std.isOfType(value, ValEditObject))
-		//{
-			//this._valEditObject = cast value;
-			//#if valeditor
-			//this._valEditorObject = cast value;
-			//#end
-			//this._object = this._valEditObject.object;
-			//this._extras.object = this._valEditObject.object;
-		//}
-		//else
-		//{
-			//this._valEditObject = null;
-			//#if valeditor
-			//this._valEditorObject = null;
-			//#end
-			//this._object = value;
-			//this._extras.object = value;
-		//}
+		
 		this._object = value;
 		this._extras.object = value;
 		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE, this);
@@ -285,6 +247,7 @@ abstract class ExposedValue extends EventDispatcher
 		this.collection = null;
 		this.defaultValue = null;
 		this.isAbsolute = false;
+		this._isConstructor = false;
 		this._isEditable = true;
 		this.isNullable = false;
 		this._isReadOnly = false;
@@ -311,6 +274,16 @@ abstract class ExposedValue extends EventDispatcher
 		this.propertyName = propertyName;
 		if (name == null) name = propertyName;
 		this.name = name;
+	}
+	
+	public function apply():Void
+	{
+		if (this._object == null || this._storedValue == null)
+		{
+			return;
+		}
+		Reflect.setProperty(this._object, this.propertyName, this._storedValue);
+		this._extras.applyToObject(this._object);
 	}
 	
 	public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void
@@ -395,14 +368,7 @@ abstract class ExposedValue extends EventDispatcher
 		value.defaultValue = this.defaultValue;
 		if (copyValue && canCopyValueOnClone)
 		{
-			if (this._storedValue != null)
-			{
-				value.value = this._storedValue;
-			}
-			else
-			{
-				value.value = this.value;
-			}
+			cloneValue(value);
 		}
 		value.isAbsolute = this.isAbsolute;
 		value.isEditable = this._isEditable;
@@ -418,6 +384,18 @@ abstract class ExposedValue extends EventDispatcher
 		this._extras.clone(value._extras);
 	}
 	
+	private function cloneValue(toValue:ExposedValue):Void
+	{
+		if (this._storedValue != null)
+		{
+			toValue.value = this._storedValue;
+		}
+		else
+		{
+			toValue.value = this.value;
+		}
+	}
+	
 	public function loadComplete():Void
 	{
 		
@@ -431,7 +409,8 @@ abstract class ExposedValue extends EventDispatcher
 	
 	public function fromJSONSave(json:Dynamic):Void
 	{
-		this.value = json.value;
+		//this.value = json.value;
+		this._storedValue = json.value;
 	}
 	
 	public function toJSON(json:Dynamic = null):Dynamic
