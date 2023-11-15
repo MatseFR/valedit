@@ -169,9 +169,9 @@ class ExposedObject extends ExposedValueWithChildren
 	
 	public function getTweenData(tweenData:TweenData, targetValue:ExposedObject):Void
 	{
-		if (this.objectCollection != null && targetValue.objectCollection != null)
+		if (this._objectCollection != null && targetValue._objectCollection != null)
 		{
-			this.objectCollection.getTweenData(targetValue.objectCollection, tweenData);
+			this._objectCollection.getTweenData(targetValue._objectCollection, tweenData);
 			if (this.reassignOnChange)
 			{
 				var properties:TweenProperties = tweenData.getPropertiesForObject(this.value);
@@ -183,19 +183,27 @@ class ExposedObject extends ExposedValueWithChildren
 		}
 	}
 	
+	override public function apply():Void 
+	{
+		if (this._objectCollection != null)
+		{
+			this._objectCollection.apply();
+		}
+	}
+	
 	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
 	{
-		if (this.objectCollection != null)
+		if (this._objectCollection != null)
 		{
 			if (this._object == null || this._object == object)
 			{
-				this.objectCollection.applyToObject(this.value, applyIfDefaultValue);
+				this._objectCollection.applyToObject(this.value, applyIfDefaultValue);
 			}
 			else
 			{
 				var realObject:Dynamic = Reflect.getProperty(object, this.propertyName);
 				
-				this.objectCollection.applyToObject(realObject, applyIfDefaultValue);
+				this._objectCollection.applyToObject(realObject, applyIfDefaultValue);
 			}
 			
 			if (this.reassignOnChange)
@@ -224,6 +232,23 @@ class ExposedObject extends ExposedValueWithChildren
 		//{
 			//value.readValue(dispatchEventIfChange);
 		//}
+	}
+	
+	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
+	{
+		if (this._storedValue == null)
+		{
+			this._storedValue = Reflect.getProperty(object, this.propertyName);
+		}
+		if (this._objectCollection == null)
+		{
+			this.objectCollection = ValEditor.getCollectionForObject(this._storedValue);
+			this._objectCollection.object = this._storedValue;
+		}
+		if (this._objectCollection != null)
+		{
+			this._objectCollection.readValuesFromObject(this._storedValue);
+		}
 	}
 	
 	override public function childValueChanged():Void 
@@ -294,6 +319,10 @@ class ExposedObject extends ExposedValueWithChildren
 		else
 		{
 			this._objectCollection.fromJSONSave(json.collection);
+			//if (this._storedValue != null)
+			//{
+				//this._objectCollection.applyToObject(this._storedValue);
+			//}
 		}
 	}
 	
