@@ -342,6 +342,35 @@ class AssetLib
 		
 		loadNext();
 	}
+	
+	public function updateBinary(asset:BinaryAsset, path:String, data:ByteArray):Void
+	{
+		this._binaryMap.remove(asset.path);
+		if (asset.content != null)
+		{
+			this._binaryToAsset.remove(asset.content);
+			asset.content = null;
+		}
+		
+		path = Path.normalize(path);
+		asset.name = path.substr(path.lastIndexOf("/") + 1);
+		asset.content = data;
+		if (asset.content != null) this._binaryToAsset.set(asset.content, asset);
+		this._binaryMap.set(asset.path, asset);
+		
+		#if valeditor
+		updateBinaryItem(asset);
+		#end
+		
+		asset.update();
+	}
+	
+	#if valeditor
+	public function updateBinaryItem(asset:BinaryAsset):Void
+	{
+		this.binaryCollection.updateAt(this.binaryCollection.indexOf(asset));
+	}
+	#end
 	//####################################################################################################
 	//\BINARIES
 	//####################################################################################################
@@ -535,11 +564,18 @@ class AssetLib
 		this._bitmapMap.set(asset.path, asset);
 		
 		#if valeditor
-		this.bitmapCollection.updateAt(this.bitmapCollection.indexOf(asset));
+		updateBitmapItem(asset);
 		#end
 		
 		asset.update();
 	}
+	
+	#if valeditor
+	public function updateBitmapItem(asset:BitmapAsset):Void
+	{
+		this.bitmapCollection.updateAt(this.bitmapCollection.indexOf(asset));
+	}
+	#end
 	//####################################################################################################
 	//\BITMAPS
 	//####################################################################################################
@@ -683,6 +719,36 @@ class AssetLib
 		
 		loadNext();
 	}
+	
+	public function updateSound(asset:SoundAsset, path:String, sound:Sound, data:Bytes):Void
+	{
+		this._soundMap.remove(asset.path);
+		if (asset.content != null)
+		{
+			this._soundToAsset.remove(asset.content);
+			asset.content = null;
+		}
+		
+		path = Path.normalize(path);
+		asset.name = path.substr(path.lastIndexOf("/") + 1);
+		asset.content = sound;
+		asset.data = data;
+		if (asset.content != null) this._soundToAsset.set(asset.content, asset);
+		this._soundMap.set(asset.path, asset);
+		
+		#if valeditor
+		updateSoundItem(asset);
+		#end
+		
+		asset.update();
+	}
+	
+	#if valeditor
+	public function updateSoundItem(asset:SoundAsset):Void
+	{
+		this.soundCollection.updateAt(this.soundCollection.indexOf(asset));
+	}
+	#end
 	//####################################################################################################
 	//\SOUNDS
 	//####################################################################################################
@@ -814,6 +880,35 @@ class AssetLib
 		
 		loadNext();
 	}
+	
+	public function updateText(asset:TextAsset, path:String, text:String):Void
+	{
+		this._textMap.remove(asset.path);
+		if (asset.content != null)
+		{
+			this._textToAsset.remove(asset.content);
+			asset.content = null;
+		}
+		
+		path = Path.normalize(path);
+		asset.name = path.substr(path.lastIndexOf("/") + 1);
+		asset.content = text;
+		if (asset.content != null) this._textToAsset.set(asset.content, asset);
+		this._textMap.set(asset.path, asset);
+		
+		#if valeditor
+		updateTextItem(asset);
+		#end
+		
+		asset.update();
+	}
+	
+	#if valeditor
+	public function updateTextItem(asset:TextAsset):Void
+	{
+		this.textCollection.updateAt(this.textCollection.indexOf(asset));
+	}
+	#end
 	//####################################################################################################
 	//\TEXTS
 	//####################################################################################################
@@ -960,11 +1055,19 @@ class AssetLib
 		this._starlingTextureMap.set(asset.path, asset);
 		this._starlingTextureToAsset.set(asset.content, asset);
 		#if valeditor
-		this.starlingTextureCollection.updateAt(this.starlingTextureCollection.indexOf(asset));
+		updateStarlingTextureItem(asset);
 		#end
 		
 		asset.update();
 	}
+	
+	#if valeditor
+	public function updateStarlingTextureItem(asset:StarlingTextureAsset):Void
+	{
+		this.starlingTextureCollection.updateAt(this.starlingTextureCollection.indexOf(asset));
+	}
+	#end
+	
 	#end
 	//####################################################################################################
 	//\STARLING TEXTURES
@@ -1106,6 +1209,14 @@ class AssetLib
 	{
 		return this._starlingAtlasTextureToAsset.get(texture);
 	}
+	
+	#if valeditor
+	public function updateStarlingAtlasItem(asset:StarlingAtlasAsset):Void
+	{
+		this.starlingAtlasCollection.updateAt(this.starlingAtlasCollection.indexOf(asset));
+	}
+	#end
+	
 	#end
 	//####################################################################################################
 	//\STARLING ATLASES
