@@ -50,6 +50,7 @@ class AssetLib
 	
 	// BITMAPS
 	#if valeditor
+	public var defaultBitmapAsset(default, null):BitmapAsset;
 	public var bitmapCollection(default, null):ArrayCollection<BitmapAsset>;
 	#end
 	public var bitmapList(default, null):Array<BitmapAsset> = new Array<BitmapAsset>();
@@ -75,6 +76,7 @@ class AssetLib
 	// STARLING TEXTURES
 	#if starling
 	#if valeditor
+	public var defaultStarlingTextureAsset(default, null):StarlingTextureAsset;
 	public var starlingTextureCollection(default, null):ArrayCollection<StarlingTextureAsset>;
 	#end
 	public var starlingTextureList(default, null):Array<StarlingTextureAsset> = new Array<StarlingTextureAsset>();
@@ -128,7 +130,33 @@ class AssetLib
 		this.bitmapCollection = new ArrayCollection<BitmapAsset>();
 		this.soundCollection = new ArrayCollection<SoundAsset>();
 		this.textCollection = new ArrayCollection<TextAsset>();
+		
+		var size:Int = 32;
+		var bmd:BitmapData = new BitmapData(size, size, false);
+		var rect:Rectangle = new Rectangle(0, 0, size / 2, size / 2);
+		bmd.fillRect(rect, 0xff0000);
+		rect.x = size / 2;
+		bmd.fillRect(rect, 0xffffff);
+		rect.y = size / 2;
+		bmd.fillRect(rect, 0xff0000);
+		rect.x = 0;
+		bmd.fillRect(rect, 0xffffff);
+		this.defaultBitmapAsset = new BitmapAsset();
+		this.defaultBitmapAsset.name = "none";
+		this.defaultBitmapAsset.content = bmd;
+		if (this._generatePreview)
+		{
+			makeBitmapPreview(this.defaultBitmapAsset);
+		}
+		
 		#if starling
+		var texture:Texture;
+		texture = Texture.fromBitmapData(bmd, false);// , false, 1, Context3DTextureFormat
+		this.defaultStarlingTextureAsset = new StarlingTextureAsset();
+		this.defaultStarlingTextureAsset.name = "none";
+		this.defaultStarlingTextureAsset.content = texture;
+		this.defaultStarlingTextureAsset.preview = this.defaultBitmapAsset.preview;
+		
 		this.starlingTextureCollection = new ArrayCollection<StarlingTextureAsset>();
 		this.starlingAtlasCollection = new ArrayCollection<StarlingAtlasAsset>();
 		#end
@@ -224,7 +252,7 @@ class AssetLib
 		//trace("AssetLib initBinaries " + strList);
 		for (id in strList)
 		{
-			asset = new BinaryAsset();
+			asset = BinaryAsset.fromPool();
 			asset.path = id;
 			asset.name = Path.withoutDirectory(id);
 			try
@@ -280,11 +308,13 @@ class AssetLib
 		this.binaryCollection.remove(asset);
 		#end
 		if (asset.content != null) this._binaryToAsset.remove(asset.content);
+		
+		asset.pool();
 	}
 	
 	public function createBinary(path:String, bytes:ByteArray):Void
 	{
-		var asset:BinaryAsset = new BinaryAsset();
+		var asset:BinaryAsset = BinaryAsset.fromPool();
 		path = Path.normalize(path);
 		asset.path = path;
 		asset.name = Path.withoutDirectory(path);
@@ -386,7 +416,7 @@ class AssetLib
 		if (_debug) trace("AssetLib initBitmaps " + strList);
 		for (id in strList)
 		{
-			asset = new BitmapAsset();
+			asset = BitmapAsset.fromPool();
 			asset.path = id;
 			asset.name = Path.withoutDirectory(id);
 			try
@@ -453,11 +483,13 @@ class AssetLib
 			asset.preview.dispose();
 			asset.preview = null;
 		}
+		
+		asset.pool();
 	}
 	
 	public function createBitmap(path:String, bmd:BitmapData, data:Bytes):Void
 	{
-		var asset:BitmapAsset = new BitmapAsset();
+		var asset:BitmapAsset = BitmapAsset.fromPool();
 		path = Path.normalize(path);
 		asset.path = path;
 		asset.name = path.substr(path.lastIndexOf("/") + 1);
@@ -471,6 +503,7 @@ class AssetLib
 	
 	public function getBitmapFromBitmapData(bmd:BitmapData):BitmapAsset
 	{
+		if (bmd == this.defaultBitmapAsset.content) return this.defaultBitmapAsset;
 		return this._bitmapDataToAsset.get(bmd);
 	}
 	
@@ -602,7 +635,7 @@ class AssetLib
 		if (_debug) trace("AssetLib initSounds " + strList);
 		for (id in strList)
 		{
-			asset = new SoundAsset();
+			asset = SoundAsset.fromPool();
 			asset.path = id;
 			asset.name = Path.withoutDirectory(id);
 			try
@@ -656,11 +689,13 @@ class AssetLib
 		this.soundCollection.remove(asset);
 		#end
 		if (asset.content != null) this._soundToAsset.remove(asset.content);
+		
+		asset.pool();
 	}
 	
 	public function createSound(path:String, sound:Sound, data:Bytes):Void
 	{
-		var asset:SoundAsset = new SoundAsset();
+		var asset:SoundAsset = SoundAsset.fromPool();
 		path = Path.normalize(path);
 		asset.path = path;
 		asset.name = Path.withoutDirectory(path);
@@ -764,7 +799,7 @@ class AssetLib
 		if (_debug) trace("AssetLib initTexts " + strList);
 		for (id in strList)
 		{
-			asset = new TextAsset();
+			asset = TextAsset.fromPool();
 			asset.path = id;
 			asset.name = Path.withoutDirectory(id);
 			try
@@ -818,11 +853,13 @@ class AssetLib
 		this.textCollection.remove(asset);
 		#end
 		if (asset.content != null) this._textToAsset.remove(asset.content);
+		
+		asset.pool();
 	}
 	
 	public function createText(path:String, text:String):Void
 	{
-		var asset:TextAsset = new TextAsset();
+		var asset:TextAsset = TextAsset.fromPool();
 		path = Path.normalize(path);
 		asset.path = path;
 		asset.name = Path.withoutDirectory(path);
@@ -956,11 +993,13 @@ class AssetLib
 			this._starlingTextureToAsset.remove(asset.content);
 			asset.content.dispose();
 		}
+		
+		asset.pool();
 	}
 	
 	public function createStarlingTexture(path:String, texture:Texture, textureParams:TextureCreationParameters, bitmapAsset:BitmapAsset, ?name:String, ?preview:BitmapData):Void
 	{
-		var asset:StarlingTextureAsset = new StarlingTextureAsset();
+		var asset:StarlingTextureAsset = StarlingTextureAsset.fromPool();
 		path = Path.normalize(path);
 		asset.path = path;
 		if (name == null)
@@ -994,6 +1033,7 @@ class AssetLib
 	
 	public function getStarlingTextureAssetFromTexture(texture:Texture):StarlingTextureAsset
 	{
+		if (texture == this.defaultStarlingTextureAsset.content) return this.defaultStarlingTextureAsset;
 		return this._starlingTextureToAsset.get(texture);
 	}
 	
@@ -1177,11 +1217,13 @@ class AssetLib
 			
 			asset.content.dispose();
 		}
+		
+		asset.pool();
 	}
 	
 	public function createStarlingAtlas(path:String, atlas:TextureAtlas, textureParams:TextureCreationParameters, bitmapAsset:BitmapAsset, textAsset:TextAsset):Void
 	{
-		var asset:StarlingAtlasAsset = new StarlingAtlasAsset();
+		var asset:StarlingAtlasAsset = StarlingAtlasAsset.fromPool();
 		path = Path.normalize(path);
 		asset.path = path;
 		asset.name = Path.withoutDirectory(path);

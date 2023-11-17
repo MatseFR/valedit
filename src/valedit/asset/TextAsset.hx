@@ -9,11 +9,31 @@ import haxe.zip.Entry;
  */
 class TextAsset extends Asset 
 {
+	static private var _POOL:Array<TextAsset> = new Array<TextAsset>();
+	
+	static public function fromPool():TextAsset
+	{
+		if (_POOL.length != 0) return _POOL.pop();
+		return new TextAsset();
+	}
+	
 	public var content:String;
 	
 	public function new() 
 	{
 		super();
+	}
+	
+	override public function clear():Void 
+	{
+		this.content = null;
+		super.clear();
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
 	}
 	
 	public function toZIPEntry():Entry

@@ -15,6 +15,14 @@ import valeditor.utils.starling.TextureCreationParameters;
  */
 class StarlingAtlasAsset extends Asset 
 {
+	static private var _POOL:Array<StarlingAtlasAsset> = new Array<StarlingAtlasAsset>();
+	
+	static public function fromPool():StarlingAtlasAsset
+	{
+		if (_POOL.length != 0) return _POOL.pop();
+		return new StarlingAtlasAsset();
+	}
+	
 	public var bitmapAsset(get, set):BitmapAsset;
 	public var textAsset(get, set):TextAsset;
 	public var content:TextureAtlas;
@@ -58,6 +66,20 @@ class StarlingAtlasAsset extends Asset
 	public function new() 
 	{
 		super();
+	}
+	
+	override public function clear():Void 
+	{
+		this.bitmapAsset = null;
+		this.textAsset = null;
+		
+		super.clear();
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
 	}
 	
 	override public function assetUpdate(asset:Asset):Void 

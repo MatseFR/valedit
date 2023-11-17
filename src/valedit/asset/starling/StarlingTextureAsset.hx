@@ -13,6 +13,14 @@ import valeditor.utils.starling.TextureCreationParameters;
  */
 class StarlingTextureAsset extends Asset 
 {
+	static private var _POOL:Array<StarlingTextureAsset> = new Array<StarlingTextureAsset>();
+	
+	static public function fromPool():StarlingTextureAsset
+	{
+		if (_POOL.length != 0) return _POOL.pop();
+		return new StarlingTextureAsset();
+	}
+	
 	public var bitmapAsset(get, set):BitmapAsset;
 	public var content:Texture;
 	public var preview:BitmapData;
@@ -38,6 +46,25 @@ class StarlingTextureAsset extends Asset
 	public function new() 
 	{
 		super();
+	}
+	
+	override public function clear():Void 
+	{
+		this.bitmapAsset = null;
+		
+		for (value in this._registeredValues)
+		{
+			value.value = ValEdit.assetLib.defaultStarlingTextureAsset;
+		}
+		this._registeredValues.resize(0);
+		
+		super.clear();
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
 	}
 	
 	override public function assetUpdate(asset:Asset):Void 

@@ -27,6 +27,34 @@ abstract class Asset
 		
 	}
 	
+	public function clear():Void
+	{
+		for (asset in this._registeredAssets)
+		{
+			asset.assetRemoved(this);
+		}
+		this._registeredAssets.resize(0);
+		
+		for (value in this._registeredConstructorValues)
+		{
+			value.value = null;
+		}
+		this._registeredConstructorValues.resize(0);
+		
+		for (value in this._registeredValues)
+		{
+			value.value = null;
+		}
+		this._registeredValues.resize(0);
+		
+		this.name = null;
+		this.path = null;
+		this.source = null;
+		this.isLoaded = false;
+	}
+	
+	abstract function pool():Void;
+	
 	public function registerAsset(asset:Asset):Void
 	{
 		// DEBUG
@@ -152,6 +180,11 @@ abstract class Asset
 		{
 			asset.assetUpdate(this);
 		}
+	}
+	
+	public function assetRemoved(asset:Asset):Void
+	{
+		
 	}
 	
 	public function assetUpdate(asset:Asset):Void
