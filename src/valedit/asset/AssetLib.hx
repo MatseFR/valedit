@@ -10,7 +10,6 @@ import openfl.media.Sound;
 import openfl.utils.AssetType;
 import openfl.utils.Assets;
 import openfl.utils.ByteArray;
-import valeditor.utils.starling.TextureCreationParameters;
 
 #if starling
 import openfl.Vector;
@@ -19,6 +18,7 @@ import starling.textures.Texture;
 import starling.textures.TextureAtlas;
 import valedit.asset.starling.StarlingAtlasAsset;
 import valedit.asset.starling.StarlingTextureAsset;
+import valeditor.utils.starling.TextureCreationParameters;
 #end
 
 #if valeditor
@@ -118,7 +118,7 @@ class AssetLib
 		if (this._generatePreview)
 		{
 			this._matrix = new Matrix();
-			this._previewRect = new Rectangle(0, 0, UIConfig.ASSET_PREVIEW_SIZE, UIConfig.ASSET_PREVIEW_SIZE);
+			this._previewRect = new Rectangle(0, 0, UIConfig.ASSET_PREVIEW_WIDTH, UIConfig.ASSET_PREVIEW_HEIGHT);
 			this._rect = new Rectangle();
 		}
 		#else
@@ -567,7 +567,7 @@ class AssetLib
 		var scale = bmd.width / asset.content.width;
 		this._matrix.identity();
 		this._matrix.scale(scale, scale);
-		bmd.draw(asset.content, this._matrix);
+		bmd.draw(asset.content, this._matrix, null, null, null, true);
 		asset.preview = bmd;
 	}
 	
@@ -993,11 +993,15 @@ class AssetLib
 			this._starlingTextureToAsset.remove(asset.content);
 			asset.content.dispose();
 		}
+		if (asset.preview != asset.bitmapAsset.preview)
+		{
+			asset.preview.dispose();
+		}
 		
 		asset.pool();
 	}
 	
-	public function createStarlingTexture(path:String, texture:Texture, textureParams:TextureCreationParameters, bitmapAsset:BitmapAsset, ?name:String, ?preview:BitmapData):Void
+	public function createStarlingTexture(path:String, texture:Texture, textureParams:TextureCreationParameters, bitmapAsset:BitmapAsset, ?name:String, ?preview:BitmapData, ?atlasAsset:StarlingAtlasAsset):Void
 	{
 		var asset:StarlingTextureAsset = StarlingTextureAsset.fromPool();
 		path = Path.normalize(path);
@@ -1011,6 +1015,7 @@ class AssetLib
 			asset.name = name;
 		}
 		asset.content = texture;
+		asset.atlasAsset = atlasAsset;
 		asset.bitmapAsset = bitmapAsset;
 		asset.textureParams = textureParams;
 		if (preview == null)
@@ -1037,7 +1042,7 @@ class AssetLib
 		return this._starlingTextureToAsset.get(texture);
 	}
 	
-	public function updateStarlingTexture(asset:StarlingTextureAsset, bitmapAsset:BitmapAsset, ?path:String, ?texture:Texture, ?textureParams:TextureCreationParameters, ?name:String, ?preview:BitmapData):Void
+	public function updateStarlingTexture(asset:StarlingTextureAsset, bitmapAsset:BitmapAsset, ?path:String, ?texture:Texture, ?textureParams:TextureCreationParameters, ?name:String, ?preview:BitmapData, ?atlasAsset:StarlingAtlasAsset):Void
 	{
 		this._starlingTextureMap.remove(asset.path);
 		if (asset.content != null)
@@ -1080,7 +1085,18 @@ class AssetLib
 				texture = Texture.fromBitmapData(bitmapAsset.content);
 			}
 		}
+		
+		if (asset.isFromAtlas)
+		{
+			if (asset.preview != null)
+			{
+				asset.preview.dispose();
+				asset.preview = null;
+			}
+		}
+		
 		asset.content = texture;
+		asset.atlasAsset = atlasAsset;
 		asset.bitmapAsset = bitmapAsset;
 		asset.textureParams = textureParams;
 		if (preview == null)
@@ -1160,6 +1176,110 @@ class AssetLib
 				name = names[i];
 				subTexture = cast asset.content.getTexture(name);
 				
+				#if valeditor
+				if (this._generatePreview)
+				{
+					if (subTexture.rotated)
+					{
+						texWidth = subTexture.height;
+						texHeight = subTexture.width;
+					}
+					else
+					{
+						texWidth = subTexture.width;
+						texHeight = subTexture.height;
+					}
+					
+					scale = ScaleUtil.scaleToFit(texWidth, texHeight, UIConfig.ASSET_PREVIEW_WIDTH, UIConfig.ASSET_PREVIEW_HEIGHT);
+					preview = new BitmapData(Math.ceil(texWidth * scale), Math.ceil(texHeight * scale), true, 0x00ffffff);
+					
+					this._rect.setTo(0, 0, texWidth, texHeight);
+					this._matrix.identity();
+					this._matrix.translate(-subTexture.region.left, -subTexture.region.top);
+					this._matrix.scale(scale, scale);
+					preview.draw(asset.bitmapAsset.content, this._matrix, null, null, this._rect, true);
+				}
+				#end
+				
+				createStarlingTexture(asset.path + ValEdit.STARLING_SUBTEXTURE_MARKER + name, subTexture, null, asset.bitmapAsset, name, preview, asset);
+			}
+		}
+	}
+	
+	public function updateStarlingAtlas(asset:StarlingAtlasAsset):Void
+	{
+		var oldAtlas:TextureAtlas = asset.content;
+		var oldNames:Vector<String> = oldAtlas.getNames();
+		var texture:Texture = Texture.fromBitmapData(asset.bitmapAsset.content, asset.textureParams.generateMipMaps, asset.textureParams.optimizeForRenderToTexture, asset.textureParams.scale, asset.textureParams.format, asset.textureParams.forcePotTexture);
+		var newAtlas:TextureAtlas = new TextureAtlas(texture, asset.textAsset.content);
+		var newNames:Vector<String> = newAtlas.getNames();
+		var textureAsset:StarlingTextureAsset;
+		var index:Int;
+		var newPath:String = asset.bitmapAsset.path;
+		var path:String;
+		var subTexture:SubTexture;
+		var preview:BitmapData = null;
+		var scale:Float;
+		var texWidth:Float;
+		var texHeight:Float;
+		
+		for (name in oldNames)
+		{
+			index = newNames.indexOf(name);
+			if (index != -1)
+			{
+				// remove name from new names
+				newNames.splice(index, 1);
+				// update texture asset
+				path = asset.path + ValEdit.STARLING_SUBTEXTURE_MARKER + name;
+				textureAsset = getStarlingTextureAssetFromPath(path);
+				
+				subTexture = cast newAtlas.getTexture(name);
+				
+				#if valeditor
+				if (this._generatePreview)
+				{
+					if (subTexture.rotated)
+					{
+						texWidth = subTexture.height;
+						texHeight = subTexture.width;
+					}
+					else
+					{
+						texWidth = subTexture.width;
+						texHeight = subTexture.height;
+					}
+					
+					scale = ScaleUtil.scaleToFit(texWidth, texHeight, UIConfig.ASSET_PREVIEW_WIDTH, UIConfig.ASSET_PREVIEW_HEIGHT);
+					preview = new BitmapData(Math.ceil(texWidth * scale), Math.ceil(texHeight * scale), true, 0x00ffffff);
+					
+					this._rect.setTo(0, 0, texWidth, texHeight);
+					this._matrix.identity();
+					this._matrix.translate(-subTexture.region.left, -subTexture.region.top);
+					this._matrix.scale(scale, scale);
+					preview.draw(asset.bitmapAsset.content, this._matrix, null, null, this._rect, true);
+				}
+				#end
+				
+				path = newPath + ValEdit.STARLING_SUBTEXTURE_MARKER + name;
+				updateStarlingTexture(textureAsset, asset.bitmapAsset, path, subTexture, null, name, preview, asset);
+			}
+			else
+			{
+				// remove texture asset
+				path = asset.path + ValEdit.STARLING_SUBTEXTURE_MARKER + name;
+				textureAsset = getStarlingTextureAssetFromPath(path);
+				removeStarlingTexture(textureAsset);
+			}
+		}
+		
+		for (name in newNames)
+		{
+			subTexture = cast asset.content.getTexture(name);
+			
+			#if valeditor
+			if (this._generatePreview)
+			{
 				if (subTexture.rotated)
 				{
 					texWidth = subTexture.height;
@@ -1171,29 +1291,41 @@ class AssetLib
 					texHeight = subTexture.height;
 				}
 				
-				#if valeditor
-				if (this._generatePreview)
-				{
-					scale = ScaleUtil.scaleToFit(texWidth, texHeight, UIConfig.ASSET_PREVIEW_SIZE, UIConfig.ASSET_PREVIEW_SIZE);
-					preview = new BitmapData(Math.ceil(texWidth * scale), Math.ceil(texHeight * scale), true, 0x00ffffff);
-					
-					this._rect.setTo(0, 0, texWidth, texHeight);
-					this._matrix.identity();
-					this._matrix.translate(-subTexture.region.left, -subTexture.region.top);
-					this._matrix.scale(scale, scale);
-					preview.draw(asset.bitmapAsset.content, this._matrix, null, null, this._rect);
-				}
-				#end
+				scale = ScaleUtil.scaleToFit(texWidth, texHeight, UIConfig.ASSET_PREVIEW_WIDTH, UIConfig.ASSET_PREVIEW_HEIGHT);
+				preview = new BitmapData(Math.ceil(texWidth * scale), Math.ceil(texHeight * scale), true, 0x00ffffff);
 				
-				createStarlingTexture(asset.path + ValEdit.STARLING_SUBTEXTURE_MARKER + name, subTexture, null, asset.bitmapAsset, name, preview);
+				this._rect.setTo(0, 0, texWidth, texHeight);
+				this._matrix.identity();
+				this._matrix.translate(-subTexture.region.left, -subTexture.region.top);
+				this._matrix.scale(scale, scale);
+				preview.draw(asset.bitmapAsset.content, this._matrix, null, null, this._rect, true);
 			}
+			#end
+			
+			createStarlingTexture(asset.path + ValEdit.STARLING_SUBTEXTURE_MARKER + name, subTexture, null, asset.bitmapAsset, name, preview, asset);
 		}
+		
+		this._starlingAtlasMap.remove(asset.path);
+		this._starlingAtlasToAsset.remove(oldAtlas);
+		this._starlingTextureToAsset.remove(oldAtlas.texture);
+		
+		asset.path = newPath;
+		asset.name = Path.withoutDirectory(newPath);
+		asset.content = newAtlas;
+		
+		this._starlingAtlasMap.set(asset.path, asset);
+		this._starlingAtlasToAsset.set(asset.content, asset);
+		this._starlingAtlasTextureToAsset.set(asset.content.texture, asset);
+		
+		updateStarlingAtlasItem(asset);
 	}
 	
 	public function removeStarlingAtlas(asset:StarlingAtlasAsset):Void
 	{
 		this.starlingAtlasList.remove(asset);
 		this._starlingAtlasMap.remove(asset.path);
+		this._starlingAtlasTextureToAsset.remove(asset.content.texture);
+		this._starlingAtlasToAsset.remove(asset.content);
 		#if valeditor
 		this.starlingAtlasCollection.remove(asset);
 		#end

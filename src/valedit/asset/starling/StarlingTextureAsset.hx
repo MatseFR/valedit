@@ -21,10 +21,22 @@ class StarlingTextureAsset extends Asset
 		return new StarlingTextureAsset();
 	}
 	
+	public var atlasAsset(get, set):StarlingAtlasAsset;
 	public var bitmapAsset(get, set):BitmapAsset;
 	public var content:Texture;
+	public var isFromAtlas(default, null):Bool;
 	public var preview:BitmapData;
 	public var textureParams:TextureCreationParameters;
+	
+	private var _atlasAsset:StarlingAtlasAsset;
+	private function get_atlasAsset():StarlingAtlasAsset { return this._atlasAsset; }
+	private function set_atlasAsset(value:StarlingAtlasAsset):StarlingAtlasAsset
+	{
+		if (this._atlasAsset == value) return value;
+		
+		this.isFromAtlas = value != null;
+		return this._atlasAsset = value;
+	}
 	
 	private var _bitmapAsset:BitmapAsset;
 	private function get_bitmapAsset():BitmapAsset { return this._bitmapAsset; }
@@ -50,7 +62,15 @@ class StarlingTextureAsset extends Asset
 	
 	override public function clear():Void 
 	{
+		this.atlasAsset = null;
 		this.bitmapAsset = null;
+		this.content = null;
+		this.preview = null;
+		if (this.textureParams != null)
+		{
+			this.textureParams.pool();
+			this.textureParams = null;
+		}
 		
 		for (value in this._registeredValues)
 		{

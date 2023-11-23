@@ -72,6 +72,10 @@ class StarlingAtlasAsset extends Asset
 	{
 		this.bitmapAsset = null;
 		this.textAsset = null;
+		this.content = null;
+		this.preview = null;
+		this.textureParams.pool();
+		this.textureParams = null;
 		
 		super.clear();
 	}
@@ -95,7 +99,7 @@ class StarlingAtlasAsset extends Asset
 			this.textAsset = cast asset;
 		}
 		
-		
+		ValEdit.assetLib.updateStarlingAtlas(this);
 	}
 	
 	override public function toJSONSave(json:Dynamic = null):Dynamic 
