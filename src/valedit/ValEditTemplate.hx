@@ -35,9 +35,9 @@ class ValEditTemplate extends EventDispatcher
 	private var _instances:Array<ValEditObject> = new Array<ValEditObject>();
 	private function get_instances():Array<ValEditObject> { return this._instances; }
 	
-	private var _object:Dynamic;
-	private function get_object():Dynamic { return this._object; }
-	private function set_object(value:Dynamic):Dynamic
+	private var _object:ValEditObject;
+	private function get_object():ValEditObject { return this._object; }
+	private function set_object(value:ValEditObject):ValEditObject
 	{
 		return this._object = value;
 	}

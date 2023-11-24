@@ -147,7 +147,14 @@ class ValEditObject extends EventDispatcher
 	{
 		if (this.currentKeyFrame == keyFrame) return;
 		if (this.currentCollection != null) this.currentCollection.object = null;
-		this.currentCollection = this._keyFrameToCollection.get(keyFrame);
+		if (keyFrame == null)
+		{
+			this.currentCollection = null;
+		}
+		else
+		{
+			this.currentCollection = this._keyFrameToCollection.get(keyFrame);
+		}
 		this.currentKeyFrame = keyFrame;
 		if (this.currentCollection != null)
 		{
