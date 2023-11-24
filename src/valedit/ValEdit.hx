@@ -1,6 +1,7 @@
 package valedit;
 import haxe.Constraints.Function;
 import haxe.ds.Map;
+import haxe.macro.Compiler;
 import openfl.display.DisplayObject;
 import valedit.asset.AssetLib;
 import valedit.utils.PropertyMap;
@@ -15,6 +16,8 @@ class ValEdit
 	#if starling
 	static public var STARLING_SUBTEXTURE_MARKER:String = "@@@";
 	#end
+	
+	static public var VERSION:String = Compiler.getDefine("valedit");
 	
 	static public var assetLib:AssetLib;
 	
