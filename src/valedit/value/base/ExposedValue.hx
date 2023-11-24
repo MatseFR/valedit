@@ -36,7 +36,7 @@ abstract class ExposedValue extends EventDispatcher
 	 * if stored value is null it will read from object, otherwise stored value is used
 	 * this is especially useful for rotation : one might want to have an animation with many rotations,
 	 * while the object might restrict the value to 180/-180 or PI/-PI */
-	public var isAbsolute:Bool;
+	public var isAbsolute:Bool = false;
 	public var isConstructor(get, set):Bool;
 	public var isEditable(get, set):Bool;
 	public var isGroup(default, null):Bool;
