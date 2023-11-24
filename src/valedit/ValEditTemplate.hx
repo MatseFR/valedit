@@ -1,4 +1,5 @@
 package valedit;
+import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 
 /**
@@ -16,7 +17,6 @@ class ValEditTemplate extends EventDispatcher
 		return new ValEditTemplate(clss, id, collection, constructorCollection);
 	}
 	
-	public var className:String;
 	public var clss:ValEditClass;
 	public var collection:ExposedCollection;
 	public var constructorCollection:ExposedCollection;
@@ -55,7 +55,6 @@ class ValEditTemplate extends EventDispatcher
 		this.clss = null;
 		this.collection = null;
 		this.constructorCollection = null;
-		//this.numInstances = 0;
 		
 		if (this.object != null)
 		{
@@ -69,6 +68,13 @@ class ValEditTemplate extends EventDispatcher
 		}
 		this._instances.resize(0);
 		this._instanceMap.clear();
+		
+		// DEBUG
+		if (this.numInstances != 0)
+		{
+			throw new Error("ValEditTemplate ::: non-zero numInstances after clear");
+		}
+		//\DEBUG
 	}
 	
 	public function pool():Void
@@ -86,7 +92,6 @@ class ValEditTemplate extends EventDispatcher
 						   constructorCollection:ExposedCollection):ValEditTemplate
 	{
 		this.clss = clss;
-		this.className = clss.className;
 		this.id = id;
 		this.collection = collection;
 		this.constructorCollection = constructorCollection;
