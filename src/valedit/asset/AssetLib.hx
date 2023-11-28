@@ -38,6 +38,7 @@ class AssetLib
 	private var _generatePreview:Bool;
 	private function get_generatePreviews():Bool { return this._generatePreview; }
 	
+	private var _excludedPaths:Map<String, String> = new Map<String, String>();
 	private var _registeredExtensions:Map<String, String> = new Map<String, String>();
 	
 	// BINARIES
@@ -210,6 +211,11 @@ class AssetLib
 		}
 	}
 	
+	public function excludePath(path:String):Void
+	{
+		this._excludedPaths.set(path, path);
+	}
+	
 	public function isValidExtension(fileExtension:String):Bool
 	{
 		return this._registeredExtensions.exists(fileExtension);
@@ -252,6 +258,11 @@ class AssetLib
 		//trace("AssetLib initBinaries " + strList);
 		for (id in strList)
 		{
+			if (this._excludedPaths.exists(Path.directory(id)))
+			{
+				continue;
+			}
+			
 			asset = BinaryAsset.fromPool();
 			asset.path = id;
 			asset.name = Path.withoutDirectory(id);
@@ -416,6 +427,11 @@ class AssetLib
 		if (_debug) trace("AssetLib initBitmaps " + strList);
 		for (id in strList)
 		{
+			if (this._excludedPaths.exists(Path.directory(id)))
+			{
+				continue;
+			}
+			
 			asset = BitmapAsset.fromPool();
 			asset.path = id;
 			asset.name = Path.withoutDirectory(id);
@@ -635,6 +651,11 @@ class AssetLib
 		if (_debug) trace("AssetLib initSounds " + strList);
 		for (id in strList)
 		{
+			if (this._excludedPaths.exists(Path.directory(id)))
+			{
+				continue;
+			}
+			
 			asset = SoundAsset.fromPool();
 			asset.path = id;
 			asset.name = Path.withoutDirectory(id);
@@ -799,6 +820,11 @@ class AssetLib
 		if (_debug) trace("AssetLib initTexts " + strList);
 		for (id in strList)
 		{
+			if (this._excludedPaths.exists(Path.directory(id)))
+			{
+				continue;
+			}
+			
 			asset = TextAsset.fromPool();
 			asset.path = id;
 			asset.name = Path.withoutDirectory(id);
