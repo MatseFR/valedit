@@ -260,7 +260,7 @@ class ValEditClass
 		while (true)
 		{
 			this._templateIDIndex++;
-			templateID = this.className + " template" + this._templateIDIndex;
+			templateID = this.className + this._templateIDIndex;
 			if (!this._IDToTemplate.exists(templateID)) break;
 		}
 		return templateID;
@@ -273,7 +273,6 @@ class ValEditClass
 	
 	public function addTemplate(template:ValEditTemplate):Void
 	{
-		if (template.id == null) template.id = makeTemplateID();
 		this._IDToTemplate.set(template.id, template);
 		this.numTemplates++;
 	}
