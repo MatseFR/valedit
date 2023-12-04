@@ -254,18 +254,6 @@ class ValEditClass
 		this.numInstances--;
 	}
 	
-	public function makeTemplateID():String
-	{
-		var templateID:String = null;
-		while (true)
-		{
-			this._templateIDIndex++;
-			templateID = this.className + this._templateIDIndex;
-			if (!this._IDToTemplate.exists(templateID)) break;
-		}
-		return templateID;
-	}
-	
 	public function templateIDExists(id:String):Bool
 	{
 		return this._IDToTemplate.exists(id);
