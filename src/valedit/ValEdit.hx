@@ -3,6 +3,7 @@ import haxe.Constraints.Function;
 import haxe.ds.Map;
 import haxe.macro.Compiler;
 import openfl.display.DisplayObject;
+import openfl.errors.Error;
 import valedit.asset.AssetLib;
 import valedit.utils.PropertyMap;
 
@@ -295,7 +296,7 @@ class ValEdit
 		if (template == null) 
 		{
 			template = ValEditTemplate.fromPool(valClass, id, collection, constructorCollection);
-			template.object = createObjectWithTemplate(template, template.collection, false);
+			template.object = createObjectWithTemplate(template, id, template.collection, false);
 			template.object.currentCollection.readValues();
 		}
 		else
@@ -351,7 +352,14 @@ class ValEdit
 	
 	static private function registerObjectInternal(valObject:ValEditObject):Void
 	{
-		if (valObject.id == null) valObject.id = valObject.clss.makeObjectID();
+		//if (valObject.id == null) valObject.id = valObject.clss.makeObjectID();
+		
+		// DEBUG : all objects should have an id when registered
+		if (valObject.id == null)
+		{
+			throw new Error("ValEdit.registerObjectInternal ::: null object id");
+		}
+		//\DEBUG
 		valObject.clss.addObject(valObject);
 	}
 	
