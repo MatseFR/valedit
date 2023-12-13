@@ -53,11 +53,11 @@ class ValEditClassSettings
 	
 	public var propertyMap:PropertyMap;
 	
-	/** external/static function of type Dynamic->DisplayObjectContainer->Void
+	/** external/static function of type Dynamic->DisplayObjectContainer->Void to call instead of doing a simple removeChild
 	 *  This is only useful is isDisplayObject is set to true */
 	public var removeFromDisplayFunction:Function;
 	
-	/** name of the object's function */
+	/** name of the object's DisplayObjectContainer->Void function to call instead of doing a simple removeChild */
 	public var removeFromDisplayFunctionName:String;
 	
 	/** template collection */
