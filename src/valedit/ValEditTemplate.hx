@@ -1,6 +1,7 @@
 package valedit;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
+import valedit.utils.ReverseIterator;
 
 /**
  * ...
@@ -62,11 +63,10 @@ class ValEditTemplate extends EventDispatcher
 			this.object = null;
 		}
 		
-		for (instance in this._instances)
+		for (i in new ReverseIterator(this._instances.length - 1, 0))
 		{
-			ValEdit.destroyObject(instance);
+			ValEdit.destroyObject(this._instances[i]);
 		}
-		this._instances.resize(0);
 		this._instanceMap.clear();
 		
 		// DEBUG
