@@ -9,6 +9,7 @@ import valedit.utils.StringIndexedMap;
 
 #if valeditor
 import valeditor.events.LayerEvent;
+import valeditor.events.RenameEvent;
 #end
 
 /**
@@ -382,6 +383,7 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		#if valeditor
 		layer.addEventListener(LayerEvent.OBJECT_ADDED, layer_objectAdded);
 		layer.addEventListener(LayerEvent.OBJECT_REMOVED, layer_objectRemoved);
+		layer.addEventListener(RenameEvent.RENAMED, layer_renamed);
 		#end
 	}
 	
@@ -402,6 +404,7 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		#if valeditor
 		layer.removeEventListener(LayerEvent.OBJECT_ADDED, layer_objectAdded);
 		layer.removeEventListener(LayerEvent.OBJECT_REMOVED, layer_objectRemoved);
+		layer.removeEventListener(RenameEvent.RENAMED, layer_renamed);
 		#end
 	}
 	
@@ -416,6 +419,13 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	{
 		this._objects.remove(evt.object.id);
 		this._objectToLayer.remove(evt.object);
+	}
+	
+	private function layer_renamed(evt:RenameEvent):Void
+	{
+		var layer:ValEditLayer = cast evt.target;
+		this._layerMap.remove(evt.previousNameOrID);
+		this._layerMap.set(layer.name, layer);
 	}
 	#end
 	
