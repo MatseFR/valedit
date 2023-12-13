@@ -420,8 +420,6 @@ class ValEdit
 	
 	static private function destroyTemplateInternal(template:ValEditTemplate):Void
 	{
-		destroyObject(template.object);
-		
 		unregisterTemplateInternal(template);
 		
 		template.pool();
@@ -430,6 +428,7 @@ class ValEdit
 	static private function unregisterTemplateInternal(template:ValEditTemplate):Void
 	{
 		template.clss.removeTemplate(template);
+		_templateMap.remove(template.id);
 	}
 	
 	static public function unregisterTemplate(template:ValEditTemplate):Void
