@@ -367,7 +367,7 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	
 	private function layerRegister(layer:ValEditLayer, index:Int):Void
 	{
-		layer.valEditContainer = this;
+		layer.container = this;
 		this.timeLine.addChildAt(layer.timeLine, index);
 		if (this._container != null)
 		{
@@ -387,7 +387,7 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	
 	private function layerUnregister(layer:ValEditLayer):Void
 	{
-		layer.valEditContainer = null;
+		layer.container = null;
 		this.timeLine.removeChild(layer.timeLine);
 		if (this._container != null)
 		{
