@@ -369,6 +369,12 @@ class ValEdit
 		_templateMap.set(template.id, template);
 	}
 	
+	static public function renameTemplate(template:ValEditTemplate, previousID:String):Void
+	{
+		_templateMap.remove(previousID);
+		_templateMap.set(template.id, template);
+	}
+	
 	static public function destroyObject(valObject:ValEditObject):Void
 	{
 		destroyObjectInternal(valObject);
