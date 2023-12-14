@@ -21,6 +21,7 @@ class ValEditLayer extends EventDispatcher
 	}
 	
 	public var container(get, set):IValEditContainer;
+	public var locked(get, set):Bool;
 	public var name(get, set):String;
 	public var rootContainer(get, set):DisplayObjectContainer;
 	#if starling
@@ -36,6 +37,18 @@ class ValEditLayer extends EventDispatcher
 	private function set_container(value:IValEditContainer):IValEditContainer
 	{
 		return this._container = value;
+	}
+	
+	private var _locked:Bool = false;
+	private function get_locked():Bool { return this._locked; }
+	private function set_locked(value:Bool):Bool
+	{
+		if (this._locked == value) return value;
+		if (this._displayContainer != null) this._displayContainer.mouseEnabled = !value;
+		#if starling
+		if (this._displayContainerStarling != null) this._displayContainerStarling.touchable = !value;
+		#end
+		return this._locked = value;
 	}
 	
 	private var _name:String;
@@ -278,6 +291,7 @@ class ValEditLayer extends EventDispatcher
 		this._displayContainer = new Sprite();
 		this._displayContainer.x = this._x;
 		this._displayContainer.y = this._y;
+		this._displayContainer.mouseEnabled = !this._locked;
 		this._displayContainer.visible = this._visible;
 		if (this._rootContainer != null) this._rootContainer.addChild(this._displayContainer);
 	}
@@ -288,6 +302,7 @@ class ValEditLayer extends EventDispatcher
 		this._displayContainerStarling = new starling.display.Sprite();
 		this._displayContainerStarling.x = this._x;
 		this._displayContainerStarling.y = this._y;
+		this._displayContainerStarling.touchable = !this._locked;
 		this._displayContainerStarling.visible = this._visible;
 		if (this._rootContainerStarling != null) this._rootContainerStarling.addChild(this._displayContainerStarling);
 	}
