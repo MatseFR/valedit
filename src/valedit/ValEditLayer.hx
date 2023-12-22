@@ -156,6 +156,7 @@ class ValEditLayer extends EventDispatcher
 			this.timeLine = null;
 		}
 		this.container = null;
+		this.locked = false;
 		this.visible = true;
 		this.x = 0;
 		this.y = 0;
