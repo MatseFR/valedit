@@ -23,7 +23,7 @@ class ValEditTemplate extends EventDispatcher
 	public var constructorCollection:ExposedCollection;
 	public var id(get, set):String;
 	public var instances(get, never):Array<ValEditObject>;
-	public var numInstances(default, null):Int = 0;
+	public var numInstances(get, never):Int;
 	public var object(get, set):ValEditObject;
 	
 	private var _id:String;
@@ -35,6 +35,8 @@ class ValEditTemplate extends EventDispatcher
 	
 	private var _instances:Array<ValEditObject> = new Array<ValEditObject>();
 	private function get_instances():Array<ValEditObject> { return this._instances; }
+	
+	private function get_numInstances():Int { return this._instances.length; }
 	
 	private var _object:ValEditObject;
 	private function get_object():ValEditObject { return this._object; }
@@ -104,7 +106,6 @@ class ValEditTemplate extends EventDispatcher
 		instance.template = this;
 		this._instances[this._instances.length] = instance;
 		this._instanceMap.set(instance.id, instance);
-		this.numInstances++;
 	}
 	
 	public function getInstance(id:String):ValEditObject
@@ -115,10 +116,7 @@ class ValEditTemplate extends EventDispatcher
 	public function removeInstance(instance:ValEditObject):Void
 	{
 		instance.template = null;
-		if (this._instances.remove(instance))
-		{
-			this.numInstances--;
-		}
+		this._instances.remove(instance);
 		this._instanceMap.remove(instance.id);
 	}
 	
