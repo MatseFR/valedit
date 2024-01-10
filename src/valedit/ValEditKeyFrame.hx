@@ -22,8 +22,8 @@ class ValEditKeyFrame extends EventDispatcher
 	public var deactivateFunction:ValEditObject->Void;
 	public var duration(get, never):Float;
 	public var indexCurrent(get, set):Int;
-	public var indexEnd:Int;
-	public var indexStart:Int;
+	public var indexEnd:Int = -1;
+	public var indexStart:Int = -1;
 	public var isActive(default, null):Bool;
 	public var isEmpty(get, never):Bool;
 	public var objects(default, null):Array<ValEditObject> = new Array<ValEditObject>();
@@ -100,6 +100,8 @@ class ValEditKeyFrame extends EventDispatcher
 		
 		this.activateFunction = null;
 		this.deactivateFunction = null;
+		this.indexStart = -1;
+		this.indexEnd = -1;
 		this.isActive = false;
 		this.timeLine = null;
 		this._transition = Transitions.LINEAR;
