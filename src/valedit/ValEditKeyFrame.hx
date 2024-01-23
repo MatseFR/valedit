@@ -131,10 +131,10 @@ class ValEditKeyFrame extends EventDispatcher
 		}
 	}
 	
-	public function remove(object:ValEditObject):Void
+	public function remove(object:ValEditObject, poolCollection:Bool = true):Void
 	{
 		this.objects.remove(object);
-		object.removeKeyFrame(this);
+		object.removeKeyFrame(this, poolCollection);
 		if (this.isActive)
 		{
 			deactivateFunction(object);
