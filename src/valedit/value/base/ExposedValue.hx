@@ -384,7 +384,7 @@ abstract class ExposedValue extends EventDispatcher
 		this._extras.clone(value._extras);
 	}
 	
-	private function cloneValue(toValue:ExposedValue):Void
+	public function cloneValue(toValue:ExposedValue):Void
 	{
 		if (this._storedValue != null)
 		{
