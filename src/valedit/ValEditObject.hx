@@ -1,6 +1,7 @@
 package valedit;
 import openfl.events.EventDispatcher;
 import valedit.utils.PropertyMap;
+import valedit.utils.ReverseIterator;
 
 /**
  * ...
@@ -47,6 +48,7 @@ class ValEditObject extends EventDispatcher
 		return this._id = value;
 	}
 	
+	private var _keyFrames:Array<ValEditKeyFrame> = new Array<ValEditKeyFrame>();
 	private var _keyFrameToCollection:Map<ValEditKeyFrame, ExposedCollection> = new Map<ValEditKeyFrame, ExposedCollection>();
 	
 	private var _realPropertyName:String;
@@ -61,9 +63,13 @@ class ValEditObject extends EventDispatcher
 	
 	public function clear():Void
 	{
-		for (keyFrame in this._keyFrameToCollection.keys())
+		//for (keyFrame in this._keyFrameToCollection.keys())
+		//{
+			//keyFrame.remove(this);
+		//}
+		for (i in new ReverseIterator(this._keyFrames.length - 1, 0))
 		{
-			keyFrame.remove(this);
+			this._keyFrames[i].remove(this);
 		}
 		
 		this.clss = null;
@@ -101,21 +107,30 @@ class ValEditObject extends EventDispatcher
 	{
 		if (collection == null)
 		{
-			var previousFrame:ValEditKeyFrame = keyFrame.timeLine.getPreviousKeyFrame(keyFrame);
-			if (previousFrame != null && this._keyFrameToCollection.exists(previousFrame))
-			{
-				collection = this._keyFrameToCollection.get(previousFrame).clone(true);
-			}
-			
-			if (collection == null)
-			{
-				collection = this.clss.getCollection();
-				collection.readValuesFromObject(this.object);
-			}
+			collection = createCollectionForKeyFrame(keyFrame);
 		}
 		
+		this._keyFrames[this._keyFrames.length] = keyFrame;
 		this._keyFrameToCollection.set(keyFrame, collection);
 		this.numKeyFrames++;
+	}
+	
+	public function createCollectionForKeyFrame(keyFrame:ValEditKeyFrame):ExposedCollection
+	{
+		var collection:ExposedCollection = null;
+		var previousFrame:ValEditKeyFrame = keyFrame.timeLine.getPreviousKeyFrame(keyFrame);
+		if (previousFrame != null && this._keyFrameToCollection.exists(previousFrame))
+		{
+			collection = this._keyFrameToCollection.get(previousFrame).clone(true);
+		}
+		
+		if (collection == null)
+		{
+			collection = this.clss.getCollection();
+			collection.readValuesFromObject(this.object);
+		}
+		
+		return collection;
 	}
 	
 	public function getCollectionForKeyFrame(keyFrame:ValEditKeyFrame):ExposedCollection
@@ -134,6 +149,7 @@ class ValEditObject extends EventDispatcher
 		{
 			this._keyFrameToCollection.get(keyFrame).pool();
 		}
+		this._keyFrames.remove(keyFrame);
 		this._keyFrameToCollection.remove(keyFrame);
 		this.numKeyFrames--;
 		
