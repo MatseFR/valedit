@@ -69,7 +69,7 @@ class ValEditTemplate extends EventDispatcher
 		{
 			ValEdit.destroyObject(this._instances[i]);
 		}
-		this._instanceMap.clear();
+		//this._instanceMap.clear();
 		
 		// DEBUG
 		if (this.numInstances != 0)
