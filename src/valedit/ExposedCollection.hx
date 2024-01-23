@@ -9,6 +9,8 @@ import valedit.value.ExposedGroup;
 import valedit.value.ExposedObject;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueWithChildren;
+import valeditor.editor.action.MultiAction;
+import valeditor.editor.action.value.ValueClone;
 #if valeditor
 import valeditor.ValEditor;
 import valeditor.ValEditorObject;
@@ -280,31 +282,61 @@ class ExposedCollection extends EventDispatcher
 	}
 	
 	/* Looks for corresponding exposed values in fromCollection and copies their values */
-	public function copyValuesFrom(fromCollection:ExposedCollection):Void
+	public function copyValuesFrom(fromCollection:ExposedCollection, ?action:MultiAction):Void
 	{
 		var fromGroup:ExposedGroup;
 		var fromValue:ExposedValue;
 		var group:ExposedGroup;
 		
-		for (value in this._valueList)
+		if (action != null)
 		{
-			if (!value.isRealValue) continue;
-			if (value.isGroup)
+			var valueClone:ValueClone;
+			for (value in this._valueList)
 			{
-				group = cast value;
-				fromGroup = fromCollection.getGroup(group.name);
-				if (fromGroup != null)
+				if (!value.isRealValue) continue;
+				if (value.isGroup)
 				{
-					group.copyValuesFrom(fromGroup);
+					group = cast value;
+					fromGroup = fromCollection.getGroup(group.name);
+					if (fromGroup != null)
+					{
+						group.copyValuesFrom(fromGroup, action);
+					}
+				}
+				else
+				{
+					fromValue = fromCollection.getValue(value.propertyName);
+					if (fromValue != null)
+					{
+						valueClone = ValueClone.fromPool();
+						valueClone.setup(fromValue, value);
+						action.add(valueClone);
+					}
 				}
 			}
-			else
+		}
+		else
+		{
+			for (value in this._valueList)
 			{
-				fromValue = fromCollection.getValue(value.propertyName);
-				if (fromValue != null)
+				if (!value.isRealValue) continue;
+				if (value.isGroup)
 				{
-					//value.value = fromValue.value;
-					fromValue.cloneValue(value);
+					group = cast value;
+					fromGroup = fromCollection.getGroup(group.name);
+					if (fromGroup != null)
+					{
+						group.copyValuesFrom(fromGroup);
+					}
+				}
+				else
+				{
+					fromValue = fromCollection.getValue(value.propertyName);
+					if (fromValue != null)
+					{
+						//value.value = fromValue.value;
+						fromValue.cloneValue(value);
+					}
 				}
 			}
 		}

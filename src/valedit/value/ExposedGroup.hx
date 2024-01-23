@@ -7,6 +7,8 @@ import valedit.value.base.ExposedValue;
 import valedit.events.ValueEvent;
 import valedit.ui.IGroupUI;
 import valedit.ui.IValueUI;
+import valeditor.editor.action.MultiAction;
+import valeditor.editor.action.value.ValueClone;
 
 #if valeditor
 import valeditor.ValEditor;
@@ -228,30 +230,58 @@ class ExposedGroup extends ExposedValue
 		return true;
 	}
 	
-	public function copyValuesFrom(fromGroup:ExposedGroup):Void
+	public function copyValuesFrom(fromGroup:ExposedGroup, ?action:MultiAction):Void
 	{
 		var fromGrp:ExposedGroup;
 		var fromValue:ExposedValue;
 		var group:ExposedGroup;
 		
-		for (value in this._valueList)
+		if (action != null)
 		{
-			if (!value.isRealValue) continue;
-			if (value.isGroup)
+			var valueClone:ValueClone;
+			for (value in this._valueList)
 			{
-				group = cast value;
-				fromGrp = fromGroup.getGroup(group.name);
-				if (fromGrp != null)
+				if (!value.isRealValue) continue;
+				if (value.isGroup)
 				{
-					group.copyValuesFrom(fromGrp);
+					group = cast value;
+					fromGrp = fromGroup.getGroup(group.name);
+					if (fromGrp != null)
+					{
+						group.copyValuesFrom(fromGrp, action);
+					}
+				}
+				else
+				{
+					fromValue = fromGroup.getValue(value.propertyName);
+					if (fromValue != null)
+					{
+						valueClone = ValueClone.fromPool();
+					}
 				}
 			}
-			else
+		}
+		else
+		{
+			for (value in this._valueList)
 			{
-				fromValue = fromGroup.getValue(value.propertyName);
-				if (fromValue != null)
+				if (!value.isRealValue) continue;
+				if (value.isGroup)
 				{
-					fromValue.cloneValue(value);
+					group = cast value;
+					fromGrp = fromGroup.getGroup(group.name);
+					if (fromGrp != null)
+					{
+						group.copyValuesFrom(fromGrp);
+					}
+				}
+				else
+				{
+					fromValue = fromGroup.getValue(value.propertyName);
+					if (fromValue != null)
+					{
+						fromValue.cloneValue(value);
+					}
 				}
 			}
 		}
