@@ -221,7 +221,7 @@ class ExposedStarlingTexture extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var tex:ExposedStarlingTexture = new ExposedStarlingTexture(this.propertyName, this.name);
+		var tex:ExposedStarlingTexture = fromPool(this.propertyName, this.name);
 		clone_internal(tex, copyValue);
 		return tex;
 	}
