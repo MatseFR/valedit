@@ -222,7 +222,7 @@ class ExposedStarlingAtlas extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var atlas:ExposedStarlingAtlas = new ExposedStarlingAtlas(this.propertyName, this.name);
+		var atlas:ExposedStarlingAtlas = fromPool(this.propertyName, this.name);
 		clone_internal(atlas, copyValue);
 		return atlas;
 	}
