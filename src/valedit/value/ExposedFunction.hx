@@ -63,11 +63,15 @@ class ExposedFunction extends ExposedValue
 		{
 			addParameter(param);
 		}
+		this.canCopyValueOnClone = false;
+		this.checkForChange = false;
 	}
 	
 	override public function clear():Void 
 	{
 		super.clear();
+		this.canCopyValueOnClone = false;
+		this.checkForChange = false;
 		this.parameters.resize(0);
 		this._parameterValuesAll.resize(0);
 		this._parameterValues.resize(0);
