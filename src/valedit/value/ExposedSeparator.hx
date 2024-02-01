@@ -41,7 +41,7 @@ class ExposedSeparator extends ExposedNotValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var separator:ExposedSeparator = new ExposedSeparator(this.name);
+		var separator:ExposedSeparator = fromPool(this.name);
 		return separator;
 	}
 	
