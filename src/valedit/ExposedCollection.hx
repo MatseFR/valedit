@@ -16,6 +16,7 @@ import valeditor.ValEditor;
 import valeditor.ValEditorObject;
 import valedit.ui.UICollection;
 #end
+import valeditor.editor.action.value.ValueUIUpdate;
 
 /**
  * ...
@@ -572,6 +573,44 @@ class ExposedCollection extends EventDispatcher
 			this.uiContainer = container;
 		}
 	}
+	
+	public function getActionChanges(targetCollection:ExposedCollection, action:MultiAction):Void
+	{
+		var group:ExposedGroup;
+		var targetGroup:ExposedGroup;
+		var targetValue:ExposedValue;
+		var valueClone:ValueClone;
+		var valueUIUpdate:ValueUIUpdate;
+		
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			if (!value.checkForChange) continue;
+			if (value.isGroup)
+			{
+				group = cast value;
+				targetGroup = targetCollection.getGroup(group.name);
+				if (targetGroup != null)
+				{
+					group.getActionChanges(targetGroup, action);
+				}
+			}
+			else
+			{
+				targetValue = targetCollection.getValue(value.propertyName);
+				if (targetValue != null && value.value != targetValue.value)
+				{
+					valueClone = ValueClone.fromPool();
+					valueClone.setup(targetValue.clone(true), targetValue, value);
+					action.add(valueClone);
+					
+					valueUIUpdate = ValueUIUpdate.fromPool();
+					valueUIUpdate.setup(targetValue);
+					action.addPost(valueUIUpdate);
+				}
+			}
+		}
+	}
 	#end
 	
 	public function getGroup(name:String, includeSubGroups:Bool = false):ExposedGroup
@@ -698,7 +737,7 @@ class ExposedCollection extends EventDispatcher
 	
 	public function clone(copyValues:Bool = false):ExposedCollection
 	{
-		var collection:ExposedCollection = new ExposedCollection();
+		var collection:ExposedCollection = fromPool();
 		collection.applyIfDefaultValue = this.applyIfDefaultValue;
 		collection.isConstructor = this.isConstructor;
 		collection.isEditable = this.isEditable;
