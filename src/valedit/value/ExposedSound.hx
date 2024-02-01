@@ -133,7 +133,7 @@ class ExposedSound extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var snd:ExposedSound = new ExposedSound(this.propertyName, this.name);
+		var snd:ExposedSound = fromPool(this.propertyName, this.name);
 		clone_internal(snd, copyValue);
 		return snd;
 	}
