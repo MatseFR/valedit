@@ -9,6 +9,7 @@ import valedit.ui.IGroupUI;
 import valedit.ui.IValueUI;
 import valeditor.editor.action.MultiAction;
 import valeditor.editor.action.value.ValueClone;
+import valeditor.editor.action.value.ValueUIUpdate;
 
 #if valeditor
 import valeditor.ValEditor;
@@ -257,6 +258,8 @@ class ExposedGroup extends ExposedValue
 					if (fromValue != null)
 					{
 						valueClone = ValueClone.fromPool();
+						valueClone.setup(fromValue, value);
+						action.add(valueClone);
 					}
 				}
 			}
@@ -449,6 +452,44 @@ class ExposedGroup extends ExposedValue
 			this._uiGroup.addExposedControl(control);
 		}
 		this._isUIBuilt = true;
+	}
+	
+	public function getActionChanges(targetGroup:ExposedGroup, action:MultiAction):Void
+	{
+		var group:ExposedGroup;
+		var targetGrp:ExposedGroup;
+		var targetValue:ExposedValue;
+		var valueClone:ValueClone;
+		var valueUIUpdate:ValueUIUpdate;
+		
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			if (!value.checkForChange) continue;
+			if (value.isGroup)
+			{
+				group = cast value;
+				targetGrp = targetGroup.getGroup(group.name);
+				if (targetGrp != null)
+				{
+					group.getActionChanges(targetGrp, action);
+				}
+			}
+			else
+			{
+				targetValue = targetGroup.getValue(value.propertyName);
+				if (targetValue != null && value.value != targetValue.value)
+				{
+					valueClone = ValueClone.fromPool();
+					valueClone.setup(targetValue, value);
+					action.add(valueClone);
+					
+					valueUIUpdate = ValueUIUpdate.fromPool();
+					valueUIUpdate.setup(targetValue);
+					action.addPost(valueUIUpdate);
+				}
+			}
+		}
 	}
 	#end
 	
