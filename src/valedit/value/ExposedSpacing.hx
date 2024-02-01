@@ -41,7 +41,7 @@ class ExposedSpacing extends ExposedNotValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var space:ExposedSpacing = new ExposedSpacing(this.name);
+		var space:ExposedSpacing = fromPool(this.name);
 		return space;
 	}
 	
