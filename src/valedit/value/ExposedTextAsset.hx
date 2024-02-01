@@ -213,7 +213,7 @@ class ExposedTextAsset extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var text:ExposedTextAsset = new ExposedTextAsset(this.propertyName, this.name);
+		var text:ExposedTextAsset = fromPool(this.propertyName, this.name);
 		clone_internal(text, copyValue);
 		return text;
 	}
