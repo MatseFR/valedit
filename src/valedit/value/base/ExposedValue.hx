@@ -26,6 +26,8 @@ abstract class ExposedValue extends EventDispatcher
 	}
 	
 	public var canCopyValueOnClone:Bool = true;
+	/* Tells wether value should be checked for change when calling ExposedCollection's or ExposedGroup's getActionChanges function. Default is true. */
+	public var checkForChange:Bool = true;
 	public var collection(get, set):ExposedCollection;
 	public var concatenatedPropertyName(get, never):String;
 	/* used as value when object is null */
@@ -224,7 +226,7 @@ abstract class ExposedValue extends EventDispatcher
 		return this._visible = value;
 	}
 	
-	private var _storedValue:Dynamic;
+	private var _storedValue:Dynamic = null;
 	
 	/**
 	   
@@ -244,6 +246,7 @@ abstract class ExposedValue extends EventDispatcher
 	public function clear():Void
 	{
 		this.canCopyValueOnClone = true;
+		this.checkForChange = true;
 		this.collection = null;
 		this.defaultValue = null;
 		this.isAbsolute = false;
@@ -365,8 +368,10 @@ abstract class ExposedValue extends EventDispatcher
 	
 	private function clone_internal(value:ExposedValue, copyValue:Bool = false):Void
 	{
+		value.canCopyValueOnClone = this.canCopyValueOnClone;
+		value.checkForChange = this.checkForChange;
 		value.defaultValue = this.defaultValue;
-		if (copyValue && canCopyValueOnClone)
+		if (copyValue && this.canCopyValueOnClone)
 		{
 			cloneValue(value);
 		}
