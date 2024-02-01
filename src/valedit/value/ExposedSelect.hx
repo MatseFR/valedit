@@ -102,7 +102,7 @@ class ExposedSelect extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var select:ExposedSelect = new ExposedSelect(this.propertyName, this.name, choiceList != null ? choiceList.copy():null, valueList != null ? valueList.copy():null, listPercentWidth);
+		var select:ExposedSelect = fromPool(this.propertyName, this.name, choiceList != null ? choiceList.copy():null, valueList != null ? valueList.copy():null, listPercentWidth);
 		super.clone_internal(select, copyValue);
 		return select;
 	}
