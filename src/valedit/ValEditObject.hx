@@ -2,6 +2,7 @@ package valedit;
 import openfl.events.EventDispatcher;
 import valedit.utils.PropertyMap;
 import valedit.utils.ReverseIterator;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -188,6 +189,13 @@ class ValEditObject extends EventDispatcher
 		this._realPropertyName = this.propertyMap.getObjectPropertyName(regularPropertyName);
 		if (this._realPropertyName == null) this._realPropertyName = regularPropertyName;
 		return Reflect.getProperty(this.object, this._realPropertyName);
+	}
+	
+	public function getValue(regularPropertyName:String):ExposedValue
+	{
+		this._realPropertyName = this.propertyMap.getObjectPropertyName(regularPropertyName);
+		if (this._realPropertyName == null) this._realPropertyName = regularPropertyName;
+		return this.currentCollection.getValue(this._realPropertyName);
 	}
 	
 	private function setTo(clss:ValEditClass, id:String):ValEditObject
