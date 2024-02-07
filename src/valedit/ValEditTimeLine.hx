@@ -366,6 +366,11 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		}
 	}
 	
+	public function getKeyFrameAt(index:Int):ValEditKeyFrame
+	{
+		return this._frames[index];
+	}
+	
 	public function registerKeyFrame(keyFrame:ValEditKeyFrame):Void
 	{
 		keyFrame.timeLine = this;
