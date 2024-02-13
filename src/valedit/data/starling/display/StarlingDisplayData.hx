@@ -204,8 +204,23 @@ class StarlingDisplayData
 	
 	static private function applyDisplayObjectInstance(collection:ExposedCollection):Void
 	{
-		//collection.setVisibleArray(["name", "x", "y", "width", "height", "scaleX", "scaleY", "alpha", "rotation", "skewX", "skewY", "blendMode", "mask", "maskInverted", "visible", "transformationMatrix"], true);
-		collection.setVisibleArray(["name", "x", "y", "width", "height", "scaleX", "scaleY", "alpha", "rotation", "skewX", "skewY", "blendMode", "mask", "maskInverted", "visible"], true);
+		collection.setVisibleArray([
+			"name",
+			"x",
+			"y",
+			"width",
+			"height",
+			"scaleX",
+			"scaleY",
+			"alpha",
+			"rotation",
+			"skewX",
+			"skewY",
+			"blendMode",
+			"mask",
+			"maskInverted",
+			"visible"
+		], true);
 	}
 	
 	static public function exposeDisplayObjectTemplate(?collection:ExposedCollection):ExposedCollection
@@ -221,7 +236,13 @@ class StarlingDisplayData
 	
 	static private function applyDisplayObjectTemplate(collection:ExposedCollection):Void
 	{
-		collection.setVisibleArray(["pivotX", "pivotY", "touchable", "useHandCursor", "alignPivot"], true);
+		collection.setVisibleArray([
+			"pivotX",
+			"pivotY",
+			"touchable",
+			"useHandCursor",
+			"alignPivot"
+		], true);
 	}
 	
 	static public function exposeDisplayObjectContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -409,7 +430,9 @@ class StarlingDisplayData
 	static private function applyMeshInstance(collection:ExposedCollection):Void
 	{
 		applyDisplayObjectInstance(collection);
-		collection.setVisibleArray(["color"], true);
+		collection.setVisibleArray([
+			"color"
+		], true);
 	}
 	
 	static public function exposeMeshTemplate(?collection:ExposedCollection):ExposedCollection
@@ -426,7 +449,13 @@ class StarlingDisplayData
 	static private function applyMeshTemplate(collection:ExposedCollection):Void
 	{
 		applyDisplayObjectTemplate(collection);
-		collection.setVisibleArray(["texture", "textureSmoothing", "textureRepeat", "pixelSnapping", "readjustSize"], true);
+		collection.setVisibleArray([
+			"texture",
+			"textureSmoothing",
+			"textureRepeat",
+			"pixelSnapping",
+			"readjustSize"
+		], true);
 	}
 	
 	static public function exposeQuad(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -607,7 +636,13 @@ class StarlingDisplayData
 	static private function applySprite3DInstance(collection:ExposedCollection):Void
 	{
 		applyDisplayObjectContainerInstance(collection);
-		collection.setVisibleArray(["z", "rotationX", "rotationY", "rotationZ", "scaleZ"], true);
+		collection.setVisibleArray([
+			"z",
+			"rotationX",
+			"rotationY",
+			"rotationZ",
+			"scaleZ"
+		], true);
 	}
 	
 	static public function exposeSprite3DTemplate(?collection:ExposedCollection):ExposedCollection
@@ -624,7 +659,9 @@ class StarlingDisplayData
 	static private function applySprite3DTemplate(collection:ExposedCollection):Void
 	{
 		applyDisplayObjectContainerTemplate(collection);
-		collection.setVisibleArray(["pivotZ"], true);
+		collection.setVisibleArray([
+			"pivotZ"
+		], true);
 	}
 	
 }
