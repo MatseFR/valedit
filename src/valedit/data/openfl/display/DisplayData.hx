@@ -95,7 +95,11 @@ class DisplayData
 	static private function applyBitmapTemplate(collection:ExposedCollection):Void
 	{
 		applyDisplayObjectTemplate(collection);
-		collection.setVisibleArray(["bitmapData", "pixelSnapping", "smoothing"], true);
+		collection.setVisibleArray([
+			"bitmapData",
+			"pixelSnapping",
+			"smoothing"
+		], true);
 	}
 	
 	static public function exposeBitmapConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -265,7 +269,22 @@ class DisplayData
 	
 	static private function applyDisplayObjectInstance(collection:ExposedCollection):Void
 	{
-		collection.setVisibleArray(["name", "x", "y", "width", "height", "scaleX", "scaleY", "alpha", "rotation", "blendMode", "mask", "transform", "cacheAsBitmap", "visible"], true);
+		collection.setVisibleArray([
+			"name",
+			"x",
+			"y",
+			"width",
+			"height",
+			"scaleX",
+			"scaleY",
+			"alpha",
+			"rotation",
+			"blendMode",
+			"mask",
+			"transform",
+			"cacheAsBitmap",
+			"visible"
+		], true);
 	}
 	
 	static public function exposeDisplayObjectTemplate(?collection:ExposedCollection):ExposedCollection
@@ -321,7 +340,10 @@ class DisplayData
 	static private function applyDisplayObjectContainerInstance(collection:ExposedCollection):Void
 	{
 		applyDisplayObjectInstance(collection);
-		collection.setVisibleArray(["mouseChildren", "tabChildren"], true);
+		collection.setVisibleArray([
+			"mouseChildren",
+			"tabChildren"
+		], true);
 	}
 	
 	static public function exposeDisplayObjectContainerTemplate(?collection:ExposedCollection):ExposedCollection
@@ -443,7 +465,14 @@ class DisplayData
 	static private function applyInteractiveObjectInstance(collection:ExposedCollection):Void
 	{
 		applyDisplayObjectInstance(collection);
-		collection.setVisibleArray(["doubleClickEnabled", "focusRect", "mouseEnabled", "needsSoftKeyboard", "tabEnabled", "tabIndex"], true);
+		collection.setVisibleArray([
+			"doubleClickEnabled",
+			"focusRect",
+			"mouseEnabled",
+			"needsSoftKeyboard",
+			"tabEnabled",
+			"tabIndex"
+		], true);
 	}
 	
 	static public function exposeInteractiveObjectTemplate(?collection:ExposedCollection):ExposedCollection
@@ -493,7 +522,9 @@ class DisplayData
 	static private function applyMovieClipInstance(collection:ExposedCollection):Void
 	{
 		applySpriteInstance(collection);
-		collection.setVisibleArray(["enabled"], true);
+		collection.setVisibleArray([
+			"enabled"
+		], true);
 	}
 	
 	static public function exposeMovieClipTemplate(?collection:ExposedCollection):ExposedCollection
@@ -574,7 +605,10 @@ class DisplayData
 	static private function applySpriteTemplate(collection:ExposedCollection):Void
 	{
 		applyDisplayObjectContainerTemplate(collection);
-		collection.setVisibleArray(["buttonMode", "useHandCursor"], true);
+		collection.setVisibleArray([
+			"buttonMode",
+			"useHandCursor"
+		], true);
 	}
 	
 	static public function exposeStage(?collection:ExposedCollection, ?groupName:String):ExposedCollection
