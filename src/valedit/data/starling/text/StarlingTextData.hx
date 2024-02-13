@@ -1,7 +1,9 @@
 package valedit.data.starling.text;
 import flash.display3D.Context3DTextureFormat;
 import openfl.text.StyleSheet;
+import starling.styles.MeshStyle;
 import starling.text.TextFieldAutoSize;
+import starling.text.TextFormat;
 import starling.text.TextOptions;
 import starling.utils.Align;
 import valedit.ExposedCollection;
@@ -12,7 +14,6 @@ import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFontName;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedIntDrag;
-import valedit.value.ExposedObject;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedText;
@@ -21,6 +22,7 @@ import valedit.value.ExposedText;
  * ...
  * @author Matse
  */
+@:access(valedit.data.starling.display.StarlingDisplayData)
 class StarlingTextData 
 {
 
@@ -28,7 +30,7 @@ class StarlingTextData
 	{
 		var bool:ExposedBool;
 		var floatDrag:ExposedFloatDrag;
-		var object:ExposedObject;
+		var objectRef:ExposedObjectReference;
 		var select:ExposedSelect;
 		var text:ExposedText;
 		
@@ -64,8 +66,9 @@ class StarlingTextData
 		
 		if (!collection.hasValue("format"))
 		{
-			object = new ExposedObject("format");
-			collection.addValue(object, groupName);
+			objectRef = new ExposedObjectReference("format");
+			objectRef.addClass(TextFormat);
+			collection.addValue(objectRef, groupName);
 		}
 		
 		if (!collection.hasValue("isHtmlText"))
@@ -88,14 +91,16 @@ class StarlingTextData
 		
 		if (!collection.hasValue("style"))
 		{
-			object = new ExposedObject("style");
-			collection.addValue(object, groupName);
+			objectRef = new ExposedObjectReference("style");
+			objectRef.addClass(MeshStyle);
+			collection.addValue(objectRef, groupName);
 		}
 		
 		if (!collection.hasValue("styleSheet"))
 		{
-			object = new ExposedObject("styleSheet");
-			collection.addValue(object, groupName);
+			objectRef = new ExposedObjectReference("styleSheet");
+			objectRef.addClass(StyleSheet);
+			collection.addValue(objectRef, groupName);
 		}
 		
 		if (!collection.hasValue("text"))
@@ -115,10 +120,58 @@ class StarlingTextData
 		return collection;
 	}
 	
+	static public function exposeTextFieldInstance(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeTextField(collection);
+		collection.setVisibleAll(false);
+		applyTextFieldInstance(collection);
+		
+		return collection;
+	}
+	
+	static private function applyTextFieldInstance(collection:ExposedCollection):Void
+	{
+		StarlingDisplayData.applyDisplayObjectContainerInstance(collection);
+		collection.setVisibleArray([
+			"text"
+		], true);
+	}
+	
+	static public function exposeTextFieldTemplate(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeTextField(collection);
+		collection.setVisibleAll(false);
+		applyTextFieldTemplate(collection);
+		
+		return collection;
+	}
+	
+	static private function applyTextFieldTemplate(collection:ExposedCollection):Void
+	{
+		StarlingDisplayData.applyDisplayObjectContainerTemplate(collection);
+		collection.setVisibleArray([
+			"autoScale",
+			"autoSize",
+			"batchable",
+			"border",
+			"format",
+			"isHtmlText",
+			"padding",
+			"pixelSnapping",
+			"style",
+			"styleSheet",
+			"wordWrap"
+		], true);
+	}
+	
 	static public function exposeTextFieldConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var intDrag:ExposedIntDrag;
-		var object:ExposedObject;
+		var objectRef:ExposedObjectReference;
 		var text:ExposedText;
 		
 		if (collection == null)
@@ -150,14 +203,14 @@ class StarlingTextData
 		
 		if (!collection.hasValue("format"))
 		{
-			object = new ExposedObject("format");
-			collection.addValue(object, groupName);
+			objectRef = new ExposedObjectReference("format");
+			collection.addValue(objectRef, groupName);
 		}
 		
 		if (!collection.hasValue("options"))
 		{
-			object = new ExposedObject("options");
-			collection.addValue(object, groupName);
+			objectRef = new ExposedObjectReference("options");
+			collection.addValue(objectRef, groupName);
 		}
 		
 		return collection;
@@ -226,13 +279,13 @@ class StarlingTextData
 		
 		if (!collection.hasValue("size"))
 		{
-			floatDrag = new ExposedFloatDrag("size", null, 0)
+			floatDrag = new ExposedFloatDrag("size", null, 0);
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("underline"))
 		{
-			bool = new ExposedBool("underline")
+			bool = new ExposedBool("underline");
 			collection.addValue(bool, groupName);
 		}
 		
