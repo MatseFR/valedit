@@ -10,21 +10,18 @@ import valedit.ExposedCollection;
 import valedit.data.openfl.display.DisplayData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
-import valedit.value.ExposedFloat;
 import valedit.value.ExposedFloatDrag;
-import valedit.value.ExposedFloatRange;
 import valedit.value.ExposedFontName;
-import valedit.value.ExposedInt;
 import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 import valedit.value.ExposedText;
-import valedit.value.NumericMode;
 
 /**
  * ...
  * @author Matse
  */
+@:access(valedit.data.openfl.display.DisplayData)
 class TextData 
 {
 	static public function exposeFont(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -256,6 +253,67 @@ class TextData
 		}
 		
 		return collection;
+	}
+	
+	static public function exposeTextFieldInstance(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeTextField(collection);
+		collection.setVisibleAll(false);
+		applyTextFieldInstance(collection);
+		
+		return collection;
+	}
+	
+	static private function applyTextFieldInstance(collection:ExposedCollection):Void
+	{
+		DisplayData.applyInteractiveObjectInstance(collection);
+		collection.setVisibleArray([
+			"displayAsPassword",
+			"htmlText",
+			"maxChars",
+			"restrict",
+			"scrollH",
+			"scrollV",
+			"text",
+			"textColor",
+		], true);
+		
+	}
+	
+	static public function exposeTextFieldTemplate(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeTextField(collection);
+		collection.setVisibleAll(false);
+		applyTextFieldTemplate(collection);
+		
+		return collection;
+	}
+	
+	static private function applyTextFieldTemplate(collection:ExposedCollection):Void
+	{
+		DisplayData.applyInteractiveObjectTemplate(collection);
+		collection.setVisibleArray([
+			"alwaysShowSelection",
+			"antiAliasType",
+			"autoSize",
+			"background",
+			"backgroundColor",
+			"border",
+			"borderColor",
+			"condenseWhite",
+			"embedFonts",
+			"gridFitType",
+			"mouseWheelEnabled",
+			"multiline",
+			"selectable",
+			"sharpness",
+			"type",
+			"wordWrap"
+		], true);
 	}
 	
 	static public function exposeTextFormat(?collection:ExposedCollection, ?groupName:String):ExposedCollection
