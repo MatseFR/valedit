@@ -7,11 +7,6 @@ import openfl.events.EventDispatcher;
 import valedit.events.PlayEvent;
 import valedit.utils.StringIndexedMap;
 
-#if valeditor
-import valeditor.events.LayerEvent;
-import valeditor.events.RenameEvent;
-#end
-
 /**
  * ...
  * @author Matse
@@ -268,7 +263,7 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		
 		for (layer in this._layers)
 		{
-			layer.clear();
+			layer.pool();
 		}
 		this._layers.resize(0);
 		this._layerMap.clear();
@@ -380,11 +375,6 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 			layer.rootContainerStarling = this._containerStarling;
 		}
 		#end
-		#if valeditor
-		layer.addEventListener(LayerEvent.OBJECT_ADDED, layer_objectAdded);
-		layer.addEventListener(LayerEvent.OBJECT_REMOVED, layer_objectRemoved);
-		layer.addEventListener(RenameEvent.RENAMED, layer_renamed);
-		#end
 	}
 	
 	private function layerUnregister(layer:ValEditLayer):Void
@@ -401,33 +391,7 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 			layer.rootContainerStarling = null;
 		}
 		#end
-		#if valeditor
-		layer.removeEventListener(LayerEvent.OBJECT_ADDED, layer_objectAdded);
-		layer.removeEventListener(LayerEvent.OBJECT_REMOVED, layer_objectRemoved);
-		layer.removeEventListener(RenameEvent.RENAMED, layer_renamed);
-		#end
 	}
-	
-	#if valeditor
-	private function layer_objectAdded(evt:LayerEvent):Void
-	{
-		this._objects.set(evt.object.id, evt.object);
-		this._objectToLayer.set(evt.object, evt.layer);
-	}
-	
-	private function layer_objectRemoved(evt:LayerEvent):Void
-	{
-		this._objects.remove(evt.object.id);
-		this._objectToLayer.remove(evt.object);
-	}
-	
-	private function layer_renamed(evt:RenameEvent):Void
-	{
-		var layer:ValEditLayer = cast evt.target;
-		this._layerMap.remove(evt.previousNameOrID);
-		this._layerMap.set(layer.name, layer);
-	}
-	#end
 	
 	public function add(object:ValEditObject):Void
 	{
