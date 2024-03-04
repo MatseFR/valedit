@@ -159,12 +159,14 @@ class DisplayData
 		if (!collection.hasValue("x"))
 		{
 			floatDrag = new ExposedFloatDrag("x");
+			floatDrag.isTweenable = false;
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
 			floatDrag = new ExposedFloatDrag("y");
+			floatDrag.isTweenable = false;
 			collection.addValue(floatDrag, groupName);
 		}
 		
