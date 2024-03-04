@@ -83,6 +83,7 @@ class GeomData
 	static public function exposeMatrix(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var floatDrag:ExposedFloatDrag;
+		var func:ExposedFunction;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -113,15 +114,59 @@ class GeomData
 		if (!collection.hasValue("tx"))
 		{
 			floatDrag = new ExposedFloatDrag("tx");
-			floatDrag.isTweenable = false; // this should be covered by "x" property
+			//floatDrag.isTweenable = false; // this should be covered by "x" property
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("ty"))
 		{
 			floatDrag = new ExposedFloatDrag("ty");
-			floatDrag.isTweenable = false; // this should be covered by "y" property
+			//floatDrag.isTweenable = false; // this should be covered by "y" property
 			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("identity"))
+		{
+			func = new ExposedFunction("identity", "identity");
+			collection.addValue(func);
+		}
+		
+		if (!collection.hasValue("rotate"))
+		{
+			func = new ExposedFunction("rotate", "rotate");
+			
+			floatDrag = new ExposedFloatDrag("rotation (radians)", null, null, null, 0.01);
+			func.addParameter(floatDrag);
+			
+			collection.addValue(func);
+		}
+		
+		if (!collection.hasValue("scale"))
+		{
+			func = new ExposedFunction("scale", "scale");
+			
+			floatDrag = new ExposedFloatDrag("scale X", null, null, null, 0.01);
+			floatDrag.defaultValue = 1.0;
+			func.addParameter(floatDrag);
+			
+			floatDrag = new ExposedFloatDrag("scale Y", null, null, null, 0.01);
+			floatDrag.defaultValue = 1.0;
+			func.addParameter(floatDrag);
+			
+			collection.addValue(func);
+		}
+		
+		if (!collection.hasValue("translate"))
+		{
+			func = new ExposedFunction("translate");
+			
+			floatDrag = new ExposedFloatDrag("translation X");
+			func.addParameter(floatDrag);
+			
+			floatDrag = new ExposedFloatDrag("translation Y");
+			func.addParameter(floatDrag);
+			
+			collection.addValue(func);
 		}
 		
 		return collection;
