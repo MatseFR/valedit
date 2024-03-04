@@ -53,6 +53,7 @@ abstract class ExposedValue extends EventDispatcher
 	public var object(get, set):Dynamic;
 	public var parentValue:ExposedValueWithChildren;
 	public var propertyName:String;
+	public var tweenValue(get, never):Dynamic;
 	public var uiControl(get, set):IValueUI;
 	public var updateCollectionOnChange:Bool = true;
 	public var updateCollectionLocked:Bool = false;
@@ -149,6 +150,15 @@ abstract class ExposedValue extends EventDispatcher
 		this._extras.object = value;
 		ValueEvent.dispatch(this, ValueEvent.OBJECT_CHANGE, this);
 		return this._object;
+	}
+	
+	private function get_tweenValue():Dynamic
+	{
+		if (this._storedValue != null)
+		{
+			return this._storedValue;
+		}
+		return this._object == null ? this.defaultValue : Reflect.getProperty(this._object, this.propertyName);
 	}
 	
 	private var _uiControl:IValueUI;
