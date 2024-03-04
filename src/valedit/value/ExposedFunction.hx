@@ -214,6 +214,7 @@ class ExposedFunction extends ExposedValue
 		#end
 		this._values.resize(0);
 		
+		if (this.parentValue != null) this.parentValue.childValueChanged();
 		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
 	}
 	
@@ -221,6 +222,7 @@ class ExposedFunction extends ExposedValue
 	{
 		Reflect.callMethod(this._object, this.value, parameters);
 		
+		if (this.parentValue != null) this.parentValue.childValueChanged();
 		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
 	}
 	
