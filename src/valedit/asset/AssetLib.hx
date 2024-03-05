@@ -570,15 +570,25 @@ class AssetLib
 	
 	private function makeBitmapPreview(asset:BitmapAsset):Void
 	{
-		ScaleUtil.fitRectangle(asset.content.rect, this._previewRect, this._rect);
-		var bmd:BitmapData;
-		if (asset.content.transparent)
+		if (asset.content.width > this._previewRect.width || asset.content.height > this._previewRect.height)
 		{
-			bmd = new BitmapData(Math.ceil(_rect.width), Math.ceil(_rect.height), true, 0x00ffffff);
+			ScaleUtil.fitRectangle(asset.content.rect, this._previewRect, this._rect);
 		}
 		else
 		{
-			bmd = new BitmapData(Math.ceil(_rect.width), Math.ceil(_rect.height), false, 0x000000);
+			this._rect.copyFrom(asset.content.rect);
+			this._rect.x += (this._previewRect.width - this._rect.width) / 2;
+			this._rect.y += (this._previewRect.height - this._rect.height) / 2;
+		}
+		
+		var bmd:BitmapData;
+		if (asset.content.transparent)
+		{
+			bmd = new BitmapData(Math.ceil(this._rect.width), Math.ceil(this._rect.height), true, 0x00ffffff);
+		}
+		else
+		{
+			bmd = new BitmapData(Math.ceil(this._rect.width), Math.ceil(this._rect.height), false, 0x000000);
 		}
 		var scale = bmd.width / asset.content.width;
 		this._matrix.identity();
