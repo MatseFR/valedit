@@ -239,7 +239,7 @@ class DisplayData
 		
 		if (!collection.hasValue("transform"))
 		{
-			obj = new ExposedObject("transform", null, true, true);
+			obj = new ExposedObject("transform");
 			collection.addValue(obj, groupName);
 		}
 		

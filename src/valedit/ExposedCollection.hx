@@ -694,49 +694,64 @@ class ExposedCollection extends EventDispatcher
 		return values;
 	}
 	
-	public function getTweenData(targetCollection:ExposedCollection, tweenData:TweenData = null, object:Dynamic = null):TweenData
+	/**
+	   
+	   @param	targetCollection
+	   @param	tweenData
+	   @param	object
+	   @return	true if tween data was added, false otherwise
+	**/
+	public function getTweenData(targetCollection:ExposedCollection, tweenData:TweenData, object:Dynamic = null):Bool
 	{
-		if (tweenData == null) tweenData = TweenData.fromPool();
+		var hasTween:Bool = false;
 		var targetValue:ExposedValue;
-		var tweenProperties:TweenProperties;
+		var tweenProperties:TweenProperties = TweenProperties.fromPool();
 		if (object == null)
 		{
-			tweenProperties = tweenData.addObject(this._object);
+			tweenProperties.object = this._object;
 		}
 		else
 		{
-			tweenProperties = tweenData.addObject(object);
+			tweenProperties.object = object;
 		}
 		
 		for (value in this._valueList)
 		{
 			if (value.isGroup)
 			{
-				cast(value, ExposedGroup).getTweenData(tweenData, tweenProperties, targetCollection.getGroup(value.propertyName));
+				if (cast(value, ExposedGroup).getTweenData(tweenData, tweenProperties, targetCollection.getGroup(value.propertyName)))
+				{
+					hasTween = true;
+				}
 			}
 			else if (value.isTweenable)
 			{
 				if (Std.isOfType(value, ExposedObject))
 				{
 					targetValue = targetCollection.getValue(value.propertyName);
-					cast(value, ExposedObject).getTweenData(tweenData, cast targetValue);
+					if (cast(value, ExposedObject).getTweenData(tweenData, cast targetValue))
+					{
+						hasTween = true;
+					}
 				}
 				else
 				{
 					targetValue = targetCollection.getValue(value.propertyName);
-					//if (value.value != targetValue.value)
-					//{
-						//tweenProperties.addProperty(value.propertyName, value.value, targetValue.value);
-					//}
 					if (value.tweenValue != targetValue.tweenValue)
 					{
 						tweenProperties.addProperty(value.propertyName, value.tweenValue, targetValue.tweenValue);
+						hasTween = true;
 					}
 				}
 			}
 		}
 		
-		return tweenData;
+		if (tweenProperties.numProperties != 0)
+		{
+			tweenData.addProperties(tweenProperties);
+		}
+		
+		return hasTween;
 	}
 	
 	public function clone(copyValues:Bool = false):ExposedCollection
@@ -746,7 +761,6 @@ class ExposedCollection extends EventDispatcher
 		collection.isConstructor = this.isConstructor;
 		collection.isEditable = this.isEditable;
 		collection.isReadOnly = this.isReadOnly;
-		//collection.valuesUpdateLocked = this.valuesUpdateLocked;
 		
 		for (val in this._valueList)
 		{

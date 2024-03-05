@@ -609,13 +609,13 @@ class GeomData
 		
 		if (!collection.hasValue("colorTransform"))
 		{
-			obj = new ExposedObject("colorTransform", null, true, true);
+			obj = new ExposedObject("colorTransform", null, true);
 			collection.addValue(obj, groupName);
 		}
 		
 		if (!collection.hasValue("matrix"))
 		{
-			obj = new ExposedObject("matrix", null, true, true);
+			obj = new ExposedObject("matrix", null, true);
 			collection.addValue(obj, groupName);
 		}
 		

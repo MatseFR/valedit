@@ -20,6 +20,20 @@ class TweenData
 		return new TweenData();
 	}
 	
+	public var numObjects(get, never):Int;
+	public var numProperties(get, never):Int;
+	
+	private function get_numObjects():Int { return this._properties.length; }
+	private function get_numProperties():Int
+	{
+		var count:Int = 0;
+		for (properties in this._properties)
+		{
+			count += properties.numProperties;
+		}
+		return count;
+	}
+	
 	private var _objectToProperties:ObjectMap<Dynamic, TweenProperties> = new ObjectMap<Dynamic, TweenProperties>();
 	private var _properties:Array<TweenProperties> = new Array<TweenProperties>();
 	
@@ -44,13 +58,20 @@ class TweenData
 		_POOL[_POOL.length] = this;
 	}
 	
-	public function addObject(object:Dynamic):TweenProperties
+	//public function addObject(object:Dynamic):TweenProperties
+	//{
+		//var properties:TweenProperties = TweenProperties.fromPool();
+		//properties.object = object;
+		//this._objectToProperties.set(object, properties);
+		////this._properties.unshift(properties);
+		//this._properties[this._properties.length] = properties;
+		//return properties;
+	//}
+	
+	public function addProperties(properties:TweenProperties):Void
 	{
-		var properties:TweenProperties = TweenProperties.fromPool();
-		properties.object = object;
-		this._objectToProperties.set(object, properties);
-		this._properties.unshift(properties);
-		return properties;
+		this._objectToProperties.set(properties.object, properties);
+		this._properties[this._properties.length] = properties;
 	}
 	
 	public function hasObject(object:Dynamic):Bool
@@ -78,7 +99,7 @@ class TweenData
 		var tween:FrameTween;
 		for (properties in this._properties)
 		{
-			if (properties.numProperties == 0)/* && properties.onUpdate == null)*/ continue;
+			if (properties.numProperties == 0 && properties.onUpdate == null) continue; // TODO : this is probably not needed anymore
 			tween = FrameTween.fromPool(properties.object, duration, transition);
 			properties.applyToTween(tween);
 			tweens[tweens.length] = tween;

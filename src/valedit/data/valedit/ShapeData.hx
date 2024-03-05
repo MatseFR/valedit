@@ -75,7 +75,7 @@ class ShapeData
 		
 		if (!collection.hasValue("fillMatrix"))
 		{
-			object = new ExposedObject("fillMatrix", null, true, true);
+			object = new ExposedObject("fillMatrix", null, true);
 			collection.addValue(object, groupName);
 		}
 		
@@ -123,7 +123,7 @@ class ShapeData
 		
 		if (!collection.hasValue("outlineMatrix"))
 		{
-			object = new ExposedObject("outlineMatrix", null, false, true);
+			object = new ExposedObject("outlineMatrix", null, true);
 			collection.addValue(object, groupName);
 		}
 		

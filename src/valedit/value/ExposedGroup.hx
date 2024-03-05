@@ -595,21 +595,28 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	
-	public function getTweenData(tweenData:TweenData, tweenProperties:TweenProperties, targetGroup:ExposedGroup):Void
+	public function getTweenData(tweenData:TweenData, tweenProperties:TweenProperties, targetGroup:ExposedGroup):Bool
 	{
+		var hasTween:Bool = false;
 		var targetValue:ExposedValue;
 		
 		for (value in this._valueList)
 		{
 			if (value.isGroup)
 			{
-				cast(value, ExposedGroup).getTweenData(tweenData, tweenProperties, targetGroup.getGroup(value.propertyName));
+				if (cast(value, ExposedGroup).getTweenData(tweenData, tweenProperties, targetGroup.getGroup(value.propertyName)))
+				{
+					hasTween = true;
+				}
 			}
 			else if (value.isTweenable)
 			{
 				if (Std.isOfType(value, ExposedObject))
 				{
-					cast(value, ExposedObject).getTweenData(tweenData, cast targetGroup.getValue(value.propertyName));
+					if (cast(value, ExposedObject).getTweenData(tweenData, cast targetGroup.getValue(value.propertyName)))
+					{
+						hasTween = true;
+					}
 				}
 				else
 				{
@@ -617,10 +624,13 @@ class ExposedGroup extends ExposedValue
 					if (value.value != targetValue.value)
 					{
 						tweenProperties.addProperty(value.propertyName, value.value, targetValue.value);
+						hasTween = true;
 					}
 				}
 			}
 		}
+		
+		return hasTween;
 	}
 	
 	/**
