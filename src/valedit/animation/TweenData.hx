@@ -58,15 +58,14 @@ class TweenData
 		_POOL[_POOL.length] = this;
 	}
 	
-	//public function addObject(object:Dynamic):TweenProperties
-	//{
-		//var properties:TweenProperties = TweenProperties.fromPool();
-		//properties.object = object;
-		//this._objectToProperties.set(object, properties);
-		////this._properties.unshift(properties);
-		//this._properties[this._properties.length] = properties;
-		//return properties;
-	//}
+	public function addObject(object:Dynamic):TweenProperties
+	{
+		var properties:TweenProperties = TweenProperties.fromPool();
+		properties.object = object;
+		this._objectToProperties.set(object, properties);
+		this._properties[this._properties.length] = properties;
+		return properties;
+	}
 	
 	public function addProperties(properties:TweenProperties):Void
 	{
