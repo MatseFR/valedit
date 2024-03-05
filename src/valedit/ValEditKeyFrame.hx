@@ -206,6 +206,7 @@ class ValEditKeyFrame extends EventDispatcher
 			}
 		}
 		
+		tweenData.pool();
 		this._tweenObjectMap.clear();
 		this._remainingObjects.resize(0);
 	}
