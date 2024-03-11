@@ -108,10 +108,10 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	private var _frames:Array<ValEditKeyFrame> = new Array<ValEditKeyFrame>();
 	private function get_frames():Array<ValEditKeyFrame> { return this._frames; }
 	
-	private var _isPlaying:Bool;
+	private var _isPlaying:Bool = false;
 	private function get_isPlaying():Bool { return this._isPlaying; }
 	
-	private var _isReverse:Bool;
+	private var _isReverse:Bool = false;
 	private function get_isReverse():Bool { return this._isReverse; }
 	
 	private var _juggler:Juggler;
@@ -127,7 +127,7 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	private var _lastFrameIndex:Int;
 	private function get_lastFrameIndex():Int { return this._lastFrameIndex; }
 	
-	private var _loop:Bool;
+	private var _loop:Bool = false;
 	private function get_loop():Bool { return this._loop; }
 	private function set_loop(value:Bool):Bool
 	{
@@ -198,7 +198,7 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		return this._parent = value;
 	}
 	
-	private var _reverse:Bool;
+	private var _reverse:Bool = false;
 	private function get_reverse():Bool { return this._reverse; }
 	private function set_reverse(value:Bool):Bool
 	{
