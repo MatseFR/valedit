@@ -159,43 +159,6 @@ class GearShape extends BaseShape
 			}
 		}
 		
-		// init vars
-		//var step:Number, qtrStep:Number, start:Number, n:Number, dx:Number, dy:Number;
-		//// calculate length of sides
-		//step = (Math.PI * 2) / sides;
-		//qtrStep = step / 4;
-		//// calculate starting angle in radians
-		//start = (angle / 180) * Math.PI;
-		//target.moveTo(x + (Math.cos(start) * outerRadius), y - (Math.sin(start) * outerRadius));
-		//// draw lines
-		//for (n = 1; n <= sides; ++n)
-		//{
-			//dx = x + Math.cos(start + (step * n) - (qtrStep * 3)) * innerRadius;
-			//dy = y - Math.sin(start + (step * n) - (qtrStep * 3)) * innerRadius;
-			//target.lineTo(dx, dy);
-			//dx = x + Math.cos(start + (step * n) - (qtrStep * 2)) * innerRadius;
-			//dy = y - Math.sin(start + (step * n) - (qtrStep * 2)) * innerRadius;
-			//target.lineTo(dx, dy);
-			//dx = x + Math.cos(start + (step * n) - qtrStep) * outerRadius;
-			//dy = y - Math.sin(start + (step * n) - qtrStep) * outerRadius;
-			//target.lineTo(dx, dy);
-			//dx = x + Math.cos(start + (step * n)) * outerRadius;
-			//dy = y - Math.sin(start + (step * n)) * outerRadius;
-			//target.lineTo(dx, dy);
-		//}
-		//// This is complete overkill... but I had it done already. :)
-		//if (holeSides > 2)
-		//{
-			//step = (Math.PI * 2) / holeSides;
-			//target.moveTo(x + (Math.cos(start) * holeRadius), y - (Math.sin(start) * holeRadius));
-			//for (n = 1; n <= holeSides; ++n)
-			//{
-				//dx = x + Math.cos(start + (step * n)) * holeRadius;
-				//dy = y - Math.sin(start + (step * n)) * holeRadius;
-				//target.lineTo(dx, dy);
-			//}
-		//}
-		
 		if (this._fill)
 		{
 			this.graphics.endFill();
