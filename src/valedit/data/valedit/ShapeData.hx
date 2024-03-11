@@ -344,6 +344,140 @@ class ShapeData
 		], true);
 	}
 	
+	static public function exposeArrowShape(?collection:ExposedCollection):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var floatDrag:ExposedFloatDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("arrowLength"))
+		{
+			floatDrag = new ExposedFloatDrag("arrowLength", null, 0.0);
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("arrowHeight"))
+		{
+			floatDrag = new ExposedFloatDrag("arrowHeight", null, 0.0);
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("tail"))
+		{
+			bool = new ExposedBool("tail");
+			collection.addValue(bool);
+		}
+		
+		if (!collection.hasValue("tailLength"))
+		{
+			floatDrag = new ExposedFloatDrag("tailLength", null, 0.0);
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("tailHeight"))
+		{
+			floatDrag = new ExposedFloatDrag("tailHeight", null, 0.0);
+			collection.addValue(floatDrag);
+		}
+		
+		exposeBaseShape(collection);
+		
+		return collection;
+	}
+	
+	static public function exposeArrowShapeConstructor(?collection:ExposedCollection):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var floatDrag:ExposedFloatDrag;
+		
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
+		
+		if (!collection.hasValue("arrowLength"))
+		{
+			floatDrag = new ExposedFloatDrag("arrowLength", null, 0.0);
+			floatDrag.defaultValue = 50.0;
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("arrowHeight"))
+		{
+			floatDrag = new ExposedFloatDrag("arrowHeight", null, 0.0);
+			floatDrag.defaultValue = 50.0;
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("tail"))
+		{
+			bool = new ExposedBool("tail");
+			bool.defaultValue = true;
+			collection.addValue(bool);
+		}
+		
+		if (!collection.hasValue("tailLength"))
+		{
+			floatDrag = new ExposedFloatDrag("tailLength", null, 0.0);
+			floatDrag.defaultValue = 30.0;
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("tailHeight"))
+		{
+			floatDrag = new ExposedFloatDrag("tailHeight", null, 0.0);
+			floatDrag.defaultValue = 20.0;
+			collection.addValue(floatDrag);
+		}
+		
+		exposeBaseShapeConstructor(collection);
+		
+		return collection;
+	}
+	
+	static public function exposeArrowShapeInstance(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeArrowShape(collection);
+		collection.setVisibleAll(false);
+		applyArrowShapeInstance(collection);
+		
+		return collection;
+	}
+	
+	static private function applyArrowShapeInstance(collection:ExposedCollection):Void
+	{
+		applyBaseShapeInstance(collection);
+		collection.setVisibleArray([
+			"arrowLength",
+			"arrowHeight",
+			"tail",
+			"tailLength",
+			"tailHeight"
+		], true);
+	}
+	
+	static public function exposeArrowShapeTemplate(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeArrowShape(collection);
+		collection.setVisibleAll(false);
+		applyArrowShapeTemplate(collection);
+		
+		return collection;
+	}
+	
+	static private function applyArrowShapeTemplate(collection:ExposedCollection):Void
+	{
+		applyBaseShapeTemplate(collection);
+		collection.setVisibleArray([
+		], true);
+	}
+	
 	static public function exposeBurstShape(?collection:ExposedCollection):ExposedCollection
 	{
 		var floatDrag:ExposedFloatDrag;
@@ -527,6 +661,96 @@ class ShapeData
 	}
 	
 	static private function applyCircleShapeTemplate(collection:ExposedCollection):Void
+	{
+		applyBaseShapeTemplate(collection);
+		collection.setVisibleArray([
+		], true);
+	}
+	
+	static public function exposeDonutShape(?collection:ExposedCollection):ExposedCollection
+	{
+		var floatDrag:ExposedFloatDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("radius"))
+		{
+			floatDrag = new ExposedFloatDrag("radius", null, 0.0);
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("holeRadius"))
+		{
+			floatDrag = new ExposedFloatDrag("holeRadius", null, 0.0);
+			collection.addValue(floatDrag);
+		}
+		
+		exposeBaseShape(collection);
+		
+		return collection;
+	}
+	
+	static public function exposeDonutShapeConstructor(?collection:ExposedCollection):ExposedCollection
+	{
+		var floatDrag:ExposedFloatDrag;
+		
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
+		
+		if (!collection.hasValue("radius"))
+		{
+			floatDrag = new ExposedFloatDrag("radius", null, 0.0);
+			floatDrag.defaultValue = 50.0;
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("holeRadius"))
+		{
+			floatDrag = new ExposedFloatDrag("holeRadius", null, 0.0);
+			floatDrag.defaultValue = 20.0;
+			collection.addValue(floatDrag);
+		}
+		
+		exposeBaseShapeConstructor(collection);
+		
+		return collection;
+	}
+	
+	static public function exposeDonutShapeInstance(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDonutShape(collection);
+		collection.setVisibleAll(false);
+		applyDonutShapeInstance(collection);
+		
+		return collection;
+	}
+	
+	static private function applyDonutShapeInstance(collection:ExposedCollection):Void
+	{
+		applyBaseShapeInstance(collection);
+		collection.setVisibleArray([
+			"radius",
+			"holeRadius"
+		], true);
+	}
+	
+	static public function exposeDonutShapeTemplate(?collection:ExposedCollection):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDonutShape(collection);
+		collection.setVisibleAll(false);
+		applyDonutShapeTemplate(collection);
+		
+		return collection;
+	}
+	
+	static private function applyDonutShapeTemplate(collection:ExposedCollection):Void
 	{
 		applyBaseShapeTemplate(collection);
 		collection.setVisibleArray([
