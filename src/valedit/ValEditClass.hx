@@ -3,7 +3,7 @@ import flash.display.DisplayObjectContainer;
 import haxe.Constraints.Function;
 import haxe.ds.ObjectMap;
 import valedit.utils.PropertyMap;
-import valedit.value.base.ExposedValueWithChildren;
+import valedit.value.base.ExposedValueWithCollection;
 import valeditor.ValEditorObject;
 
 /**
@@ -298,7 +298,7 @@ class ValEditClass
 		}
 	}
 	
-	public function addContainer(container:DisplayObjectContainer, object:Dynamic, collection:ExposedCollection = null, parentValue:ExposedValueWithChildren = null):ExposedCollection
+	public function addContainer(container:DisplayObjectContainer, object:Dynamic, collection:ExposedCollection = null, parentValue:ExposedValueWithCollection = null):ExposedCollection
 	{
 		if (collection == null)
 		{
