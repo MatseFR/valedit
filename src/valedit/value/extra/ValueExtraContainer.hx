@@ -51,6 +51,19 @@ class ValueExtraContainer
 		
 	}
 	
+	public function clear():Void
+	{
+		for (extra in this._extras)
+		{
+			extra.pool();
+		}
+		this._extras.resize(0);
+		
+		this._collection = null;
+		this._object = null;
+		this._owner = null;
+	}
+	
 	public function add(extra:ValueExtra):Void
 	{
 		extra.collection = this._collection;
