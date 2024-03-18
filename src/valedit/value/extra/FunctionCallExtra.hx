@@ -9,6 +9,14 @@ import valedit.value.extra.ValueExtra;
  */
 class FunctionCallExtra extends ValueExtra 
 {
+	static private var _POOL:Array<FunctionCallExtra> = new Array<FunctionCallExtra>();
+	
+	static public function fromPool(functionName:String, ?parameters:Array<Dynamic>):FunctionCallExtra
+	{
+		if (_POOL.length != 0) return _POOL.pop().setTo(functionName, parameters);
+		return new FunctionCallExtra(functionName, parameters);
+	}
+	
 	override function set_object(value:Dynamic):Dynamic 
 	{
 		if (value == null)
@@ -36,19 +44,40 @@ class FunctionCallExtra extends ValueExtra
 		this._parameters = parameters;
 	}
 	
+	override public function clear():Void
+	{
+		this._function = null;
+		this._parameters = null;
+		super.clear();
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
+	}
+	
+	private function setTo(functionName:String, ?parameters:Array<Dynamic>):FunctionCallExtra
+	{
+		this._functionName = functionName;
+		if (parameters == null) parameters = new Array<Dynamic>();
+		this._parameters = parameters;
+		return this;
+	}
+	
 	public function addParameter(param:Dynamic):Void
 	{
 		this._parameters.push(param);
 	}
 	
-	override public function clone():ValueExtra 
+	public function clone():ValueExtra 
 	{
-		var func:FunctionCallExtra = new FunctionCallExtra(this._functionName, this._parameters.copy());
+		var func:FunctionCallExtra = FunctionCallExtra.fromPool(this._functionName, this._parameters.copy());
 		this.clone_internal(func);
 		return func;
 	}
 	
-	override public function applyToObject(object:Dynamic):Void 
+	public function applyToObject(object:Dynamic):Void 
 	{
 		var str:String;
 		var val:ExposedValue;
@@ -77,7 +106,7 @@ class FunctionCallExtra extends ValueExtra
 		this._parameterValues.resize(0);
 	}
 	
-	override public function execute():Void 
+	public function execute():Void 
 	{
 		var str:String;
 		var val:ExposedValue;

@@ -3,9 +3,9 @@ package valedit.value;
 import valedit.ExposedCollection;
 import valedit.animation.TweenData;
 import valedit.animation.TweenProperties;
-import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
-import valedit.value.base.ExposedValueWithChildren;
+import valedit.value.base.ExposedValueWithCollection;
+import valedit.value.extra.ValueExtraContainer;
 import valeditor.ValEditor;
 import valeditor.ValEditorObject;
 
@@ -13,7 +13,7 @@ import valeditor.ValEditorObject;
  * ...
  * @author Matse
  */
-class ExposedObject extends ExposedValueWithChildren 
+class ExposedObject extends ExposedValueWithCollection 
 {
 	static private var _POOL:Array<ExposedObject> = new Array<ExposedObject>();
 	
@@ -29,41 +29,15 @@ class ExposedObject extends ExposedValueWithChildren
 	}
 	
 	public var isUIOpen:Bool = false;
-	public var objectCollection(get, set):ExposedCollection;
+	public var reassignObjectExtras(get, never):ValueExtraContainer;
 	public var reassignOnChange:Bool = false;
 	public var storeValue:Bool = true;
 	
-	private var _objectCollection:ExposedCollection;
-	private function get_objectCollection() { return this._objectCollection; }
-	private function set_objectCollection(value:ExposedCollection):ExposedCollection
+	override function set_collection(value:ExposedCollection):ExposedCollection 
 	{
-		if (this._objectCollection == value) return value;
-		if (this._objectCollection != null)
-		{
-			this._objectCollection.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
-		}
-		this._objectCollection = value;
-		if (this._objectCollection != null)
-		{
-			this._objectCollection.parentValue = this;
-			this._objectCollection.valEditorObject = this._valEditorObject;
-			this._objectCollection.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
-		}
-		return this._objectCollection;
+		this._reassignObjectExtras.collection = value;
+		return super.set_collection(value);
 	}
-	
-	private var _objectCollectionSaveData:Dynamic;
-	
-	#if valeditor
-	override function set_valEditorObject(value:ValEditorObject):ValEditorObject 
-	{
-		if (this.objectCollection != null)
-		{
-			this.objectCollection.valEditorObject = value;
-		}
-		return super.set_valEditorObject(value);
-	}
-	#end
 	
 	override function set_isTweenable(value:Bool):Bool 
 	{
@@ -76,19 +50,19 @@ class ExposedObject extends ExposedValueWithChildren
 		if (value != null)
 		{
 			if (this._storedValue == null) this._storedValue = Reflect.getProperty(value, this.propertyName);
-			if (this._objectCollection == null)
+			if (this._childCollection == null)
 			{
-				var objectCollection:ExposedCollection = ValEditor.getCollectionForObject(this._storedValue);
-				if (this._objectCollectionSaveData == null)
+				var childCollection:ExposedCollection = ValEditor.getCollectionForObject(this._storedValue);
+				if (this._childCollectionSaveData == null)
 				{
-					objectCollection.readAndSetObject(this._storedValue);
-					this.objectCollection = objectCollection;
+					childCollection.readAndSetObject(this._storedValue);
+					this.childCollection = childCollection;
 				}
 				else
 				{
-					objectCollection.fromJSONSave(this._objectCollectionSaveData);
-					objectCollection.applyAndSetObject(this._storedValue);
-					this.objectCollection = objectCollection;
+					childCollection.fromJSONSave(this._childCollectionSaveData);
+					childCollection.applyAndSetObject(this._storedValue);
+					this.childCollection = childCollection;
 					if (this.reassignOnChange) 
 					{
 						this._object = value;
@@ -99,12 +73,27 @@ class ExposedObject extends ExposedValueWithChildren
 			}
 			else
 			{
-				this._objectCollection.object = this._storedValue;
+				this._childCollection.object = this._storedValue;
 			}
 			if (!this.storeValue) this._storedValue = null;
 		}
+		this._reassignObjectExtras.object = value;
 		return super.set_object(value);
 	}
+	
+	private var _reassignObjectExtras:ValueExtraContainer = new ValueExtraContainer();
+	private function get_reassignObjectExtras():ValueExtraContainer { return this._reassignObjectExtras; }
+	
+	#if valeditor
+	override function set_valEditorObject(value:ValEditorObject):ValEditorObject 
+	{
+		if (this.childCollection != null)
+		{
+			this.childCollection.valEditorObject = value;
+		}
+		return super.set_valEditorObject(value);
+	}
+	#end
 	
 	override function get_value():Dynamic 
 	{
@@ -132,6 +121,7 @@ class ExposedObject extends ExposedValueWithChildren
 	{
 		super(propertyName, name);
 		this._isTweenable = true;
+		this._reassignObjectExtras.owner = this;
 		this.reassignOnChange = reassignOnChange;
 		this.isUIOpen = isUIOpen;
 		this.canCopyValueOnClone = false;
@@ -141,11 +131,8 @@ class ExposedObject extends ExposedValueWithChildren
 	{
 		this._isTweenable = true;
 		this.isUIOpen = false;
-		if (this.objectCollection != null)
-		{
-			this.objectCollection.pool();
-			this.objectCollection = null;
-		}
+		this._reassignObjectExtras.clear();
+		this._reassignObjectExtras.owner = this;
 		this.storeValue = true;
 		super.clear();
 		this.canCopyValueOnClone = false;
@@ -165,14 +152,11 @@ class ExposedObject extends ExposedValueWithChildren
 		return this;
 	}
 	
-	public function getTweenData(tweenData:TweenData, targetValue:ExposedObject):Bool
+	override public function getTweenData(tweenData:TweenData, targetValue:ExposedValueWithCollection):Bool 
 	{
-		var hasTween:Bool = false;
-		
-		if (this._objectCollection != null && targetValue._objectCollection != null)
+		if (super.getTweenData(tweenData, targetValue))
 		{
-			hasTween = this._objectCollection.getTweenData(targetValue._objectCollection, tweenData);
-			if (hasTween && this.reassignOnChange)
+			if (this.reassignOnChange)
 			{
 				var properties:TweenProperties = tweenData.getPropertiesForObject(this.value);
 				if (properties == null)
@@ -183,32 +167,32 @@ class ExposedObject extends ExposedValueWithChildren
 				}
 				properties.onUpdate = reassignObject;
 			}
+			return true;
 		}
-		
-		return hasTween;
+		return false;
 	}
 	
 	override public function apply():Void 
 	{
-		if (this._objectCollection != null)
+		if (this._childCollection != null)
 		{
-			this._objectCollection.apply();
+			this._childCollection.apply();
 		}
 	}
 	
 	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
 	{
-		if (this._objectCollection != null)
+		if (this._childCollection != null)
 		{
 			if (this._object == null || this._object == object)
 			{
-				this._objectCollection.applyToObject(this.value, applyIfDefaultValue);
+				this._childCollection.applyToObject(this.value, applyIfDefaultValue);
 			}
 			else
 			{
 				var realObject:Dynamic = Reflect.getProperty(object, this.propertyName);
 				
-				this._objectCollection.applyToObject(realObject, applyIfDefaultValue);
+				this._childCollection.applyToObject(realObject, applyIfDefaultValue);
 			}
 			
 			if (this.reassignOnChange)
@@ -229,9 +213,9 @@ class ExposedObject extends ExposedValueWithChildren
 	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
 		reloadObject();
-		if (this._objectCollection != null)
+		if (this._childCollection != null)
 		{
-			this._objectCollection.readValues(dispatchEventIfChange);
+			this._childCollection.readValues(dispatchEventIfChange);
 		}
 	}
 	
@@ -241,125 +225,106 @@ class ExposedObject extends ExposedValueWithChildren
 		{
 			this._storedValue = Reflect.getProperty(object, this.propertyName);
 		}
-		if (this._objectCollection == null)
+		if (this._childCollection == null)
 		{
-			this.objectCollection = ValEditor.getCollectionForObject(this._storedValue);
-			this._objectCollection.object = this._storedValue;
+			this.childCollection = ValEditor.getCollectionForObject(this._storedValue);
+			this._childCollection.object = this._storedValue;
 		}
-		if (this._objectCollection != null)
+		if (this._childCollection != null)
 		{
-			this._objectCollection.readValuesFromObject(this._storedValue);
+			this._childCollection.readValuesFromObject(this._storedValue);
 		}
 	}
 	
-	override public function childValueChanged():Void 
+	override public function childValueChanged(value:ExposedValue):Void 
 	{
 		if (this.reassignOnChange)
 		{
 			reassignObject();
 		}
 		
-		super.childValueChanged();
+		super.childValueChanged(value);
 	}
 	
 	public function reassignObject():Void
 	{
+		// DEBUG
+		//trace("reassignObject " + this.propertyName);
+		//\DEBUG
+		
 		if (this._object != null)
 		{
 			Reflect.setProperty(this._object, this.propertyName, this.value);
+			this._reassignObjectExtras.execute();
 		}
 	}
 	
 	public function reloadObject():Void
 	{
 		this._storedValue = Reflect.getProperty(this._object, propertyName);
-		if (this._objectCollection != null)
+		if (this._childCollection != null)
 		{
-			this._objectCollection.readAndSetObject(this._storedValue);
+			this._childCollection.readAndSetObject(this._storedValue);
 		}
-	}
-	
-	private function onValueChange(evt:ValueEvent):Void
-	{
-		dispatchEvent(evt);
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var object:ExposedObject = fromPool(this.propertyName, this.name, this.reassignOnChange);
-		if (this._objectCollection != null)
+		if (this._childCollection != null)
 		{
-			object.objectCollection = this._objectCollection.clone(true);
+			object.childCollection = this._childCollection.clone(true);
 		}
-		super.clone_internal(object, copyValue);
+		clone_internal(object, copyValue);
 		return object;
+	}
+	
+	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
+	{
+		this._reassignObjectExtras.clone(cast(value, ExposedObject)._reassignObjectExtras);
+		super.clone_internal(value, copyValue);
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 
 	{
 		super.fromJSON(json);
-		if (json.childValues != null)
-		{
-			var data:Array<Dynamic> = json.childValues;
-			var value:ExposedValue;
-			for (node in data)
-			{
-				value = ExposedValue.valueFromJSON(node);
-				addChildValue(value);
-			}
-		}
-	}
-	
-	override public function fromJSONSave(json:Dynamic):Void 
-	{
-		if (this._objectCollection == null)
-		{
-			// store collection data, it will be applied to the collection when it will be created
-			this._objectCollectionSaveData = json.collection;
-		}
-		else
-		{
-			this._objectCollection.fromJSONSave(json.collection);
-		}
+		//if (json.childValues != null)
+		//{
+			//var data:Array<Dynamic> = json.childValues;
+			//var value:ExposedValue;
+			//for (node in data)
+			//{
+				//value = ExposedValue.valueFromJSON(node);
+				//addChildValue(value);
+			//}
+		//}
 	}
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
-		if (this._childValues.length != 0)
-		{
-			var data:Array<Dynamic> = new Array<Dynamic>();
-			var valueJson:Dynamic;
-			for (value in this._childValues)
-			{
-				valueJson = value.toJSON();
-				if (valueJson != null) data.push(valueJson);
-			}
-			json.childValues = data;
-		}
+		//if (this._childValues.length != 0)
+		//{
+			//var data:Array<Dynamic> = new Array<Dynamic>();
+			//var valueJson:Dynamic;
+			//for (value in this._childValues)
+			//{
+				//valueJson = value.toJSON();
+				//if (valueJson != null) data.push(valueJson);
+			//}
+			//json.childValues = data;
+		//}
 		return super.toJSON(json);
-	}
-	
-	override public function toJSONSave(json:Dynamic):Void
-	{
-		var data:Dynamic = {};
-		if (this._objectCollection != null)
-		{
-			var collectionData:Dynamic = {};
-			this._objectCollection.toJSONSave(collectionData);
-			data.collection = collectionData;
-		}
-		Reflect.setField(json, this.propertyName, data);
 	}
 	
 	override public function toJSONSimple(json:Dynamic):Void 
 	{
-		var childJson:Dynamic = {};
-		for (value in this._childValues)
-		{
-			value.toJSONSimple(childJson);
-		}
-		Reflect.setField(json, this.propertyName, childJson);
+		//var childJson:Dynamic = {};
+		//for (value in this._childValues)
+		//{
+			//value.toJSONSimple(childJson);
+		//}
+		//Reflect.setField(json, this.propertyName, childJson);
 	}
 	
 }

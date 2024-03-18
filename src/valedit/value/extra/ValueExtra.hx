@@ -7,7 +7,7 @@ import valedit.value.base.ExposedValue;
  * ...
  * @author Matse
  */
-class ValueExtra 
+abstract class ValueExtra 
 {
 	public var collection(get, set):ExposedCollection;
 	private var _collection:ExposedCollection;
@@ -38,20 +38,20 @@ class ValueExtra
 		
 	}
 	
-	public function applyToObject(object:Dynamic):Void
+	public function clear():Void
 	{
-		
+		this._collection = null;
+		this._object = null;
+		this._owner = null;
 	}
 	
-	public function execute():Void
-	{
-		
-	}
+	abstract public function pool():Void;
 	
-	public function clone():ValueExtra
-	{
-		throw new Error("You have to override ValueExtra.clone");
-	}
+	abstract public function applyToObject(object:Dynamic):Void;
+	
+	abstract public function execute():Void;
+	
+	abstract public function clone():ValueExtra;
 	
 	private function clone_internal(extra:ValueExtra):Void
 	{
