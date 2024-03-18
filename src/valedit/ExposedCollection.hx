@@ -8,7 +8,7 @@ import valedit.events.ValueEvent;
 import valedit.value.ExposedGroup;
 import valedit.value.ExposedObject;
 import valedit.value.base.ExposedValue;
-import valedit.value.base.ExposedValueWithChildren;
+import valedit.value.base.ExposedValueWithCollection;
 import valeditor.editor.action.MultiAction;
 import valeditor.editor.action.value.ValueClone;
 #if valeditor
@@ -42,8 +42,9 @@ class ExposedCollection extends EventDispatcher
 	public var isConstructor(get, set):Bool;
 	public var isEditable(get, set):Bool;
 	public var isReadOnly(get, set):Bool;
+	private var isReadOnlyInternal(get, set):Bool;
 	public var object(get, set):Dynamic;
-	public var parentValue(get, set):ExposedValueWithChildren;
+	public var parentValue(get, set):ExposedValueWithCollection;
 	#if valeditor
 	public var uiCollection(default, null):UICollection;
 	public var uiContainer(get, set):DisplayObjectContainer;
@@ -88,6 +89,18 @@ class ExposedCollection extends EventDispatcher
 		return this._isReadOnly = value;
 	}
 	
+	private var _isReadOnlyInternal:Bool = false;
+	private function get_isReadOnlyInternal():Bool { return this._isReadOnlyInternal; }
+	private function set_isReadOnlyInternal(value:Bool):Bool
+	{
+		if (this._isReadOnlyInternal == value) return value;
+		for (val in this._valueList)
+		{
+			val.isReadOnlyInternal = value;
+		}
+		return this._isReadOnlyInternal = value;
+	}
+	
 	private var _object:Dynamic;
 	private function get_object():Dynamic { return _object; }
 	private function set_object(value:Dynamic):Dynamic
@@ -104,25 +117,15 @@ class ExposedCollection extends EventDispatcher
 		return this._object = value;
 	}
 	
-	private var _parentValue:ExposedValueWithChildren;
-	private function get_parentValue():ExposedValueWithChildren { return _parentValue; }
-	private function set_parentValue(value:ExposedValueWithChildren):ExposedValueWithChildren
+	private var _parentValue:ExposedValueWithCollection;
+	private function get_parentValue():ExposedValueWithCollection { return _parentValue; }
+	private function set_parentValue(value:ExposedValueWithCollection):ExposedValueWithCollection
 	{
 		if (this._parentValue == value) return value;
-		if (this._parentValue != null)
-		{
-			for (val in this._valueList)
-			{
-				this._parentValue.removeChildValue(val);
-			}
-		}
 		
-		if (value != null)
+		for (val in this._valueList)
 		{
-			for (val in this._valueList)
-			{
-				value.addChildValue(val);
-			}
+			val.parentValue = value;
 		}
 		return this._parentValue = value;
 	}
@@ -199,11 +202,6 @@ class ExposedCollection extends EventDispatcher
 		this._valuesUpdateLocked = false;
 		
 		#if valeditor
-		//if (this.uiCollection != null)
-		//{
-			//this.uiCollection.pool();
-			//this.uiCollection = null;
-		//}
 		this.uiContainer = null;
 		this._valEditorObject = null;
 		#end
@@ -335,7 +333,6 @@ class ExposedCollection extends EventDispatcher
 					fromValue = fromCollection.getValue(value.propertyName);
 					if (fromValue != null)
 					{
-						//value.value = fromValue.value;
 						fromValue.cloneValue(value);
 					}
 				}
@@ -420,7 +417,9 @@ class ExposedCollection extends EventDispatcher
 		{
 			value.isConstructor = this._isConstructor;
 			value.isEditable = this._isEditable;
-			value.isReadOnlyInternal = this._isReadOnly;
+			value.isReadOnly = this._isReadOnly;
+			value.isReadOnlyInternal = this._isReadOnlyInternal;
+			value.parentValue = this._parentValue;
 			this._valueList.push(value);
 			this._valueMap[value.propertyName] = value;
 			if (Std.isOfType(value, ExposedGroup))
@@ -641,6 +640,21 @@ class ExposedCollection extends EventDispatcher
 		return null;
 	}
 	
+	public function getValueDeep(propertyNames:Array<String>):ExposedValue
+	{
+		if (propertyNames.length == 1) return getValue(propertyNames[0]);
+		
+		var value:ExposedValueWithCollection = cast getValue(propertyNames[0]);
+		var count:Int = propertyNames.length;
+		for (i in 1...count - 1)
+		{
+			value = cast value.childCollection.getValue(propertyNames[i]);
+			if (value == null) return null;
+		}
+		
+		return value.childCollection.getValue(propertyNames[count-1]);
+	}
+	
 	public function hasValue(propertyName:String):Bool
 	{
 		if (this._valueMap.exists(propertyName)) return true;
@@ -726,10 +740,10 @@ class ExposedCollection extends EventDispatcher
 			}
 			else if (value.isTweenable)
 			{
-				if (Std.isOfType(value, ExposedObject))
+				if (Std.isOfType(value, ExposedValueWithCollection))
 				{
 					targetValue = targetCollection.getValue(value.propertyName);
-					if (cast(value, ExposedObject).getTweenData(tweenData, cast targetValue))
+					if (cast(value, ExposedValueWithCollection).getTweenData(tweenData, cast targetValue))
 					{
 						hasTween = true;
 					}
