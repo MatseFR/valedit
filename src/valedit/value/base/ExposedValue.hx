@@ -1,11 +1,12 @@
 package valedit.value.base;
 import haxe.Constraints.Function;
+import haxe.Timer;
 import openfl.errors.ArgumentError;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 import valedit.events.ValueEvent;
 import valedit.ui.IValueUI;
-import valedit.value.base.ExposedValueWithChildren;
+import valedit.value.base.ExposedValueWithCollection;
 import valedit.value.extra.ValueExtraContainer;
 #if valeditor
 import valeditor.ValEditorObject;
@@ -49,9 +50,15 @@ abstract class ExposedValue extends EventDispatcher
 	 * Values that are not "real" : ExposedName, ExposedNote, ExposedSeparator, ExposedSpacing... */
 	public var isRealValue(get, never):Bool;
 	public var isTweenable(get, set):Bool;
+	#if valeditor
+	/* time at which this value last changed, whatever the reason */
+	public var lastChanged:Float = ValEdit.TIME_STAMP_ORIGIN;
+	/* time at which this value was last modified explicitely by user (through UI) */
+	public var lastModified:Float = ValEdit.TIME_STAMP_ORIGIN;
+	#end
 	public var name:String;
 	public var object(get, set):Dynamic;
-	public var parentValue:ExposedValueWithChildren;
+	public var parentValue:ExposedValueWithCollection;
 	public var propertyName:String;
 	public var tweenValue(get, never):Dynamic;
 	public var uiControl(get, set):IValueUI;
@@ -208,20 +215,32 @@ abstract class ExposedValue extends EventDispatcher
 	{
 		if (this._object == null)
 		{
+			#if valeditor
+			if (this._storedValue != value)
+			{
+				this._storedValue = value;
+				this.lastChanged = Timer.stamp();
+			}
+			#else
 			this._storedValue = value;
+			#end
 		}
 		else if (this._storedValue != value)
 		{
 			this._storedValue = value;
 			Reflect.setProperty(this._object, this.propertyName, value);
+			#if valeditor
+			this.lastChanged = ValEdit.TIME_STAMP_CURRENT;
+			#end
 			this._extras.execute();
-			if (this.parentValue != null) this.parentValue.childValueChanged();
+			if (this.parentValue != null) this.parentValue.childValueChanged(this);
 			if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
 			
 			#if valeditor
 			if (this._valEditorObject != null)
 			{
-				this._valEditorObject.valueChange(this.propertyName);
+				//this._valEditorObject.valueChange(this.propertyName);
+				this._valEditorObject.valueChange(this);
 			}
 			#end
 		}
@@ -259,16 +278,21 @@ abstract class ExposedValue extends EventDispatcher
 		this.checkForChange = true;
 		this.collection = null;
 		this.defaultValue = null;
+		this._extras.clear();
+		this._extras.owner = this;
 		this.isAbsolute = false;
 		this._isConstructor = false;
 		this._isEditable = true;
 		this.isNullable = false;
 		this._isReadOnly = false;
 		this._isReadOnlyInternal = false;
+		#if valeditor
+		this.lastChanged = ValEdit.TIME_STAMP_ORIGIN;
+		this.lastModified = ValEdit.TIME_STAMP_ORIGIN;
+		#end
 		this.parentValue = null;
 		this._storedValue = null;
 		this._object = null;
-		this._extras.object = null;
 		this.uiControl = null;
 		#if valeditor
 		this.useForObjectMatching = false;
@@ -287,6 +311,21 @@ abstract class ExposedValue extends EventDispatcher
 		this.propertyName = propertyName;
 		if (name == null) name = propertyName;
 		this.name = name;
+	}
+	
+	public function getPropertyNames():Array<String>
+	{
+		var names:Array<String> = [this.propertyName];
+		if (this.parentValue != null)
+		{
+			var parent:ExposedValue = this.parentValue;
+			while (parent != null)
+			{
+				names.unshift(parent.propertyName);
+				parent = parent.parentValue;
+			}
+		}
+		return names;
 	}
 	
 	public function apply():Void
@@ -339,6 +378,20 @@ abstract class ExposedValue extends EventDispatcher
 			this._storedValue = val;
 			if (this._uiControl != null) this._uiControl.updateExposedValue();
 			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+		}
+	}
+	
+	public function reassignValue():Void
+	{
+		if (this._storedValue != null)
+		{
+			var val:Dynamic = this._storedValue;
+			this._storedValue = null;
+			this.value = val;
+		}
+		else
+		{
+			this.value = this.value;
 		}
 	}
 	
@@ -426,6 +479,16 @@ abstract class ExposedValue extends EventDispatcher
 	{
 		//this.value = json.value;
 		this._storedValue = json.value;
+		#if valeditor
+		if (json.lastChanged != null)
+		{
+			this.lastChanged = json.lastChanged;
+		}
+		if (json.lastModified != null)
+		{
+			this.lastModified = json.lastModified;
+		}
+		#end
 	}
 	
 	public function toJSON(json:Dynamic = null):Dynamic
@@ -439,7 +502,13 @@ abstract class ExposedValue extends EventDispatcher
 	
 	public function toJSONSave(json:Dynamic):Void
 	{
-		var data:Dynamic = {value:this.value};
+		var data:Dynamic = {
+			value:this.value,
+		};
+		#if valeditor
+		data.lastChanged = this.lastChanged;
+		data.lastModified = this.lastModified;
+		#end
 		Reflect.setField(json, this.propertyName, data);
 	}
 	
