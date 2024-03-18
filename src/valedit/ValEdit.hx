@@ -1,5 +1,6 @@
 package valedit;
 import haxe.Constraints.Function;
+import haxe.Timer;
 import haxe.ds.Map;
 import haxe.macro.Compiler;
 import openfl.display.DisplayObject;
@@ -13,11 +14,19 @@ import valedit.utils.PropertyMap;
  */
 class ValEdit 
 {
-	static public var EXPOSED_VALUE_MARKER:String = "@@@";
+	inline static public var EXPOSED_VALUE_MARKER:String = "@@@";
 	#if starling
-	static public var STARLING_SUBTEXTURE_MARKER:String = "@@@";
+	inline static public var STARLING_SUBTEXTURE_MARKER:String = "@@@";
 	#end
 	
+	static public var LIME_VERSION:String = Compiler.getDefine("lime");
+	static public var OPENFL_JUGGLER_VERSION:String = Compiler.getDefine("openfl-juggler");
+	static public var OPENFL_VERSION:String = Compiler.getDefine("openfl");
+	#if starling
+	static public var STARLING_VERSION:String = Compiler.getDefine("starling");
+	#end
+	static public var TIME_STAMP_CURRENT:Float = Timer.stamp();
+	static public var TIME_STAMP_ORIGIN:Float = Timer.stamp();
 	static public var VERSION:String = Compiler.getDefine("valedit");
 	
 	static public var assetLib:AssetLib;
