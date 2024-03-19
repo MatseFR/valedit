@@ -111,6 +111,9 @@ class ExposedObject extends ExposedValueWithCollection
 		}
 	}
 	
+	private var _hasIgnoredReassignChildProperty:Bool = false;
+	private var _ignoreReassignForChildPropertiesMap:Map<String, String> = new Map<String, String>();
+	
 	/**
 	   
 	   @param	propertyName
@@ -129,6 +132,8 @@ class ExposedObject extends ExposedValueWithCollection
 	
 	override public function clear():Void 
 	{
+		this._hasIgnoredReassignChildProperty = false;
+		this._ignoreReassignForChildPropertiesMap.clear();
 		this._isTweenable = true;
 		this.isUIOpen = false;
 		this._reassignObjectExtras.clear();
@@ -150,6 +155,12 @@ class ExposedObject extends ExposedValueWithCollection
 		this.reassignOnChange = reassignOnChange;
 		this.isUIOpen = isUIOpen;
 		return this;
+	}
+	
+	public function ignoreObjectReassignForChildProperty(propertyName:String):Void
+	{
+		this._hasIgnoredReassignChildProperty = true;
+		this._ignoreReassignForChildPropertiesMap.set(propertyName, propertyName);
 	}
 	
 	override public function getTweenData(tweenData:TweenData, targetValue:ExposedValueWithCollection):Bool 
@@ -240,7 +251,17 @@ class ExposedObject extends ExposedValueWithCollection
 	{
 		if (this.reassignOnChange)
 		{
-			reassignObject();
+			if (this._hasIgnoredReassignChildProperty)
+			{
+				if (!this._ignoreReassignForChildPropertiesMap.exists(value.propertyName))
+				{
+					reassignObject();
+				}
+			}
+			else
+			{
+				reassignObject();
+			}
 		}
 		
 		super.childValueChanged(value);
@@ -275,14 +296,13 @@ class ExposedObject extends ExposedValueWithCollection
 		{
 			object.childCollection = this._childCollection.clone(true);
 		}
+		for (propertyName in this._ignoreReassignForChildPropertiesMap)
+		{
+			object.ignoreObjectReassignForChildProperty(propertyName);
+		}
+		this._reassignObjectExtras.clone(object._reassignObjectExtras);
 		clone_internal(object, copyValue);
 		return object;
-	}
-	
-	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
-	{
-		this._reassignObjectExtras.clone(cast(value, ExposedObject)._reassignObjectExtras);
-		super.clone_internal(value, copyValue);
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 
