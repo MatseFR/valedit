@@ -1,12 +1,11 @@
 package valedit.data.feathers.themes;
-import openfl.text.Font;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
+import valedit.value.ExposedFontName;
 import valedit.value.ExposedGroup;
 import valedit.value.ExposedIntDrag;
-import valedit.value.ExposedSelect;
 import valedit.value.ExposedSeparator;
 
 /**
@@ -20,8 +19,8 @@ class SimpleThemeData
 		var bool:ExposedBool;
 		var color:ExposedColor;
 		var floatDrag:ExposedFloatDrag;
+		var font:ExposedFontName;
 		var intDrag:ExposedIntDrag;
-		var select:ExposedSelect;
 		var subGroup:ExposedGroup;
 		var sep:ExposedSeparator;
 		
@@ -36,17 +35,8 @@ class SimpleThemeData
 		
 		if (!collection.hasValue("fontName"))
 		{
-			select = new ExposedSelect("fontName");
-			var fonts:Array<Font> = Font.enumerateFonts(true);
-			for (font in fonts)
-			{
-				// on neko target font can be null (at least on my system)
-				if (font != null)
-				{
-					select.add(font.fontName);
-				}
-			}
-			collection.addValue(select, groupName);
+			font = new ExposedFontName("fontName");
+			collection.addValue(font, groupName);
 		}
 		
 		if (!collection.hasValue("fontSize"))
