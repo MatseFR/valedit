@@ -3,11 +3,15 @@ import juggler.animation.Transitions;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedFloatDrag;
+import valedit.value.ExposedFunctionExternal;
 import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 #if desktop
 import valedit.value.ExposedPath;
+#end
+#if valeditor
+import valeditor.ValEditor;
 #end
 
 /**
@@ -16,6 +20,36 @@ import valedit.value.ExposedPath;
  */
 class SettingsData 
 {
+	#if valeditor
+	static public function exposeEditorSettings(?collection:ExposedCollection):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var funcExternal:ExposedFunctionExternal;
+		var intDrag:ExposedIntDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("undoLevels"))
+		{
+			intDrag = new ExposedIntDrag("undoLevels", "undo levels", 10, 99999);
+			collection.addValue(intDrag);
+		}
+		
+		if (!collection.hasValue("uiDarkMode"))
+		{
+			bool = new ExposedBool("uiDarkMode", "UI dark mode");
+			collection.addValue(bool);
+		}
+		
+		if (!collection.hasValue("editUITheme"))
+		{
+			funcExternal = new ExposedFunctionExternal("editUITheme", "edit UI theme", ValEditor);
+			collection.addValue(funcExternal);
+		}
+		
+		return collection;
+	}
+	#end
 	
 	static public function exposeExportSettings(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
