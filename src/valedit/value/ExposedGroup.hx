@@ -7,6 +7,7 @@ import valedit.value.base.ExposedValue;
 import valedit.events.ValueEvent;
 import valedit.ui.IGroupUI;
 import valedit.ui.IValueUI;
+import valedit.value.base.ExposedValueWithCollection;
 import valeditor.editor.action.MultiAction;
 import valeditor.editor.action.value.ValueClone;
 import valeditor.editor.action.value.ValueUIUpdate;
@@ -99,6 +100,7 @@ class ExposedGroup extends ExposedValue
 		else
 		{
 			this._uiGroup = null;
+			this._isUIBuilt = false;
 		}
 		return value;
 	}
@@ -324,6 +326,14 @@ class ExposedGroup extends ExposedValue
 		for (value in this._valueList)
 		{
 			value.readValue(dispatchEventIfChange);
+		}
+	}
+	
+	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
+	{
+		for (value in this._valueList)
+		{
+			value.readValueFromObject(object, dispatchEventIfChange);
 		}
 	}
 	
@@ -611,9 +621,9 @@ class ExposedGroup extends ExposedValue
 			}
 			else if (value.isTweenable)
 			{
-				if (Std.isOfType(value, ExposedObject))
+				if (Std.isOfType(value, ExposedValueWithCollection))
 				{
-					if (cast(value, ExposedObject).getTweenData(tweenData, cast targetGroup.getValue(value.propertyName)))
+					if (cast(value, ExposedValueWithCollection).getTweenData(tweenData, cast targetGroup.getValue(value.propertyName)))
 					{
 						hasTween = true;
 					}
@@ -631,6 +641,23 @@ class ExposedGroup extends ExposedValue
 		}
 		
 		return hasTween;
+	}
+	
+	public function hasDifferenceWith(group:ExposedGroup):Bool
+	{
+		for (value in this._valueList)
+		{
+			if (value.isGroup)
+			{
+				if (cast(value, ExposedGroup).hasDifferenceWith(group.getGroup(value.propertyName))) return true;
+			}
+			else if (value.isRealValue)
+			{
+				if (value.isDifferentFrom(group.getValue(value.propertyName))) return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
