@@ -768,6 +768,25 @@ class ExposedCollection extends EventDispatcher
 		return hasTween;
 	}
 	
+	public function hasDifferenceWith(collection:ExposedCollection):Bool
+	{
+		var targetValue:ExposedValue;
+		
+		for (value in this._valueList)
+		{
+			if (value.isGroup)
+			{
+				if (cast(value, ExposedGroup).hasDifferenceWith(collection.getGroup(value.propertyName))) return true;
+			}
+			else if (value.isRealValue)
+			{
+				if (value.isDifferentFrom(collection.getValue(value.propertyName))) return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public function clone(copyValues:Bool = false):ExposedCollection
 	{
 		var collection:ExposedCollection = fromPool();
