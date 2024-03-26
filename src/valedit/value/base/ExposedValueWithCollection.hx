@@ -228,6 +228,16 @@ abstract class ExposedValueWithCollection extends ExposedValue
 		}
 	}
 	
+	override public function isDifferentFrom(value:ExposedValue):Bool 
+	{
+		var valueWithCollection:ExposedValueWithCollection = cast value;
+		if (this._childCollection != null && valueWithCollection._childCollection != null)
+		{
+			return this._childCollection.hasDifferenceWith(valueWithCollection._childCollection);
+		}
+		return false;
+	}
+	
 	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
 		super.readValue(dispatchEventIfChange);
