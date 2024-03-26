@@ -173,14 +173,14 @@ abstract class ExposedValue extends EventDispatcher
 	private function set_uiControl(value:IValueUI):IValueUI
 	{
 		if (this._uiControl == value) return value;
-		if (value != null)
-		{
-			value.exposedValue = this;
-		}
-		else if (this._uiControl != null)
-		{
-			this._uiControl.exposedValue = null;
-		}
+		//if (value != null)
+		//{
+			//value.exposedValue = this;
+		//}
+		//else if (this._uiControl != null)
+		//{
+			//this._uiControl.exposedValue = null;
+		//}
 		return this._uiControl = value;
 	}
 	
@@ -353,6 +353,11 @@ abstract class ExposedValue extends EventDispatcher
 			Reflect.setProperty(object, this.propertyName, this._storedValue);
 		}
 		this._extras.applyToObject(object);
+	}
+	
+	public function isDifferentFrom(value:ExposedValue):Bool
+	{
+		return this.value != value.value;
 	}
 	
 	public function readValue(dispatchEventIfChange:Bool = true):Void
