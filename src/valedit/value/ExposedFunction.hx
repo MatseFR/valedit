@@ -1,12 +1,13 @@
 package valedit.value;
 
+import valedit.value.base.ExposedFunctionBase;
 import valedit.value.base.ExposedValue;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedFunction extends ExposedValue 
+class ExposedFunction extends ExposedFunctionBase 
 {
 	static private var _POOL:Array<ExposedFunction> = new Array<ExposedFunction>();
 	
@@ -26,7 +27,7 @@ class ExposedFunction extends ExposedValue
 	override function set_isEditable(value:Bool):Bool 
 	{
 		if (this._isEditable == value) return value;
-		for (param in this._parameterValuesAll)
+		for (param in this._parameterValuesEditable)
 		{
 			param.isEditable = value;
 		}
@@ -36,16 +37,24 @@ class ExposedFunction extends ExposedValue
 	override function set_isReadOnly(value:Bool):Bool 
 	{
 		if (this._isReadOnly == value) return value;
-		for (param in this._parameterValues)
+		for (param in this._parameterValuesEditable)
 		{
 			param.isReadOnly = value;
 		}
 		return super.set_isReadOnly(value);
 	}
 	
-	private var _parameterValuesAll:Array<ExposedValue> = new Array<ExposedValue>();
+	override function set_object(value:Dynamic):Dynamic 
+	{
+		if (this._object == value) return value;
+		super.set_object(value);
+		buildParameterValues();
+		return this._object;
+	}
+	
 	private var _parameterValues:Array<ExposedValue> = new Array<ExposedValue>();
-	private var _stringParamToValue:Map<String, ExposedValue> = new Map<String, ExposedValue>();
+	private var _parameterValuesEditable:Array<ExposedValue> = new Array<ExposedValue>();
+	private var _parameterValuesToPool:Array<ExposedValue> = new Array<ExposedValue>();
 	
 	private var _values:Array<Dynamic> = new Array<Dynamic>();
 	
@@ -54,14 +63,16 @@ class ExposedFunction extends ExposedValue
 	   @param	propertyName
 	   @param	name
 	**/
-	public function new(propertyName:String, name:String=null, parameters:Array<Dynamic> = null) 
+	public function new(propertyName:String, name:String = null, parameters:Array<Dynamic> = null) 
 	{
 		super(propertyName, name);
 		
-		if (parameters == null) parameters = new Array<Dynamic>();
-		for (param in parameters)
+		if (parameters != null)
 		{
-			addParameter(param);
+			for (param in parameters)
+			{
+				addParameter(param);
+			}
 		}
 		this.canCopyValueOnClone = false;
 		this.checkForChange = false;
@@ -73,10 +84,13 @@ class ExposedFunction extends ExposedValue
 		this.canCopyValueOnClone = false;
 		this.checkForChange = false;
 		this.parameters.resize(0);
-		this._parameterValuesAll.resize(0);
+		for (value in this._parameterValues)
+		{
+			value.pool();
+		}
 		this._parameterValues.resize(0);
-		this._stringParamToValue.clear();
-		this._values.resize(0);
+		this._parameterValuesEditable.resize(0);
+		this._parameterValuesToPool.resize(0);
 	}
 	
 	public function pool():Void
@@ -85,13 +99,15 @@ class ExposedFunction extends ExposedValue
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, parameters:Array<Dynamic> = null):ExposedFunction
+	private function setTo(propertyName:String, name:String, parameters:Array<Dynamic>):ExposedFunction
 	{
 		setNames(propertyName, name);
-		if (parameters == null) parameters = new Array<Dynamic>();
-		for (param in parameters)
+		if (parameters != null)
 		{
-			addParameter(param);
+			for (param in parameters)
+			{
+				addParameter(param);
+			}
 		}
 		return this;
 	}
@@ -101,9 +117,22 @@ class ExposedFunction extends ExposedValue
 		// nothing
 	}
 	
+	override public function isDifferentFrom(value:ExposedValue):Bool 
+	{
+		var func:ExposedFunction = cast value;
+		var paramCount:Int = this._parameterValues.length;
+		
+		for (i in 0...paramCount)
+		{
+			if (this._parameterValues[i].isDifferentFrom(func._parameterValues[i])) return true;
+		}
+		
+		return false;
+	}
+	
 	override public function readValue(dispatchEventIfChange:Bool = true):Void 
 	{
-		for (param in this._parameterValuesAll)
+		for (param in this._parameterValues)
 		{
 			param.readValue(false);
 		}
@@ -118,55 +147,105 @@ class ExposedFunction extends ExposedValue
 	**/
 	public function addParameter(param:Dynamic):Void
 	{
-		var val:ExposedValue;
 		this.parameters.push(param);
-		if (Std.isOfType(param, String))
+	}
+	
+	public function buildParameterValues():Void
+	{
+		clearParameterValues();
+		
+		var str:String;
+		var val:ExposedValue;
+		for (param in this.parameters)
 		{
-			var str:String = param;
-			if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
+			if (Std.isOfType(param, Bool))
 			{
-				val = this._collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
-				val = val.clone(true);
+				val = ExposedBool.fromPool(null);
+				val.isEditable = false;
+				val.isReadOnly = true;
+				val.value = param;
+				this._parameterValues[this._parameterValues.length] = val;
+				this._parameterValuesToPool[this._parameterValuesToPool.length] = val;
+			}
+			else if (Std.isOfType(param, Float))
+			{
+				val = ExposedFloatDrag.fromPool(null);
+				val.isEditable = false;
+				val.isReadOnly = true;
+				val.value = param;
+				this._parameterValues[this._parameterValues.length] = val;
+				this._parameterValuesToPool[this._parameterValuesToPool.length] = val;
+			}
+			else if (Std.isOfType(param, Int))
+			{
+				val = ExposedIntDrag.fromPool(null);
+				val.isEditable = false;
+				val.isReadOnly = true;
+				val.value = param;
+				this._parameterValues[this._parameterValues.length] = val;
+				this._parameterValuesToPool[this._parameterValuesToPool.length] = val;
+			}
+			else if (Std.isOfType(param, String))
+			{
+				str = param;
+				if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
+				{
+					// TODO : replace this with reference values
+					val = this._collection.getValue(str.substr(ValEdit.EXPOSED_VALUE_MARKER.length));
+					val = val.clone(true);
+					val.isEditable = false;
+					val.isReadOnly = true;
+					val.object = this._object;
+					#if valeditor
+					val.valEditorObject = this._valEditorObject;
+					#end
+					this._parameterValues[this._parameterValues.length] = val;
+					this._parameterValuesToPool[this._parameterValuesToPool.length] = val;
+				}
+				else
+				{
+					val = ExposedString.fromPool(null);
+					val.isEditable = false;
+					val.isReadOnly = true;
+					val.value = param;
+					this._parameterValues[this._parameterValues.length] = val;
+					this._parameterValuesToPool[this._parameterValuesToPool.length] = val;
+				}
+			}
+			else if (Std.isOfType(param, ExposedValue))
+			{
+				val = cast param;
 				val.isEditable = this._isEditable;
-				val.isReadOnlyInternal = true;
+				val.isReadOnly = this._isReadOnly;
 				val.object = this._object;
-				this._parameterValuesAll.push(val);
-				this._stringParamToValue.set(str, val);
+				#if valeditor
+				val.valEditorObject = this._valEditorObject;
+				#end
+				this._parameterValues[this._parameterValues.length] = val;
+				this._parameterValuesEditable[this._parameterValuesEditable.length] = val;
 			}
 		}
-		else if (Std.isOfType(param, ExposedValue))
+	}
+	
+	private function clearParameterValues():Void
+	{
+		this._parameterValues.resize(0);
+		this._parameterValuesEditable.resize(0);
+		for (value in this._parameterValuesToPool)
 		{
-			val = cast param;
-			val.isEditable = this._isEditable;
-			val.isReadOnly = this._isReadOnly;
-			val.isReadOnlyInternal = this._isReadOnlyInternal;
-			this._parameterValues.push(cast param);
-			this._parameterValuesAll.push(cast param);
+			value.pool();
 		}
+		this._parameterValuesToPool.resize(0);
 	}
 	
 	public function getExposedValueParameters(?values:Array<ExposedValue>):Array<ExposedValue>
 	{
 		if (values == null) values = new Array<ExposedValue>();
 		
-		var str:String;
-		var val:ExposedValue;
-		
-		for (param in this.parameters)
+		var count:Int = this._parameterValues.length;
+		for (i in 0...count)
 		{
-			if (Std.isOfType(param, String))
-			{
-				str = param;
-				if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
-				{
-					val = this._stringParamToValue.get(str);
-					values.push(val);
-				}
-			}
-			else if (Std.isOfType(param, ExposedValue))
-			{
-				values.push(cast param);
-			}
+			values[i] = this._parameterValues[i];
 		}
 		
 		return values;
@@ -174,34 +253,11 @@ class ExposedFunction extends ExposedValue
 	
 	public function execute():Void
 	{
-		var str:String;
-		var val:ExposedValue;
-		for (param in this.parameters)
+		for (val in this._parameterValues)
 		{
-			if (Std.isOfType(param, String))
+			if (val.isRealValue)
 			{
-				str = param;
-				if (str.indexOf(ValEdit.EXPOSED_VALUE_MARKER) == 0)
-				{
-					val = this._stringParamToValue.get(str);
-					this._values.push(val.value);
-				}
-				else
-				{
-					this._values.push(param);
-				}
-			}
-			else if (Std.isOfType(param, ExposedValue))
-			{
-				val = cast param;
-				if (val.isRealValue)
-				{
-					this._values.push(val.value);
-				}
-			}
-			else
-			{
-				this._values.push(param);
+				this._values[this._values.length] = val.value;
 			}
 		}
 		
@@ -228,7 +284,7 @@ class ExposedFunction extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var func:ExposedFunction = fromPool(this.propertyName, this.name, this.parameters.copy());
+		var func:ExposedFunction = fromPool(this.propertyName, this.name, this.parameters);
 		super.clone_internal(func, false); // don't copy value, whatever the copyValue param says
 		return func;
 	}
