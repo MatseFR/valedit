@@ -800,8 +800,6 @@ class ExposedCollection extends EventDispatcher
 	
 	public function hasDifferenceWith(collection:ExposedCollection):Bool
 	{
-		var targetValue:ExposedValue;
-		
 		for (value in this._valueList)
 		{
 			if (value.isGroup)
