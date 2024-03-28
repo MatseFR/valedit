@@ -104,6 +104,16 @@ class ExposedGroup extends ExposedValue
 		}
 		return value;
 	}
+	
+	override function set_useActions(value:Bool):Bool 
+	{
+		if (this._useActions == value) return value;
+		for (val in this._valueList)
+		{
+			val.useActions = value;
+		}
+		return super.set_useActions(value);
+	}
 	#end
 	
 	private var _groupList:Array<ExposedGroup> = new Array<ExposedGroup>();
@@ -356,6 +366,9 @@ class ExposedGroup extends ExposedValue
 		value.isConstructor = this.isConstructor;
 		value.isEditable = this._isEditable;
 		value.isReadOnly = this._isReadOnly;
+		#if valeditor
+		value.useActions = this._useActions;
+		#end
 		
 		this._valueList.push(value);
 		this._valueMap[value.propertyName] = value;
@@ -389,6 +402,9 @@ class ExposedGroup extends ExposedValue
 		value.isConstructor = this.isConstructor;
 		value.isEditable = this._isEditable;
 		value.isReadOnly = this._isReadOnly;
+		#if valeditor
+		value.useActions = this._useActions;
+		#end
 		
 		var afterValue:ExposedValue = this._valueMap[afterValueName];
 		if (afterValue == null)
@@ -425,6 +441,9 @@ class ExposedGroup extends ExposedValue
 		value.isConstructor = this.isConstructor;
 		value.isEditable = this._isEditable;
 		value.isReadOnly = this._isReadOnly;
+		#if valeditor
+		value.useActions = this._useActions;
+		#end
 		
 		var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 		if (beforeValue == null)

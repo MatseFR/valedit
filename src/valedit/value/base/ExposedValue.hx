@@ -65,6 +65,7 @@ abstract class ExposedValue extends EventDispatcher
 	public var updateCollectionOnChange:Bool = true;
 	public var updateCollectionLocked:Bool = false;
 	#if valeditor
+	public var useActions(get, set):Bool;
 	/* When set to true, ValEditor will check that value to decide if 2 objects should be considered the same or not. Default is false. */
 	public var useForObjectMatching:Bool = false;
 	public var valEditorObject(get, set):ValEditorObject;
@@ -185,6 +186,13 @@ abstract class ExposedValue extends EventDispatcher
 	}
 	
 	#if valeditor
+	private var _useActions:Bool = true;
+	private function get_useActions():Bool { return this._useActions; }
+	private function set_useActions(value:Bool):Bool
+	{
+		return this._useActions = value;
+	}
+	
 	private var _valEditorObject:ValEditorObject;
 	private function get_valEditorObject():ValEditorObject { return this._valEditorObject; }
 	private function set_valEditorObject(value:ValEditorObject):ValEditorObject
@@ -239,7 +247,6 @@ abstract class ExposedValue extends EventDispatcher
 			#if valeditor
 			if (this._valEditorObject != null)
 			{
-				//this._valEditorObject.valueChange(this.propertyName);
 				this._valEditorObject.valueChange(this);
 			}
 			#end
@@ -295,6 +302,7 @@ abstract class ExposedValue extends EventDispatcher
 		this._object = null;
 		this.uiControl = null;
 		#if valeditor
+		this.useActions = true;
 		this.useForObjectMatching = false;
 		this._valEditorObject = null;
 		#end
@@ -444,6 +452,7 @@ abstract class ExposedValue extends EventDispatcher
 			cloneValue(value);
 		}
 		value.isAbsolute = this.isAbsolute;
+		value.isConstructor = this._isConstructor;
 		value.isEditable = this._isEditable;
 		value.isNullable = this.isNullable;
 		value.isReadOnly = this._isReadOnly;
@@ -451,6 +460,7 @@ abstract class ExposedValue extends EventDispatcher
 		value.isTweenable = this._isTweenable;
 		value.updateCollectionOnChange = this.updateCollectionOnChange;
 		#if valeditor
+		value.useActions = this._useActions;
 		value.useForObjectMatching = this.useForObjectMatching;
 		#end
 		value.visible = this._visible;

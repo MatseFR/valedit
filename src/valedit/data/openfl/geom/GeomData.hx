@@ -180,6 +180,7 @@ class GeomData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("a"))
@@ -431,6 +432,7 @@ class GeomData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		return collection;
@@ -465,6 +467,7 @@ class GeomData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("x"))
@@ -568,6 +571,7 @@ class GeomData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("x"))
@@ -712,6 +716,7 @@ class GeomData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("x"))

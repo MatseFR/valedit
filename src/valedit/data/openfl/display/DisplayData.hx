@@ -112,6 +112,7 @@ class DisplayData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("bitmapData"))
@@ -159,14 +160,12 @@ class DisplayData
 		if (!collection.hasValue("x"))
 		{
 			floatDrag = new ExposedFloatDrag("x");
-			floatDrag.isTweenable = false;
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("y"))
 		{
 			floatDrag = new ExposedFloatDrag("y");
-			floatDrag.isTweenable = false;
 			collection.addValue(floatDrag, groupName);
 		}
 		
@@ -240,6 +239,10 @@ class DisplayData
 		if (!collection.hasValue("transform"))
 		{
 			obj = new ExposedObject("transform");
+			// TODO : interpolating matrix's a, b, c & d values gives weird results
+			obj.addNonTweenablePropertyName("matrix");
+			//obj.addNonTweenableDeepPropertyName(["matrix", "tx"]);
+			//obj.addNonTweenableDeepPropertyName(["matrix", "ty"]);
 			collection.addValue(obj, groupName);
 		}
 		
@@ -382,6 +385,7 @@ class DisplayData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("x"))

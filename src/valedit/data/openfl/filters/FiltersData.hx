@@ -57,6 +57,7 @@ class FiltersData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		var floatDrag:ExposedFloatDrag;
@@ -182,6 +183,7 @@ class FiltersData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = true;
 		}
 		
 		var bool:ExposedBool;
@@ -349,6 +351,7 @@ class FiltersData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		var bool:ExposedBool;

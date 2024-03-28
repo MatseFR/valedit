@@ -38,6 +38,7 @@ class ExposedCollection extends EventDispatcher
 		return new ExposedCollection();
 	}
 	
+	/* Default is false */
 	public var applyIfDefaultValue:Bool = false;
 	public var isConstructor(get, set):Bool;
 	public var isEditable(get, set):Bool;
@@ -48,6 +49,8 @@ class ExposedCollection extends EventDispatcher
 	#if valeditor
 	public var uiCollection(default, null):UICollection;
 	public var uiContainer(get, set):DisplayObjectContainer;
+	/* Default is true */
+	public var useActions(get, set):Bool;
 	public var valEditorObject(get, set):ValEditorObject;
 	#end
 	/* when true, prevents a changed value from updating other values in the collection */
@@ -150,6 +153,19 @@ class ExposedCollection extends EventDispatcher
 		return this._uiContainer = value;
 	}
 	
+	private var _useActions:Bool = true;
+	private function get_useActions():Bool { return this._useActions; }
+	private function set_useActions(value:Bool):Bool
+	{
+		if (this._useActions == value) return value;
+		
+		for (val in this._valueList)
+		{
+			val.useActions = value;
+		}
+		return this._useActions = value;
+	}
+	
 	private var _valEditorObject:ValEditorObject;
 	private function get_valEditorObject():ValEditorObject { return this._valEditorObject; }
 	private function set_valEditorObject(value:ValEditorObject):ValEditorObject
@@ -203,6 +219,7 @@ class ExposedCollection extends EventDispatcher
 		
 		#if valeditor
 		this.uiContainer = null;
+		this._useActions = true;
 		this._valEditorObject = null;
 		#end
 		for (value in this._valueList)
@@ -420,6 +437,9 @@ class ExposedCollection extends EventDispatcher
 			value.isReadOnly = this._isReadOnly;
 			value.isReadOnlyInternal = this._isReadOnlyInternal;
 			value.parentValue = this._parentValue;
+			#if valeditor
+			value.useActions = this._useActions;
+			#end
 			this._valueList.push(value);
 			this._valueMap[value.propertyName] = value;
 			if (Std.isOfType(value, ExposedGroup))
@@ -449,7 +469,12 @@ class ExposedCollection extends EventDispatcher
 		{
 			value.isConstructor = this._isConstructor;
 			value.isEditable = this._isEditable;
-			value.isReadOnlyInternal = this._isReadOnly;
+			value.isReadOnly = this._isReadOnly;
+			value.isReadOnlyInternal = this._isReadOnlyInternal;
+			value.parentValue = this._parentValue;
+			#if valeditor
+			value.useActions = this._useActions;
+			#end
 			var afterValue:ExposedValue = this._valueMap[afterValueName];
 			if (afterValue == null)
 			{
@@ -485,7 +510,12 @@ class ExposedCollection extends EventDispatcher
 		{
 			value.isConstructor = this._isConstructor;
 			value.isEditable = this._isEditable;
-			value.isReadOnlyInternal = this._isReadOnly;
+			value.isReadOnly = this._isReadOnly;
+			value.isReadOnlyInternal = this._isReadOnlyInternal;
+			value.parentValue = this._parentValue;
+			#if valeditor
+			value.useActions = this._useActions;
+			#end
 			var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 			if (beforeValue == null)
 			{
@@ -794,6 +824,9 @@ class ExposedCollection extends EventDispatcher
 		collection.isConstructor = this.isConstructor;
 		collection.isEditable = this.isEditable;
 		collection.isReadOnly = this.isReadOnly;
+		#if valeditor
+		collection.useActions = this.useActions;
+		#end
 		
 		for (val in this._valueList)
 		{

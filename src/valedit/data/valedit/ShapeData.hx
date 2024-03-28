@@ -143,6 +143,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("fill"))
@@ -269,6 +270,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("arc"))
@@ -395,6 +397,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("arrowLength"))
@@ -523,6 +526,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("numSides"))
@@ -616,6 +620,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("radius"))
@@ -698,6 +703,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("radius"))
@@ -788,6 +794,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("radiusX"))
@@ -892,6 +899,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("numSides"))
@@ -1024,6 +1032,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("numSides"))
@@ -1134,6 +1143,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("numSides"))
@@ -1225,6 +1235,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("rectangleWidth"))
@@ -1327,6 +1338,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("rectangleWidth"))
@@ -1447,6 +1459,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("numPoints"))
@@ -1558,6 +1571,7 @@ class ShapeData
 		{
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
+			collection.useActions = false;
 		}
 		
 		if (!collection.hasValue("arc"))

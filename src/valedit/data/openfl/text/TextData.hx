@@ -13,9 +13,12 @@ import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFontName;
 import valedit.value.ExposedIntDrag;
+import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 import valedit.value.ExposedText;
+import valedit.value.extra.ReassignLastModifiedValueExtra;
+import valedit.value.extra.ReassignValuesExtra;
 
 /**
  * ...
@@ -84,18 +87,23 @@ class TextData
 		var color:ExposedColor;
 		var floatDrag:ExposedFloatDrag;
 		var intDrag:ExposedIntDrag;
+		var obj:ExposedObject;
 		var select:ExposedSelect;
 		var str:ExposedString;
 		var text:ExposedText;
+		
+		var reassignLastModified:ReassignLastModifiedValueExtra;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
 		DisplayData.exposeInteractiveObject(collection, groupName);
 		
-		if (!collection.hasValue("alwaysShowSelection"))
+		if (!collection.hasValue("type"))
 		{
-			bool = new ExposedBool("alwaysShowSelection");
-			collection.addValue(bool, groupName);
+			select = new ExposedSelect("type");
+			select.add("dynamic", TextFieldType.DYNAMIC);
+			select.add("input", TextFieldType.INPUT);
+			collection.addValue(select, groupName);
 		}
 		
 		if (!collection.hasValue("antiAliasType"))
@@ -104,6 +112,12 @@ class TextData
 			select.add("advanced", AntiAliasType.ADVANCED);
 			select.add("normal", AntiAliasType.NORMAL);
 			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("sharpness"))
+		{
+			floatDrag = new ExposedFloatDrag("sharpness", null, -400, 400);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("autoSize"))
@@ -147,6 +161,15 @@ class TextData
 		}
 		
 		// TODO : TextFormat
+		if (!collection.hasValue("defaultTextFormat"))
+		{
+			obj = new ExposedObject("defaultTextFormat", null, true);
+			reassignLastModified = new ReassignLastModifiedValueExtra();
+			reassignLastModified.addValue("htmlText");
+			reassignLastModified.addValue("text");
+			obj.reassignObjectExtras.add(reassignLastModified);
+			collection.addValue(obj);
+		}
 		
 		if (!collection.hasValue("displayAsPassword"))
 		{
@@ -218,10 +241,10 @@ class TextData
 			collection.addValue(bool, groupName);
 		}
 		
-		if (!collection.hasValue("sharpness"))
+		if (!collection.hasValue("alwaysShowSelection"))
 		{
-			floatDrag = new ExposedFloatDrag("sharpness", null, -400, 400);
-			collection.addValue(floatDrag, groupName);
+			bool = new ExposedBool("alwaysShowSelection");
+			collection.addValue(bool, groupName);
 		}
 		
 		// TODO : StyleSheet
@@ -236,14 +259,6 @@ class TextData
 		{
 			color = new ExposedColor("textColor");
 			collection.addValue(color, groupName);
-		}
-		
-		if (!collection.hasValue("type"))
-		{
-			select = new ExposedSelect("type");
-			select.add("dynamic", TextFieldType.DYNAMIC);
-			select.add("input", TextFieldType.INPUT);
-			collection.addValue(select, groupName);
 		}
 		
 		if (!collection.hasValue("wordWrap"))
@@ -305,6 +320,7 @@ class TextData
 			"border",
 			"borderColor",
 			"condenseWhite",
+			"defaultTextFormat",
 			"embedFonts",
 			"gridFitType",
 			"mouseWheelEnabled",
