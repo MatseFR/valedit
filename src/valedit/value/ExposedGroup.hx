@@ -423,7 +423,7 @@ class ExposedGroup extends ExposedValue
 		}
 		
 		#if valeditor
-		if (_isUIBuilt && value._uiControl == null)
+		if (this._isUIBuilt && value._uiControl == null)
 		{
 			var control:IValueUI = ValEditor.toUIControl(value);
 			this._uiGroup.addExposedControlAfter(control, afterValue._uiControl);
