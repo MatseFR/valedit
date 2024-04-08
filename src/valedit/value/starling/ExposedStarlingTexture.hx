@@ -262,7 +262,7 @@ class ExposedStarlingTexture extends ExposedValue
 		this.value = ValEdit.assetLib.getStarlingTextureAssetFromPath(json.asset);
 	}
 	
-	override public function toJSONSave(json:Dynamic):Void 
+	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
 	{
 		if (this._asset != null)
 		{

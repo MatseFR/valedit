@@ -254,7 +254,7 @@ class ExposedTextAsset extends ExposedValue
 		this.value = ValEdit.assetLib.getTextFromPath(json.asset);
 	}
 	
-	override public function toJSONSave(json:Dynamic):Void 
+	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
 	{
 		if (this._asset != null)
 		{

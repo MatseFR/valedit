@@ -218,6 +218,21 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	
+	override public function isDifferentFrom(value:ExposedValue):Bool 
+	{
+		var group:ExposedGroup = cast value;
+		
+		for (value in this._valueList)
+		{
+			if (value.isRealValue)
+			{
+				if (value.isDifferentFrom(group.getValue(value.propertyName))) return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public function checkForObjectMatch(otherGroup:ExposedGroup):Bool
 	{
 		var otherGrp:ExposedGroup;
@@ -366,6 +381,8 @@ class ExposedGroup extends ExposedValue
 		value.isConstructor = this.isConstructor;
 		value.isEditable = this._isEditable;
 		value.isReadOnly = this._isReadOnly;
+		value.isReadOnlyInternal = this._isReadOnlyInternal;
+		value.parentValue = this.parentValue;
 		#if valeditor
 		value.useActions = this._useActions;
 		#end
@@ -402,6 +419,8 @@ class ExposedGroup extends ExposedValue
 		value.isConstructor = this.isConstructor;
 		value.isEditable = this._isEditable;
 		value.isReadOnly = this._isReadOnly;
+		value.isReadOnlyInternal = this._isReadOnlyInternal;
+		value.parentValue = this.parentValue;
 		#if valeditor
 		value.useActions = this._useActions;
 		#end
@@ -433,7 +452,7 @@ class ExposedGroup extends ExposedValue
 	
 	public function addValueBefore(value:ExposedValue, beforeValueName:String):Void
 	{
-		if (!value.hasEventListener(ValueEvent.VALUE_CHANGE))
+		if (value.isRealValue && !value.hasEventListener(ValueEvent.VALUE_CHANGE))
 		{
 			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		}
@@ -441,6 +460,8 @@ class ExposedGroup extends ExposedValue
 		value.isConstructor = this.isConstructor;
 		value.isEditable = this._isEditable;
 		value.isReadOnly = this._isReadOnly;
+		value.isReadOnlyInternal = this._isReadOnlyInternal;
+		value.parentValue = this.parentValue;
 		#if valeditor
 		value.useActions = this._useActions;
 		#end
@@ -662,22 +683,22 @@ class ExposedGroup extends ExposedValue
 		return hasTween;
 	}
 	
-	public function hasDifferenceWith(group:ExposedGroup):Bool
-	{
-		for (value in this._valueList)
-		{
-			if (value.isGroup)
-			{
-				if (cast(value, ExposedGroup).hasDifferenceWith(group.getGroup(value.propertyName))) return true;
-			}
-			else if (value.isRealValue)
-			{
-				if (value.isDifferentFrom(group.getValue(value.propertyName))) return true;
-			}
-		}
-		
-		return false;
-	}
+	//public function hasDifferenceWith(group:ExposedGroup):Bool
+	//{
+		//for (value in this._valueList)
+		//{
+			//if (value.isGroup)
+			//{
+				//if (cast(value, ExposedGroup).hasDifferenceWith(group.getGroup(value.propertyName))) return true;
+			//}
+			//else if (value.isRealValue)
+			//{
+				//if (value.isDifferentFrom(group.getValue(value.propertyName))) return true;
+			//}
+		//}
+		//
+		//return false;
+	//}
 	
 	/**
 	   
@@ -710,6 +731,19 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	
+	override public function fromJSONSave(json:Dynamic):Void 
+	{
+		var data:Dynamic;
+		for (value in this._valueList)
+		{
+			data = Reflect.field(json, value.propertyName);
+			if (data != null)
+			{
+				value.fromJSONSave(data);
+			}
+		}
+	}
+	
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
@@ -727,6 +761,27 @@ class ExposedGroup extends ExposedValue
 		}
 		
 		return super.toJSON(json);
+	}
+	
+	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
+	{
+		var refGroup:ExposedGroup = cast refValue;
+		var values:Dynamic = {};
+		for (value in this._valueList)
+		{
+			if (!value.isRealValue) continue;
+			if (!includeNotVisible && !value.visible) continue;
+			if (refGroup != null)
+			{
+				refValue = refGroup.getValue(value.propertyName);
+				if (!refValue.isDifferentFrom(value))
+				{
+					continue;
+				}
+			}
+			value.toJSONSave(values, includeNotVisible, refValue);
+		}
+		Reflect.setField(json, this.propertyName, values);
 	}
 	
 	override public function toJSONSimple(json:Dynamic):Void 

@@ -802,11 +802,12 @@ class ExposedCollection extends EventDispatcher
 	{
 		for (value in this._valueList)
 		{
-			if (value.isGroup)
-			{
-				if (cast(value, ExposedGroup).hasDifferenceWith(collection.getGroup(value.propertyName))) return true;
-			}
-			else if (value.isRealValue)
+			//if (value.isGroup)
+			//{
+				//if (cast(value, ExposedGroup).hasDifferenceWith(collection.getGroup(value.propertyName))) return true;
+			//}
+			//else if (value.isRealValue)
+			if (value.isRealValue)
 			{
 				if (value.isDifferentFrom(collection.getValue(value.propertyName))) return true;
 			}
@@ -903,7 +904,7 @@ class ExposedCollection extends EventDispatcher
 	{
 		if (json == null) json = {};
 		
-		var refValue:ExposedValue;
+		var refValue:ExposedValue = null;
 		var values:Dynamic = {};
 		for (value in this._valueList)
 		{
@@ -912,12 +913,12 @@ class ExposedCollection extends EventDispatcher
 			if (refCollection != null)
 			{
 				refValue = refCollection.getValue(value.propertyName);
-				if (refValue.value == value.value)
+				if (!refValue.isDifferentFrom(value))
 				{
 					continue;
 				}
 			}
-			value.toJSONSave(values);
+			value.toJSONSave(values, includeNotVisible, refValue);
 		}
 		json.values = values;
 		

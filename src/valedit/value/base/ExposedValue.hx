@@ -223,15 +223,15 @@ abstract class ExposedValue extends EventDispatcher
 	{
 		if (this._object == null)
 		{
-			#if valeditor
 			if (this._storedValue != value)
 			{
 				this._storedValue = value;
+				#if valeditor
 				this.lastChanged = Timer.stamp();
+				#end
+				ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
 			}
-			#else
-			this._storedValue = value;
-			#end
+			
 		}
 		else if (this._storedValue != value)
 		{
@@ -250,6 +250,8 @@ abstract class ExposedValue extends EventDispatcher
 				this._valEditorObject.valueChange(this);
 			}
 			#end
+			
+			ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
 		}
 		return value;
 	}
@@ -477,6 +479,10 @@ abstract class ExposedValue extends EventDispatcher
 		{
 			toValue.value = this.value;
 		}
+		if (toValue.uiControl != null)
+		{
+			toValue.uiControl.updateExposedValue();
+		}
 	}
 	
 	public function loadComplete():Void
@@ -515,7 +521,7 @@ abstract class ExposedValue extends EventDispatcher
 		return json;
 	}
 	
-	public function toJSONSave(json:Dynamic):Void
+	public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void
 	{
 		var data:Dynamic = {
 			value:this.value,

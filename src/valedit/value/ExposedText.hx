@@ -293,7 +293,7 @@ class ExposedText extends ExposedValue
 		}
 	}
 	
-	override public function toJSONSave(json:Dynamic):Void 
+	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
 	{
 		var data:Dynamic;
 		if (this._asset != null)

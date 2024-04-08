@@ -1,5 +1,6 @@
 package valedit.value.base;
 
+import valedit.ExposedCollection;
 import valedit.animation.TweenData;
 import valedit.value.base.ExposedValue;
 import valedit.events.ValueEvent;
@@ -275,13 +276,18 @@ abstract class ExposedValueWithCollection extends ExposedValue
 		}
 	}
 	
-	override public function toJSONSave(json:Dynamic):Void
+	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void
 	{
 		var data:Dynamic = {};
 		if (this._childCollection != null)
 		{
+			var refCollection:ExposedCollection = null;
+			if (refValue != null)
+			{
+				refCollection = cast(refValue, ExposedValueWithCollection)._childCollection;
+			}
 			var collectionData:Dynamic = {};
-			this._childCollection.toJSONSave(collectionData);
+			this._childCollection.toJSONSave(collectionData, includeNotVisible, refCollection);
 			data.collection = collectionData;
 		}
 		Reflect.setField(json, this.propertyName, data);
