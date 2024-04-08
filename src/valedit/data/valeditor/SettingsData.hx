@@ -29,6 +29,20 @@ class SettingsData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
+		#if desktop
+		if (!collection.hasValue("autoSave"))
+		{
+			bool = new ExposedBool("autoSave", "auto save");
+			collection.addValue(bool);
+		}
+		
+		if (!collection.hasValue("autoSaveInterval"))
+		{
+			intDrag = new ExposedIntDrag("autoSaveInterval", "auto save interval (mins)", 1, 120);
+			collection.addValue(intDrag);
+		}
+		#end
+		
 		if (!collection.hasValue("undoLevels"))
 		{
 			intDrag = new ExposedIntDrag("undoLevels", "undo levels", 10, 99999);
