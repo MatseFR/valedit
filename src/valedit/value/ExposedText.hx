@@ -291,6 +291,16 @@ class ExposedText extends ExposedValue
 		{
 			this.value = json.value;
 		}
+		#if valeditor
+		if (json.lastChanged != null)
+		{
+			this.lastChanged = json.lastChanged;
+		}
+		if (json.lastModified != null)
+		{
+			this.lastModified = json.lastModified;
+		}
+		#end
 	}
 	
 	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
@@ -304,6 +314,10 @@ class ExposedText extends ExposedValue
 		{
 			data = {value:this.value};
 		}
+		#if valeditor
+		data.lastChanged = this.lastChanged;
+		data.lastModified = this.lastModified;
+		#end
 		Reflect.setField(json, this.propertyName, data);
 	}
 	

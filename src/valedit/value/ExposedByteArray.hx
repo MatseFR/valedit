@@ -258,6 +258,16 @@ class ExposedByteArray extends ExposedValue
 	override public function fromJSONSave(json:Dynamic):Void 
 	{
 		this.value = ValEdit.assetLib.getBinaryFromPath(json.asset);
+		#if valeditor
+		if (json.lastChanged != null)
+		{
+			this.lastChanged = json.lastChanged;
+		}
+		if (json.lastModified != null)
+		{
+			this.lastModified = json.lastModified;
+		}
+		#end
 	}
 	
 	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
@@ -265,6 +275,10 @@ class ExposedByteArray extends ExposedValue
 		if (this._asset != null)
 		{
 			var data:Dynamic = {asset:this._asset.path};
+			#if valeditor
+			data.lastChanged = this.lastChanged;
+			data.lastModified = this.lastModified;
+			#end
 			Reflect.setField(json, this.propertyName, data);
 		}
 	}

@@ -140,6 +140,16 @@ class ExposedObjectReference extends ExposedValue
 	{
 		this._objectID = json.value;
 		this._objectClassName = json.clss;
+		#if valeditor
+		if (json.lastChanged != null)
+		{
+			this.lastChanged = json.lastChanged;
+		}
+		if (json.lastModified != null)
+		{
+			this.lastModified = json.lastModified;
+		}
+		#end
 	}
 	
 	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
@@ -147,6 +157,10 @@ class ExposedObjectReference extends ExposedValue
 		if (this.value != null)
 		{
 			var data:Dynamic = {value:this._valEditObjectReference.id, clss:this._valEditObjectReference.className};
+			#if valeditor
+			data.lastChanged = this.lastChanged;
+			data.lastModified = this.lastModified;
+			#end
 			Reflect.setField(json, this.propertyName, data);
 		}
 	}
