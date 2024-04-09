@@ -6,17 +6,16 @@ import valedit.animation.TweenData;
 import valedit.animation.TweenProperties;
 import valedit.events.ValueEvent;
 import valedit.value.ExposedGroup;
-import valedit.value.ExposedObject;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueWithCollection;
 import valeditor.editor.action.MultiAction;
 import valeditor.editor.action.value.ValueClone;
+import valeditor.editor.action.value.ValueUIUpdate;
 #if valeditor
 import valeditor.ValEditor;
 import valeditor.ValEditorObject;
 import valedit.ui.UICollection;
 #end
-import valeditor.editor.action.value.ValueUIUpdate;
 
 /**
  * ...
