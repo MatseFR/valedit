@@ -802,11 +802,6 @@ class ExposedCollection extends EventDispatcher
 	{
 		for (value in this._valueList)
 		{
-			//if (value.isGroup)
-			//{
-				//if (cast(value, ExposedGroup).hasDifferenceWith(collection.getGroup(value.propertyName))) return true;
-			//}
-			//else if (value.isRealValue)
 			if (value.isRealValue)
 			{
 				if (value.isDifferentFrom(collection.getValue(value.propertyName))) return true;
