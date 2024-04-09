@@ -1,4 +1,4 @@
-package valedit.value;
+package valedit.value.data;
 
 /**
  * @author Matse
