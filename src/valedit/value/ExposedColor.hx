@@ -16,20 +16,25 @@ class ExposedColor extends ExposedValueTweenable
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null):ExposedColor
+	static public function fromPool(propertyName:String, name:String = null, liveDragging:Bool = true, liveTyping:Bool = true):ExposedColor
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name);
-		return new ExposedColor(propertyName, name);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, liveDragging, liveTyping);
+		return new ExposedColor(propertyName, name, liveDragging, liveTyping);
 	}
+	
+	public var liveDragging:Bool;
+	public var liveTyping:Bool;
 	
 	/**
 	   
 	   @param	propertyName
 	   @param	name
 	**/
-	public function new(propertyName:String, name:String = null) 
+	public function new(propertyName:String, name:String = null, liveDragging:Bool = true, liveTyping:Bool = true) 
 	{
 		super(propertyName, name);
+		this.liveDragging = liveDragging;
+		this.liveTyping = liveTyping;
 		this.defaultValue = 0xffffff;
 	}
 	
@@ -45,15 +50,17 @@ class ExposedColor extends ExposedValueTweenable
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String):ExposedColor
+	private function setTo(propertyName:String, name:String, liveDragging:Bool, liveTyping:Bool):ExposedColor
 	{
 		setNames(propertyName, name);
+		this.liveDragging = liveDragging;
+		this.liveTyping = liveTyping;
 		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var color:ExposedColor = fromPool(this.propertyName, this.name);
+		var color:ExposedColor = fromPool(this.propertyName, this.name, this.liveDragging, this.liveTyping);
 		super.clone_internal(color, copyValue);
 		return color;
 	}
