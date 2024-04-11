@@ -18,12 +18,13 @@ class ExposedText extends ExposedValue
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null):ExposedText
+	static public function fromPool(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, liveTyping:Bool = true):ExposedText
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, maxChars, restrict);
-		return new ExposedText(propertyName, name, maxChars, restrict);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, maxChars, restrict, liveTyping);
+		return new ExposedText(propertyName, name, maxChars, restrict, liveTyping);
 	}
 	
+	public var liveTyping:Bool;
 	/* 0 = unlimited */
 	public var maxChars:Int = 0;
 	public var restrict:String = null;
@@ -105,11 +106,12 @@ class ExposedText extends ExposedValue
 	   @param	maxChars
 	   @param	restrict
 	**/
-	public function new(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null) 
+	public function new(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, liveTyping:Bool = true) 
 	{
 		super(propertyName, name);
 		this.maxChars = maxChars;
 		this.restrict = restrict;
+		this.liveTyping = liveTyping;
 		this.defaultValue = "";
 	}
 	
@@ -139,11 +141,12 @@ class ExposedText extends ExposedValue
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, maxChars:Int, restrict:String):ExposedText
+	private function setTo(propertyName:String, name:String, maxChars:Int, restrict:String, liveTyping:Bool):ExposedText
 	{
 		setNames(propertyName, name);
 		this.maxChars = maxChars;
 		this.restrict = restrict;
+		this.liveTyping = liveTyping;
 		return this;
 	}
 	
@@ -237,7 +240,7 @@ class ExposedText extends ExposedValue
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var text:ExposedText = fromPool(this.propertyName, this.name, this.maxChars, this.restrict);
+		var text:ExposedText = fromPool(this.propertyName, this.name, this.maxChars, this.restrict, this.liveTyping);
 		clone_internal(text, copyValue);
 		return text;
 	}

@@ -16,17 +16,18 @@ class ExposedString extends ExposedValue
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, inputPercentWidth:Float = 100):ExposedString
+	static public function fromPool(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, liveTyping:Bool = true, inputPercentWidth:Float = 100):ExposedString
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, maxChars, restrict, inputPercentWidth);
-		return new ExposedString(propertyName, name, maxChars, restrict, inputPercentWidth);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, maxChars, restrict, liveTyping, inputPercentWidth);
+		return new ExposedString(propertyName, name, maxChars, restrict, liveTyping, inputPercentWidth);
 	}
 	
+	public var inputPercentWidth:Float;
+	public var liveTyping:Bool;
 	/* 0 = unlimited */
 	public var maxChars:Int = 0;
 	public var prompt(get, set):String;
 	public var restrict:String = null;
-	public var inputPercentWidth:Float;
 	
 	private var _prompt:String;
 	private function get_prompt():String { return this._prompt; }
@@ -46,11 +47,12 @@ class ExposedString extends ExposedValue
 	   @param	restrict
 	   @param	inputWidthPercent
 	**/
-	public function new(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, inputPercentWidth:Float = 100) 
+	public function new(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, liveTyping:Bool = true, inputPercentWidth:Float = 100) 
 	{
 		super(propertyName, name);
 		this.maxChars = maxChars;
 		this.restrict = restrict;
+		this.liveTyping = liveTyping;
 		this.inputPercentWidth = inputPercentWidth;
 		this.defaultValue = "";
 	}
@@ -67,18 +69,19 @@ class ExposedString extends ExposedValue
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, maxChars:Int, restrict:String, inputPercentWidth:Float):ExposedString
+	private function setTo(propertyName:String, name:String, maxChars:Int, restrict:String, liveTyping:Bool, inputPercentWidth:Float):ExposedString
 	{
 		setNames(propertyName, name);
 		this.maxChars = maxChars;
 		this.restrict = restrict;
+		this.liveTyping = liveTyping;
 		this.inputPercentWidth = inputPercentWidth;
 		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var string:ExposedString = fromPool(this.propertyName, this.name, this.maxChars, this.restrict, this.inputPercentWidth);
+		var string:ExposedString = fromPool(this.propertyName, this.name, this.maxChars, this.restrict, this.liveTyping, this.inputPercentWidth);
 		super.clone_internal(string, copyValue);
 		return string;
 	}

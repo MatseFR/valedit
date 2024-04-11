@@ -18,14 +18,15 @@ class ExposedInt extends ExposedValueTweenable
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, numericMode:NumericMode = NumericMode.PositiveOrNegative, inputVariant:String = TextInputVariant.FULL_WIDTH):ExposedInt
+	static public function fromPool(propertyName:String, name:String = null, numericMode:NumericMode = NumericMode.PositiveOrNegative, liveTyping:Bool = true, inputVariant:String = TextInputVariant.FULL_WIDTH):ExposedInt
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, numericMode, inputVariant);
-		return new ExposedInt(propertyName, name, numericMode, inputVariant);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, numericMode, liveTyping, inputVariant);
+		return new ExposedInt(propertyName, name, numericMode, liveTyping, inputVariant);
 	}
 	
-	public var numericMode:NumericMode;
 	public var inputVariant:String;
+	public var liveTyping:Bool;
+	public var numericMode:NumericMode;
 	
 	/**
 	   
@@ -34,10 +35,11 @@ class ExposedInt extends ExposedValueTweenable
 	   @param	numericMode
 	   @param	inputPercentWidth
 	**/
-	public function new(propertyName:String, name:String = null, numericMode:NumericMode = NumericMode.PositiveOrNegative, inputVariant:String = TextInputVariant.FULL_WIDTH) 
+	public function new(propertyName:String, name:String = null, numericMode:NumericMode = NumericMode.PositiveOrNegative, liveTyping:Bool = true, inputVariant:String = TextInputVariant.FULL_WIDTH) 
 	{
 		super(propertyName, name);
 		this.numericMode = numericMode;
+		this.liveTyping = liveTyping;
 		this.inputVariant = inputVariant;
 		this.defaultValue = 0;
 	}
@@ -54,17 +56,18 @@ class ExposedInt extends ExposedValueTweenable
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, numericMode:NumericMode, inputVariant:String):ExposedInt
+	private function setTo(propertyName:String, name:String, numericMode:NumericMode, liveTyping:Bool, inputVariant:String):ExposedInt
 	{
 		setNames(propertyName, name);
 		this.numericMode = numericMode;
+		this.liveTyping = liveTyping;
 		this.inputVariant = inputVariant;
 		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var int:ExposedInt = fromPool(this.propertyName, this.name, this.numericMode, this.inputVariant);
+		var int:ExposedInt = fromPool(this.propertyName, this.name, this.numericMode, this.liveTyping, this.inputVariant);
 		super.clone_internal(int, copyValue);
 		return int;
 	}

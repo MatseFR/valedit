@@ -18,15 +18,16 @@ class ExposedFloat extends ExposedValueTweenable
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, inputVariant:String = TextInputVariant.FULL_WIDTH):ExposedFloat
+	static public function fromPool(propertyName:String, name:String = null, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, liveTyping:Bool = true, inputVariant:String = TextInputVariant.FULL_WIDTH):ExposedFloat
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, precision, numericMode, inputVariant);
-		return new ExposedFloat(propertyName, name, precision, numericMode, inputVariant);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, precision, numericMode, liveTyping, inputVariant);
+		return new ExposedFloat(propertyName, name, precision, numericMode, liveTyping, inputVariant);
 	}
 	
+	public var inputVariant:String;
+	public var liveTyping:Bool;
 	public var numericMode:NumericMode;
 	public var precision:Int;
-	public var inputVariant:String;
 	
 	/**
 	   
@@ -36,11 +37,12 @@ class ExposedFloat extends ExposedValueTweenable
 	   @param	numericMode
 	   @param	inputPercentWidth
 	**/
-	public function new(propertyName:String, name:String = null, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, inputVariant:String = TextInputVariant.FULL_WIDTH) 
+	public function new(propertyName:String, name:String = null, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, liveTyping:Bool = true, inputVariant:String = TextInputVariant.FULL_WIDTH) 
 	{
 		super(propertyName, name);
 		this.precision = precision;
 		this.numericMode = numericMode;
+		this.liveTyping = liveTyping;
 		this.inputVariant = inputVariant;
 		this.defaultValue = 0.0;
 	}
@@ -57,18 +59,19 @@ class ExposedFloat extends ExposedValueTweenable
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, precision:Int, numericMode:NumericMode, inputVariant:String):ExposedFloat
+	private function setTo(propertyName:String, name:String, precision:Int, numericMode:NumericMode, liveTyping:Bool, inputVariant:String):ExposedFloat
 	{
 		setNames(propertyName, name);
 		this.precision = precision;
 		this.numericMode = numericMode;
+		this.liveTyping = liveTyping;
 		this.inputVariant = inputVariant;
 		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var float:ExposedFloat = fromPool(this.propertyName, this.name, this.precision, this.numericMode, this.inputVariant);
+		var float:ExposedFloat = fromPool(this.propertyName, this.name, this.precision, this.numericMode, this.liveTyping, this.inputVariant);
 		super.clone_internal(float, copyValue);
 		return float;
 	}
