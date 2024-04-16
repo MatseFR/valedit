@@ -43,6 +43,12 @@ class SettingsData
 		}
 		#end
 		
+		if (!collection.hasValue("releaseUIFocusOnValidation"))
+		{
+			bool = new ExposedBool("releaseUIFocusOnValidation", "release UI focus");
+			collection.addValue(bool);
+		}
+		
 		if (!collection.hasValue("undoLevels"))
 		{
 			intDrag = new ExposedIntDrag("undoLevels", "undo levels", 10, 99999);
@@ -78,7 +84,7 @@ class SettingsData
 		#if desktop
 		if (!collection.hasValue("filePath"))
 		{
-			path = new ExposedPath("filePath", "export path", "export path");
+			path = new ExposedPath("filePath", "export path", true, "export path");
 			collection.addValue(path, groupName);
 		}
 		#end
@@ -135,7 +141,7 @@ class SettingsData
 		#if desktop
 		if (!collection.hasValue("filePath"))
 		{
-			path = new ExposedPath("filePath", "file path", "file path");
+			path = new ExposedPath("filePath", "file path", true, "file path");
 			collection.addValue(path, groupName);
 		}
 		#end
