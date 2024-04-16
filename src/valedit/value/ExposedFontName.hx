@@ -23,6 +23,8 @@ class ExposedFontName extends ExposedValue
 	}
 	
 	public var fontSelection:String;
+	/* if true, moving up or down using keyboard will select the item. Default is false. */
+	public var selectOnKeyboardNavigation:Bool = false;
 	
 	public function new(propertyName:String, name:String=null, fontSelection:String = FontSelection.ALL) 
 	{
