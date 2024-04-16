@@ -60,6 +60,7 @@ abstract class ExposedValue extends EventDispatcher
 	public var object(get, set):Dynamic;
 	public var parentValue:ExposedValueWithCollection;
 	public var propertyName:String;
+	public var toolTip:String;
 	public var tweenValue(get, never):Dynamic;
 	public var uiControl(get, set):IValueUI;
 	public var updateCollectionOnChange:Bool = true;
@@ -302,6 +303,7 @@ abstract class ExposedValue extends EventDispatcher
 		this.parentValue = null;
 		this._storedValue = null;
 		this._object = null;
+		this.toolTip = null;
 		this.uiControl = null;
 		#if valeditor
 		this.useActions = true;
