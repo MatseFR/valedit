@@ -237,6 +237,11 @@ class ExposedCollection extends EventDispatcher
 		_POOL[_POOL.length] = this;
 	}
 	
+	public function iterator():Iterator<ExposedValue>
+	{
+		return this._valueList.iterator();
+	}
+	
 	public function apply():Void
 	{
 		for (value in this._valueList)
