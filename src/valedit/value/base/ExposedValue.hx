@@ -1,7 +1,6 @@
 package valedit.value.base;
 import haxe.Constraints.Function;
 import haxe.Timer;
-import openfl.errors.ArgumentError;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
 import valedit.events.ValueEvent;
@@ -316,10 +315,10 @@ abstract class ExposedValue extends EventDispatcher
 	
 	private function setNames(propertyName:String, name:String):Void
 	{
-		if (propertyName == null)
-		{
-			throw new ArgumentError("ExposedValue ::: propertyName cannot be null");
-		}
+		//if (propertyName == null)
+		//{
+			//throw new ArgumentError("ExposedValue ::: propertyName cannot be null");
+		//}
 		this.propertyName = propertyName;
 		if (name == null) name = propertyName;
 		this.name = name;
