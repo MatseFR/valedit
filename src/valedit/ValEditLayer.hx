@@ -66,11 +66,17 @@ class ValEditLayer extends EventDispatcher
 		if (this._rootContainer == value) return value;
 		if (value != null)
 		{
-			if (this._displayContainer != null) value.addChild(this._displayContainer);
+			if (this._displayContainer != null)
+			{
+				value.addChildAt(this._displayContainer, 0);
+			}
 		}
 		else if (this._rootContainer != null)
 		{
-			if (this._displayContainer != null) this._rootContainer.removeChild(this._displayContainer);
+			if (this._displayContainer != null)
+			{
+				this._rootContainer.removeChild(this._displayContainer);
+			}
 		}
 		return this._rootContainer = value;
 	}
@@ -83,11 +89,17 @@ class ValEditLayer extends EventDispatcher
 		if (this._rootContainerStarling == value) return value;
 		if (value != null)
 		{
-			if (this._displayContainerStarling != null) value.addChild(this._displayContainerStarling);
+			if (this._displayContainerStarling != null)
+			{
+				value.addChildAt(this._displayContainerStarling, 0);
+			}
 		}
 		else if (this._rootContainerStarling != null)
 		{
-			if (this._displayContainerStarling != null) this._rootContainerStarling.removeChild(this._displayContainerStarling);
+			if (this._displayContainerStarling != null)
+			{
+				this._rootContainerStarling.removeChild(this._displayContainerStarling);
+			}
 		}
 		return this._rootContainerStarling = value;
 	}
@@ -127,12 +139,12 @@ class ValEditLayer extends EventDispatcher
 		return this._y = value;
 	}
 	
-	private var _objects:StringIndexedMap<ValEditObject> = new StringIndexedMap<ValEditObject>();
-	
+	private var _clearContainers:Bool = true;
 	private var _displayContainer:Sprite = new Sprite();
 	#if starling
 	private var _displayContainerStarling:starling.display.Sprite = new starling.display.Sprite();
 	#end
+	private var _objects:StringIndexedMap<ValEditObject> = new StringIndexedMap<ValEditObject>();
 
 	public function new(?timeLine:ValEditTimeLine) 
 	{
@@ -146,6 +158,16 @@ class ValEditLayer extends EventDispatcher
 	public function clear():Void
 	{
 		this.name = null;
+		if (this._clearContainers && this._displayContainer != null)
+		{
+			clearDisplayContainer();
+		}
+		#if starling
+		if (this._clearContainers && this._displayContainerStarling != null)
+		{
+			clearDisplayContainerStarling();
+		}
+		#end
 		this.rootContainer = null;
 		#if starling
 		this.rootContainerStarling = null;
@@ -294,7 +316,25 @@ class ValEditLayer extends EventDispatcher
 		this._displayContainer.y = this._y;
 		this._displayContainer.mouseEnabled = !this._locked;
 		this._displayContainer.visible = this._visible;
-		if (this._rootContainer != null) this._rootContainer.addChild(this._displayContainer);
+		
+		addDisplayContainer();
+	}
+	
+	private function addDisplayContainer():Void
+	{
+		if (this._rootContainer != null)
+		{
+			this._rootContainer.addChildAt(this._displayContainer, 0);
+		}
+	}
+	
+	private function clearDisplayContainer():Void
+	{
+		if (this._rootContainer != null)
+		{
+			this._rootContainer.removeChild(this._displayContainer);
+		}
+		this._displayContainer = null;
 	}
 	
 	#if starling
@@ -305,7 +345,26 @@ class ValEditLayer extends EventDispatcher
 		this._displayContainerStarling.y = this._y;
 		this._displayContainerStarling.touchable = !this._locked;
 		this._displayContainerStarling.visible = this._visible;
-		if (this._rootContainerStarling != null) this._rootContainerStarling.addChild(this._displayContainerStarling);
+		
+		addDisplayContainerStarling();
+	}
+	
+	private function addDisplayContainerStarling():Void
+	{
+		if (this._rootContainerStarling != null)
+		{
+			this._rootContainerStarling.addChildAt(this._displayContainerStarling, 0);
+		}
+	}
+	
+	private function clearDisplayContainerStarling():Void
+	{
+		if (this._rootContainerStarling != null)
+		{
+			this._rootContainerStarling.removeChild(this._displayContainerStarling);
+		}
+		this._displayContainerStarling.dispose();
+		this._displayContainerStarling = null;
 	}
 	#end
 	
