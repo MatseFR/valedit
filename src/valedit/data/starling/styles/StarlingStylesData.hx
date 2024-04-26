@@ -104,18 +104,18 @@ class StarlingStylesData
 		if (!collection.hasValue("setupDropShadow"))
 		{
 			func = new ExposedFunction("setupDropShadow");
-			floatDrag = new ExposedFloatDrag("blur", null, 0, null, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "blur", 0, null, 0.05);
 			floatDrag.defaultValue = 0.2;
 			func.addParameter(floatDrag);
-			floatDrag = new ExposedFloatDrag("offsetX");
+			floatDrag = new ExposedFloatDrag(null, "offsetX");
 			floatDrag.defaultValue = 2.0;
 			func.addParameter(floatDrag);
-			floatDrag = new ExposedFloatDrag("offsetY");
+			floatDrag = new ExposedFloatDrag(null, "offsetY");
 			floatDrag.defaultValue = 2.0;
-			color = new ExposedColor("color");
+			color = new ExposedColor(null, "color");
 			color.defaultValue = 0x0;
 			func.addParameter(color);
-			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "alpha", null, 0, 1, 0.05);
 			func.addParameter(floatDrag);
 			collection.addValue(func, groupName);
 		}
@@ -123,13 +123,13 @@ class StarlingStylesData
 		if (!collection.hasValue("setupGlow"))
 		{
 			func = new ExposedFunction("setupGlow");
-			floatDrag = new ExposedFloatDrag("blur", null, 0, null, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "blur", 0, null, 0.05);
 			floatDrag.defaultValue = 0.2;
 			func.addParameter(floatDrag);
-			color = new ExposedColor("color");
+			color = new ExposedColor(null, "color");
 			color.defaultValue = 0xffff00;
 			func.addParameter(color);
-			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "alpha", 0, 1, 0.05);
 			floatDrag.defaultValue = 0.5;
 			func.addParameter(floatDrag);
 			collection.addValue(func, groupName);
@@ -139,13 +139,13 @@ class StarlingStylesData
 		{
 			func = new ExposedFunction("setupOutline");
 			// width:Number = 0.25, color:uint = 0x0, alpha:Number = 1.0
-			floatDrag = new ExposedFloatDrag("width", null, 0, 1, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "width", 0, 1, 0.05);
 			floatDrag.defaultValue = 0.25;
 			func.addParameter(floatDrag);
-			color = new ExposedColor("color")
+			color = new ExposedColor(null, "color")
 			color.defaultValue = 0x0;
 			func.addParameter(color);
-			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "alpha", 0, 1, 0.05);
 			floatDrag.defaultValue = 1.0;
 			func.addParameter(floatDrag);
 			collection.addValue(func, groupName);

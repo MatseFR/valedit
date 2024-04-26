@@ -93,7 +93,7 @@ class StarlingFilterData
 		if (!collection.hasValue("adjustBrightness"))
 		{
 			func = new ExposedFunction("adjustBrightness");
-			floatDrag = new ExposedFloatDrag("value", null, -1, 1, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "value", -1, 1, 0.05);
 			func.addParameter(floatDrag);
 			collection.addValue(func, groupName);
 		}
@@ -101,7 +101,7 @@ class StarlingFilterData
 		if (!collection.hasValue("adjustContrast"))
 		{
 			func = new ExposedFunction("adjustContrast");
-			floatDrag = new ExposedFloatDrag("value", null, -1, 1, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "value", -1, 1, 0.05);
 			func.addParameter(floatDrag);
 			collection.addValue(func, groupName);
 		}
@@ -109,7 +109,7 @@ class StarlingFilterData
 		if (!collection.hasValue("adjustHue"))
 		{
 			func = new ExposedFunction("adjustHue");
-			floatDrag = new ExposedFloatDrag("value", null, -1, 1, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "value", -1, 1, 0.05);
 			func.addParameter(floatDrag);
 			collection.addValue(func, groupName);
 		}
@@ -117,7 +117,7 @@ class StarlingFilterData
 		if (!collection.hasValue("adjustSaturation"))
 		{
 			func = new ExposedFunction("adjustSaturation");
-			floatDrag = new ExposedFloatDrag("value", null, -1, 1, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "value", -1, 1, 0.05);
 			func.addParameter(floatDrag);
 			collection.addValue(func, groupName);
 		}
@@ -139,7 +139,7 @@ class StarlingFilterData
 			func = new ExposedFunction("tint");
 			color = new ExposedColor("color");
 			func.addParameter(color);
-			floatDrag = new ExposedFloatDrag("amount", null, 0, 1, 0.05);
+			floatDrag = new ExposedFloatDrag(null, "amount", 0, 1, 0.05);
 			floatDrag.defaultValue = 1.0;
 			func.addParameter(floatDrag);
 			collection.addValue(func, groupName);

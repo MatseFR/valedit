@@ -408,8 +408,8 @@ class StarlingDisplayData
 		{
 			func = new ExposedFunction("readjustSize", "readjust size");
 			func.addParameter(new ExposedNote("note", "Set width and height to 0 to match texture dimensions"));
-			func.addParameter(new ExposedFloatDrag("width"));
-			func.addParameter(new ExposedFloatDrag("height"));
+			func.addParameter(new ExposedFloatDrag(null, "width"));
+			func.addParameter(new ExposedFloatDrag(null, "height"));
 			collection.addValueAfter(func, "alignPivot", groupName);
 		}
 		

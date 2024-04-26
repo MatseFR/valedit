@@ -56,9 +56,9 @@ class StarlingUtilsData
 		if (!collection.hasValue("setToSymmetric"))
 		{
 			func = new ExposedFunction("setToSymmetric");
-			floatDrag = new ExposedFloatDrag("horizontal");
+			floatDrag = new ExposedFloatDrag(null, "horizontal");
 			func.addParameter(floatDrag);
-			floatDrag = new ExposedFloatDrag("vertical");
+			floatDrag = new ExposedFloatDrag(null, "vertical");
 			func.addParameter(floatDrag);
 			collection.addValue(func, groupName);
 		}
@@ -66,7 +66,7 @@ class StarlingUtilsData
 		if (!collection.hasValue("setToUniform"))
 		{
 			func = new ExposedFunction("setToUniform");
-			floatDrag = new ExposedFloatDrag("value");
+			floatDrag = new ExposedFloatDrag(null, "value");
 			func.addParameter(floatDrag);
 			collection.addValue(func);
 		}
