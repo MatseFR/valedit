@@ -2,6 +2,7 @@ package valedit;
 import flash.display.DisplayObjectContainer;
 import haxe.Constraints.Function;
 import haxe.ds.ObjectMap;
+import openfl.events.EventDispatcher;
 import valedit.utils.PropertyMap;
 import valedit.value.base.ExposedValueWithCollection;
 import valeditor.ValEditorObject;
@@ -10,7 +11,7 @@ import valeditor.ValEditorObject;
  * ...
  * @author Matse
  */
-class ValEditClass 
+class ValEditClass extends EventDispatcher
 {
 	static private var _POOL:Array<ValEditClass> = new Array<ValEditClass>();
 	
@@ -37,8 +38,8 @@ class ValEditClass
 	/** Void->Void object function name, to be called on object destruction */
 	public var disposeFunctionName:String = null;
 	public var isDisplayObject:Bool;
-	public var numInstances(default, null):Int = 0;
-	public var numTemplates(default, null):Int = 0;
+	public var numInstances(get, never):Int;
+	public var numTemplates(get, never):Int;
 	public var objectCollection:ExposedCollection;
 	public var propertyMap:PropertyMap;
 	/** Dynamic->DisplayObjectContainer->Void */
@@ -47,12 +48,16 @@ class ValEditClass
 	public var superClassNames(default, null):Array<String> = new Array<String>();
 	public var templateCollection:ExposedCollection;
 	
-	private var _IDToObject:Map<String, ValEditObject> = new Map<String, ValEditObject>();
-	private var _objectIDIndex:Int = -1;
+	private function get_numInstances():Int { return this._numObjects; }
+	private function get_numTemplates():Int { return this._numTemplates; }
 	
+	private var _IDToObject:Map<String, ValEditObject> = new Map<String, ValEditObject>();
+	private var _numObjects:Int = 0;
+	private var _objectIDIndex:Int = -1;
 	private var _objectToValEditObject:ObjectMap<Dynamic, ValEditObject> = new ObjectMap<Dynamic, ValEditObject>();
 	
 	private var _IDToTemplate:Map<String, ValEditTemplate> = new Map<String, ValEditTemplate>();
+	private var _numTemplates:Int = 0;
 	private var _templateIDIndex:Int = -1;
 	
 	private var _containers:Map<DisplayObjectContainer, ExposedCollection> = new Map<DisplayObjectContainer, ExposedCollection>();
@@ -70,6 +75,7 @@ class ValEditClass
 	**/
 	public function new(classReference:Class<Dynamic>) 
 	{
+		super();
 		this.classReference = classReference;
 	}
 	
@@ -94,8 +100,8 @@ class ValEditClass
 		this.disposeFunction = null;
 		this.disposeFunctionName = null;
 		this.isDisplayObject = false;
-		this.numInstances = 0;
-		this.numTemplates = 0;
+		this._numObjects = 0;
+		this._numTemplates = 0;
 		if (this.objectCollection != null)
 		{
 			this.objectCollection.pool();
@@ -214,7 +220,7 @@ class ValEditClass
 		if (object.id == null) object.id = makeObjectID();
 		this._IDToObject.set(object.id, object);
 		this._objectToValEditObject.set(object.object, object);
-		this.numInstances++;
+		this._numObjects++;
 	}
 	
 	public function getObjectByID(id:String):ValEditObject
@@ -243,7 +249,7 @@ class ValEditClass
 	{
 		this._IDToObject.remove(object.id);
 		this._objectToValEditObject.remove(object.object);
-		this.numInstances--;
+		this._numObjects--;
 	}
 	
 	public function removeObjectByID(id:String):Void
@@ -251,7 +257,7 @@ class ValEditClass
 		var object:ValEditObject = this._IDToObject.get(id);
 		this._IDToObject.remove(id);
 		this._objectToValEditObject.remove(object.object);
-		this.numInstances--;
+		this._numObjects--;
 	}
 	
 	public function templateIDExists(id:String):Bool
@@ -262,7 +268,7 @@ class ValEditClass
 	public function addTemplate(template:ValEditTemplate):Void
 	{
 		this._IDToTemplate.set(template.id, template);
-		this.numTemplates++;
+		this._numTemplates++;
 	}
 	
 	public function getTemplateByID(id:String):ValEditTemplate
@@ -286,7 +292,7 @@ class ValEditClass
 	{
 		if (this._IDToTemplate.remove(template.id))
 		{
-			this.numTemplates--;
+			this._numTemplates--;
 		}
 	}
 	
@@ -294,7 +300,7 @@ class ValEditClass
 	{
 		if (this._IDToTemplate.remove(id))
 		{
-			this.numTemplates--;
+			this._numTemplates--;
 		}
 	}
 	
