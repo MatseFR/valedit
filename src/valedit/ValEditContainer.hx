@@ -5,6 +5,7 @@ import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
 import openfl.events.EventDispatcher;
 import valedit.events.PlayEvent;
+import valedit.utils.ReverseIterator;
 import valedit.utils.StringIndexedMap;
 
 /**
@@ -349,7 +350,8 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	
 	public function removeLayer(layer:ValEditLayer):Void
 	{
-		this._layers.remove(layer);
+		var index:Int = this._layers.indexOf(layer);
+		this._layers.splice(index, 1);
 		this._layerMap.remove(layer.name);
 		layerUnregister(layer);
 	}
@@ -415,11 +417,24 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		this._container.x = this._x - this._cameraX;
 		this._container.y = this._y - this._cameraY;
 		this._container.visible = this._visible;
-		for (layer in this._layers)
+		//for (layer in this._layers)
+		//{
+			//layer.rootContainer = this._container;
+		//}
+		for (i in new ReverseIterator(this._layers.length - 1, 0))
 		{
-			layer.rootContainer = this._container;
+			this._layers[i].rootContainer = this._container;
 		}
 		if (this._rootContainer != null) this._rootContainer.addChild(this._container);
+	}
+	
+	private function clearContainer():Void
+	{
+		if (this._rootContainer != null)
+		{
+			this._rootContainer.removeChild(this._container);
+		}
+		this._container = null;
 	}
 	
 	#if starling
@@ -429,11 +444,25 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		this._containerStarling.x = this._x - this._cameraX;
 		this._containerStarling.y = this._y - this._cameraY;
 		this._containerStarling.visible = this._visible;
-		for (layer in this._layers)
+		//for (layer in this._layers)
+		//{
+			//layer.rootContainerStarling = this._containerStarling;
+		//}
+		for (i in new ReverseIterator(this._layers.length - 1, 0))
 		{
-			layer.rootContainerStarling = this._containerStarling;
+			this._layers[i].rootContainerStarling = this._containerStarling;
 		}
 		if (this._rootContainerStarling != null) this._rootContainerStarling.addChild(this._containerStarling);
+	}
+	
+	private function clearContainerStarling():Void
+	{
+		if (this._rootContainerStarling != null)
+		{
+			this._rootContainerStarling.removeChild(this._containerStarling);
+		}
+		this._containerStarling.dispose();
+		this._containerStarling = null;
 	}
 	#end
 	
