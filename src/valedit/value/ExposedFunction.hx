@@ -84,13 +84,7 @@ class ExposedFunction extends ExposedFunctionBase
 		this.canCopyValueOnClone = false;
 		this.checkForChange = false;
 		this.parameters.resize(0);
-		for (value in this._parameterValues)
-		{
-			value.pool();
-		}
-		this._parameterValues.resize(0);
-		this._parameterValuesEditable.resize(0);
-		this._parameterValuesToPool.resize(0);
+		clearParameterValues();
 	}
 	
 	public function pool():Void
@@ -215,14 +209,16 @@ class ExposedFunction extends ExposedFunctionBase
 			else if (Std.isOfType(param, ExposedValue))
 			{
 				val = cast param;
+				val = val.clone(true);
 				val.isEditable = this._isEditable;
 				val.isReadOnly = this._isReadOnly;
-				val.object = this._object;
-				#if valeditor
-				val.valEditorObject = this._valEditorObject;
-				#end
+				//val.object = this._object;
+				//#if valeditor
+				//val.valEditorObject = this._valEditorObject;
+				//#end
 				this._parameterValues[this._parameterValues.length] = val;
 				this._parameterValuesEditable[this._parameterValuesEditable.length] = val;
+				this._parameterValuesToPool[this._parameterValuesToPool.length] = val;
 			}
 		}
 	}
