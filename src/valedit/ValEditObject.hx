@@ -64,10 +64,6 @@ class ValEditObject extends EventDispatcher
 	
 	public function clear():Void
 	{
-		//for (keyFrame in this._keyFrameToCollection.keys())
-		//{
-			//keyFrame.remove(this);
-		//}
 		for (i in new ReverseIterator(this._keyFrames.length - 1, 0))
 		{
 			this._keyFrames[i].remove(this);
@@ -84,13 +80,6 @@ class ValEditObject extends EventDispatcher
 		this.object = null;
 		this.template = null;
 		this.propertyMap = null;
-		
-		//for (collection in this._keyFrameToCollection)
-		//{
-			//collection.pool();
-		//}
-		//this._keyFrameToCollection.clear();
-		
 	}
 	
 	public function pool():Void
