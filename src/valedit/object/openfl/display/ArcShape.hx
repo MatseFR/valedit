@@ -72,10 +72,16 @@ class ArcShape extends BaseShape
 		
 		var segs:Int = Math.ceil(Math.abs(this._arc) / 45);
 		var segAngle:Float = this._arc / segs;
-		var theta:Float = -(segAngle / 180) * Math.PI;
-		var angle:Float = -(this._startAngle / 180) * Math.PI;
-		var ax:Float = this._pivotX - Math.cos(angle) * this._radiusX;
-		var ay:Float = this._pivotY - Math.sin(angle) * this._radiusY;
+		//var theta:Float = -(segAngle / 180) * Math.PI;
+		//var angle:Float = -(this._startAngle / 180) * Math.PI;
+		var theta:Float = (segAngle / 180) * Math.PI;
+		var angle:Float = (this._startAngle / 180) * Math.PI;
+		//var ax:Float = this._pivotX - Math.cos(angle) * this._radiusX;
+		//var ay:Float = this._pivotY - Math.sin(angle) * this._radiusY;
+		var baseX:Float = this._radiusX * 2 - this._pivotX;
+		var baseY:Float = this._radiusY - this._pivotY;
+		var ax:Float = baseX - Math.cos(angle) * this._radiusX;
+		var ay:Float = baseY - Math.sin(angle) * this._radiusY;
 		
 		var angleMid:Float;
 		var bx:Float;
@@ -83,7 +89,7 @@ class ArcShape extends BaseShape
 		var cx:Float;
 		var cy:Float;
 		
-		this.graphics.moveTo(this._pivotX, this._pivotY);
+		this.graphics.moveTo(baseX, baseY);
 		
 		for (i in 0...segs)
 		{

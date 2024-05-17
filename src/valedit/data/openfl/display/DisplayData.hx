@@ -18,6 +18,8 @@ import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 import valedit.value.extra.ReadValuesExtra;
+import valeditor.editor.visibility.ClassValueVisibility;
+import valeditor.editor.visibility.ClassVisibilityCollection;
 
 /**
  * ...
@@ -63,43 +65,16 @@ class DisplayData
 		return collection;
 	}
 	
-	/* data for an instance of a Bitmap template */
-	static public function exposeBitmapInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getBitmapVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeBitmap(collection);
-		collection.setVisibleAll(false);
-		applyBitmapInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyBitmapInstance(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectInstance(collection);
-	}
-	
-	/* data for a Bitmap template */
-	static public function exposeBitmapTemplate(?collection:ExposedCollection, ?groupName:String):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeBitmap(collection);
-		collection.setVisibleAll(false);
-		applyBitmapTemplate(collection);
+		getDisplayObjectVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("bitmapData", true, false));
+		collection.add(ClassValueVisibility.fromPool("pixelSnapping", true, false));
+		collection.add(ClassValueVisibility.fromPool("smoothing", true, false));
 		
 		return collection;
-	}
-	
-	static private function applyBitmapTemplate(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectTemplate(collection);
-		collection.setVisibleArray([
-			"bitmapData",
-			"pixelSnapping",
-			"smoothing"
-		], true);
 	}
 	
 	static public function exposeBitmapConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -261,51 +236,26 @@ class DisplayData
 		return collection;
 	}
 	
-	static public function exposeDisplayObjectInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getDisplayObjectVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeDisplayObject(collection);
-		collection.setVisibleAll(false);
-		applyDisplayObjectInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyDisplayObjectInstance(collection:ExposedCollection):Void
-	{
-		collection.setVisibleArray([
-			"name",
-			"x",
-			"y",
-			"width",
-			"height",
-			"scaleX",
-			"scaleY",
-			"alpha",
-			"rotation",
-			"blendMode",
-			"mask",
-			"transform",
-			"cacheAsBitmap",
-			"visible"
-		], true);
-	}
-	
-	static public function exposeDisplayObjectTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeDisplayObject(collection);
-		collection.setVisibleAll(false);
-		applyDisplayObjectTemplate(collection);
+		collection.add(ClassValueVisibility.fromPool("name"));
+		collection.add(ClassValueVisibility.fromPool("x"));
+		collection.add(ClassValueVisibility.fromPool("y"));
+		collection.add(ClassValueVisibility.fromPool("width"));
+		collection.add(ClassValueVisibility.fromPool("height"));
+		collection.add(ClassValueVisibility.fromPool("scaleX"));
+		collection.add(ClassValueVisibility.fromPool("scaleY"));
+		collection.add(ClassValueVisibility.fromPool("alpha"));
+		collection.add(ClassValueVisibility.fromPool("rotation"));
+		collection.add(ClassValueVisibility.fromPool("blendMode"));
+		collection.add(ClassValueVisibility.fromPool("mask"));
+		collection.add(ClassValueVisibility.fromPool("transform"));
+		collection.add(ClassValueVisibility.fromPool("cacheAsBitmap"));
+		collection.add(ClassValueVisibility.fromPool("visible"));
 		
 		return collection;
-	}
-	
-	static private function applyDisplayObjectTemplate(collection:ExposedCollection):Void
-	{
-		// nothing ?
 	}
 	
 	static public function exposeDisplayObjectContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -331,40 +281,15 @@ class DisplayData
 		return collection;
 	}
 	
-	static public function exposeDisplayObjectContainerInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getDisplayObjectContainerVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeDisplayObjectContainer(collection);
-		collection.setVisibleAll(false);
-		applyDisplayObjectContainerInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyDisplayObjectContainerInstance(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectInstance(collection);
-		collection.setVisibleArray([
-			"mouseChildren",
-			"tabChildren"
-		], true);
-	}
-	
-	static public function exposeDisplayObjectContainerTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeDisplayObjectContainer(collection);
-		collection.setVisibleAll(false);
-		applyDisplayObjectContainerTemplate(collection);
+		getDisplayObjectVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("mouseChildren"));
+		collection.add(ClassValueVisibility.fromPool("tabChildren"));
 		
 		return collection;
-	}
-	
-	static private function applyDisplayObjectContainerTemplate(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectTemplate(collection);
 	}
 	
 	static public function exposeFPS(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -457,44 +382,18 @@ class DisplayData
 		return collection;
 	}
 	
-	static public function exposeInteractiveObjectInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getInteractiveObjectVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeInteractiveObject(collection);
-		collection.setVisibleAll(false);
-		applyInteractiveObjectInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyInteractiveObjectInstance(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectInstance(collection);
-		collection.setVisibleArray([
-			"doubleClickEnabled",
-			"focusRect",
-			"mouseEnabled",
-			"needsSoftKeyboard",
-			"tabEnabled",
-			"tabIndex"
-		], true);
-	}
-	
-	static public function exposeInteractiveObjectTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeInteractiveObject(collection);
-		collection.setVisibleAll(false);
-		applyInteractiveObjectTemplate(collection);
+		getDisplayObjectVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("doubleClickEnabled"));
+		collection.add(ClassValueVisibility.fromPool("focusRect"));
+		collection.add(ClassValueVisibility.fromPool("mouseEnabled"));
+		collection.add(ClassValueVisibility.fromPool("needsSoftKeyboard"));
+		collection.add(ClassValueVisibility.fromPool("tabEnabled"));
 		
 		return collection;
-	}
-	
-	static private function applyInteractiveObjectTemplate(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectTemplate(collection);
 	}
 	
 	static public function exposeMovieClip(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -514,39 +413,14 @@ class DisplayData
 		return collection;
 	}
 	
-	static public function exposeMovieClipInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getMovieClipVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeMovieClip(collection);
-		collection.setVisibleAll(false);
-		applyMovieClipInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyMovieClipInstance(collection:ExposedCollection):Void
-	{
-		applySpriteInstance(collection);
-		collection.setVisibleArray([
-			"enabled"
-		], true);
-	}
-	
-	static public function exposeMovieClipTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeMovieClip(collection);
-		collection.setVisibleAll(false);
-		applyMovieClipTemplate(collection);
+		getSpriteVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("enabled"));
 		
 		return collection;
-	}
-	
-	static private function applyMovieClipTemplate(collection:ExposedCollection):Void
-	{
-		applySpriteTemplate(collection);
 	}
 	
 	static public function exposeShape(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -554,6 +428,15 @@ class DisplayData
 		if (collection == null) collection = new ExposedCollection();
 		
 		exposeDisplayObject(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		getDisplayObjectVisibility(collection);
 		
 		return collection;
 	}
@@ -581,40 +464,15 @@ class DisplayData
 		return collection;
 	}
 	
-	static public function exposeSpriteInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getSpriteVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeSprite(collection);
-		collection.setVisibleAll(false);
-		applySpriteInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applySpriteInstance(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectContainerInstance(collection);
-	}
-	
-	static public function exposeSpriteTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeSprite(collection);
-		collection.setVisibleAll(false);
-		applySpriteTemplate(collection);
+		getDisplayObjectContainerVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("buttonMode", true, false));
+		collection.add(ClassValueVisibility.fromPool("useHandCursor", true, false));
 		
 		return collection;
-	}
-	
-	static private function applySpriteTemplate(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectContainerTemplate(collection);
-		collection.setVisibleArray([
-			"buttonMode",
-			"useHandCursor"
-		], true);
 	}
 	
 	static public function exposeStage(?collection:ExposedCollection, ?groupName:String):ExposedCollection

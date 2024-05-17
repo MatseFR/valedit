@@ -9,12 +9,13 @@ import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedNote;
-import valedit.value.ExposedObject;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 import valedit.value.extra.FunctionCallExtra;
 import valedit.value.starling.ExposedStarlingTexture;
+import valeditor.editor.visibility.ClassValueVisibility;
+import valeditor.editor.visibility.ClassVisibilityCollection;
 
 /**
  * ...
@@ -28,7 +29,7 @@ class StarlingDisplayData
 		var bool:ExposedBool;
 		var floatDrag:ExposedFloatDrag;
 		var func:ExposedFunction;
-		var object:ExposedObject;
+		//var object:ExposedObject;
 		var objectRef:ExposedObjectReference;
 		var select:ExposedSelect;
 		var string:ExposedString;
@@ -191,58 +192,32 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeDisplayObjectInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getDisplayObjectVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeDisplayObject(collection);
-		collection.setVisibleAll(false);
-		applyDisplayObjectInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyDisplayObjectInstance(collection:ExposedCollection):Void
-	{
-		collection.setVisibleArray([
-			"name",
-			"x",
-			"y",
-			"width",
-			"height",
-			"scaleX",
-			"scaleY",
-			"alpha",
-			"rotation",
-			"skewX",
-			"skewY",
-			"blendMode",
-			"mask",
-			"maskInverted",
-			"visible"
-		], true);
-	}
-	
-	static public function exposeDisplayObjectTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeDisplayObject(collection);
-		collection.setVisibleAll(false);
-		applyDisplayObjectTemplate(collection);
+		collection.add(ClassValueVisibility.fromPool("name"));
+		collection.add(ClassValueVisibility.fromPool("x"));
+		collection.add(ClassValueVisibility.fromPool("y"));
+		collection.add(ClassValueVisibility.fromPool("width"));
+		collection.add(ClassValueVisibility.fromPool("height"));
+		collection.add(ClassValueVisibility.fromPool("scaleX"));
+		collection.add(ClassValueVisibility.fromPool("scaleY"));
+		collection.add(ClassValueVisibility.fromPool("pivotX", true, false));
+		collection.add(ClassValueVisibility.fromPool("pivotY", true, false));
+		collection.add(ClassValueVisibility.fromPool("alpha"));
+		collection.add(ClassValueVisibility.fromPool("rotation"));
+		collection.add(ClassValueVisibility.fromPool("skewX"));
+		collection.add(ClassValueVisibility.fromPool("skewY"));
+		collection.add(ClassValueVisibility.fromPool("blendMode"));
+		collection.add(ClassValueVisibility.fromPool("mask"));
+		collection.add(ClassValueVisibility.fromPool("maskInverted"));
+		collection.add(ClassValueVisibility.fromPool("visible"));
+		collection.add(ClassValueVisibility.fromPool("touchable", true, false));
+		collection.add(ClassValueVisibility.fromPool("useHandCursor", true, false));
+		collection.add(ClassValueVisibility.fromPool("alignPivot", true, false));
 		
 		return collection;
-	}
-	
-	static private function applyDisplayObjectTemplate(collection:ExposedCollection):Void
-	{
-		collection.setVisibleArray([
-			"pivotX",
-			"pivotY",
-			"touchable",
-			"useHandCursor",
-			"alignPivot"
-		], true);
 	}
 	
 	static public function exposeDisplayObjectContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -262,37 +237,14 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeDisplayObjectContainerInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getDisplayObjectContainerVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeDisplayObjectContainer(collection);
-		collection.setVisibleAll(false);
-		applyDisplayObjectContainerInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyDisplayObjectContainerInstance(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectInstance(collection);
-	}
-	
-	static public function exposeDisplayObjectContainerTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeDisplayObjectContainer(collection);
-		collection.setVisibleAll(false);
-		applyDisplayObjectContainerTemplate(collection);
+		getDisplayObjectVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("touchGroup", true, false));
 		
 		return collection;
-	}
-	
-	static private function applyDisplayObjectContainerTemplate(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectTemplate(collection);
-		collection.setVisibleArray(["touchGroup"], true);
 	}
 	
 	static public function exposeImage(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -304,36 +256,13 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeImageInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getImageVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeImage(collection);
-		collection.setVisibleAll(false);
-		applyImageInstance(collection);
+		getMeshVisibility(collection);
 		
 		return collection;
-	}
-	
-	static private function applyImageInstance(collection:ExposedCollection):Void
-	{
-		applyMeshInstance(collection);
-	}
-	
-	static public function exposeImageTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeImage(collection);
-		collection.setVisibleAll(false);
-		applyImageTemplate(collection);
-		
-		return collection;
-	}
-	
-	static private function applyImageTemplate(collection:ExposedCollection):Void
-	{
-		applyMeshTemplate(collection);
 	}
 	
 	static public function exposeImageConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -416,46 +345,19 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeMeshInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getMeshVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeMesh(collection);
-		collection.setVisibleAll(false);
-		applyMeshInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyMeshInstance(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectInstance(collection);
-		collection.setVisibleArray([
-			"color"
-		], true);
-	}
-	
-	static public function exposeMeshTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeMesh(collection);
-		collection.setVisibleAll(false);
-		applyMeshTemplate(collection);
+		getDisplayObjectVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("color"));
+		collection.add(ClassValueVisibility.fromPool("texture", true, false));
+		collection.add(ClassValueVisibility.fromPool("textureSmoothing", true, false));
+		collection.add(ClassValueVisibility.fromPool("textureRepeat", true, false));
+		collection.add(ClassValueVisibility.fromPool("pixelSnapping", true, false));
+		collection.add(ClassValueVisibility.fromPool("readjustSize", true, false));
 		
 		return collection;
-	}
-	
-	static private function applyMeshTemplate(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectTemplate(collection);
-		collection.setVisibleArray([
-			"texture",
-			"textureSmoothing",
-			"textureRepeat",
-			"pixelSnapping",
-			"readjustSize"
-		], true);
 	}
 	
 	static public function exposeQuad(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -467,36 +369,13 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeQuadInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getQuadVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeQuad(collection);
-		collection.setVisibleAll(false);
-		applyQuadInstance(collection);
+		getMeshVisibility(collection);
 		
 		return collection;
-	}
-	
-	static private function applyQuadInstance(collection:ExposedCollection):Void
-	{
-		applyMeshInstance(collection);
-	}
-	
-	static public function exposeQuadTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeQuad(collection);
-		collection.setVisibleAll(false);
-		applyQuadTemplate(collection);
-		
-		return collection;
-	}
-	
-	static private function applyQuadTemplate(collection:ExposedCollection):Void
-	{
-		applyMeshTemplate(collection);
 	}
 	
 	static public function exposeQuadConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -542,36 +421,13 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeSpriteInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getSpriteVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeSprite(collection);
-		collection.setVisibleAll(false);
-		applySpriteInstance(collection);
+		getDisplayObjectContainerVisibility(collection);
 		
 		return collection;
-	}
-	
-	static private function applySpriteInstance(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectContainerInstance(collection);
-	}
-	
-	static public function exposeSpriteTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeSprite(collection);
-		collection.setVisibleAll(false);
-		applySpriteTemplate(collection);
-		
-		return collection;
-	}
-	
-	static private function applySpriteTemplate(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectContainerTemplate(collection);
 	}
 	
 	static public function exposeSprite3D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -622,46 +478,19 @@ class StarlingDisplayData
 		return collection;
 	}
 	
-	static public function exposeSprite3DInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getSprite3DVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeSprite3D(collection);
-		collection.setVisibleAll(false);
-		applySprite3DInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applySprite3DInstance(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectContainerInstance(collection);
-		collection.setVisibleArray([
-			"z",
-			"rotationX",
-			"rotationY",
-			"rotationZ",
-			"scaleZ"
-		], true);
-	}
-	
-	static public function exposeSprite3DTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeSprite3D(collection);
-		collection.setVisibleAll(false);
-		applySprite3DTemplate(collection);
+		getDisplayObjectContainerVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("z"));
+		collection.add(ClassValueVisibility.fromPool("pivotZ", true, false));
+		collection.add(ClassValueVisibility.fromPool("rotationX"));
+		collection.add(ClassValueVisibility.fromPool("rotationY"));
+		collection.add(ClassValueVisibility.fromPool("rotationZ"));
+		collection.add(ClassValueVisibility.fromPool("scaleZ"));
 		
 		return collection;
-	}
-	
-	static private function applySprite3DTemplate(collection:ExposedCollection):Void
-	{
-		applyDisplayObjectContainerTemplate(collection);
-		collection.setVisibleArray([
-			"pivotZ"
-		], true);
 	}
 	
 }

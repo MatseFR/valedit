@@ -112,13 +112,14 @@ class ValEdit
 		
 		if (v == null)
 		{
-			v = ValEditClass.fromPool(type);
+			v = ValEditClass.fromPool(type, className, settings.collection, settings.constructorCollection);
 		}
 		
 		v.addToDisplayFunction = settings.addToDisplayFunction;
 		v.addToDisplayFunctionName = settings.addToDisplayFunctionName;
-		v.className = className;
-		v.constructorCollection = settings.constructorCollection;
+		//v.className = className;
+		
+		//v.constructorCollection = settings.constructorCollection;
 		v.creationFunction = settings.creationFunction;
 		v.creationInitFunction = settings.creationInitFunction;
 		v.creationInitFunctionName = settings.creationInitFunctionName;
@@ -126,11 +127,11 @@ class ValEdit
 		v.disposeFunction = settings.disposeFunction;
 		v.disposeFunctionName = settings.disposeFunctionName;
 		v.isDisplayObject = settings.isDisplayObject;
-		v.objectCollection = settings.objectCollection;
+		//v.objectCollection = settings.objectCollection;
 		v.propertyMap = settings.propertyMap;
 		v.removeFromDisplayFunction = settings.removeFromDisplayFunction;
 		v.removeFromDisplayFunctionName = settings.removeFromDisplayFunctionName;
-		v.templateCollection = settings.templateCollection;
+		//v.templateCollection = settings.templateCollection;
 		
 		if (v.propertyMap == null)
 		{
@@ -172,11 +173,10 @@ class ValEdit
 		return v;
 	}
 	
-	static public function registerClassSimple(type:Class<Dynamic>, objectCollection:ExposedCollection, templateCollection:ExposedCollection = null, constructorCollection:ExposedCollection = null, ?v:ValEditClass):ValEditClass
+	static public function registerClassSimple(type:Class<Dynamic>, collection:ExposedCollection, constructorCollection:ExposedCollection = null, ?v:ValEditClass):ValEditClass
 	{
 		var settings:ValEditClassSettings = ValEditClassSettings.fromPool();
-		settings.objectCollection = objectCollection;
-		settings.templateCollection = templateCollection;
+		settings.collection = collection;
 		settings.constructorCollection = constructorCollection;
 		getClassSettings(type, settings);
 		
@@ -295,7 +295,7 @@ class ValEdit
 		}
 		
 		var valClass:ValEditClass = _classMap.get(className);
-		var collection:ExposedCollection = valClass.getTemplateCollection();
+		var collection:ExposedCollection = valClass.getCollection();
 		
 		if (constructorCollection != null)
 		{
@@ -354,7 +354,10 @@ class ValEdit
 		
 		valObject.ready();
 		
-		registerObjectInternal(valObject);
+		if (registerToTemplate)
+		{
+			registerObjectInternal(valObject);
+		}
 		
 		return valObject;
 	}

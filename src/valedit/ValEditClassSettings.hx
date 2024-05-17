@@ -23,6 +23,9 @@ class ValEditClassSettings
 	/** name of the object's DisplayObjectContainer->Void function to call instead of doing a simple addChild */
 	public var addToDisplayFunctionName:String;
 	
+	/** class collection */
+	public var collection:ExposedCollection;
+	
 	/** constructor collection */
 	public var constructorCollection:ExposedCollection;
 	
@@ -49,7 +52,7 @@ class ValEditClassSettings
 	public var isDisplayObject:Bool;
 	
 	/** object collection */
-	public var objectCollection:ExposedCollection;
+	//public var objectCollection:ExposedCollection;
 	
 	public var propertyMap:PropertyMap;
 	
@@ -61,7 +64,7 @@ class ValEditClassSettings
 	public var removeFromDisplayFunctionName:String;
 	
 	/** template collection */
-	public var templateCollection:ExposedCollection;
+	//public var templateCollection:ExposedCollection;
 
 	public function new()
 	{
@@ -72,6 +75,7 @@ class ValEditClassSettings
 	{
 		this.addToDisplayFunction = null;
 		this.addToDisplayFunctionName = null;
+		this.collection = null;
 		this.constructorCollection = null;
 		this.creationFunction = null;
 		this.creationInitFunction = null;
@@ -80,11 +84,11 @@ class ValEditClassSettings
 		this.disposeFunction = null;
 		this.disposeFunctionName = null;
 		this.isDisplayObject = false;
-		this.objectCollection = null;
+		//this.objectCollection = null;
 		this.propertyMap = null;
 		this.removeFromDisplayFunction = null;
 		this.removeFromDisplayFunctionName = null;
-		this.templateCollection = null;
+		//this.templateCollection = null;
 	}
 	
 	public function pool():Void

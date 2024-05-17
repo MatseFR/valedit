@@ -19,6 +19,8 @@ import valedit.value.ExposedString;
 import valedit.value.ExposedText;
 import valedit.value.extra.ReassignLastModifiedValueExtra;
 import valedit.value.extra.ReassignValuesExtra;
+import valeditor.editor.visibility.ClassValueVisibility;
+import valeditor.editor.visibility.ClassVisibilityCollection;
 
 /**
  * ...
@@ -270,66 +272,37 @@ class TextData
 		return collection;
 	}
 	
-	static public function exposeTextFieldInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getTextFieldVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeTextField(collection);
-		collection.setVisibleAll(false);
-		applyTextFieldInstance(collection);
+		DisplayData.getInteractiveObjectVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("alwaysShowSelection", true, false));
+		collection.add(ClassValueVisibility.fromPool("antiAliasType", true, false));
+		collection.add(ClassValueVisibility.fromPool("autoSize", true, false));
+		collection.add(ClassValueVisibility.fromPool("background", true, false));
+		collection.add(ClassValueVisibility.fromPool("border", true, false));
+		collection.add(ClassValueVisibility.fromPool("borderColor", true, false));
+		collection.add(ClassValueVisibility.fromPool("condenseWhite", true, false));
+		collection.add(ClassValueVisibility.fromPool("defaultTextFormat", true, false));
+		collection.add(ClassValueVisibility.fromPool("displayAsPassword"));
+		collection.add(ClassValueVisibility.fromPool("embedFonts", true, false));
+		collection.add(ClassValueVisibility.fromPool("gridFitType", true, false));
+		collection.add(ClassValueVisibility.fromPool("htmlText"));
+		collection.add(ClassValueVisibility.fromPool("maxChars"));
+		collection.add(ClassValueVisibility.fromPool("mouseWheelEnabled", true, false));
+		collection.add(ClassValueVisibility.fromPool("multiline", true, false));
+		collection.add(ClassValueVisibility.fromPool("restrict"));
+		collection.add(ClassValueVisibility.fromPool("scrollH"));
+		collection.add(ClassValueVisibility.fromPool("scrollV"));
+		collection.add(ClassValueVisibility.fromPool("selectable", true, false));
+		collection.add(ClassValueVisibility.fromPool("sharpness", true, false));
+		collection.add(ClassValueVisibility.fromPool("text"));
+		collection.add(ClassValueVisibility.fromPool("textColor"));
+		collection.add(ClassValueVisibility.fromPool("type", true, false));
+		collection.add(ClassValueVisibility.fromPool("wordwrap", true, false));
 		
 		return collection;
-	}
-	
-	static private function applyTextFieldInstance(collection:ExposedCollection):Void
-	{
-		DisplayData.applyInteractiveObjectInstance(collection);
-		collection.setVisibleArray([
-			"displayAsPassword",
-			"htmlText",
-			"maxChars",
-			"restrict",
-			"scrollH",
-			"scrollV",
-			"text",
-			"textColor",
-		], true);
-		
-	}
-	
-	static public function exposeTextFieldTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeTextField(collection);
-		collection.setVisibleAll(false);
-		applyTextFieldTemplate(collection);
-		
-		return collection;
-	}
-	
-	static private function applyTextFieldTemplate(collection:ExposedCollection):Void
-	{
-		DisplayData.applyInteractiveObjectTemplate(collection);
-		collection.setVisibleArray([
-			"alwaysShowSelection",
-			"antiAliasType",
-			"autoSize",
-			"background",
-			"backgroundColor",
-			"border",
-			"borderColor",
-			"condenseWhite",
-			"defaultTextFormat",
-			"embedFonts",
-			"gridFitType",
-			"mouseWheelEnabled",
-			"multiline",
-			"selectable",
-			"sharpness",
-			"type",
-			"wordWrap"
-		], true);
 	}
 	
 	static public function exposeTextFormat(?collection:ExposedCollection, ?groupName:String):ExposedCollection

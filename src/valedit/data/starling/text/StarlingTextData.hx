@@ -17,6 +17,8 @@ import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedText;
+import valeditor.editor.visibility.ClassValueVisibility;
+import valeditor.editor.visibility.ClassVisibilityCollection;
 
 /**
  * ...
@@ -120,52 +122,25 @@ class StarlingTextData
 		return collection;
 	}
 	
-	static public function exposeTextFieldInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getTextFieldVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeTextField(collection);
-		collection.setVisibleAll(false);
-		applyTextFieldInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyTextFieldInstance(collection:ExposedCollection):Void
-	{
-		StarlingDisplayData.applyDisplayObjectContainerInstance(collection);
-		collection.setVisibleArray([
-			"text"
-		], true);
-	}
-	
-	static public function exposeTextFieldTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeTextField(collection);
-		collection.setVisibleAll(false);
-		applyTextFieldTemplate(collection);
+		StarlingDisplayData.getDisplayObjectContainerVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("autoScale", true, false));
+		collection.add(ClassValueVisibility.fromPool("autoSize", true, false));
+		collection.add(ClassValueVisibility.fromPool("batchable", true, false));
+		collection.add(ClassValueVisibility.fromPool("border", true, false));
+		collection.add(ClassValueVisibility.fromPool("format", true, false));
+		collection.add(ClassValueVisibility.fromPool("isHtmlText", true, false));
+		collection.add(ClassValueVisibility.fromPool("padding", true, false));
+		collection.add(ClassValueVisibility.fromPool("pixelSnapping", true, false));
+		collection.add(ClassValueVisibility.fromPool("style", true, false));
+		collection.add(ClassValueVisibility.fromPool("styleSheet", true, false));
+		collection.add(ClassValueVisibility.fromPool("text"));
+		collection.add(ClassValueVisibility.fromPool("wordWrap", true, false));
 		
 		return collection;
-	}
-	
-	static private function applyTextFieldTemplate(collection:ExposedCollection):Void
-	{
-		StarlingDisplayData.applyDisplayObjectContainerTemplate(collection);
-		collection.setVisibleArray([
-			"autoScale",
-			"autoSize",
-			"batchable",
-			"border",
-			"format",
-			"isHtmlText",
-			"padding",
-			"pixelSnapping",
-			"style",
-			"styleSheet",
-			"wordWrap"
-		], true);
 	}
 	
 	static public function exposeTextFieldConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection

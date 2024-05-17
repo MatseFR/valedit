@@ -298,7 +298,6 @@ class ExposedCollection extends EventDispatcher
 		}
 		
 		return true;
-		
 	}
 	
 	/* Looks for corresponding exposed values in fromCollection and copies their values */
@@ -550,11 +549,30 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
-	private function checkGroupsVisibility():Void
+	public function updateUI():Void
 	{
+		if (this.uiCollection != null)
+		{
+			var container:DisplayObjectContainer = this._uiContainer;
+			this.uiContainer = null;
+			this.uiContainer = container;
+		}
+	}
+	
+	public function checkGroupsVisibility(updateUIOnChange:Bool = true):Void
+	{
+		var changed:Bool = false;
 		for (group in this._groupList)
 		{
-			group.checkVisibility();
+			if (group.checkVisibility())
+			{
+				changed = true;
+			}
+		}
+		
+		if (updateUIOnChange && changed)
+		{
+			updateUI();
 		}
 	}
 	
@@ -562,14 +580,9 @@ class ExposedCollection extends EventDispatcher
 	{
 		var value:ExposedValue = getValue(propertyName);
 		value.visible = visible;
-		checkGroupsVisibility();
+		checkGroupsVisibility(false);
 		
-		if (this.uiCollection != null)
-		{
-			var container:DisplayObjectContainer = this._uiContainer;
-			this.uiContainer = null;
-			this.uiContainer = container;
-		}
+		updateUI();
 	}
 	
 	public function setVisibleAll(visible:Bool):Void
@@ -578,14 +591,9 @@ class ExposedCollection extends EventDispatcher
 		{
 			value.visible = visible;
 		}
-		checkGroupsVisibility();
+		checkGroupsVisibility(false);
 		
-		if (this.uiCollection != null)
-		{
-			var container:DisplayObjectContainer = this._uiContainer;
-			this.uiContainer = null;
-			this.uiContainer = container;
-		}
+		updateUI();
 	}
 	
 	public function setVisibleArray(propertyNames:Array<String>, visible:Bool):Void
@@ -596,15 +604,9 @@ class ExposedCollection extends EventDispatcher
 			value = getValue(propertyName);
 			value.visible = visible;
 		}
+		checkGroupsVisibility(false);
 		
-		checkGroupsVisibility();
-		
-		if (this.uiCollection != null)
-		{
-			var container:DisplayObjectContainer = this._uiContainer;
-			this.uiContainer = null;
-			this.uiContainer = container;
-		}
+		updateUI();
 	}
 	
 	public function getActionChanges(targetCollection:ExposedCollection, action:MultiAction):Void

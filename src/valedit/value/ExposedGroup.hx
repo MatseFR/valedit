@@ -174,15 +174,26 @@ class ExposedGroup extends ExposedValue
 		return this;
 	}
 	
-	public function checkVisibility():Void
+	public function checkVisibility():Bool
 	{
+		var changed:Bool = false;
+		
+		for (group in this._groupList)
+		{
+			if (group.checkVisibility())
+			{
+				changed = true;
+			}
+		}
+		
 		if (this._visible)
 		{
 			for (value in this._valueList)
 			{
-				if (value.visible) return;
+				if (value.visible) return changed;
 			}
 			this.visible = false;
+			changed = true;
 		}
 		else
 		{
@@ -191,15 +202,12 @@ class ExposedGroup extends ExposedValue
 				if (value.visible)
 				{
 					this.visible = true;
-					return;
+					changed = true;
+					break;
 				}
 			}
 		}
-		
-		for (group in this._groupList)
-		{
-			group.checkVisibility();
-		}
+		return changed;
 	}
 	
 	override public function apply():Void 

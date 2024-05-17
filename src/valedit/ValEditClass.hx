@@ -1,11 +1,8 @@
 package valedit;
-import flash.display.DisplayObjectContainer;
 import haxe.Constraints.Function;
 import haxe.ds.ObjectMap;
 import openfl.events.EventDispatcher;
 import valedit.utils.PropertyMap;
-import valedit.value.base.ExposedValueWithCollection;
-import valeditor.ValEditorObject;
 
 /**
  * ...
@@ -15,10 +12,10 @@ class ValEditClass extends EventDispatcher
 {
 	static private var _POOL:Array<ValEditClass> = new Array<ValEditClass>();
 	
-	static public function fromPool(classReference:Class<Dynamic>):ValEditClass
+	static public function fromPool(classReference:Class<Dynamic>, className:String, collection:ExposedCollection, constructorCollection:ExposedCollection = null):ValEditClass
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(classReference);
-		return new ValEditClass(classReference);
+		if (_POOL.length != 0) return _POOL.pop().setTo(classReference, className, collection, constructorCollection);
+		return new ValEditClass(classReference, className, collection, constructorCollection);
 	}
 	
 	/** Dynamic->DisplayObjectContainer->Void */
@@ -26,6 +23,7 @@ class ValEditClass extends EventDispatcher
 	public var addToDisplayFunctionName:String;
 	public var className:String;
 	public var classReference:Class<Dynamic>;
+	public var collection:ExposedCollection;
 	public var constructorCollection:ExposedCollection;
 	public var creationFunction:Function;
 	/** Dynamic->Void external function reference, to be called on object creation */
@@ -40,13 +38,13 @@ class ValEditClass extends EventDispatcher
 	public var isDisplayObject:Bool;
 	public var numInstances(get, never):Int;
 	public var numTemplates(get, never):Int;
-	public var objectCollection:ExposedCollection;
+	//public var objectCollection:ExposedCollection;
 	public var propertyMap:PropertyMap;
 	/** Dynamic->DisplayObjectContainer->Void */
 	public var removeFromDisplayFunction:Function;
 	public var removeFromDisplayFunctionName:String;
 	public var superClassNames(default, null):Array<String> = new Array<String>();
-	public var templateCollection:ExposedCollection;
+	//public var templateCollection:ExposedCollection;
 	
 	private function get_numInstances():Int { return this._numObjects; }
 	private function get_numTemplates():Int { return this._numTemplates; }
@@ -60,23 +58,20 @@ class ValEditClass extends EventDispatcher
 	private var _numTemplates:Int = 0;
 	private var _templateIDIndex:Int = -1;
 	
-	private var _containers:Map<DisplayObjectContainer, ExposedCollection> = new Map<DisplayObjectContainer, ExposedCollection>();
 	private var _pool:Array<ExposedCollection> = new Array<ExposedCollection>();
 	
-	private var _constructorContainers:Map<DisplayObjectContainer, ExposedCollection> = new Map<DisplayObjectContainer, ExposedCollection>();
 	private var _constructorPool:Array<ExposedCollection> = new Array<ExposedCollection>();
-	
-	private var _templateContainers:Map<DisplayObjectContainer, ValEditTemplate> = new Map<DisplayObjectContainer, ValEditTemplate>();
-	
-	private var _collectionsToPool:Map<ExposedCollection, ExposedCollection> = new Map<ExposedCollection, ExposedCollection>();
 	
 	/**
 	   
 	**/
-	public function new(classReference:Class<Dynamic>) 
+	public function new(classReference:Class<Dynamic>, className:String, collection:ExposedCollection, constructorCollection:ExposedCollection = null) 
 	{
 		super();
 		this.classReference = classReference;
+		this.className = className;
+		this.collection = collection;
+		this.constructorCollection = constructorCollection;
 	}
 	
 	/**
@@ -88,6 +83,11 @@ class ValEditClass extends EventDispatcher
 		this.addToDisplayFunctionName = null;
 		this.className = null;
 		this.classReference = null;
+		if (this.collection != null)
+		{
+			this.collection.pool();
+			this.collection = null;
+		}
 		if (this.constructorCollection != null)
 		{
 			this.constructorCollection.pool();
@@ -102,11 +102,7 @@ class ValEditClass extends EventDispatcher
 		this.isDisplayObject = false;
 		this._numObjects = 0;
 		this._numTemplates = 0;
-		if (this.objectCollection != null)
-		{
-			this.objectCollection.pool();
-			this.objectCollection = null;
-		}
+		
 		if (this.propertyMap != null)
 		{
 			this.propertyMap.pool();
@@ -115,11 +111,6 @@ class ValEditClass extends EventDispatcher
 		this.removeFromDisplayFunction = null;
 		this.removeFromDisplayFunctionName = null;
 		this.superClassNames.resize(0);
-		if (this.templateCollection != null)
-		{
-			this.templateCollection.pool();
-			this.templateCollection = null;
-		}
 		
 		this._IDToObject.clear();
 		this._objectIDIndex = -1;
@@ -127,26 +118,17 @@ class ValEditClass extends EventDispatcher
 		this._IDToTemplate.clear();
 		this._templateIDIndex = -1;
 		
-		this._containers.clear();
 		for (collection in this._pool)
 		{
 			collection.pool();
 		}
 		this._pool.resize(0);
 		
-		this._constructorContainers.clear();
 		for (collection in this._constructorPool)
 		{
 			collection.pool();
 		}
 		this._constructorPool.resize(0);
-		
-		this._templateContainers.clear();
-		for (collection in this._collectionsToPool)
-		{
-			collection.pool();
-		}
-		this._collectionsToPool.clear();
 	}
 	
 	public function pool():Void
@@ -155,15 +137,12 @@ class ValEditClass extends EventDispatcher
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(classReference:Class<Dynamic> = null, className:String = null, objectCollection:ExposedCollection = null,
-						   isDisplayObject:Bool = false, constructorCollection:ExposedCollection = null, templateCollection:ExposedCollection = null):ValEditClass
+	private function setTo(classReference:Class<Dynamic>, className:String, collection:ExposedCollection, constructorCollection:ExposedCollection):ValEditClass
 	{
 		this.classReference = classReference;
 		this.className = className;
-		this.objectCollection = objectCollection;
-		this.isDisplayObject = isDisplayObject;
+		this.collection = collection;
 		this.constructorCollection = constructorCollection;
-		this.templateCollection = templateCollection;
 		return this;
 	}
 	
@@ -181,22 +160,22 @@ class ValEditClass extends EventDispatcher
 		}
 		else
 		{
-			collection = this.objectCollection.clone();
+			collection = this.collection.clone();
 		}
 		return collection;
 	}
 	
-	public function getTemplateCollection():ExposedCollection
-	{
-		if (this.templateCollection != null)
-		{
-			return this.templateCollection.clone();
-		}
-		else
-		{
-			return getCollection();
-		}
-	}
+	//public function getTemplateCollection():ExposedCollection
+	//{
+		//if (this.templateCollection != null)
+		//{
+			//return this.templateCollection.clone();
+		//}
+		//else
+		//{
+			//return getCollection();
+		//}
+	//}
 	
 	public function makeObjectID():String
 	{
@@ -301,110 +280,6 @@ class ValEditClass extends EventDispatcher
 		if (this._IDToTemplate.remove(id))
 		{
 			this._numTemplates--;
-		}
-	}
-	
-	public function addContainer(container:DisplayObjectContainer, object:Dynamic, collection:ExposedCollection = null, parentValue:ExposedValueWithCollection = null):ExposedCollection
-	{
-		if (collection == null)
-		{
-			if (this._pool.length != 0) 
-			{
-				collection = this._pool.pop();
-			}
-			else
-			{
-				collection = this.objectCollection.clone();
-			}
-			this._collectionsToPool.set(collection, collection);
-			if (Std.isOfType(object, ValEditorObject))
-			{
-				collection.readAndSetObject(cast(object, ValEditorObject).object);
-			}
-			else
-			{
-				collection.readAndSetObject(object);
-			}
-		}
-		this._containers[container] = collection;
-		collection.parentValue = parentValue;
-		collection.uiContainer = container;
-		
-		return collection;
-	}
-	
-	public function addConstructorContainer(container:DisplayObjectContainer):ExposedCollection
-	{
-		var collection:ExposedCollection;
-		if (this._constructorPool.length != 0)
-		{
-			collection = this._constructorPool.pop();
-		}
-		else
-		{
-			collection = this.constructorCollection.clone();
-		}
-		
-		this._constructorContainers[container] = collection;
-		collection.uiContainer = container;
-		
-		return collection;
-	}
-	
-	public function addTemplateContainer(container:DisplayObjectContainer, template:ValEditTemplate):Void
-	{
-		this._templateContainers[container] = template;
-		template.collection.uiContainer = container;
-	}
-	
-	public function removeContainer(container:DisplayObjectContainer):Void
-	{
-		var collection:ExposedCollection = this._containers[container];
-		if (collection != null)
-		{
-			this._containers.remove(container);
-			collection.parentValue = null;
-			collection.uiContainer = null;
-			if (this._collectionsToPool.exists(collection))
-			{
-				collection.object = null;
-				this._collectionsToPool.remove(collection);
-				this._pool.push(collection);
-			}
-			return;
-		}
-		
-		if (this._constructorContainers.exists(container))
-		{
-			removeConstructorContainer(container);
-			return;
-		}
-		
-		if (this._templateContainers.exists(container))
-		{
-			removeTemplateContainer(container);
-			return;
-		}
-	}
-	
-	public function removeConstructorContainer(container:DisplayObjectContainer):Void
-	{
-		var collection:ExposedCollection = this._constructorContainers[container];
-		if (collection != null)
-		{
-			this._constructorContainers.remove(container);
-			collection.uiContainer = null;
-			this._constructorPool.push(collection);
-		}
-	}
-	
-	public function removeTemplateContainer(container:DisplayObjectContainer):Void
-	{
-		var template:ValEditTemplate = this._templateContainers[container];
-		if (template != null)
-		{
-			this._templateContainers.remove(container);
-			template.collection.uiContainer = null;
 		}
 	}
 	

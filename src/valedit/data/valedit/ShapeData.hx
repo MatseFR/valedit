@@ -7,6 +7,8 @@ import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedObject;
+import valeditor.editor.visibility.ClassValueVisibility;
+import valeditor.editor.visibility.ClassVisibilityCollection;
 
 /**
  * ...
@@ -196,35 +198,30 @@ class ShapeData
 		return collection;
 	}
 	
-	static private function applyBaseShapeInstance(collection:ExposedCollection):Void
+	static public function getBaseShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		DisplayData.applyDisplayObjectInstance(collection);
-		collection.setVisibleArray([
-			"fill",
-			"fillAlpha",
-			"fillColor",
-			"fillBitmapData",
-			"fillRepeat",
-			"fillSmoothing",
-			"fillMatrix",
-			"outline",
-			"outlineThickness",
-			"outlineAlpha",
-			"outlineColor",
-			"outlineBitmapData",
-			"outlineRepeat",
-			"outlineSmoothing",
-			"outlineMatrix",
-			"pivotX",
-			"pivotY"
-		], true);
-	}
-	
-	static private function applyBaseShapeTemplate(collection:ExposedCollection):Void
-	{
-		DisplayData.applyDisplayObjectTemplate(collection);
-		collection.setVisibleArray([
-		], true);
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		DisplayData.getDisplayObjectVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("fill"));
+		collection.add(ClassValueVisibility.fromPool("fillAlpha"));
+		collection.add(ClassValueVisibility.fromPool("fillColor"));
+		collection.add(ClassValueVisibility.fromPool("fillBitmapData"));
+		collection.add(ClassValueVisibility.fromPool("fillRepeat"));
+		collection.add(ClassValueVisibility.fromPool("fillSmoothing"));
+		collection.add(ClassValueVisibility.fromPool("fillMatrix"));
+		collection.add(ClassValueVisibility.fromPool("outline"));
+		collection.add(ClassValueVisibility.fromPool("outlineThickness"));
+		collection.add(ClassValueVisibility.fromPool("outlineAlpha"));
+		collection.add(ClassValueVisibility.fromPool("outlineColor"));
+		collection.add(ClassValueVisibility.fromPool("outlineBitmapData"));
+		collection.add(ClassValueVisibility.fromPool("outlineRepeat"));
+		collection.add(ClassValueVisibility.fromPool("outlineSmoothing"));
+		collection.add(ClassValueVisibility.fromPool("outlineMatrix"));
+		collection.add(ClassValueVisibility.fromPool("pivotX"));
+		collection.add(ClassValueVisibility.fromPool("pivotY"));
+		
+		return collection;
 	}
 	
 	static public function exposeArcShape(?collection:ExposedCollection):ExposedCollection
@@ -306,44 +303,17 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeArcShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getArcShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeArcShape(collection);
-		collection.setVisibleAll(false);
-		applyArcShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyArcShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"arc",
-			"radiusX",
-			"radiusY",
-			"startAngle"
-		], true);
-	}
-	
-	static public function exposeArcShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeArcShape(collection);
-		collection.setVisibleAll(false);
-		applyArcShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("arc"));
+		collection.add(ClassValueVisibility.fromPool("radiusX"));
+		collection.add(ClassValueVisibility.fromPool("radiusY"));
+		collection.add(ClassValueVisibility.fromPool("startAngle"));
 		
 		return collection;
-	}
-	
-	static private function applyArcShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeArrowShape(?collection:ExposedCollection):ExposedCollection
@@ -440,45 +410,18 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeArrowShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getArrowShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeArrowShape(collection);
-		collection.setVisibleAll(false);
-		applyArrowShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyArrowShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"arrowLength",
-			"arrowHeight",
-			"tail",
-			"tailLength",
-			"tailHeight"
-		], true);
-	}
-	
-	static public function exposeArrowShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeArrowShape(collection);
-		collection.setVisibleAll(false);
-		applyArrowShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("arrowLength"));
+		collection.add(ClassValueVisibility.fromPool("arrowHeight"));
+		collection.add(ClassValueVisibility.fromPool("tail"));
+		collection.add(ClassValueVisibility.fromPool("tailLength"));
+		collection.add(ClassValueVisibility.fromPool("tailHeight"));
 		
 		return collection;
-	}
-	
-	static private function applyArrowShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeBurstShape(?collection:ExposedCollection):ExposedCollection
@@ -555,46 +498,19 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeBurstShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getBurstShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeBurstShape(collection);
-		collection.setVisibleAll(false);
-		applyBurstShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyBurstShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"angle",
-			"innerRadius",
-			"numSides",
-			"outerRadius"
-		], true);
-	}
-	
-	static public function exposeBurstShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeBurstShape(collection);
-		collection.setVisibleAll(false);
-		applyBurstShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("angle"));
+		collection.add(ClassValueVisibility.fromPool("innerRadius"));
+		collection.add(ClassValueVisibility.fromPool("numSides"));
+		collection.add(ClassValueVisibility.fromPool("outerRadius"));
 		
 		return collection;
 	}
 	
-	static private function applyBurstShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
-	}
-
 	static public function exposeCircleShape(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var floatDrag:ExposedFloatDrag;
@@ -635,41 +551,14 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeCircleShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getCircleShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeCircleShape(collection);
-		collection.setVisibleAll(false);
-		applyCircleShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyCircleShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"radius"
-		], true);
-	}
-	
-	static public function exposeCircleShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeCircleShape(collection);
-		collection.setVisibleAll(false);
-		applyCircleShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("radius"));
 		
 		return collection;
-	}
-	
-	static private function applyCircleShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeDonutShape(?collection:ExposedCollection):ExposedCollection
@@ -725,42 +614,15 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeDonutShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getDonutShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeDonutShape(collection);
-		collection.setVisibleAll(false);
-		applyDonutShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyDonutShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"radius",
-			"holeRadius"
-		], true);
-	}
-	
-	static public function exposeDonutShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeDonutShape(collection);
-		collection.setVisibleAll(false);
-		applyDonutShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("radius"));
+		collection.add(ClassValueVisibility.fromPool("holeRadius"));
 		
 		return collection;
-	}
-	
-	static private function applyDonutShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeEllipseShape(?collection:ExposedCollection):ExposedCollection
@@ -816,42 +678,15 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeEllipseShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getEllipseShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeEllipseShape(collection);
-		collection.setVisibleAll(false);
-		applyEllipseShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyEllipseShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"radiusX",
-			"radiusY"
-		], true);
-	}
-	
-	static public function exposeEllipseShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeEllipseShape(collection);
-		collection.setVisibleAll(false);
-		applyEllipseShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("radiusX"));
+		collection.add(ClassValueVisibility.fromPool("radiusY"));
 		
 		return collection;
-	}
-	
-	static private function applyEllipseShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeFlowerShape(?collection:ExposedCollection):ExposedCollection
@@ -928,44 +763,17 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeFlowerShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getFlowerShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeFlowerShape(collection);
-		collection.setVisibleAll(false);
-		applyFlowerShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyFlowerShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"angle",
-			"innerRadius",
-			"numSides",
-			"outerRadius"
-		], true);
-	}
-	
-	static public function exposeFlowerShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeFlowerShape(collection);
-		collection.setVisibleAll(false);
-		applyFlowerShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("angle"));
+		collection.add(ClassValueVisibility.fromPool("innerRadius"));
+		collection.add(ClassValueVisibility.fromPool("numSides"));
+		collection.add(ClassValueVisibility.fromPool("outerRadius"));
 		
 		return collection;
-	}
-	
-	static private function applyFlowerShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeGearShape(?collection:ExposedCollection):ExposedCollection
@@ -1061,47 +869,20 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeGearShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getGearShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeGearShape(collection);
-		collection.setVisibleAll(false);
-		applyGearShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyGearShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"angle",
-			"hole",
-			"holeRadius",
-			"innerRadius",
-			"numHoleSides",
-			"numSides",
-			"outerRadius"
-		], true);
-	}
-	
-	static public function exposeGearShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeGearShape(collection);
-		collection.setVisibleAll(false);
-		applyGearShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("angle"));
+		collection.add(ClassValueVisibility.fromPool("hole"));
+		collection.add(ClassValueVisibility.fromPool("holeRadius"));
+		collection.add(ClassValueVisibility.fromPool("innerRadius"));
+		collection.add(ClassValueVisibility.fromPool("numHoleSides"));
+		collection.add(ClassValueVisibility.fromPool("numSides"));
+		collection.add(ClassValueVisibility.fromPool("outerRadius"));
 		
 		return collection;
-	}
-	
-	static private function applyGearShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposePolygonShape(?collection:ExposedCollection):ExposedCollection
@@ -1165,43 +946,16 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposePolygonShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getPolygonShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposePolygonShape(collection);
-		collection.setVisibleAll(false);
-		applyPolygonShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyPolygonShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"angle",
-			"numSides",
-			"radius"
-		], true);
-	}
-	
-	static public function exposePolygonShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposePolygonShape(collection);
-		collection.setVisibleAll(false);
-		applyPolygonShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("angle"));
+		collection.add(ClassValueVisibility.fromPool("numSides"));
+		collection.add(ClassValueVisibility.fromPool("radius"));
 		
 		return collection;
-	}
-	
-	static private function applyPolygonShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeRectangleShape(?collection:ExposedCollection):ExposedCollection
@@ -1257,42 +1011,15 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeRectangleShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getRectangleShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeRectangleShape(collection);
-		collection.setVisibleAll(false);
-		applyRectangleShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyRectangleShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"rectangleWidth",
-			"rectangleHeight"
-		], true);
-	}
-	
-	static public function exposeRectangleShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeRectangleShape(collection);
-		collection.setVisibleAll(false);
-		applyRectangleShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("rectangleWidth"));
+		collection.add(ClassValueVisibility.fromPool("rectangleHeight"));
 		
 		return collection;
-	}
-	
-	static private function applyRectangleShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeRoundRectangleShape(?collection:ExposedCollection):ExposedCollection
@@ -1374,44 +1101,17 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeRoundRectangleShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getRoundRectangleShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeRoundRectangleShape(collection);
-		collection.setVisibleAll(false);
-		applyRoundRectangleShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyRoundRectangleShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"rectangleWidth",
-			"rectangleHeight",
-			"roundWidth",
-			"roundHeight"
-		], true);
-	}
-	
-	static public function exposeRoundRectangleShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeRoundRectangleShape(collection);
-		collection.setVisibleAll(false);
-		applyRoundRectangleShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("rectangleWidth"));
+		collection.add(ClassValueVisibility.fromPool("rectangleHeight"));
+		collection.add(ClassValueVisibility.fromPool("roundWidth"));
+		collection.add(ClassValueVisibility.fromPool("roundHeight"));
 		
 		return collection;
-	}
-	
-	static private function applyRoundRectangleShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeStarShape(?collection:ExposedCollection):ExposedCollection
@@ -1488,44 +1188,17 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeStarShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getStarShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeStarShape(collection);
-		collection.setVisibleAll(false);
-		applyStarShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyStarShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"angle",
-			"numPoints",
-			"innerRadius",
-			"outerRadius"
-		], true);
-	}
-	
-	static public function exposeStarShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeStarShape(collection);
-		collection.setVisibleAll(false);
-		applyStarShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("angle"));
+		collection.add(ClassValueVisibility.fromPool("numPoints"));
+		collection.add(ClassValueVisibility.fromPool("innerRadius"));
+		collection.add(ClassValueVisibility.fromPool("outerRadius"));
 		
 		return collection;
-	}
-	
-	static private function applyStarShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 	static public function exposeWedgeShape(?collection:ExposedCollection):ExposedCollection
@@ -1607,44 +1280,17 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeWedgeShapeInstance(?collection:ExposedCollection):ExposedCollection
+	static public function getWedgeShapeVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = new ExposedCollection();
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		exposeWedgeShape(collection);
-		collection.setVisibleAll(false);
-		applyWedgeShapeInstance(collection);
-		
-		return collection;
-	}
-	
-	static private function applyWedgeShapeInstance(collection:ExposedCollection):Void
-	{
-		applyBaseShapeInstance(collection);
-		collection.setVisibleArray([
-			"arc",
-			"radiusX",
-			"radiusY",
-			"startAngle"
-		], true);
-	}
-	
-	static public function exposeWedgeShapeTemplate(?collection:ExposedCollection):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeWedgeShape(collection);
-		collection.setVisibleAll(false);
-		applyWedgeShapeTemplate(collection);
+		getBaseShapeVisibility(collection);
+		collection.add(ClassValueVisibility.fromPool("arc"));
+		collection.add(ClassValueVisibility.fromPool("radiusX"));
+		collection.add(ClassValueVisibility.fromPool("radiusY"));
+		collection.add(ClassValueVisibility.fromPool("startAngle"));
 		
 		return collection;
-	}
-	
-	static private function applyWedgeShapeTemplate(collection:ExposedCollection):Void
-	{
-		applyBaseShapeTemplate(collection);
-		collection.setVisibleArray([
-		], true);
 	}
 	
 }

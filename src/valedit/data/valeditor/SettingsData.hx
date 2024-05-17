@@ -61,6 +61,12 @@ class SettingsData
 			collection.addValue(bool);
 		}
 		
+		if (!collection.hasValue("editClassVisibilitiesEditor"))
+		{
+			funcExternal = new ExposedFunctionExternal("editClassVisibilitiesEditor", "edit class visibilities", ValEditor);
+			collection.addValue(funcExternal);
+		}
+		
 		if (!collection.hasValue("editUITheme"))
 		{
 			funcExternal = new ExposedFunctionExternal("editUITheme", "edit UI theme", ValEditor);
@@ -129,6 +135,7 @@ class SettingsData
 	{
 		var bool:ExposedBool;
 		var floatDrag:ExposedFloatDrag;
+		var funcExternal:ExposedFunctionExternal;
 		var intDrag:ExposedIntDrag;
 		#if desktop
 		var path:ExposedPath;
@@ -180,6 +187,12 @@ class SettingsData
 		{
 			select = new ExposedSelect("tweenTransitionDefault", "default tween transition", Transitions.transitionNames, Transitions.transitionNames);
 			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("editClassVisibilitiesFile"))
+		{
+			funcExternal = new ExposedFunctionExternal("editClassVisibilitiesFile", "edit class visibilities", ValEditor);
+			collection.addValue(funcExternal);
 		}
 		
 		return collection;
