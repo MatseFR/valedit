@@ -38,13 +38,11 @@ class ValEditClass extends EventDispatcher
 	public var isDisplayObject:Bool;
 	public var numInstances(get, never):Int;
 	public var numTemplates(get, never):Int;
-	//public var objectCollection:ExposedCollection;
 	public var propertyMap:PropertyMap;
 	/** Dynamic->DisplayObjectContainer->Void */
 	public var removeFromDisplayFunction:Function;
 	public var removeFromDisplayFunctionName:String;
 	public var superClassNames(default, null):Array<String> = new Array<String>();
-	//public var templateCollection:ExposedCollection;
 	
 	private function get_numInstances():Int { return this._numObjects; }
 	private function get_numTemplates():Int { return this._numTemplates; }
@@ -164,18 +162,6 @@ class ValEditClass extends EventDispatcher
 		}
 		return collection;
 	}
-	
-	//public function getTemplateCollection():ExposedCollection
-	//{
-		//if (this.templateCollection != null)
-		//{
-			//return this.templateCollection.clone();
-		//}
-		//else
-		//{
-			//return getCollection();
-		//}
-	//}
 	
 	public function makeObjectID():String
 	{
