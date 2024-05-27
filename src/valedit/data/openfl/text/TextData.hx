@@ -300,7 +300,7 @@ class TextData
 		collection.add(ClassValueVisibility.fromPool("text"));
 		collection.add(ClassValueVisibility.fromPool("textColor"));
 		collection.add(ClassValueVisibility.fromPool("type", true, false));
-		collection.add(ClassValueVisibility.fromPool("wordwrap", true, false));
+		collection.add(ClassValueVisibility.fromPool("wordWrap", true, false));
 		
 		return collection;
 	}
