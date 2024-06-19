@@ -39,6 +39,10 @@ class ValEditClassSettings
 	 *  make sure the function's signature matches the constructorCollection (if any) */
 	public var creationFunction:Function;
 	
+	public var creationFunctionForLoading:Function;
+	
+	public var creationFunctionForTemplateInstance:Function;
+	
 	/** external/static function of type Dynamic->Void to call on object creation */
 	public var creationInitFunction:Function;
 	
@@ -57,9 +61,6 @@ class ValEditClassSettings
 	/** @default false **/
 	public var isDisplayObject:Bool;
 	
-	/** object collection */
-	//public var objectCollection:ExposedCollection;
-	
 	public var propertyMap:PropertyMap;
 	
 	/** external/static function of type Dynamic->DisplayObjectContainer->Void to call instead of doing a simple removeChild
@@ -69,9 +70,6 @@ class ValEditClassSettings
 	/** name of the object's DisplayObjectContainer->Void function to call instead of doing a simple removeChild */
 	public var removeFromDisplayFunctionName:String;
 	
-	/** template collection */
-	//public var templateCollection:ExposedCollection;
-
 	public function new()
 	{
 		
@@ -84,17 +82,17 @@ class ValEditClassSettings
 		this.collection = null;
 		this.constructorCollection = null;
 		this.creationFunction = null;
+		this.creationFunctionForLoading = null;
+		this.creationFunctionForTemplateInstance = null;
 		this.creationInitFunction = null;
 		this.creationInitFunctionName = null;
 		this.displayObjectType = DisplayObjectType.NONE;
 		this.disposeFunction = null;
 		this.disposeFunctionName = null;
 		this.isDisplayObject = false;
-		//this.objectCollection = null;
 		this.propertyMap = null;
 		this.removeFromDisplayFunction = null;
 		this.removeFromDisplayFunctionName = null;
-		//this.templateCollection = null;
 	}
 	
 	public function pool():Void

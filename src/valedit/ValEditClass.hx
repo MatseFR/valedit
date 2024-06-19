@@ -28,6 +28,8 @@ class ValEditClass extends EventDispatcher
 	public var collection:ExposedCollection;
 	public var constructorCollection:ExposedCollection;
 	public var creationFunction:Function;
+	public var creationFunctionForLoading:Function;
+	public var creationFunctionForTemplateInstance:Function;
 	/** Dynamic->Void external function reference, to be called on object creation */
 	public var creationInitFunction:Function;
 	/** Void->Void object function name, to be called on object creation */
@@ -96,6 +98,8 @@ class ValEditClass extends EventDispatcher
 			this.constructorCollection = null;
 		}
 		this.creationFunction = null;
+		this.creationFunctionForLoading = null;
+		this.creationFunctionForTemplateInstance = null;
 		this.creationInitFunction = null;
 		this.creationInitFunctionName = null;
 		this.displayObjectType = DisplayObjectType.NONE;
