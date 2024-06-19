@@ -84,9 +84,10 @@ class ExposedCollection extends EventDispatcher
 	private function set_isReadOnly(value:Bool):Bool
 	{
 		if (this._isReadOnly == value) return value;
+		var readOnly:Bool = value || this._isReadOnlyInternal;
 		for (val in this._valueList)
 		{
-			val.isReadOnlyInternal = value;
+			val.isReadOnlyInternal = readOnly;
 		}
 		return this._isReadOnly = value;
 	}
@@ -96,9 +97,10 @@ class ExposedCollection extends EventDispatcher
 	private function set_isReadOnlyInternal(value:Bool):Bool
 	{
 		if (this._isReadOnlyInternal == value) return value;
+		var readOnly:Bool = value || this._isReadOnly;
 		for (val in this._valueList)
 		{
-			val.isReadOnlyInternal = value;
+			val.isReadOnlyInternal = readOnly;
 		}
 		return this._isReadOnlyInternal = value;
 	}
@@ -416,7 +418,7 @@ class ExposedCollection extends EventDispatcher
 	
 	private function onValueChange(evt:ValueEvent):Void
 	{
-		this.dispatchEvent(evt);
+		dispatchEvent(evt);
 	}
 	
 	/**
@@ -426,30 +428,15 @@ class ExposedCollection extends EventDispatcher
 	**/
 	public function addValue(value:ExposedValue, groupName:String = null):Void
 	{
-		value.collection = this;
-		value.updateCollectionLocked = this._valuesUpdateLocked;
-		if (value.isRealValue) value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		if (groupName != null)
 		{
+			registerValue(value, true);
 			this._groupMap[groupName].addValue(value);
 		}
 		else
 		{
-			value.isConstructor = this._isConstructor;
-			value.isEditable = this._isEditable;
-			value.isReadOnly = this._isReadOnly;
-			value.isReadOnlyInternal = this._isReadOnlyInternal;
-			value.parentValue = this._parentValue;
-			#if valeditor
-			value.useActions = this._useActions;
-			#end
+			registerValue(value, false);
 			this._valueList.push(value);
-			this._valueMap[value.propertyName] = value;
-			if (Std.isOfType(value, ExposedGroup))
-			{
-				this._groupList.push(cast value);
-				this._groupMap[value.propertyName] = cast value;
-			}
 		}
 	}
 	
@@ -461,23 +448,14 @@ class ExposedCollection extends EventDispatcher
 	 */
 	public function addValueAfter(value:ExposedValue, afterValueName:String, groupName:String = null):Void
 	{
-		value.collection = this;
-		value.updateCollectionLocked = this._valuesUpdateLocked;
-		if (value.isRealValue) value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		if (groupName != null)
 		{
+			registerValue(value, true);
 			this._groupMap[groupName].addValueAfter(value, afterValueName);
 		}
 		else
 		{
-			value.isConstructor = this._isConstructor;
-			value.isEditable = this._isEditable;
-			value.isReadOnly = this._isReadOnly;
-			value.isReadOnlyInternal = this._isReadOnlyInternal;
-			value.parentValue = this._parentValue;
-			#if valeditor
-			value.useActions = this._useActions;
-			#end
+			registerValue(value, false);
 			var afterValue:ExposedValue = this._valueMap[afterValueName];
 			if (afterValue == null)
 			{
@@ -485,12 +463,6 @@ class ExposedCollection extends EventDispatcher
 			}
 			var index:Int = this._valueList.indexOf(afterValue);
 			this._valueList.insert(index + 1, value);
-			this._valueMap[value.propertyName] = value;
-			if (Std.isOfType(value, ExposedGroup))
-			{
-				this._groupList.push(cast value);
-				this._groupMap[value.propertyName] = cast value;
-			}
 		}
 	}
 	
@@ -502,23 +474,14 @@ class ExposedCollection extends EventDispatcher
 	 */
 	public function addValueBefore(value:ExposedValue, beforeValueName:String, groupName:String = null):Void
 	{
-		value.collection = this;
-		value.updateCollectionLocked = this._valuesUpdateLocked;
-		if (value.isRealValue) value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		if (groupName != null)
 		{
+			registerValue(value, true);
 			this._groupMap[groupName].addValueBefore(value, beforeValueName);
 		}
 		else
 		{
-			value.isConstructor = this._isConstructor;
-			value.isEditable = this._isEditable;
-			value.isReadOnly = this._isReadOnly;
-			value.isReadOnlyInternal = this._isReadOnlyInternal;
-			value.parentValue = this._parentValue;
-			#if valeditor
-			value.useActions = this._useActions;
-			#end
+			registerValue(value, false);
 			var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 			if (beforeValue == null)
 			{
@@ -526,11 +489,113 @@ class ExposedCollection extends EventDispatcher
 			}
 			var index:Int = this._valueList.indexOf(beforeValue);
 			this._valueList.insert(index, value);
+		}
+	}
+	
+	public function getValue(propertyName:String):ExposedValue
+	{
+		var value:ExposedValue;
+		if (this._valueMap.exists(propertyName)) return this._valueMap[propertyName];
+		for (group in this._groupList)
+		{
+			value = group.getValue(propertyName);
+			if (value != null) return value;
+		}
+		return null;
+	}
+	
+	public function getValueDeep(propertyNames:Array<String>):ExposedValue
+	{
+		if (propertyNames.length == 1) return getValue(propertyNames[0]);
+		
+		var value:ExposedValueWithCollection = cast getValue(propertyNames[0]);
+		var count:Int = propertyNames.length;
+		for (i in 1...count - 1)
+		{
+			value = cast value.childCollection.getValue(propertyNames[i]);
+			if (value == null) return null;
+		}
+		
+		return value.childCollection.getValue(propertyNames[count-1]);
+	}
+	
+	public function hasValue(propertyName:String):Bool
+	{
+		if (this._valueMap.exists(propertyName)) return true;
+		for (group in this._groupList)
+		{
+			if (group.hasValue(propertyName)) return true;
+		}
+		return false;
+	}
+	
+	public function removeValue(value:ExposedValue):Void
+	{
+		removeValueByName(value.propertyName);
+	}
+	
+	public function removeValueByName(propertyName:String):ExposedValue
+	{
+		var value:ExposedValue = this._valueMap[propertyName];
+		if (value != null)
+		{
+			unregisterValue(value, false);
+			this._valueList.remove(value);
+			return value;
+		}
+		
+		for (group in this._groupList)
+		{
+			value = group.removeValueByName(propertyName);
+			if (value != null)
+			{
+				unregisterValue(value, true);
+				return value;
+			}
+		}
+		return null;
+	}
+	
+	private function registerValue(value:ExposedValue, isInGroup:Bool):Void
+	{
+		if (value.isRealValue) value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		
+		if (!isInGroup)
+		{
+			value.collection = this;
+			value.updateCollectionLocked = this._valuesUpdateLocked;
+			value.isConstructor = this._isConstructor;
+			value.isEditable = this._isEditable;
+			value.isReadOnlyInternal = this._isReadOnly || this._isReadOnlyInternal;
+			value.parentValue = this._parentValue;
+			#if valeditor
+			value.useActions = this._useActions;
+			#end
+			
 			this._valueMap[value.propertyName] = value;
+			
 			if (Std.isOfType(value, ExposedGroup))
 			{
 				this._groupList.push(cast value);
 				this._groupMap[value.propertyName] = cast value;
+			}
+		}
+	}
+	
+	private function unregisterValue(value:ExposedValue, isInGroup:Bool):Void
+	{
+		if (value.isRealValue) value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+		
+		if (!isInGroup)
+		{
+			value.collection = null;
+			
+			this._valueMap.remove(value.propertyName);
+			
+			if (Std.isOfType(value, ExposedGroup))
+			{
+				this._groupList.remove(cast value);
+				this._groupMap.remove(value.propertyName);
 			}
 		}
 	}
@@ -659,71 +724,6 @@ class ExposedCollection extends EventDispatcher
 			{
 				group = grp.getGroup(name);
 				if (group != null) return group;
-			}
-		}
-		return null;
-	}
-	
-	public function getValue(propertyName:String):ExposedValue
-	{
-		var value:ExposedValue;
-		if (this._valueMap.exists(propertyName)) return this._valueMap[propertyName];
-		for (group in this._groupList)
-		{
-			value = group.getValue(propertyName);
-			if (value != null) return value;
-		}
-		return null;
-	}
-	
-	public function getValueDeep(propertyNames:Array<String>):ExposedValue
-	{
-		if (propertyNames.length == 1) return getValue(propertyNames[0]);
-		
-		var value:ExposedValueWithCollection = cast getValue(propertyNames[0]);
-		var count:Int = propertyNames.length;
-		for (i in 1...count - 1)
-		{
-			value = cast value.childCollection.getValue(propertyNames[i]);
-			if (value == null) return null;
-		}
-		
-		return value.childCollection.getValue(propertyNames[count-1]);
-	}
-	
-	public function hasValue(propertyName:String):Bool
-	{
-		if (this._valueMap.exists(propertyName)) return true;
-		for (group in this._groupList)
-		{
-			if (group.hasValue(propertyName)) return true;
-		}
-		return false;
-	}
-	
-	public function removeValue(value:ExposedValue):Void
-	{
-		removeValueByName(value.propertyName);
-	}
-	
-	public function removeValueByName(propertyName:String):ExposedValue
-	{
-		var value:ExposedValue = this._valueMap[propertyName];
-		if (value != null)
-		{
-			if (value.isRealValue) value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
-			this._valueList.remove(value);
-			this._valueMap.remove(propertyName);
-			return value;
-		}
-		
-		for (group in this._groupList)
-		{
-			value = group.removeValueByName(propertyName);
-			if (value != null)
-			{
-				if (value.isRealValue) value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
-				return value;
 			}
 		}
 		return null;

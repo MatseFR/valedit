@@ -23,6 +23,12 @@ class ValEditClassSettings
 	/** name of the object's DisplayObjectContainer->Void function to call instead of doing a simple addChild */
 	public var addToDisplayFunctionName:String;
 	
+	/** name of the cloneFrom function, if any */
+	public var cloneFromFunctionName:String;
+	
+	/** name of the cloneTo function, if any */
+	public var cloneToFunctionName:String;
+	
 	/** class collection */
 	public var collection:ExposedCollection;
 	

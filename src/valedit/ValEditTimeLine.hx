@@ -4,6 +4,7 @@ import juggler.animation.Juggler;
 import openfl.events.EventDispatcher;
 import valedit.events.PlayEvent;
 import valedit.utils.ReverseIterator;
+import valeditor.events.KeyFrameEvent;
 
 /**
  * ...
@@ -34,10 +35,12 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	public var lastFrameIndex(get, never):Int;
 	public var loop(get, set):Bool;
 	public var numFrames(get, set):Int;
+	public var numKeyFrames(get, never):Int;
 	/** 0 = infinite */
 	public var numLoops(get, set):Int;
 	public var parent(get, set):ValEditTimeLine;
 	public var reverse(get, set):Bool;
+	public var slaves(get, never):Array<ValEditTimeLine>;
 	
 	private var _activateFunction:ValEditObject->Void;
 	private function get_activateFunction():ValEditObject->Void { return this._activateFunction; }
@@ -81,9 +84,9 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		
 		setFrameCurrent(this._frames[value]);
 		
-		for (child in this._children)
+		for (slave in this._slaves)
 		{
-			child.frameIndex = this._frameIndex;
+			slave.frameIndex = this._frameIndex;
 		}
 		
 		return this._frameIndex;
@@ -95,9 +98,9 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	{
 		if (this._frameRate == value) return value;
 		this._frameTime = 1.0 / value;
-		for (child in this._children)
+		for (slave in this._slaves)
 		{
-			child.frameRate = value;
+			slave.frameRate = value;
 		}
 		return this._frameRate = value;
 	}
@@ -131,9 +134,9 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	private function get_loop():Bool { return this._loop; }
 	private function set_loop(value:Bool):Bool
 	{
-		for (child in this._children)
+		for (slave in this._slaves)
 		{
-			child.loop = value;
+			slave.loop = value;
 		}
 		return this._loop = value;
 	}
@@ -171,22 +174,24 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 			}
 		}
 		
-		// set numFrames on children too
-		for (child in this._children)
+		// set numFrames on slaves too
+		for (slave in this._slaves)
 		{
-			child.numFrames = value;
+			slave.numFrames = value;
 		}
 		
 		return this._numFrames = value;
 	}
 	
+	private function get_numKeyFrames():Int { return this._keyFrames.length; }
+	
 	private var _numLoops:Int = 0;
 	private function get_numLoops():Int { return this._numLoops; }
 	private function set_numLoops(value:Int):Int
 	{
-		for (child in this._children)
+		for (slave in this._slaves)
 		{
-			child.numLoops = value;
+			slave.numLoops = value;
 		}
 		return this._numLoops = value;
 	}
@@ -202,14 +207,17 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	private function get_reverse():Bool { return this._reverse; }
 	private function set_reverse(value:Bool):Bool
 	{
-		for (child in this._children)
+		for (slave in this._slaves)
 		{
-			child.reverse = value;
+			slave.reverse = value;
 		}
 		return this._reverse = value;
 	}
 	
-	private var _playTime:Float;
+	private var _slaves:Array<ValEditTimeLine> = new Array<ValEditTimeLine>();
+	private function get_slaves():Array<ValEditTimeLine> { return this._slaves; }
+	
+	private var _playTime:Float = 0;
 	private var _loopCount:Int;
 	
 	public function new() 
@@ -225,7 +233,7 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 			stop();
 		}
 		// WARNING : children are NOT pooled since the typical case is children time lines are owned by layers
-		this._children.resize(0);
+		this._slaves.resize(0);
 		for (frame in this._keyFrames)
 		{
 			frame.pool();
@@ -265,7 +273,18 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		this._loopCount = 0;
 		this._isReverse = false;
 		this._isPlaying = true;
-		this._juggler.add(this);
+		if (this._juggler != null) this._juggler.add(this);
+		
+		for (child in this._children)
+		{
+			child.play();
+		}
+		
+		for (slave in this._slaves)
+		{
+			slave.play();
+		}
+		
 		PlayEvent.dispatch(this, PlayEvent.PLAY);
 	}
 	
@@ -274,19 +293,56 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		if (!this._isPlaying) return;
 		
 		this._isPlaying = false;
-		this._juggler.remove(this);
+		if (this._juggler != null) this._juggler.remove(this);
+		
+		for (child in this._children)
+		{
+			child.stop();
+		}
+		
+		for (slave in this._slaves)
+		{
+			slave.stop();
+		}
+		
 		PlayEvent.dispatch(this, PlayEvent.STOP);
+	}
+	
+	public function setTime(time:Float):Void
+	{
+		this.frameIndex = 0;
+		this._playTime = 0.0;
+		advanceTime(time);
 	}
 	
 	public function advanceTime(time:Float):Void
 	{
-		if (!this._isPlaying) return;
+		//if (!this._isPlaying) return;
+		
+		for (child in this._children)
+		{
+			child.advanceTime(time);
+		}
+		
+		for (slave in this._slaves)
+		{
+			slave.advanceTimeForChildren(time);
+		}
 		
 		this._playTime += time;
-		if (this._playTime >= this._frameTime)
+		//if (this._playTime >= this._frameTime)
+		while (this._playTime >= this._frameTime)
 		{
 			playProgress();
 			this._playTime -= this._frameTime;
+		}
+	}
+	
+	public function advanceTimeForChildren(time:Float):Void
+	{
+		for (child in this._children)
+		{
+			child.advanceTime(time);
 		}
 	}
 	
@@ -347,12 +403,12 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		}
 	}
 	
-	public function add(object:ValEditObject):Void
+	public function addObject(object:ValEditObject):Void
 	{
 		this._frameCurrent.add(object);
 	}
 	
-	public function remove(object:ValEditObject):Void
+	public function removeObject(object:ValEditObject):Void
 	{
 		this._frameCurrent.remove(object);
 	}
@@ -363,6 +419,11 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		for (i in keyFrame.indexStart...keyFrame.indexEnd)
 		{
 			this._frames[i] = keyFrame;
+		}
+		
+		if (this._frameIndex >= keyFrame.indexStart && this._frameIndex <= keyFrame.indexEnd)
+		{
+			setFrameCurrent(keyFrame);
 		}
 	}
 	
@@ -376,6 +437,9 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		keyFrame.timeLine = this;
 		keyFrame.activateFunction = this.activateFunction;
 		keyFrame.deactivateFunction = this.deactivateFunction;
+		
+		keyFrame.addEventListener(KeyFrameEvent.OBJECT_ADDED, onKeyFrameObjectAdded);
+		keyFrame.addEventListener(KeyFrameEvent.OBJECT_REMOVED, onKeyFrameObjectRemoved);
 		
 		#if valeditor
 		var pos:Int = -1;
@@ -404,6 +468,9 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	
 	public function unregisterKeyFrame(keyFrame:ValEditKeyFrame):Void
 	{
+		keyFrame.removeEventListener(KeyFrameEvent.OBJECT_ADDED, onKeyFrameObjectAdded);
+		keyFrame.removeEventListener(KeyFrameEvent.OBJECT_REMOVED, onKeyFrameObjectRemoved);
+		
 		this._keyFrames.remove(keyFrame);
 	}
 	
@@ -433,6 +500,29 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	public function addChildAt(timeLine:ValEditTimeLine, index:Int):ValEditTimeLine
 	{
 		this._children.insert(index, timeLine);
+		return timeLine;
+	}
+	
+	public function removeChild(timeLine:ValEditTimeLine):ValEditTimeLine
+	{
+		this._children.remove(timeLine);
+		return timeLine;
+	}
+	
+	public function removeChildAt(index:Int):ValEditTimeLine
+	{
+		return this._children.splice(index, 1)[0];
+	}
+	
+	public function addSlave(timeLine:ValEditTimeLine):ValEditTimeLine
+	{
+		addSlaveAt(timeLine, this._slaves.length);
+		return timeLine;
+	}
+	
+	public function addSlaveAt(timeLine:ValEditTimeLine, index:Int):ValEditTimeLine
+	{
+		this._slaves.insert(index, timeLine);
 		timeLine.parent = this;
 		timeLine.frameIndex = this._frameIndex;
 		timeLine.frameRate = this._frameRate;
@@ -443,17 +533,17 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		return timeLine;
 	}
 	
-	public function removeChild(timeLine:ValEditTimeLine):ValEditTimeLine
+	public function removeSlave(timeLine:ValEditTimeLine):ValEditTimeLine
 	{
-		this._children.remove(timeLine);
+		this._slaves.remove(timeLine);
 		timeLine.parent = null;
 		return timeLine;
 	}
 	
-	public function removeChildAt(index:Int):ValEditTimeLine
+	public function removeSlaveAt(index:Int):ValEditTimeLine
 	{
-		this._children[index].parent = null;
-		return this._children.splice(index, 1)[0];
+		this._slaves[index].parent = null;
+		return this._slaves.splice(index, 1)[0];
 	}
 	
 	public function updateLastFrameIndex():Void
@@ -471,7 +561,7 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 			}
 		}
 		
-		for (timeLine in this._children)
+		for (timeLine in this._slaves)
 		{
 			if (timeLine._lastFrameIndex > this._lastFrameIndex)
 			{
@@ -528,6 +618,16 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 			return this._keyFrames[keyFrameIndex - 1];
 		}
 		return null;
+	}
+	
+	private function onKeyFrameObjectAdded(evt:KeyFrameEvent):Void
+	{
+		dispatchEvent(evt);
+	}
+	
+	private function onKeyFrameObjectRemoved(evt:KeyFrameEvent):Void
+	{
+		dispatchEvent(evt);
 	}
 	
 }

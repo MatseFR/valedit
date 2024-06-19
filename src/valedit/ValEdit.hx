@@ -119,6 +119,8 @@ class ValEdit
 		v.addToDisplayFunctionName = settings.addToDisplayFunctionName;
 		//v.className = className;
 		
+		v.cloneFromFunctionName = settings.cloneFromFunctionName;
+		v.cloneToFunctionName = settings.cloneToFunctionName;
 		//v.constructorCollection = settings.constructorCollection;
 		v.creationFunction = settings.creationFunction;
 		v.creationInitFunction = settings.creationInitFunction;
@@ -246,13 +248,15 @@ class ValEdit
 		return createObjectWithClassName(Type.getClassName(clss), id, params);
 	}
 	
-	static public function createObjectWithClassName(className:String, ?id:String, ?params:Array<Dynamic>, ?valObject:ValEditObject, ?collection:ExposedCollection):ValEditObject
+	static public function createObjectWithClassName(className:String, ?id:String, ?params:Array<Dynamic>, ?valObject:ValEditObject, ?collection:ExposedCollection, ?objectID:String):ValEditObject
 	{
 		if (params == null) params = [];
 		var valClass:ValEditClass = _classMap.get(className);
 		
 		if (valObject == null) valObject = ValEditObject.fromPool(valClass, id);
-		valObject.object = Type.createInstance(valClass.classReference, params);
+		
+		createObject(valObject, valClass, params);
+		valObject.objectID = objectID;
 		
 		var collectionProvided:Bool = collection != null;
 		if (collection == null)
@@ -275,6 +279,27 @@ class ValEdit
 		registerObjectInternal(valObject);
 		
 		return valObject;
+	}
+	
+	static private function createObject(valObject:ValEditObject, valClass:ValEditClass, params:Array<Dynamic>):Void
+	{
+		if (valClass.creationFunction != null)
+		{
+			valObject.object = Reflect.callMethod(null, valClass.creationFunction, params);
+		}
+		else
+		{
+			valObject.object = Type.createInstance(valClass.classReference, params);
+		}
+		
+		if (valClass.creationInitFunction != null)
+		{
+			Reflect.callMethod(null, valClass.creationInitFunction, [valObject.object]);
+		}
+		else if (valClass.creationInitFunctionName != null)
+		{
+			Reflect.callMethod(valObject.object, Reflect.getProperty(valObject.object, valClass.creationInitFunctionName), []);
+		}
 	}
 	
 	static public function createTemplateWithClass(clss:Class<Dynamic>, id:String, ?constructorCollection:ExposedCollection):ValEditTemplate
@@ -318,7 +343,7 @@ class ValEdit
 		return template;
 	}
 	
-	static public function createObjectWithTemplate(template:ValEditTemplate, id:String, ?valObject:ValEditObject, ?collection:ExposedCollection, registerToTemplate:Bool = true):ValEditObject
+	static public function createObjectWithTemplate(template:ValEditTemplate, id:String, ?valObject:ValEditObject, ?collection:ExposedCollection, ?objectID:String, registerToTemplate:Bool = true):ValEditObject
 	{
 		var valClass:ValEditClass = template.clss;
 		
@@ -329,11 +354,21 @@ class ValEdit
 			template.constructorCollection.toValueArray(params);
 		}
 		
-		valObject.object = Type.createInstance(valClass.classReference, params);
+		createObject(valObject, valClass, params);
+		valObject.objectID = objectID;
 		
 		valObject.template = template;
 		if (registerToTemplate)
 		{
+			if (valClass.cloneFromFunctionName != null)
+			{
+				Reflect.callMethod(valObject.object, Reflect.getProperty(valObject.object, valClass.cloneFromFunctionName), [template.object.object]);
+			}
+			else if (valClass.cloneToFunctionName != null)
+			{
+				Reflect.callMethod(template.object.object, Reflect.getProperty(template.object.object, valClass.cloneToFunctionName), [valObject.object]);
+			}
+			
 			template.addInstance(valObject);
 		}
 		

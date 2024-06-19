@@ -104,7 +104,20 @@ class ExposedGroup extends ExposedValue
 		}
 		return value;
 	}
+	#end
 	
+	override function set_updateCollectionLocked(value:Bool):Bool 
+	{
+		if (this._updateCollectionLocked == value) return value;
+		
+		for (val in this._valueList)
+		{
+			val.updateCollectionLocked = value;
+		}
+		return super.set_updateCollectionLocked(value);
+	}
+	
+	#if valeditor
 	override function set_useActions(value:Bool):Bool 
 	{
 		if (this._useActions == value) return value;
@@ -379,124 +392,204 @@ class ExposedGroup extends ExposedValue
 	   
 	   @param	value
 	**/
-	public function addValue(value:ExposedValue):Void
+	public function addValue(value:ExposedValue, groupName:String = null):Void
 	{
-		if (!value.hasEventListener(ValueEvent.VALUE_CHANGE))
+		if (groupName != null)
 		{
-			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+			registerValue(value, true);
+			this._groupMap[groupName].addValue(value);
 		}
-		
-		value.isConstructor = this.isConstructor;
-		value.isEditable = this._isEditable;
-		value.isReadOnly = this._isReadOnly;
-		value.isReadOnlyInternal = this._isReadOnlyInternal;
-		value.parentValue = this.parentValue;
-		#if valeditor
-		value.useActions = this._useActions;
-		#end
-		
-		this._valueList.push(value);
-		this._valueMap[value.propertyName] = value;
-		
-		if (Std.isOfType(value, ExposedGroup))
+		else
 		{
-			this._groupList.push(cast value);
-			this._groupMap[value.propertyName] = cast value;
-		}
-		
-		#if valeditor
-		if (this._isUIBuilt)
-		{
-			if (value._uiControl == null)
+			registerValue(value, false);
+			this._valueList.push(value);
+			#if valeditor
+			if (this._isUIBuilt)
 			{
-				ValEditor.toUIControl(value);
+				if (value._uiControl == null)
+				{
+					ValEditor.toUIControl(value);
+				}
+				this._uiGroup.addExposedControl(value._uiControl);
 			}
-			this._uiGroup.addExposedControl(value._uiControl);
+			#end
 		}
-		#end
 	}
 	
 	
-	public function addValueAfter(value:ExposedValue, afterValueName:String):Void
+	public function addValueAfter(value:ExposedValue, afterValueName:String, groupName:String = null):Void
 	{
-		if (!value.hasEventListener(ValueEvent.VALUE_CHANGE))
+		if (groupName != null)
 		{
-			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
+			registerValue(value, true);
+			this._groupMap[groupName].addValueAfter(value, afterValueName);
 		}
-		
-		value.isConstructor = this.isConstructor;
-		value.isEditable = this._isEditable;
-		value.isReadOnly = this._isReadOnly;
-		value.isReadOnlyInternal = this._isReadOnlyInternal;
-		value.parentValue = this.parentValue;
-		#if valeditor
-		value.useActions = this._useActions;
-		#end
-		
-		var afterValue:ExposedValue = this._valueMap[afterValueName];
-		if (afterValue == null)
+		else
 		{
-			throw new Error("ExposedGroup.addValueAfter ::: no value with name " + afterValueName);
+			registerValue(value, false);
+			var afterValue:ExposedValue = this._valueMap[afterValueName];
+			if (afterValue == null)
+			{
+				throw new Error("ExposedGroup.addValueAfter ::: no value with name " + afterValueName);
+			}
+			var index:Int = this._valueList.indexOf(afterValue);
+			this._valueList.insert(index + 1, value);
+			#if valeditor
+			if (this._isUIBuilt)
+			{
+				if (value._uiControl == null)
+				{
+					ValEditor.toUIControl(value);
+				}
+				this._uiGroup.addExposedControlAfter(value._uiControl, afterValue._uiControl);
+			}
+			#end
 		}
-		
-		var index:Int = this._valueList.indexOf(afterValue);
-		this._valueList.insert(index + 1, value);
-		this._valueMap[value.propertyName] = value;
-		
-		if (Std.isOfType(value, ExposedGroup))
-		{
-			this._groupList.push(cast value);
-			this._groupMap[value.propertyName] = cast value;
-		}
-		
-		#if valeditor
-		if (this._isUIBuilt && value._uiControl == null)
-		{
-			var control:IValueUI = ValEditor.toUIControl(value);
-			this._uiGroup.addExposedControlAfter(control, afterValue._uiControl);
-		}
-		#end
 	}
 	
-	public function addValueBefore(value:ExposedValue, beforeValueName:String):Void
+	public function addValueBefore(value:ExposedValue, beforeValueName:String, groupName:String = null):Void
+	{
+		if (groupName != null)
+		{
+			registerValue(value, true);
+			this._groupMap[groupName].addValueBefore(value, beforeValueName);
+		}
+		else
+		{
+			registerValue(value, false);
+			var beforeValue:ExposedValue = this._valueMap[beforeValueName];
+			if (beforeValue == null)
+			{
+				throw new Error("ExposedGroup.addValueBefore :: no value with name " + beforeValueName);
+			}
+			var index:Int = this._valueList.indexOf(beforeValue);
+			this._valueList.insert(index, value);
+			#if valeditor
+			if (this._isUIBuilt)
+			{
+				if (value._uiControl == null)
+				{
+					ValEditor.toUIControl(value);
+				}
+				this._uiGroup.addExposedControlBefore(value._uiControl, beforeValue._uiControl);
+			}
+			#end
+		}
+	}
+	
+	/**
+	   
+	   @param	propertyName
+	   @return
+	**/
+	public function getValue(propertyName:String):ExposedValue
+	{
+		var value:ExposedValue = this._valueMap[propertyName];
+		if (value != null) return value;
+		for (group in this._groupList)
+		{
+			value = group.getValue(propertyName);
+			if (value != null) return value;
+		}
+		return null;
+	}
+	
+	/**
+	   
+	   @param	propertyName
+	   @return
+	**/
+	public function hasValue(propertyName:String):Bool
+	{
+		if (this._valueMap.exists(propertyName)) return true;
+		for (group in this._groupList)
+		{
+			if (group.hasValue(propertyName)) return true;
+		}
+		return false;
+	}
+	
+	/**
+	   
+	   @param	value
+	**/
+	public function removeValue(value:ExposedValue):Void
+	{
+		removeValueByName(value.propertyName);
+	}
+	
+	/**
+	   
+	   @param	name
+	   @return
+	**/
+	public function removeValueByName(propertyName:String):ExposedValue
+	{
+		var value:ExposedValue = this._valueMap[propertyName];
+		if (value != null)
+		{
+			unregisterValue(value, false);
+			this._valueList.remove(value);
+			return value;
+		}
+		
+		for (group in this._groupList)
+		{
+			value = group.removeValueByName(propertyName);
+			if (value != null)
+			{
+				unregisterValue(value, true);
+				return value;
+			}
+		}
+		return null;
+	}
+	
+	private function registerValue(value:ExposedValue, isInGroup:Bool):Void
 	{
 		if (value.isRealValue && !value.hasEventListener(ValueEvent.VALUE_CHANGE))
 		{
 			value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		}
 		
-		value.isConstructor = this.isConstructor;
-		value.isEditable = this._isEditable;
-		value.isReadOnly = this._isReadOnly;
-		value.isReadOnlyInternal = this._isReadOnlyInternal;
-		value.parentValue = this.parentValue;
-		#if valeditor
-		value.useActions = this._useActions;
-		#end
-		
-		var beforeValue:ExposedValue = this._valueMap[beforeValueName];
-		if (beforeValue == null)
+		if (!isInGroup)
 		{
-			throw new Error("ExposedGroup.addValueBefore ::: no value with name " + beforeValueName);
+			value.collection = this.collection;
+			value.updateCollectionLocked = this.updateCollectionLocked;
+			value.isConstructor = this.isConstructor;
+			value.isEditable = this._isEditable;
+			value.isReadOnlyInternal = this._isReadOnlyInternal;
+			value.parentValue = this.parentValue;
+			#if valeditor
+			value.useActions = this._useActions;
+			#end
+			
+			this._valueMap[value.propertyName] = value;
+			
+			if (Std.isOfType(value, ExposedGroup))
+			{
+				this._groupList.push(cast value);
+				this._groupMap[value.propertyName] = cast value;
+			}
 		}
+	}
+	
+	private function unregisterValue(value:ExposedValue, isInGroup:Bool):Void
+	{
+		if (value.isRealValue) value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		
-		var index:Int = this._valueList.indexOf(beforeValue);
-		this._valueList.insert(index, value);
-		this._valueMap[value.propertyName] = value;
-		
-		if (Std.isOfType(value, ExposedGroup))
+		if (!isInGroup)
 		{
-			this._groupList.push(cast value);
-			this._groupMap[value.propertyName] = cast value;
+			value.collection = null;
+			
+			this._valueMap.remove(value.propertyName);
+			
+			if (Std.isOfType(value, ExposedGroup))
+			{
+				this._groupList.remove(cast value);
+				this._groupMap.remove(value.propertyName);
+			}
 		}
-		
-		#if valeditor
-		if (this._isUIBuilt && value._uiControl == null)
-		{
-			var control:IValueUI = ValEditor.toUIControl(value);
-			this._uiGroup.addExposedControlBefore(control, beforeValue._uiControl);
-		}
-		#end
 	}
 	
 	#if valeditor
@@ -571,78 +664,6 @@ class ExposedGroup extends ExposedValue
 			}
 		}
 		return null;
-	}
-	
-	/**
-	   
-	   @param	propertyName
-	   @return
-	**/
-	public function getValue(propertyName:String):ExposedValue
-	{
-		var value:ExposedValue = this._valueMap[propertyName];
-		if (value != null) return value;
-		for (group in this._groupList)
-		{
-			value = group.getValue(propertyName);
-			if (value != null) return value;
-		}
-		return null;
-	}
-	
-	/**
-	   
-	   @param	propertyName
-	   @return
-	**/
-	public function hasValue(propertyName:String):Bool
-	{
-		if (this._valueMap.exists(propertyName)) return true;
-		for (group in this._groupList)
-		{
-			if (group.hasValue(propertyName)) return true;
-		}
-		return false;
-	}
-	
-	/**
-	   
-	   @param	value
-	**/
-	public function removeValue(value:ExposedValue):Void
-	{
-		removeValueByName(value.propertyName);
-	}
-	
-	/**
-	   
-	   @param	name
-	   @return
-	**/
-	public function removeValueByName(propertyName:String):ExposedValue
-	{
-		var value:ExposedValue;
-		value = this._valueMap[propertyName];
-		if (value != null)
-		{
-			this._valueList.remove(value);
-			this._valueMap.remove(propertyName);
-		}
-		
-		if (value == null)
-		{
-			for (group in this._groupList)
-			{
-				value = group.removeValueByName(propertyName);
-				if (value != null) break;
-			}
-		}
-		
-		if (value != null)
-		{
-			value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
-		}
-		return value;
 	}
 	
 	override public function toValueArray(values:Array<Dynamic>):Void 

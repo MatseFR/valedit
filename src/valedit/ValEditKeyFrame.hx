@@ -3,6 +3,7 @@ import juggler.animation.Transitions;
 import openfl.events.EventDispatcher;
 import valedit.animation.FrameTween;
 import valedit.animation.TweenData;
+import valeditor.events.KeyFrameEvent;
 
 /**
  * ...
@@ -129,6 +130,8 @@ class ValEditKeyFrame extends EventDispatcher
 			object.setKeyFrame(this);
 			activateFunction(object);
 		}
+		
+		KeyFrameEvent.dispatch(this, KeyFrameEvent.OBJECT_ADDED, object);
 	}
 	
 	public function remove(object:ValEditObject, poolCollection:Bool = true):Void
@@ -139,6 +142,8 @@ class ValEditKeyFrame extends EventDispatcher
 		{
 			deactivateFunction(object);
 		}
+		
+		KeyFrameEvent.dispatch(this, KeyFrameEvent.OBJECT_REMOVED, object);
 	}
 	
 	public function enter():Void

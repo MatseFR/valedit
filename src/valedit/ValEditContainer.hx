@@ -1,18 +1,22 @@
 package valedit;
 import haxe.ds.ObjectMap;
 import juggler.animation.Juggler;
+import openfl.display.BlendMode;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
 import openfl.events.EventDispatcher;
 import valedit.events.PlayEvent;
 import valedit.utils.ReverseIterator;
 import valedit.utils.StringIndexedMap;
+import valeditor.events.KeyFrameEvent;
+import valeditor.events.LayerEvent;
+import valeditor.utils.MathUtil;
 
 /**
  * ...
  * @author Matse
  */
-class ValEditContainer extends EventDispatcher implements IValEditContainer
+class ValEditContainer extends EventDispatcher implements IValEditContainer implements IValEditTimeLineContainer
 {
 	static private var _POOL:Array<ValEditContainer> = new Array<ValEditContainer>();
 	
@@ -22,12 +26,22 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		return new ValEditContainer();
 	}
 	
+	public var alpha(get, set):Float;
 	public var autoPlay:Bool = true;
+	public var blendMode(get, set):BlendMode;
+	#if starling
+	public var blendModeStarling(get, set):String;
+	#end
 	public var cameraX(get, set):Float;
 	public var cameraY(get, set):Float;
+	public var container(get, never):DisplayObjectContainer;
+	#if starling
+	public var containerStarling(get, never):starling.display.DisplayObjectContainer;
+	#end
 	public var currentLayer(get, set):ValEditLayer;
 	public var frameIndex(get, set):Int;
 	public var frameRate(get, set):Float;
+	public var height(get, set):Float;
 	public var isPlaying(get, never):Bool;
 	public var isReverse(get, never):Bool;
 	public var juggler(get, set):Juggler;
@@ -42,10 +56,61 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	#if starling
 	public var rootContainerStarling(get, set):starling.display.DisplayObjectContainer;
 	#end
+	public var rotation(get, set):Float;
+	public var scaleX(get, set):Float;
+	public var scaleY(get, set):Float;
 	public var timeLine(default, null):ValEditTimeLine;
 	public var visible(get, set):Bool;
+	public var width(get, set):Float;
 	public var x(get, set):Float;
 	public var y(get, set):Float;
+	
+	private var _alpha:Float = 1.0;
+	private function get_alpha():Float { return this._alpha; }
+	private function set_alpha(value:Float):Float
+	{
+		if (this._alpha == value) return value;
+		
+		if (this._container != null)
+		{
+			this._container.alpha = value;
+		}
+		#if starling
+		if (this._containerStarling != null)
+		{
+			this._containerStarling.alpha = value;
+		}
+		#end
+		return this._alpha = value;
+	}
+	
+	private var _blendMode:BlendMode = BlendMode.NORMAL;
+	private function get_blendMode():BlendMode { return this._blendMode; }
+	private function set_blendMode(value:BlendMode):BlendMode
+	{
+		if (this._blendMode == value) return value;
+		
+		if (this._container != null)
+		{
+			this._container.blendMode = value;
+		}
+		return this._blendMode = value;
+	}
+	
+	#if starling
+	private var _blendModeStarling:String = starling.display.BlendMode.AUTO;
+	private function get_blendModeStarling():String { return this._blendModeStarling; }
+	private function set_blendModeStarling(value:String):String
+	{
+		if (this._blendModeStarling == value) return value;
+		
+		if (this._containerStarling != null)
+		{
+			this._containerStarling.blendMode = value;
+		}
+		return this._blendModeStarling = value;
+	}
+	#end
 	
 	private var _cameraX:Float = 0;
 	private function get_cameraX():Float { return this._cameraX; }
@@ -81,6 +146,14 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		return this._cameraY = value;
 	}
 	
+	private var _container:Sprite;
+	private function get_container():DisplayObjectContainer { return this._container; }
+	
+	#if starling
+	private var _containerStarling:starling.display.Sprite;
+	private function get_containerStarling():starling.display.DisplayObjectContainer { return this._containerStarling; }
+	#end
+	
 	private var _currentLayer:ValEditLayer;
 	private function get_currentLayer():ValEditLayer { return this._currentLayer; }
 	private function set_currentLayer(value:ValEditLayer):ValEditLayer
@@ -108,6 +181,39 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	private function set_juggler(value:Juggler):Juggler
 	{
 		return this.timeLine.juggler = value;
+	}
+	
+	private function get_height():Float
+	{
+		#if starling
+		var height:Float = 0.0;
+		var heightStarling:Float = 0.0;
+		if (this._container != null)
+		{
+			height = this._container.height;
+		}
+		if (this._containerStarling != null)
+		{
+			heightStarling = this._containerStarling.height;
+		}
+		return Math.max(height, heightStarling);
+		#else
+		if (this._container != null)
+		{
+			return this._container.height;
+		}
+		else
+		{
+			return 0.0;
+		}
+		#end
+	}
+	private function set_height(value:Float):Float
+	{
+		var h:Float = this.height / this.scaleY;
+		if (h == 0.0) return h;
+		this.scaleY = value / h;
+		return value;
 	}
 	
 	private function get_lastFrameIndex():Int { return this.timeLine.lastFrameIndex; }
@@ -190,6 +296,60 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	}
 	#end
 	
+	private var _rotation:Float = 0;
+	private function get_rotation():Float { return this._rotation; }
+	private function set_rotation(value:Float):Float
+	{
+		if (this._rotation == value) return value;
+		if (this._container != null)
+		{
+			this._container.rotation = value;
+		}
+		#if starling
+		if (this._containerStarling != null)
+		{
+			this._containerStarling.rotation = MathUtil.deg2rad(value);
+		}
+		#end
+		return this._rotation = value;
+	}
+	
+	private var _scaleX:Float = 1.0;
+	private function get_scaleX():Float { return this._scaleX; }
+	private function set_scaleX(value:Float):Float
+	{
+		if (this._scaleX == value) return value;
+		if (this._container != null)
+		{
+			this._container.scaleX = value;
+		}
+		#if starling
+		if (this._containerStarling != null)
+		{
+			this._containerStarling.scaleX = value;
+		}
+		#end
+		return this._scaleX = value;
+	}
+	
+	private var _scaleY:Float = 1.0;
+	private function get_scaleY():Float { return this._scaleY; }
+	private function set_scaleY(value:Float):Float
+	{
+		if (this._scaleY == value) return value;
+		if (this._container != null)
+		{
+			this._container.scaleY = value;
+		}
+		#if starling
+		if (this._containerStarling != null)
+		{
+			this._containerStarling.scaleY = value;
+		}
+		#end
+		return this._scaleY = value;
+	}
+	
 	private var _visible:Bool = true;
 	private function get_visible():Bool { return this._visible; }
 	private function set_visible(value:Bool):Bool
@@ -200,6 +360,39 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		if (this._containerStarling != null) this._containerStarling.visible = value;
 		#end
 		return this._visible = value;
+	}
+	
+	private function get_width():Float
+	{
+		#if starling
+		var width:Float = 0.0;
+		var widthStarling:Float = 0.0;
+		if (this._container != null)
+		{
+			width = this._container.width;
+		}
+		if (this._containerStarling != null)
+		{
+			widthStarling = this._containerStarling.width;
+		}
+		return Math.max(width, widthStarling);
+		#else
+		if (this._container != null)
+		{
+			return this._container.width;
+		}
+		else
+		{
+			return 0.0;
+		}
+		#end
+	}
+	private function set_width(value:Float):Float
+	{
+		var w:Float = this.width / this.scaleX;
+		if (w == 0.0) return w;
+		this.scaleX = value / w;
+		return value;
 	}
 	
 	private var _x:Float = 0;
@@ -236,15 +429,11 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		return this._y = value;
 	}
 	
-	private var _container:Sprite;
-	#if starling
-	private var _containerStarling:starling.display.Sprite;
-	#end
-	
 	private var _layers:Array<ValEditLayer> = new Array<ValEditLayer>();
 	private var _layerMap:Map<String, ValEditLayer> = new Map<String, ValEditLayer>();
 	
-	private var _objects:StringIndexedMap<ValEditObject> = new StringIndexedMap<ValEditObject>();
+	private var _allObjects:Map<String, ValEditObject> = new Map<String, ValEditObject>();
+	private var _activeObjects:Map<String, ValEditObject> = new Map<String, ValEditObject>();
 	private var _objectToLayer:ObjectMap<ValEditObject, ValEditLayer> = new ObjectMap<ValEditObject, ValEditLayer>();
 	
 	public function new() 
@@ -295,12 +484,23 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		}
 		#end
 		
+		this.alpha = 1.0;
 		this.autoPlay = true;
+		this.blendMode = BlendMode.NORMAL;
+		#if starling
+		this.blendModeStarling = starling.display.BlendMode.AUTO;
+		#end
 		this.cameraX = 0;
 		this.cameraY = 0;
+		this.rotation = 0;
+		this.scaleX = 1.0;
+		this.scaleY = 1.0;
 		this.visible = true;
 		this.x = 0;
 		this.y = 0;
+		
+		this._allObjects.clear();
+		this._activeObjects.clear();
 	}
 	
 	public function pool():Void
@@ -363,10 +563,16 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 		layerUnregister(layer);
 	}
 	
+	public function removeLayerWithName(name:String):Void
+	{
+		var layer:ValEditLayer = this._layerMap.get(name);
+		removeLayer(layer);
+	}
+	
 	private function layerRegister(layer:ValEditLayer, index:Int):Void
 	{
 		layer.container = this;
-		this.timeLine.addChildAt(layer.timeLine, index);
+		this.timeLine.addSlaveAt(layer.timeLine, index);
 		if (this._container != null)
 		{
 			layer.rootContainer = this._container;
@@ -377,12 +583,19 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 			layer.rootContainerStarling = this._containerStarling;
 		}
 		#end
+		
+		#if !valeditor
+		layer.addEventListener(KeyFrameEvent.OBJECT_ADDED, layer_objectAdded);
+		layer.addEventListener(KeyFrameEvent.OBJECT_REMOVED, layer_objectRemoved);
+		#end
+		layer.addEventListener(LayerEvent.OBJECT_ACTIVATED, layer_objectActivated);
+		layer.addEventListener(LayerEvent.OBJECT_DEACTIVATED, layer_objectDeactivated);
 	}
 	
 	private function layerUnregister(layer:ValEditLayer):Void
 	{
 		layer.container = null;
-		this.timeLine.removeChild(layer.timeLine);
+		this.timeLine.removeSlave(layer.timeLine);
 		if (this._container != null)
 		{
 			layer.rootContainer = null;
@@ -393,19 +606,53 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 			layer.rootContainerStarling = null;
 		}
 		#end
+		
+		#if !valeditor
+		layer.removeEventListener(KeyFrameEvent.OBJECT_ADDED, layer_objectAdded);
+		layer.removeEventListener(KeyFrameEvent.OBJECT_REMOVED, layer_objectRemoved);
+		#end
+		layer.removeEventListener(LayerEvent.OBJECT_ACTIVATED, layer_objectActivated);
+		layer.removeEventListener(LayerEvent.OBJECT_DEACTIVATED, layer_objectDeactivated);
 	}
 	
-	public function add(object:ValEditObject):Void
+	#if !valeditor
+	private function layer_objectAdded(evt:KeyFrameEvent):Void
+	{
+		this._allObjects.set(evt.object.objectID, evt.object);
+	}
+	
+	private function layer_objectRemoved(evt:KeyFrameEvent):Void
+	{
+		this._allObjects.remove(evt.object.objectID);
+	}
+	#end
+	
+	private function layer_objectActivated(evt:LayerEvent):Void 
+	{
+		this._activeObjects.set(evt.object.objectID, evt.object);
+	}
+	
+	private function layer_objectDeactivated(evt:LayerEvent):Void 
+	{
+		this._activeObjects.remove(evt.object.id);
+	}
+	
+	public function addObject(object:ValEditObject):Void
 	{
 		this._currentLayer.add(object);
 	}
 	
-	public function get(objectName:String):ValEditObject
+	public function getActiveObject(objectID:String):ValEditObject
 	{
-		return this._objects.get(objectName);
+		return this._activeObjects.get(objectID);
 	}
 	
-	public function remove(object:ValEditObject):Void
+	public function getObject(objectID:String):ValEditObject
+	{
+		return this._allObjects.get(objectID);
+	}
+	
+	public function removeObject(object:ValEditObject):Void
 	{
 		var layer:ValEditLayer = this._objectToLayer.get(object);
 		layer.remove(object);
@@ -414,13 +661,15 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	private function createContainer():Void
 	{
 		this._container = new Sprite();
+		this._container.alpha = this._alpha;
+		this._container.blendMode = this._blendMode;
+		this._container.rotation = this._rotation;
+		this._container.scaleX = this._scaleX;
+		this._container.scaleY = this._scaleY;
 		this._container.x = this._x - this._cameraX;
 		this._container.y = this._y - this._cameraY;
 		this._container.visible = this._visible;
-		//for (layer in this._layers)
-		//{
-			//layer.rootContainer = this._container;
-		//}
+		
 		for (i in new ReverseIterator(this._layers.length - 1, 0))
 		{
 			this._layers[i].rootContainer = this._container;
@@ -441,13 +690,15 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer
 	private function createContainerStarling():Void
 	{
 		this._containerStarling = new starling.display.Sprite();
+		this._containerStarling.alpha = this._alpha;
+		this._containerStarling.blendMode = this._blendModeStarling;
+		this._containerStarling.rotation = MathUtil.deg2rad(this._rotation);
+		this._containerStarling.scaleX = this._scaleX;
+		this._containerStarling.scaleY = this._scaleY;
 		this._containerStarling.x = this._x - this._cameraX;
 		this._containerStarling.y = this._y - this._cameraY;
 		this._containerStarling.visible = this._visible;
-		//for (layer in this._layers)
-		//{
-			//layer.rootContainerStarling = this._containerStarling;
-		//}
+		
 		for (i in new ReverseIterator(this._layers.length - 1, 0))
 		{
 			this._layers[i].rootContainerStarling = this._containerStarling;

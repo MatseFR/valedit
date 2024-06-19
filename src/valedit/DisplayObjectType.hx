@@ -11,6 +11,7 @@ class DisplayObjectType
 	static public inline var OPENFL:Int = 0;
 	#if starling
 	static public inline var STARLING:Int = 2;
+	static public inline var MIXED:Int = 3;
 	#end
 	
 }

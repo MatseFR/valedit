@@ -3,7 +3,7 @@ import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
 import openfl.errors.Error;
 import openfl.events.EventDispatcher;
-import valedit.utils.StringIndexedMap;
+import valeditor.events.KeyFrameEvent;
 import valeditor.events.LayerEvent;
 
 /**
@@ -20,7 +20,7 @@ class ValEditLayer extends EventDispatcher
 		return new ValEditLayer(timeLine);
 	}
 	
-	public var container(get, set):IValEditContainer;
+	public var container(get, set):IValEditTimeLineContainer;
 	public var locked(get, set):Bool;
 	public var name(get, set):String;
 	public var rootContainer(get, set):DisplayObjectContainer;
@@ -32,9 +32,9 @@ class ValEditLayer extends EventDispatcher
 	public var x(get, set):Float;
 	public var y(get, set):Float;
 	
-	private var _container:IValEditContainer;
-	private function get_container():IValEditContainer { return this._container; }
-	private function set_container(value:IValEditContainer):IValEditContainer
+	private var _container:IValEditTimeLineContainer;
+	private function get_container():IValEditTimeLineContainer { return this._container; }
+	private function set_container(value:IValEditTimeLineContainer):IValEditTimeLineContainer
 	{
 		return this._container = value;
 	}
@@ -144,7 +144,6 @@ class ValEditLayer extends EventDispatcher
 	#if starling
 	private var _displayContainerStarling:starling.display.Sprite = new starling.display.Sprite();
 	#end
-	private var _objects:StringIndexedMap<ValEditObject> = new StringIndexedMap<ValEditObject>();
 
 	public function new(?timeLine:ValEditTimeLine) 
 	{
@@ -153,6 +152,8 @@ class ValEditLayer extends EventDispatcher
 		this.timeLine = timeLine;
 		this.timeLine.activateFunction = this.activate;
 		this.timeLine.deactivateFunction = this.deactivate;
+		this.timeLine.addEventListener(KeyFrameEvent.OBJECT_ADDED, onKeyFrameObjectAdded);
+		this.timeLine.addEventListener(KeyFrameEvent.OBJECT_REMOVED, onKeyFrameObjectRemoved);
 	}
 	
 	public function clear():Void
@@ -174,6 +175,8 @@ class ValEditLayer extends EventDispatcher
 		#end
 		if (this.timeLine != null)
 		{
+			this.timeLine.removeEventListener(KeyFrameEvent.OBJECT_ADDED, onKeyFrameObjectAdded);
+			this.timeLine.removeEventListener(KeyFrameEvent.OBJECT_REMOVED, onKeyFrameObjectRemoved);
 			this.timeLine.pool();
 			this.timeLine = null;
 		}
@@ -182,7 +185,8 @@ class ValEditLayer extends EventDispatcher
 		this.visible = true;
 		this.x = 0;
 		this.y = 0;
-		this._objects.clear();
+		//this._activeObjects.clear();
+		//this._allObjects.clear();
 	}
 	
 	public function pool():Void
@@ -196,17 +200,31 @@ class ValEditLayer extends EventDispatcher
 		this.timeLine = timeLine;
 		this.timeLine.activateFunction = this.activate;
 		this.timeLine.deactivateFunction = this.deactivate;
+		this.timeLine.addEventListener(KeyFrameEvent.OBJECT_ADDED, onKeyFrameObjectAdded);
+		this.timeLine.addEventListener(KeyFrameEvent.OBJECT_REMOVED, onKeyFrameObjectRemoved);
 		return this;
 	}
 	
 	public function add(object:ValEditObject):Void
 	{
-		this.timeLine.add(object);
+		this.timeLine.addObject(object);
+		
+		//if (object.numKeyFrames == 1)
+		//{
+			//this._allObjects.set(object.objectID, object);
+			//LayerEvent.dispatch(this, LayerEvent.OBJECT_ADDED, this, object);
+		//}
 	}
 	
 	public function remove(object:ValEditObject):Void
 	{
-		this.timeLine.remove(object);
+		this.timeLine.removeObject(object);
+		
+		//if (object.numKeyFrames == 0)
+		//{
+			//this._allObjects.remove(object.objectID);
+			//LayerEvent.dispatch(this, LayerEvent.OBJECT_REMOVED, this, object);
+		//}
 	}
 	
 	public function activate(object:ValEditObject):Void
@@ -253,14 +271,41 @@ class ValEditLayer extends EventDispatcher
 					}
 				#end
 				
+				case DisplayObjectType.MIXED :
+					if (this._displayContainer == null)
+					{
+						createDisplayContainer();
+					}
+					
+					cast(object.object, IValEditContainer).rootContainer = this._displayContainer;
+					
+					#if starling
+					if (this._displayContainerStarling == null)
+					{
+						createDisplayContainerStarling();
+					}
+					
+					cast(object.object, IValEditContainer).rootContainerStarling = this._displayContainerStarling;
+					#end
+					
+					if (Std.isOfType(object.object, IValEditTimeLineContainer))
+					{
+						//if (this._container.isPlaying)
+						//{
+							//cast(object.object, IValEditTimeLineContainer).play();
+						//}
+						this.timeLine.addChild(cast(object.object, IValEditTimeLineContainer).timeLine);
+						//this.container.timeLine.addChild(cast(object.object, IValEditTimeLineContainer).timeLine);
+					}
+				
 				default :
 					throw new Error("ValEditContainer.add ::: unknown display object type " + object.displayObjectType);
 			}
 		}
 		
-		this._objects.set(object.id, object);
+		//this._activeObjects.set(object.id, object);
 		
-		LayerEvent.dispatch(this, LayerEvent.OBJECT_ADDED, this, object);
+		LayerEvent.dispatch(this, LayerEvent.OBJECT_ACTIVATED, this, object);
 	}
 	
 	public function deactivate(object:ValEditObject):Void
@@ -299,14 +344,26 @@ class ValEditLayer extends EventDispatcher
 					}
 				#end
 				
+				case DisplayObjectType.MIXED :
+					cast(object.object, IValEditContainer).rootContainer = null;
+					#if starling
+					cast(object.object, IValEditContainer).rootContainerStarling = null;
+					#end
+					
+					if (Std.isOfType(object.object, IValEditTimeLineContainer))
+					{
+						this.timeLine.removeChild(cast(object.object, IValEditTimeLineContainer).timeLine);
+						//this.container.timeLine.removeChild(cast(object.object, IValEditTimeLineContainer).timeLine);
+					}
+				
 				default :
 					throw new Error("ValEditContainer.remove ::: unknown display object type " + object.displayObjectType);
 			}
 		}
 		
-		this._objects.remove(object.id);
+		//this._activeObjects.remove(object.id);
 		
-		LayerEvent.dispatch(this, LayerEvent.OBJECT_REMOVED, this, object);
+		LayerEvent.dispatch(this, LayerEvent.OBJECT_DEACTIVATED, this, object);
 	}
 	
 	private function createDisplayContainer():Void
@@ -367,5 +424,15 @@ class ValEditLayer extends EventDispatcher
 		this._displayContainerStarling = null;
 	}
 	#end
+	
+	private function onKeyFrameObjectAdded(evt:KeyFrameEvent):Void
+	{
+		dispatchEvent(evt);
+	}
+	
+	private function onKeyFrameObjectRemoved(evt:KeyFrameEvent):Void
+	{
+		dispatchEvent(evt);
+	}
 	
 }

@@ -28,6 +28,7 @@ class ValEditObject extends EventDispatcher
 	public var isDisplayObject:Bool;
 	public var numKeyFrames(default, null):Int = 0;
 	public var object:Dynamic;
+	public var objectID(get, set):String;
 	public var propertyMap:PropertyMap;
 	public var template:ValEditTemplate;
 	
@@ -47,6 +48,13 @@ class ValEditObject extends EventDispatcher
 	private function set_id(value:String):String
 	{
 		return this._id = value;
+	}
+	
+	private var _objectID:String;
+	private function get_objectID():String { return this._objectID != null ? this._objectID : this._id; }
+	private function set_objectID(value:String):String
+	{
+		return this._objectID = value;
 	}
 	
 	private var _keyFrames:Array<ValEditKeyFrame> = new Array<ValEditKeyFrame>();
@@ -78,6 +86,7 @@ class ValEditObject extends EventDispatcher
 		}
 		this.numKeyFrames = 0;
 		this.object = null;
+		this.objectID = null;
 		this.template = null;
 		this.propertyMap = null;
 	}

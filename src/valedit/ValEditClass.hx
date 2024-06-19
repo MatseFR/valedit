@@ -23,6 +23,8 @@ class ValEditClass extends EventDispatcher
 	public var addToDisplayFunctionName:String;
 	public var className:String;
 	public var classReference:Class<Dynamic>;
+	public var cloneFromFunctionName:String;
+	public var cloneToFunctionName:String;
 	public var collection:ExposedCollection;
 	public var constructorCollection:ExposedCollection;
 	public var creationFunction:Function;
@@ -81,6 +83,8 @@ class ValEditClass extends EventDispatcher
 		this.addToDisplayFunctionName = null;
 		this.className = null;
 		this.classReference = null;
+		this.cloneFromFunctionName = null;
+		this.cloneToFunctionName = null;
 		if (this.collection != null)
 		{
 			this.collection.pool();

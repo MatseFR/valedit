@@ -61,9 +61,11 @@ abstract class ExposedValue extends EventDispatcher
 	public var propertyName:String;
 	public var toolTip:String;
 	public var tweenValue(get, never):Dynamic;
+	#if valeditor
 	public var uiControl(get, set):IValueUI;
+	#end
 	public var updateCollectionOnChange:Bool = true;
-	public var updateCollectionLocked:Bool = false;
+	public var updateCollectionLocked(get, set):Bool;
 	#if valeditor
 	public var useActions(get, set):Bool;
 	/* When set to true, ValEditor will check that value to decide if 2 objects should be considered the same or not. Default is false. */
@@ -169,6 +171,7 @@ abstract class ExposedValue extends EventDispatcher
 		return this._object == null ? this.defaultValue : Reflect.getProperty(this._object, this.propertyName);
 	}
 	
+	#if valeditor
 	private var _uiControl:IValueUI;
 	private function get_uiControl():IValueUI { return this._uiControl; }
 	private function set_uiControl(value:IValueUI):IValueUI
@@ -183,6 +186,14 @@ abstract class ExposedValue extends EventDispatcher
 			//this._uiControl.exposedValue = null;
 		//}
 		return this._uiControl = value;
+	}
+	#end
+	
+	private var _updateCollectionLocked:Bool = false;
+	private function get_updateCollectionLocked():Bool { return this._updateCollectionLocked; }
+	private function set_updateCollectionLocked(value:Bool):Bool
+	{
+		return this._updateCollectionLocked = value;
 	}
 	
 	#if valeditor
