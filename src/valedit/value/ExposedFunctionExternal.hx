@@ -143,11 +143,6 @@ class ExposedFunctionExternal extends ExposedFunctionBase
 		return this;
 	}
 	
-	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
-	{
-		// nothing
-	}
-	
 	override public function isDifferentFrom(value:ExposedValue):Bool 
 	{
 		var func:ExposedFunctionExternal = cast value;
@@ -178,8 +173,6 @@ class ExposedFunctionExternal extends ExposedFunctionBase
 	{
 		// nothing
 	}
-	
-	
 	
 	/**
 	   - if param is a String and it starts with ValEdit.EXPOSED_VALUE_MARKER the function 

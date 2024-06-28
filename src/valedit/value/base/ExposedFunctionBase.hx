@@ -26,6 +26,11 @@ abstract class ExposedFunctionBase extends ExposedValue
 		super.clear();
 	}
 	
+	override public function applyToObject(object:Dynamic, visibleOnly:Bool = true, applyIfDefaultValue:Bool = false):Void 
+	{
+		// nothing
+	}
+	
 	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
 	{
 		cast(value, ExposedFunctionBase).propagateTemplateFunctionCallToInstances = this.propagateTemplateFunctionCallToInstances;

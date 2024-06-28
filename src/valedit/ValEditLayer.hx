@@ -197,6 +197,7 @@ class ValEditLayer extends EventDispatcher
 	
 	private function setTo(timeLine:ValEditTimeLine):ValEditLayer
 	{
+		if (timeLine == null) timeLine = ValEditTimeLine.fromPool();
 		this.timeLine = timeLine;
 		this.timeLine.activateFunction = this.activate;
 		this.timeLine.deactivateFunction = this.deactivate;
@@ -290,12 +291,7 @@ class ValEditLayer extends EventDispatcher
 					
 					if (Std.isOfType(object.object, IValEditTimeLineContainer))
 					{
-						//if (this._container.isPlaying)
-						//{
-							//cast(object.object, IValEditTimeLineContainer).play();
-						//}
 						this.timeLine.addChild(cast(object.object, IValEditTimeLineContainer).timeLine);
-						//this.container.timeLine.addChild(cast(object.object, IValEditTimeLineContainer).timeLine);
 					}
 				
 				default :
@@ -353,7 +349,6 @@ class ValEditLayer extends EventDispatcher
 					if (Std.isOfType(object.object, IValEditTimeLineContainer))
 					{
 						this.timeLine.removeChild(cast(object.object, IValEditTimeLineContainer).timeLine);
-						//this.container.timeLine.removeChild(cast(object.object, IValEditTimeLineContainer).timeLine);
 					}
 				
 				default :

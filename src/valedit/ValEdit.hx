@@ -136,6 +136,7 @@ class ValEdit
 		v.displayObjectType = settings.displayObjectType;
 		v.disposeFunction = settings.disposeFunction;
 		v.disposeFunctionName = settings.disposeFunctionName;
+		v.isContainer = settings.isContainer;
 		v.isDisplayObject = settings.isDisplayObject;
 		v.propertyMap = settings.propertyMap;
 		v.removeFromDisplayFunction = settings.removeFromDisplayFunction;

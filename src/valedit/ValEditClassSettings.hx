@@ -58,6 +58,9 @@ class ValEditClassSettings
 	/** name of the object's function to call on object destruction */
 	public var disposeFunctionName:String;
 	
+	/** set this to true if the class implements IValEditContainer */
+	public var isContainer:Bool;
+	
 	/** @default false **/
 	public var isDisplayObject:Bool;
 	
@@ -89,6 +92,7 @@ class ValEditClassSettings
 		this.displayObjectType = DisplayObjectType.NONE;
 		this.disposeFunction = null;
 		this.disposeFunctionName = null;
+		this.isContainer = false;
 		this.isDisplayObject = false;
 		this.propertyMap = null;
 		this.removeFromDisplayFunction = null;

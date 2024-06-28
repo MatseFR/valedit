@@ -106,11 +106,6 @@ class ExposedFunction extends ExposedFunctionBase
 		return this;
 	}
 	
-	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
-	{
-		// nothing
-	}
-	
 	override public function isDifferentFrom(value:ExposedValue):Bool 
 	{
 		var func:ExposedFunction = cast value;

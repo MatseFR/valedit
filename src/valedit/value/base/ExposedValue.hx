@@ -360,7 +360,7 @@ abstract class ExposedValue extends EventDispatcher
 		this._extras.applyToObject(this._object);
 	}
 	
-	public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void
+	public function applyToObject(object:Dynamic, visibleOnly:Bool = true, applyIfDefaultValue:Bool = false):Void
 	{
 		if (!applyIfDefaultValue && this._object == null && this._storedValue == null)
 		{

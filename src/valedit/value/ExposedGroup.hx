@@ -231,11 +231,22 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	
-	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
+	override public function applyToObject(object:Dynamic, visibleOnly:Bool = true, applyIfDefaultValue:Bool = false):Void 
 	{
-		for (value in this._valueList)
+		if (visibleOnly)
 		{
-			value.applyToObject(object, applyIfDefaultValue);
+			for (value in this._valueList)
+			{
+				if (!value.visible) continue;
+				value.applyToObject(object, visibleOnly, applyIfDefaultValue);
+			}
+		}
+		else
+		{
+			for (value in this._valueList)
+			{
+				value.applyToObject(object, visibleOnly, applyIfDefaultValue);
+			}
 		}
 	}
 	

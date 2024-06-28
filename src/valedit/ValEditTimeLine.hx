@@ -317,8 +317,6 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 	
 	public function advanceTime(time:Float):Void
 	{
-		//if (!this._isPlaying) return;
-		
 		for (child in this._children)
 		{
 			child.advanceTime(time);
@@ -330,7 +328,6 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		}
 		
 		this._playTime += time;
-		//if (this._playTime >= this._frameTime)
 		while (this._playTime >= this._frameTime)
 		{
 			playProgress();
@@ -530,20 +527,29 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		timeLine.numFrames = this.numFrames;
 		timeLine.numLoops = this._numLoops;
 		timeLine.reverse = this._reverse;
+		if (timeLine.lastFrameIndex > this.lastFrameIndex)
+		{
+			this._lastFrameIndex = timeLine.lastFrameIndex;
+		}
 		return timeLine;
 	}
 	
 	public function removeSlave(timeLine:ValEditTimeLine):ValEditTimeLine
 	{
-		this._slaves.remove(timeLine);
-		timeLine.parent = null;
-		return timeLine;
+		var index:Int = this._slaves.indexOf(timeLine);
+		return removeSlaveAt(index);
 	}
 	
 	public function removeSlaveAt(index:Int):ValEditTimeLine
 	{
-		this._slaves[index].parent = null;
-		return this._slaves.splice(index, 1)[0];
+		var timeLine:ValEditTimeLine = this._slaves[index];
+		timeLine.parent = null;
+		this._slaves.splice(index, 1);
+		if (timeLine.lastFrameIndex == this.lastFrameIndex)
+		{
+			updateLastFrameIndex();
+		}
+		return timeLine;
 	}
 	
 	public function updateLastFrameIndex():Void

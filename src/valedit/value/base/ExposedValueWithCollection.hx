@@ -219,13 +219,13 @@ abstract class ExposedValueWithCollection extends ExposedValue
 		if (this.parentValue != null) this.parentValue.childValueChanged(value);
 	}
 	
-	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
+	override public function applyToObject(object:Dynamic, visibleOnly:Bool = true, applyIfDefaultValue:Bool = false):Void 
 	{
-		super.applyToObject(object, applyIfDefaultValue);
+		super.applyToObject(object, visibleOnly, applyIfDefaultValue);
 		
 		if (this._childCollection != null)
 		{
-			this._childCollection.applyToObject(object, applyIfDefaultValue);
+			this._childCollection.applyToObject(object, visibleOnly, applyIfDefaultValue);
 		}
 	}
 	

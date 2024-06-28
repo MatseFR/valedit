@@ -252,10 +252,10 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
-	public function applyAndSetObject(object:Dynamic, ?applyIfDefaultValue:Bool):Void
+	public function applyAndSetObject(object:Dynamic, visibleOnly:Bool = true, ?applyIfDefaultValue:Bool):Void
 	{
 		this.object = object;
-		applyToObject(object, applyIfDefaultValue);
+		applyToObject(object, visibleOnly, applyIfDefaultValue);
 	}
 	
 	public function readAndSetObject(object:Dynamic):Void
@@ -264,16 +264,27 @@ class ExposedCollection extends EventDispatcher
 		readValuesFromObject(object);
 	}
 	
-	public function applyToObject(object:Dynamic, ?applyIfDefaultValue:Bool):Void
+	public function applyToObject(object:Dynamic, visibleOnly:Bool = true, ?applyIfDefaultValue:Bool):Void
 	{
 		if (applyIfDefaultValue == null)
 		{
 			applyIfDefaultValue = this.applyIfDefaultValue;
 		}
 		
-		for (value in this._valueList)
+		if (visibleOnly)
 		{
-			value.applyToObject(object, applyIfDefaultValue);
+			for (value in this._valueList)
+			{
+				if (!value.visible) continue;
+				value.applyToObject(object, visibleOnly, applyIfDefaultValue);
+			}
+		}
+		else
+		{
+			for (value in this._valueList)
+			{
+				value.applyToObject(object, visibleOnly, applyIfDefaultValue);
+			}
 		}
 	}
 	

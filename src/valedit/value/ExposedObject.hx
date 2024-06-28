@@ -191,19 +191,19 @@ class ExposedObject extends ExposedValueWithCollection
 		}
 	}
 	
-	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
+	override public function applyToObject(object:Dynamic, visibleOnly:Bool = true, applyIfDefaultValue:Bool = false):Void 
 	{
 		if (this._childCollection != null)
 		{
 			if (this._object == null || this._object == object)
 			{
-				this._childCollection.applyToObject(this.value, applyIfDefaultValue);
+				this._childCollection.applyToObject(this.value, visibleOnly, applyIfDefaultValue);
 			}
 			else
 			{
 				var realObject:Dynamic = Reflect.getProperty(object, this.propertyName);
 				
-				this._childCollection.applyToObject(realObject, applyIfDefaultValue);
+				this._childCollection.applyToObject(realObject, visibleOnly, applyIfDefaultValue);
 			}
 			
 			if (this.reassignOnChange)

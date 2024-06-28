@@ -13,7 +13,7 @@ abstract class ExposedNotValue extends ExposedValue
 		this._isRealValue = false;
 	}
 	
-	override public function applyToObject(object:Dynamic, applyIfDefaultValue:Bool = false):Void 
+	override public function applyToObject(object:Dynamic, visibleOnly:Bool = true, applyIfDefaultValue:Bool = false):Void 
 	{
 		// nothing
 	}

@@ -39,6 +39,7 @@ class ValEditClass extends EventDispatcher
 	public var disposeFunction:Function;
 	/** Void->Void object function name, to be called on object destruction */
 	public var disposeFunctionName:String = null;
+	public var isContainer:Bool;
 	public var isDisplayObject:Bool;
 	public var numInstances(get, never):Int;
 	public var numTemplates(get, never):Int;
@@ -105,6 +106,7 @@ class ValEditClass extends EventDispatcher
 		this.displayObjectType = DisplayObjectType.NONE;
 		this.disposeFunction = null;
 		this.disposeFunctionName = null;
+		this.isContainer = false;
 		this.isDisplayObject = false;
 		this._numObjects = 0;
 		this._numTemplates = 0;

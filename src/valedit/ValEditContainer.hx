@@ -7,8 +7,9 @@ import openfl.display.Sprite;
 import openfl.events.EventDispatcher;
 import valedit.events.PlayEvent;
 import valedit.utils.ReverseIterator;
-import valedit.utils.StringIndexedMap;
+#if !valeditor
 import valeditor.events.KeyFrameEvent;
+#end
 import valeditor.events.LayerEvent;
 import valeditor.utils.MathUtil;
 
