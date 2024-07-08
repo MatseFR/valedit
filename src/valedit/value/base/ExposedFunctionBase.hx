@@ -37,6 +37,11 @@ abstract class ExposedFunctionBase extends ExposedValue
 		super.clone_internal(value, copyValue);
 	}
 	
+	override public function cloneValue(toValue:ExposedValue):Void 
+	{
+		// nothing
+	}
+	
 	abstract public function getExposedValueParameters(?values:Array<ExposedValue>):Array<ExposedValue>;
 	
 	abstract public function execute():Void;
