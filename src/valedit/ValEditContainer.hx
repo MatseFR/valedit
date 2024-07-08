@@ -586,6 +586,11 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer impl
 		#end
 		
 		#if !valeditor
+		for (object in layer.allObjects)
+		{
+			objectRegister(object);
+		}
+		
 		layer.addEventListener(KeyFrameEvent.OBJECT_ADDED, layer_objectAdded);
 		layer.addEventListener(KeyFrameEvent.OBJECT_REMOVED, layer_objectRemoved);
 		#end
@@ -609,6 +614,11 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer impl
 		#end
 		
 		#if !valeditor
+		for (object in layer.allObjects)
+		{
+			objectUnregister(object);
+		}
+		
 		layer.removeEventListener(KeyFrameEvent.OBJECT_ADDED, layer_objectAdded);
 		layer.removeEventListener(KeyFrameEvent.OBJECT_REMOVED, layer_objectRemoved);
 		#end
@@ -617,14 +627,24 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer impl
 	}
 	
 	#if !valeditor
+	private function objectRegister(object:ValEditObject):Void
+	{
+		this._allObjects.set(object.objectID, object);
+	}
+	
+	private function objectUnregister(object:ValEditObject):Void
+	{
+		this._allObjects.remove(object.objectID);
+	}
+	
 	private function layer_objectAdded(evt:KeyFrameEvent):Void
 	{
-		this._allObjects.set(evt.object.objectID, evt.object);
+		objectRegister(evt.object);
 	}
 	
 	private function layer_objectRemoved(evt:KeyFrameEvent):Void
 	{
-		this._allObjects.remove(evt.object.objectID);
+		objectUnregister(evt.object);
 	}
 	#end
 	
