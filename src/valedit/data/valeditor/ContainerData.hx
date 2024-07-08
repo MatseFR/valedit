@@ -65,7 +65,7 @@ class ContainerData
 		
 		if (!collection.hasValue("rotation"))
 		{
-			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.05);
+			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.5);
 			floatDrag.isAbsolute = true;
 			collection.addValue(floatDrag, groupName);
 		}
@@ -132,11 +132,11 @@ class ContainerData
 			collection.addValue(intDrag, groupName);
 		}
 		
-		if (!collection.hasValue("frameIndex"))
-		{
-			intDrag = new ExposedIntDrag("frameIndex", null, 0);
-			collection.addValue(intDrag, groupName);
-		}
+		//if (!collection.hasValue("frameIndex"))
+		//{
+			//intDrag = new ExposedIntDrag("frameIndex", null, 0);
+			//collection.addValue(intDrag, groupName);
+		//}
 		
 		if (!collection.hasValue("loop"))
 		{
@@ -184,9 +184,8 @@ class ContainerData
 		collection.add(ClassValueVisibility.fromPool("scaleY"));
 		collection.add(ClassValueVisibility.fromPool("frameRate"));
 		collection.add(ClassValueVisibility.fromPool("numFrames"));
-		collection.add(ClassValueVisibility.fromPool("frameIndex"));
+		//collection.add(ClassValueVisibility.fromPool("frameIndex"));
 		collection.add(ClassValueVisibility.fromPool("numFrames"));
-		collection.add(ClassValueVisibility.fromPool("frameIndex"));
 		collection.add(ClassValueVisibility.fromPool("loop"));
 		collection.add(ClassValueVisibility.fromPool("reverse"));
 		collection.add(ClassValueVisibility.fromPool("numLoops"));
