@@ -20,6 +20,7 @@ class ValEditLayer extends EventDispatcher
 		return new ValEditLayer(timeLine);
 	}
 	
+	public var allObjects(default, null):Array<ValEditObject> = new Array<ValEditObject>();
 	public var container(get, set):IValEditTimeLineContainer;
 	public var locked(get, set):Bool;
 	public var name(get, set):String;
@@ -180,13 +181,12 @@ class ValEditLayer extends EventDispatcher
 			this.timeLine.pool();
 			this.timeLine = null;
 		}
+		this.allObjects.resize(0);
 		this.container = null;
 		this.locked = false;
 		this.visible = true;
 		this.x = 0;
 		this.y = 0;
-		//this._activeObjects.clear();
-		//this._allObjects.clear();
 	}
 	
 	public function pool():Void
@@ -209,23 +209,11 @@ class ValEditLayer extends EventDispatcher
 	public function add(object:ValEditObject):Void
 	{
 		this.timeLine.addObject(object);
-		
-		//if (object.numKeyFrames == 1)
-		//{
-			//this._allObjects.set(object.objectID, object);
-			//LayerEvent.dispatch(this, LayerEvent.OBJECT_ADDED, this, object);
-		//}
 	}
 	
 	public function remove(object:ValEditObject):Void
 	{
 		this.timeLine.removeObject(object);
-		
-		//if (object.numKeyFrames == 0)
-		//{
-			//this._allObjects.remove(object.objectID);
-			//LayerEvent.dispatch(this, LayerEvent.OBJECT_REMOVED, this, object);
-		//}
 	}
 	
 	public function activate(object:ValEditObject):Void
@@ -422,11 +410,19 @@ class ValEditLayer extends EventDispatcher
 	
 	private function onKeyFrameObjectAdded(evt:KeyFrameEvent):Void
 	{
+		if (evt.object.numKeyFrames == 1)
+		{
+			this.allObjects[this.allObjects.length] = evt.object;
+		}
 		dispatchEvent(evt);
 	}
 	
 	private function onKeyFrameObjectRemoved(evt:KeyFrameEvent):Void
 	{
+		if (evt.object.numKeyFrames == 0)
+		{
+			this.allObjects.remove(evt.object);
+		}
 		dispatchEvent(evt);
 	}
 	
