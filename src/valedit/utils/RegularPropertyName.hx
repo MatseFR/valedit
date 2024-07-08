@@ -12,6 +12,7 @@ class RegularPropertyName
 	inline static public var COLOR:String = "color";
 	inline static public var HEIGHT:String = "height";
 	inline static public var MASK:String = "mask";
+	inline static public var PARENT:String = "parent";
 	inline static public var PIVOT_X:String = "pivotX";
 	inline static public var PIVOT_Y:String = "pivotY";
 	inline static public var PIVOT_Z:String = "pivotZ";
