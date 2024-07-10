@@ -133,6 +133,7 @@ class ExposedFunctionExternal extends ExposedFunctionBase
 	private function setTo(propertyName:String, name:String, callObject:Dynamic = null, parameters:Array<Dynamic>):ExposedFunctionExternal
 	{
 		setNames(propertyName, name);
+		this.callObject = callObject;
 		if (parameters != null)
 		{
 			for (param in parameters)
