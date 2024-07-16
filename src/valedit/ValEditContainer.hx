@@ -655,7 +655,7 @@ class ValEditContainer extends EventDispatcher implements IValEditContainer impl
 	
 	private function layer_objectDeactivated(evt:LayerEvent):Void 
 	{
-		this._activeObjects.remove(evt.object.id);
+		this._activeObjects.remove(evt.object.objectID);
 	}
 	
 	public function addObject(object:ValEditObject):Void
