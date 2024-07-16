@@ -19,6 +19,8 @@ class ValEdit
 	inline static public var STARLING_SUBTEXTURE_MARKER:String = "@@@";
 	#end
 	
+	static public var FEATHERS_VERSION:String = Compiler.getDefine("feathers");
+	static public var INPUT_ACTION_VERSION:String = Compiler.getDefine("inputAction");
 	static public var LIME_VERSION:String = Compiler.getDefine("lime");
 	static public var OPENFL_JUGGLER_VERSION:String = Compiler.getDefine("openfl-juggler");
 	static public var OPENFL_VERSION:String = Compiler.getDefine("openfl");
