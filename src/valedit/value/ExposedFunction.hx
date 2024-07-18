@@ -127,6 +127,11 @@ class ExposedFunction extends ExposedFunctionBase
 		}
 	}
 	
+	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void
+	{
+		// nothing
+	}
+	
 	/**
 	   - if param is a String and it starts with ValEdit.EXPOSED_VALUE_MARKER the function 
 	   will look for an exposed value with that name and use its value for the function call
