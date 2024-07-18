@@ -67,7 +67,7 @@ class SimpleThemeData
 		subGroup = collection.getGroup("light mode");
 		if (subGroup == null)
 		{
-			subGroup = new ExposedGroup("light mode", true, true);
+			subGroup = new ExposedGroup("light mode");
 			collection.addValue(subGroup, groupName);
 		}
 		
@@ -162,7 +162,7 @@ class SimpleThemeData
 		subGroup = collection.getGroup("dark mode");
 		if (subGroup == null)
 		{
-			subGroup = new ExposedGroup("dark mode", true, true);
+			subGroup = new ExposedGroup("dark mode");
 			collection.addValue(subGroup, groupName);
 		}
 		
