@@ -5,6 +5,7 @@ import valedit.value.ExposedBitmapData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
+import valedit.value.ExposedGroup;
 import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedObject;
 import valeditor.editor.visibility.ClassValueVisibility;
@@ -23,6 +24,7 @@ class ShapeData
 		var bool:ExposedBool;
 		var color:ExposedColor;
 		var floatDrag:ExposedFloatDrag;
+		var group:ExposedGroup;
 		var object:ExposedObject;
 		
 		if (collection == null) collection = new ExposedCollection();
@@ -39,107 +41,118 @@ class ShapeData
 			collection.addValue(floatDrag);
 		}
 		
+		if (!collection.hasValue("fill properties"))
+		{
+			group = new ExposedGroup("fill properties", "Fill");
+			collection.addValue(group, groupName);
+		}
+		
 		if (!collection.hasValue("fill"))
 		{
 			bool = new ExposedBool("fill");
-			collection.addValue(bool, groupName);
+			collection.addValue(bool, "fill properties");
 		}
 		
 		if (!collection.hasValue("fillAlpha"))
 		{
 			floatDrag = new ExposedFloatDrag("fillAlpha", null, 0.0, 1.0, 0.01);
-			collection.addValue(floatDrag, groupName);
+			collection.addValue(floatDrag, "fill properties");
 		}
 		
 		if (!collection.hasValue("fillColor"))
 		{
 			color = new ExposedColor("fillColor");
-			collection.addValue(color, groupName);
+			collection.addValue(color, "fill properties");
 		}
 		
 		if (!collection.hasValue("fillBitmapData"))
 		{
 			bmd = new ExposedBitmapData("fillBitmapData");
-			collection.addValue(bmd, groupName);
+			collection.addValue(bmd, "fill properties");
 		}
 		
 		if (!collection.hasValue("fillRepeat"))
 		{
 			bool = new ExposedBool("fillRepeat");
-			collection.addValue(bool, groupName);
+			collection.addValue(bool, "fill properties");
 		}
 		
 		if (!collection.hasValue("fillSmoothing"))
 		{
 			bool = new ExposedBool("fillSmoothing");
-			collection.addValue(bool, groupName);
+			collection.addValue(bool, "fill properties");
 		}
 		
 		if (!collection.hasValue("fillMatrix"))
 		{
 			object = new ExposedObject("fillMatrix", null, true);
-			collection.addValue(object, groupName);
+			collection.addValue(object, "fill properties");
+		}
+		
+		if (!collection.hasValue("outline properties"))
+		{
+			group = new ExposedGroup("outline properties", "Outline");
+			collection.addValue(group, groupName);
 		}
 		
 		if (!collection.hasValue("outline"))
 		{
 			bool = new ExposedBool("outline");
-			collection.addValue(bool, groupName);
+			collection.addValue(bool, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineThickness"))
 		{
 			floatDrag = new ExposedFloatDrag("outlineThickness", null, 0, null, 0.5);
-			collection.addValue(floatDrag, groupName);
+			collection.addValue(floatDrag, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineAlpha"))
 		{
 			floatDrag = new ExposedFloatDrag("outlineAlpha", null, 0.0, 1.0, 0.01);
-			collection.addValue(floatDrag, groupName);
+			collection.addValue(floatDrag, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineColor"))
 		{
 			color = new ExposedColor("outlineColor");
-			collection.addValue(color, groupName);
+			collection.addValue(color, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineBitmapData"))
 		{
 			bmd = new ExposedBitmapData("outlineBitmapData");
-			collection.addValue(bmd, groupName);
+			collection.addValue(bmd, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineRepeat"))
 		{
 			bool = new ExposedBool("outlineRepeat");
-			collection.addValue(bool, groupName);
+			collection.addValue(bool, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineSmoothing"))
 		{
 			bool = new ExposedBool("outlineSmoothing");
-			collection.addValue(bool, groupName);
+			collection.addValue(bool, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineMatrix"))
 		{
 			object = new ExposedObject("outlineMatrix", null, true);
-			collection.addValue(object, groupName);
+			collection.addValue(object, "outline properties");
 		}
-		
-		DisplayData.exposeDisplayObject(collection, groupName);
 		
 		return collection;
 	}
 	
-	static public function exposeBaseShapeConstructor(?collection:ExposedCollection):ExposedCollection
+	static public function exposeBaseShapeConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bmd:ExposedBitmapData;
 		var bool:ExposedBool;
 		var color:ExposedColor;
 		var floatDrag:ExposedFloatDrag;
+		var group:ExposedGroup;
 		
 		if (collection == null)
 		{
@@ -148,51 +161,63 @@ class ShapeData
 			collection.useActions = false;
 		}
 		
+		if (!collection.hasValue("fill properties"))
+		{
+			group = new ExposedGroup("fill properties", "Fill");
+			collection.addValue(group, groupName);
+		}
+		
 		if (!collection.hasValue("fill"))
 		{
 			bool = new ExposedBool("fill");
 			bool.defaultValue = true;
-			collection.addValue(bool);
+			collection.addValue(bool, "fill properties");
 		}
 		
 		if (!collection.hasValue("fillColor"))
 		{
 			color = new ExposedColor("fillColor");
 			color.defaultValue = 0xffffff;
-			collection.addValue(color);
+			collection.addValue(color, "fill properties");
 		}
 		
 		if (!collection.hasValue("fillBitmapData"))
 		{
 			bmd = new ExposedBitmapData("fillBitmapData");
-			collection.addValue(bmd);
+			collection.addValue(bmd, "fill properties");
+		}
+		
+		if (!collection.hasValue("outline properties"))
+		{
+			group = new ExposedGroup("outline properties", "Outline");
+			collection.addValue(group, groupName);
 		}
 		
 		if (!collection.hasValue("outline"))
 		{
 			bool = new ExposedBool("outline");
 			bool.defaultValue = true;
-			collection.addValue(bool);
+			collection.addValue(bool, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineThickness"))
 		{
 			floatDrag = new ExposedFloatDrag("outlineThickness", null, 0, null, 0.5);
 			floatDrag.defaultValue = 1.0;
-			collection.addValue(floatDrag);
+			collection.addValue(floatDrag, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineColor"))
 		{
 			color = new ExposedColor("outlineColor");
 			color.defaultValue = 0x000000;
-			collection.addValue(color);
+			collection.addValue(color, "outline properties");
 		}
 		
 		if (!collection.hasValue("outlineBitmapData"))
 		{
 			bmd = new ExposedBitmapData("outlineBitmapData");
-			collection.addValue(bmd);
+			collection.addValue(bmd, "outline properties");
 		}
 		
 		return collection;
@@ -229,6 +254,8 @@ class ShapeData
 		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		DisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("arc"))
 		{
@@ -322,6 +349,8 @@ class ShapeData
 		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		DisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("arrowLength"))
 		{
@@ -431,6 +460,8 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
+		DisplayData.exposeDisplayObject(collection);
+		
 		if (!collection.hasValue("numSides"))
 		{
 			intDrag = new ExposedIntDrag("numSides", null, 3, null, 0.5);
@@ -511,19 +542,21 @@ class ShapeData
 		return collection;
 	}
 	
-	static public function exposeCircleShape(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	static public function exposeCircleShape(?collection:ExposedCollection):ExposedCollection
 	{
 		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
+		DisplayData.exposeDisplayObject(collection);
+		
 		if (!collection.hasValue("radius"))
 		{
 			floatDrag = new ExposedFloatDrag("radius", null, 0, null, 0.5);
-			collection.addValue(floatDrag, groupName);
+			collection.addValue(floatDrag);
 		}
 		
-		exposeBaseShape(collection, groupName);
+		exposeBaseShape(collection);
 		
 		return collection;
 	}
@@ -566,6 +599,8 @@ class ShapeData
 		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		DisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("radius"))
 		{
@@ -631,6 +666,8 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
+		DisplayData.exposeDisplayObject(collection);
+		
 		if (!collection.hasValue("radiusX"))
 		{
 			floatDrag = new ExposedFloatDrag("radiusX", null, 0);
@@ -695,6 +732,8 @@ class ShapeData
 		var intDrag:ExposedIntDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		DisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("numSides"))
 		{
@@ -783,6 +822,8 @@ class ShapeData
 		var intDrag:ExposedIntDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		DisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("numSides"))
 		{
@@ -892,6 +933,8 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
+		DisplayData.exposeDisplayObject(collection);
+		
 		if (!collection.hasValue("numSides"))
 		{
 			intDrag = new ExposedIntDrag("numSides", null, 3);
@@ -964,6 +1007,8 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
+		DisplayData.exposeDisplayObject(collection);
+		
 		if (!collection.hasValue("rectangleWidth"))
 		{
 			floatDrag = new ExposedFloatDrag("rectangleWidth");
@@ -1027,6 +1072,8 @@ class ShapeData
 		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		DisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("rectangleWidth"))
 		{
@@ -1121,6 +1168,8 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
+		DisplayData.exposeDisplayObject(collection);
+		
 		if (!collection.hasValue("numPoints"))
 		{
 			intDrag = new ExposedIntDrag("numPoints", null, 3, null, 0.5);
@@ -1206,6 +1255,8 @@ class ShapeData
 		var floatDrag:ExposedFloatDrag;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		DisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("arc"))
 		{
