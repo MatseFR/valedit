@@ -74,8 +74,6 @@ class WedgeShape extends BaseShape
 		var segAngle:Float = this._arc / segs;
 		var theta:Float = -(segAngle / 180) * Math.PI;
 		var angle:Float = -(this._startAngle / 180) * Math.PI;
-		//var ax:Float = this._pivotX - Math.cos(angle) * this._radiusX;
-		//var ay:Float = this._pivotY - Math.sin(angle) * this._radiusY;
 		
 		var angleMid:Float;
 		var bx:Float;
@@ -83,22 +81,25 @@ class WedgeShape extends BaseShape
 		var cx:Float;
 		var cy:Float;
 		
-		this.graphics.moveTo(this._pivotX, this._pivotY);
+		var startX:Float = this._pivotX + this._radiusX;
+		var startY:Float = this._pivotY + this._radiusY;
+		
+		this.graphics.moveTo(startX, startY);
 		
 		if (segs > 0)
 		{
-			var ax:Float = this._pivotX + Math.cos(angle) * this._radiusX;
-			var ay:Float = this._pivotY + Math.sin(angle) * this._radiusY;
+			var ax:Float = startX + Math.cos(angle) * this._radiusX;
+			var ay:Float = startY + Math.sin(angle) * this._radiusY;
 			this.graphics.lineTo(ax, ay);
 			
 			for (i in 0...segs)
 			{
 				angle += theta;
 				angleMid = angle - (theta / 2);
-				bx = this._pivotX + Math.cos(angle) * this._radiusX;
-				by = this._pivotY + Math.sin(angle) * this._radiusY;
-				cx = this._pivotX + Math.cos(angleMid) * (this._radiusX / Math.cos(theta / 2));
-				cy = this._pivotY + Math.sin(angleMid) * (this._radiusY / Math.cos(theta / 2));
+				bx = startX + Math.cos(angle) * this._radiusX;
+				by = startY + Math.sin(angle) * this._radiusY;
+				cx = startX + Math.cos(angleMid) * (this._radiusX / Math.cos(theta / 2));
+				cy = startY + Math.sin(angleMid) * (this._radiusY / Math.cos(theta / 2));
 				
 				this.graphics.curveTo(cx, cy, bx, by);
 			}
