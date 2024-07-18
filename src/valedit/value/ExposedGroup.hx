@@ -30,14 +30,13 @@ class ExposedGroup extends ExposedValue
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(name:String, isCollapsable:Bool = true, isCollapsedDefault:Bool = false):ExposedGroup
+	static public function fromPool(propertyName:String, name:String = null, isUIOpen:Bool = false):ExposedGroup
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(name, isCollapsable, isCollapsedDefault);
-		return new ExposedGroup(name, isCollapsable, isCollapsedDefault);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, isUIOpen);
+		return new ExposedGroup(propertyName, name, isUIOpen);
 	}
 	
-	public var isCollapsable:Bool;
-	public var isCollapsedDefault:Bool;
+	public var isUIOpen:Bool = false;
 	
 	override function set_collection(value:ExposedCollection):ExposedCollection 
 	{
@@ -144,16 +143,16 @@ class ExposedGroup extends ExposedValue
 	   @param	isCollapsable
 	   @param	isCollapsedDefault
 	**/
-	public function new(name:String, isCollapsable:Bool = true, isCollapsedDefault:Bool = false) 
+	public function new(propertyName:String, name:String = null, isUIOpen:Bool = false) 
 	{
-		super(name);
+		super(propertyName, name);
 		this.isGroup = true;
-		this.isCollapsable = isCollapsable;
-		this.isCollapsedDefault = isCollapsedDefault;
+		this.isUIOpen = isUIOpen;
 	}
 	
 	override public function clear():Void 
 	{
+		this.isUIOpen = false;
 		super.clear();
 		for (value in this._valueList)
 		{
@@ -179,11 +178,10 @@ class ExposedGroup extends ExposedValue
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(name:String, isCollapsable:Bool, isCollapsedDefault:Bool):ExposedGroup
+	private function setTo(propertyName:String, name:String, isUIOpen:Bool):ExposedGroup
 	{
-		setNames(name, null);
-		this.isCollapsable = isCollapsable;
-		this.isCollapsedDefault = isCollapsedDefault;
+		setNames(propertyName, name);
+		this.isUIOpen = isUIOpen;
 		return this;
 	}
 	
@@ -746,7 +744,7 @@ class ExposedGroup extends ExposedValue
 	**/
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var group:ExposedGroup = fromPool(this.name, this.isCollapsable, this.isCollapsedDefault);
+		var group:ExposedGroup = fromPool(this.propertyName, this.name, this.isUIOpen);
 		
 		for (val in this._valueList)
 		{
