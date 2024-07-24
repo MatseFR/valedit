@@ -61,6 +61,14 @@ class ValEditClassSettings
 	/** set this to true if the class implements IValEditContainer */
 	public var isContainer:Bool;
 	
+	/** set this to true if the class implements IValEditContainerOpenFL */
+	public var isContainerOpenFL:Bool;
+	
+	#if starling
+	/** set this to true if the class implements IValEditContainerStarling */
+	public var isContainerStarling:Bool;
+	#end
+	
 	/** @default false **/
 	public var isDisplayObject:Bool;
 	
@@ -93,6 +101,10 @@ class ValEditClassSettings
 		this.disposeFunction = null;
 		this.disposeFunctionName = null;
 		this.isContainer = false;
+		this.isContainerOpenFL = false;
+		#if starling
+		this.isContainerStarling = false;
+		#end
 		this.isDisplayObject = false;
 		this.propertyMap = null;
 		this.removeFromDisplayFunction = null;

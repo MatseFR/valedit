@@ -260,34 +260,37 @@ class ValEditLayer extends EventDispatcher
 					}
 				#end
 				
-				case DisplayObjectType.MIXED :
-					if (this._displayContainer == null)
-					{
-						createDisplayContainer();
-					}
-					
-					cast(object.object, IValEditContainer).rootContainer = this._displayContainer;
-					
-					#if starling
-					if (this._displayContainerStarling == null)
-					{
-						createDisplayContainerStarling();
-					}
-					
-					cast(object.object, IValEditContainer).rootContainerStarling = this._displayContainerStarling;
-					#end
-					
-					if (Std.isOfType(object.object, IValEditTimeLineContainer))
-					{
-						this.timeLine.addChild(cast(object.object, IValEditTimeLineContainer).timeLine);
-					}
-				
 				default :
 					throw new Error("ValEditContainer.add ::: unknown display object type " + object.displayObjectType);
 			}
 		}
-		
-		//this._activeObjects.set(object.id, object);
+		else if (object.isContainer)
+		{
+			if (object.isContainerOpenFL)
+			{
+				if (this._displayContainer == null)
+				{
+					createDisplayContainer();
+				}
+				cast(object.object, IValEditOpenFLContainer).rootContainer = this._displayContainer;
+			}
+			
+			#if starling
+			if (object.isContainerStarling)
+			{
+				if (this._displayContainerStarling == null)
+				{
+					createDisplayContainerStarling();
+				}
+				cast(object.object, IValEditStarlingContainer).rootContainerStarling = this._displayContainerStarling;
+			}
+			#end
+			
+			if (Std.isOfType(object.object, IValEditTimeLineContainer))
+			{
+				this.timeLine.addChild(cast(object.object, IValEditTimeLineContainer).timeLine);
+			}
+		}
 		
 		LayerEvent.dispatch(this, LayerEvent.OBJECT_ACTIVATED, this, object);
 	}
@@ -328,23 +331,29 @@ class ValEditLayer extends EventDispatcher
 					}
 				#end
 				
-				case DisplayObjectType.MIXED :
-					cast(object.object, IValEditContainer).rootContainer = null;
-					#if starling
-					cast(object.object, IValEditContainer).rootContainerStarling = null;
-					#end
-					
-					if (Std.isOfType(object.object, IValEditTimeLineContainer))
-					{
-						this.timeLine.removeChild(cast(object.object, IValEditTimeLineContainer).timeLine);
-					}
-				
 				default :
 					throw new Error("ValEditContainer.remove ::: unknown display object type " + object.displayObjectType);
 			}
 		}
-		
-		//this._activeObjects.remove(object.id);
+		else if (object.isContainer)
+		{
+			if (object.isContainerOpenFL)
+			{
+				cast(object.object, IValEditOpenFLContainer).rootContainer = null;
+			}
+			
+			#if starling
+			if (object.isContainerStarling)
+			{
+				cast(object.object, IValEditStarlingContainer).rootContainerStarling = null;
+			}
+			#end
+			
+			if (Std.isOfType(object.object, IValEditTimeLineContainer))
+			{
+				this.timeLine.removeChild(cast(object.object, IValEditTimeLineContainer).timeLine);
+			}
+		}
 		
 		LayerEvent.dispatch(this, LayerEvent.OBJECT_DEACTIVATED, this, object);
 	}

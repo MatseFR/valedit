@@ -138,6 +138,8 @@ class ValEdit
 		v.disposeFunction = settings.disposeFunction;
 		v.disposeFunctionName = settings.disposeFunctionName;
 		v.isContainer = settings.isContainer;
+		v.isContainerOpenFL = settings.isContainerOpenFL;
+		v.isContainerStarling = settings.isContainerStarling;
 		v.isDisplayObject = settings.isDisplayObject;
 		v.propertyMap = settings.propertyMap;
 		v.removeFromDisplayFunction = settings.removeFromDisplayFunction;
@@ -314,6 +316,12 @@ class ValEdit
 		{
 			valObject.object = object;
 		}
+		
+		valObject.isContainer = valClass.isContainer;
+		valObject.isContainerOpenFL = valClass.isContainerOpenFL;
+		#if starling
+		valObject.isContainerStarling = valClass.isContainerStarling;
+		#end
 		
 		if (valClass.creationInitFunction != null)
 		{

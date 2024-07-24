@@ -17,6 +17,103 @@ import valeditor.editor.visibility.ClassVisibilityCollection;
  */
 class ContainerData 
 {
+	
+	static public function exposeSpriteContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var floatDrag:ExposedFloatDrag;
+		var select:ExposedSelect;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("cameraX"))
+		{
+			floatDrag = new ExposedFloatDrag("cameraX");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("cameraY"))
+		{
+			floatDrag = new ExposedFloatDrag("cameraY");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("x"))
+		{
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("y"))
+		{
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("alpha"))
+		{
+			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("rotation"))
+		{
+			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.5);
+			floatDrag.isAbsolute = true;
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("blendMode"))
+		{
+			select = new ExposedSelect("blendMode");
+			select.add("ADD", BlendMode.ADD);
+			select.add("ALPHA", BlendMode.ALPHA);
+			select.add("DARKEN", BlendMode.DARKEN);
+			select.add("DIFFERENCE", BlendMode.DIFFERENCE);
+			select.add("ERASE", BlendMode.ERASE);
+			select.add("HARDLIGHT", BlendMode.HARDLIGHT);
+			select.add("INVERT", BlendMode.INVERT);
+			select.add("LAYER", BlendMode.LAYER);
+			select.add("LIGHTEN", BlendMode.LIGHTEN);
+			select.add("MULTIPLY", BlendMode.MULTIPLY);
+			select.add("NORMAL", BlendMode.NORMAL);
+			select.add("OVERLAY", BlendMode.OVERLAY);
+			select.add("SCREEN", BlendMode.SCREEN);
+			select.add("SHADER", BlendMode.SHADER);
+			select.add("SUBTRACT", BlendMode.SUBTRACT);
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("scaleX"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleY"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		collection.add(ClassValueVisibility.fromPool("cameraX"));
+		collection.add(ClassValueVisibility.fromPool("cameraY"));
+		collection.add(ClassValueVisibility.fromPool("x"));
+		collection.add(ClassValueVisibility.fromPool("y"));
+		collection.add(ClassValueVisibility.fromPool("alpha"));
+		collection.add(ClassValueVisibility.fromPool("rotation"));
+		collection.add(ClassValueVisibility.fromPool("blendMode"));
+		collection.add(ClassValueVisibility.fromPool("scaleX"));
+		collection.add(ClassValueVisibility.fromPool("scaleY"));
+		
+		return collection;
+	}
 
 	static public function exposeValEditContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
@@ -225,12 +322,10 @@ class ContainerData
 		value.pool();
 		
 		value = collection.getValue("x");
-		collection.removeValue(value);
-		value.pool();
+		value.visible = false;
 		
 		value = collection.getValue("y");
-		collection.removeValue(value);
-		value.pool();
+		value.visible = false;
 		
 		value = collection.getValue("rotation");
 		collection.removeValue(value);

@@ -25,6 +25,11 @@ class ValEditObject extends EventDispatcher
 	public var defaultCollection(get, set):ExposedCollection;
 	public var displayObjectType:Int;
 	public var id(get, set):String;
+	public var isContainer:Bool;
+	public var isContainerOpenFL:Bool;
+	#if starling
+	public var isContainerStarling:Bool;
+	#end
 	public var isDisplayObject:Bool;
 	public var numKeyFrames(default, null):Int = 0;
 	public var object:Dynamic;
@@ -84,6 +89,12 @@ class ValEditObject extends EventDispatcher
 			this._defaultCollection.pool();
 			this._defaultCollection = null;
 		}
+		this.isContainer = false;
+		this.isContainerOpenFL = false;
+		#if starling
+		this.isContainerStarling = false;
+		#end
+		this.isDisplayObject = false;
 		this.numKeyFrames = 0;
 		this.object = null;
 		this.objectID = null;
