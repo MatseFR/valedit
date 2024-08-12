@@ -114,6 +114,236 @@ class ContainerData
 		
 		return collection;
 	}
+	
+	static public function exposeSpriteContainerStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var floatDrag:ExposedFloatDrag;
+		var select:ExposedSelect;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("cameraX"))
+		{
+			floatDrag = new ExposedFloatDrag("cameraX");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("cameraY"))
+		{
+			floatDrag = new ExposedFloatDrag("cameraY");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("x"))
+		{
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("y"))
+		{
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("alpha"))
+		{
+			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("rotation"))
+		{
+			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.01);
+			floatDrag.isAbsolute = true;
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("blendMode"))
+		{
+			select = new ExposedSelect("blendMode");
+			select.add("ADD", starling.display.BlendMode.ADD);
+			select.add("AUTO", starling.display.BlendMode.AUTO);
+			select.add("BELOW", starling.display.BlendMode.BELOW);
+			select.add("ERASE", starling.display.BlendMode.ERASE);
+			select.add("MASK", starling.display.BlendMode.MASK);
+			select.add("MULTIPLY", starling.display.BlendMode.MULTIPLY);
+			select.add("NONE", starling.display.BlendMode.NONE);
+			select.add("NORMAL", starling.display.BlendMode.NORMAL);
+			select.add("SCREEN", starling.display.BlendMode.SCREEN);
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("scaleX"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleY"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerStarlingVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		collection.add(ClassValueVisibility.fromPool("cameraX"));
+		collection.add(ClassValueVisibility.fromPool("cameraY"));
+		collection.add(ClassValueVisibility.fromPool("x"));
+		collection.add(ClassValueVisibility.fromPool("y"));
+		collection.add(ClassValueVisibility.fromPool("alpha"));
+		collection.add(ClassValueVisibility.fromPool("rotation"));
+		collection.add(ClassValueVisibility.fromPool("blendMode"));
+		collection.add(ClassValueVisibility.fromPool("scaleX"));
+		collection.add(ClassValueVisibility.fromPool("scaleY"));
+		
+		return collection;
+	}
+	
+	static public function exposeSpriteContainerStarling3D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var floatDrag:ExposedFloatDrag;
+		var select:ExposedSelect;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("cameraX"))
+		{
+			floatDrag = new ExposedFloatDrag("cameraX");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("cameraY"))
+		{
+			floatDrag = new ExposedFloatDrag("cameraY");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("x"))
+		{
+			floatDrag = new ExposedFloatDrag("x");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("y"))
+		{
+			floatDrag = new ExposedFloatDrag("y");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("z"))
+		{
+			floatDrag = new ExposedFloatDrag("z");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("alpha"))
+		{
+			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("rotationX"))
+		{
+			floatDrag = new ExposedFloatDrag("rotationX", null, null, null, 0.01);
+			floatDrag.isAbsolute = true;
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("rotationY"))
+		{
+			floatDrag = new ExposedFloatDrag("rotationY", null, null, null, 0.01);
+			floatDrag.isAbsolute = true;
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("rotationZ"))
+		{
+			floatDrag = new ExposedFloatDrag("rotationZ", null, null, null, 0.01);
+			floatDrag.isAbsolute = true;
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("blendMode"))
+		{
+			select = new ExposedSelect("blendMode");
+			select.add("ADD", starling.display.BlendMode.ADD);
+			select.add("AUTO", starling.display.BlendMode.AUTO);
+			select.add("BELOW", starling.display.BlendMode.BELOW);
+			select.add("ERASE", starling.display.BlendMode.ERASE);
+			select.add("MASK", starling.display.BlendMode.MASK);
+			select.add("MULTIPLY", starling.display.BlendMode.MULTIPLY);
+			select.add("NONE", starling.display.BlendMode.NONE);
+			select.add("NORMAL", starling.display.BlendMode.NORMAL);
+			select.add("SCREEN", starling.display.BlendMode.SCREEN);
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("scaleX"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleY"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleZ"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleZ", null, null, null, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("pivotX"))
+		{
+			floatDrag = new ExposedFloatDrag("pivotX");
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("pivotY"))
+		{
+			floatDrag = new ExposedFloatDrag("pivotY");
+			collection.addValue(floatDrag);
+		}
+		
+		if (!collection.hasValue("pivotZ"))
+		{
+			floatDrag = new ExposedFloatDrag("pivotZ");
+			collection.addValue(floatDrag);
+		}
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerStarling3DVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		collection.add(ClassValueVisibility.fromPool("cameraX"));
+		collection.add(ClassValueVisibility.fromPool("cameraY"));
+		collection.add(ClassValueVisibility.fromPool("x"));
+		collection.add(ClassValueVisibility.fromPool("y"));
+		collection.add(ClassValueVisibility.fromPool("z"));
+		collection.add(ClassValueVisibility.fromPool("alpha"));
+		collection.add(ClassValueVisibility.fromPool("rotationX"));
+		collection.add(ClassValueVisibility.fromPool("rotationY"));
+		collection.add(ClassValueVisibility.fromPool("rotationZ"));
+		collection.add(ClassValueVisibility.fromPool("blendMode"));
+		collection.add(ClassValueVisibility.fromPool("scaleX"));
+		collection.add(ClassValueVisibility.fromPool("scaleY"));
+		collection.add(ClassValueVisibility.fromPool("scaleZ"));
+		
+		return collection;
+	}
 
 	static public function exposeValEditContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
