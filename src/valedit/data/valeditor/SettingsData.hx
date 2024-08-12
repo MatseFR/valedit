@@ -2,9 +2,11 @@ package valedit.data.valeditor;
 import juggler.animation.Transitions;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
+import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFunctionExternal;
 import valedit.value.ExposedIntDrag;
+import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 #if desktop
@@ -137,6 +139,7 @@ class SettingsData
 		var floatDrag:ExposedFloatDrag;
 		var funcExternal:ExposedFunctionExternal;
 		var intDrag:ExposedIntDrag;
+		var object:ExposedObject;
 		#if desktop
 		var path:ExposedPath;
 		#end
@@ -192,7 +195,67 @@ class SettingsData
 		if (!collection.hasValue("editClassVisibilitiesFile"))
 		{
 			funcExternal = new ExposedFunctionExternal("editClassVisibilitiesFile", "edit class visibilities", ValEditor);
-			collection.addValue(funcExternal);
+			collection.addValue(funcExternal, groupName);
+		}
+		
+		#if starling
+		if (!collection.hasValue("starlingSettings"))
+		{
+			object = new ExposedObject("starlingSettings", "starling settings");
+			collection.addValue(object, groupName);
+		}
+		#end
+		
+		return collection;
+	}
+	
+	static public function exposeInteractiveObjectController(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var color:ExposedColor;
+		var floatDrag:ExposedFloatDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("debug"))
+		{
+			bool = new ExposedBool("debug");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("debugAlpha"))
+		{
+			floatDrag = new ExposedFloatDrag("debugAlpha");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("debugColor"))
+		{
+			color = new ExposedColor("debugColor");
+			collection.addValue(color, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeStarlingSettings(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var floatDrag:ExposedFloatDrag;
+		var intDrag:ExposedIntDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("antiAliasing"))
+		{
+			intDrag = new ExposedIntDrag("antiAliasing", null, 0, 16);
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("fieldOfView"))
+		{
+			floatDrag = new ExposedFloatDrag("fieldOfView", null, 0, 3.10, 0.05);
+			floatDrag.toolTip = "This only affects Sprite3D instances and their children";
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		return collection;
