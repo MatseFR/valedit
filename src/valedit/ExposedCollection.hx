@@ -225,6 +225,7 @@ class ExposedCollection extends EventDispatcher
 		#end
 		for (value in this._valueList)
 		{
+			unregisterValue(value);
 			value.pool();
 		}
 		this._valueList.resize(0);
@@ -441,12 +442,11 @@ class ExposedCollection extends EventDispatcher
 	{
 		if (groupName != null)
 		{
-			registerValue(value, true);
 			this._groupMap[groupName].addValue(value);
 		}
 		else
 		{
-			registerValue(value, false);
+			registerValue(value);
 			this._valueList.push(value);
 		}
 	}
@@ -461,12 +461,11 @@ class ExposedCollection extends EventDispatcher
 	{
 		if (groupName != null)
 		{
-			registerValue(value, true);
 			this._groupMap[groupName].addValueAfter(value, afterValueName);
 		}
 		else
 		{
-			registerValue(value, false);
+			registerValue(value);
 			var afterValue:ExposedValue = this._valueMap[afterValueName];
 			if (afterValue == null)
 			{
@@ -487,12 +486,11 @@ class ExposedCollection extends EventDispatcher
 	{
 		if (groupName != null)
 		{
-			registerValue(value, true);
 			this._groupMap[groupName].addValueBefore(value, beforeValueName);
 		}
 		else
 		{
-			registerValue(value, false);
+			registerValue(value);
 			var beforeValue:ExposedValue = this._valueMap[beforeValueName];
 			if (beforeValue == null)
 			{
@@ -520,6 +518,7 @@ class ExposedCollection extends EventDispatcher
 		if (propertyNames.length == 1) return getValue(propertyNames[0]);
 		
 		var value:ExposedValueWithCollection = cast getValue(propertyNames[0]);
+		if (value == null) return null;
 		var count:Int = propertyNames.length;
 		for (i in 1...count - 1)
 		{
@@ -540,6 +539,22 @@ class ExposedCollection extends EventDispatcher
 		return false;
 	}
 	
+	public function hasValueDeep(propertyNames:Array<String>):Bool
+	{
+		if (propertyNames.length == 1) return hasValue(propertyNames[0]);
+		
+		var value:ExposedValueWithCollection = cast getValue(propertyNames[0]);
+		if (value == null) return false;
+		var count:Int = propertyNames.length;
+		for (i in 1...count - 1)
+		{
+			value = cast value.childCollection.getValue(propertyNames[i]);
+			if (value == null) return false;
+		}
+		
+		return value.childCollection.hasValue(propertyNames[count-1]);
+	}
+	
 	public function removeValue(value:ExposedValue):Void
 	{
 		removeValueByName(value.propertyName);
@@ -550,7 +565,7 @@ class ExposedCollection extends EventDispatcher
 		var value:ExposedValue = this._valueMap[propertyName];
 		if (value != null)
 		{
-			unregisterValue(value, false);
+			unregisterValue(value);
 			this._valueList.remove(value);
 			return value;
 		}
@@ -560,54 +575,47 @@ class ExposedCollection extends EventDispatcher
 			value = group.removeValueByName(propertyName);
 			if (value != null)
 			{
-				unregisterValue(value, true);
 				return value;
 			}
 		}
 		return null;
 	}
 	
-	private function registerValue(value:ExposedValue, isInGroup:Bool):Void
+	private function registerValue(value:ExposedValue):Void
 	{
 		if (value.isRealValue) value.addEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		
-		if (!isInGroup)
+		value.collection = this;
+		value.updateCollectionLocked = this._valuesUpdateLocked;
+		value.isConstructor = this._isConstructor;
+		value.isEditable = this._isEditable;
+		value.isReadOnlyInternal = this._isReadOnly || this._isReadOnlyInternal;
+		value.parentValue = this._parentValue;
+		#if valeditor
+		value.useActions = this._useActions;
+		#end
+		
+		this._valueMap[value.propertyName] = value;
+		
+		if (value.isGroup)
 		{
-			value.collection = this;
-			value.updateCollectionLocked = this._valuesUpdateLocked;
-			value.isConstructor = this._isConstructor;
-			value.isEditable = this._isEditable;
-			value.isReadOnlyInternal = this._isReadOnly || this._isReadOnlyInternal;
-			value.parentValue = this._parentValue;
-			#if valeditor
-			value.useActions = this._useActions;
-			#end
-			
-			this._valueMap[value.propertyName] = value;
-			
-			if (Std.isOfType(value, ExposedGroup))
-			{
-				this._groupList.push(cast value);
-				this._groupMap[value.propertyName] = cast value;
-			}
+			this._groupList.push(cast value);
+			this._groupMap[value.propertyName] = cast value;
 		}
 	}
 	
-	private function unregisterValue(value:ExposedValue, isInGroup:Bool):Void
+	private function unregisterValue(value:ExposedValue):Void
 	{
 		if (value.isRealValue) value.removeEventListener(ValueEvent.VALUE_CHANGE, onValueChange);
 		
-		if (!isInGroup)
+		value.collection = null;
+		
+		this._valueMap.remove(value.propertyName);
+		
+		if (value.isGroup)
 		{
-			value.collection = null;
-			
-			this._valueMap.remove(value.propertyName);
-			
-			if (Std.isOfType(value, ExposedGroup))
-			{
-				this._groupList.remove(cast value);
-				this._groupMap.remove(value.propertyName);
-			}
+			this._groupList.remove(cast value);
+			this._groupMap.remove(value.propertyName);
 		}
 	}
 	
