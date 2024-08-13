@@ -20,6 +20,7 @@ class ValEditObject extends EventDispatcher
 	
 	public var className:String;
 	public var clss:ValEditClass;
+	public var container(get, set):IValEditContainer;
 	public var currentCollection(default, null):ExposedCollection;
 	public var currentKeyFrame(default, null):ValEditKeyFrame;
 	public var defaultCollection(get, set):ExposedCollection;
@@ -31,11 +32,21 @@ class ValEditObject extends EventDispatcher
 	public var isContainerStarling:Bool;
 	#end
 	public var isDisplayObject:Bool;
+	public var isInPool(get, never):Bool;
 	public var numKeyFrames(default, null):Int = 0;
 	public var object:Dynamic;
 	public var objectID(get, set):String;
 	public var propertyMap:PropertyMap;
 	public var template:ValEditTemplate;
+	
+	private var _container:IValEditContainer;
+	private function get_container():IValEditContainer { return this._container; }
+	private function set_container(value:IValEditContainer):IValEditContainer
+	{
+		if (value == this._container) return value;
+		
+		return this._container = value;
+	}
 	
 	private var _defaultCollection:ExposedCollection;
 	private function get_defaultCollection():ExposedCollection { return this._defaultCollection; }
@@ -54,6 +65,9 @@ class ValEditObject extends EventDispatcher
 	{
 		return this._id = value;
 	}
+	
+	private var _isInPool:Bool = false;
+	private function get_isInPool():Bool { return this._isInPool; }
 	
 	private var _objectID:String;
 	private function get_objectID():String { return this._objectID != null ? this._objectID : this._id; }
@@ -77,9 +91,9 @@ class ValEditObject extends EventDispatcher
 	
 	public function clear():Void
 	{
-		for (i in new ReverseIterator(this._keyFrames.length - 1, 0))
+		if (this.container != null)
 		{
-			this._keyFrames[i].remove(this);
+			this.container.removeObjectCompletely(this);
 		}
 		
 		this.clss = null;
@@ -106,6 +120,7 @@ class ValEditObject extends EventDispatcher
 	{
 		clear();
 		_POOL[_POOL.length] = this;
+		this._isInPool = true;
 	}
 	
 	public function canBeDestroyed():Bool
@@ -151,6 +166,14 @@ class ValEditObject extends EventDispatcher
 	public function hasKeyFrame(keyFrame:ValEditKeyFrame):Bool
 	{
 		return this._keyFrameToCollection.exists(keyFrame);
+	}
+	
+	public function removeAllKeyFrames(poolCollections:Bool = true):Void
+	{
+		for (i in new ReverseIterator(this._keyFrames.length - 1, 0))
+		{
+			this._keyFrames[i].remove(this, poolCollections);
+		}
 	}
 	
 	public function removeKeyFrame(keyFrame:ValEditKeyFrame, poolCollection:Bool = true):Void
@@ -200,8 +223,17 @@ class ValEditObject extends EventDispatcher
 		return Reflect.getProperty(this.object, this._realPropertyName);
 	}
 	
+	public function hasProperty(regularPropertyName:String):Bool
+	{
+		if (this.currentCollection == null) return false;
+		this._realPropertyName = this.propertyMap.getObjectPropertyName(regularPropertyName);
+		if (this._realPropertyName == null) this._realPropertyName = regularPropertyName;
+		return this.currentCollection.hasValue(this._realPropertyName);
+	}
+	
 	public function getValue(regularPropertyName:String):ExposedValue
 	{
+		if (this.currentCollection == null) return null;
 		this._realPropertyName = this.propertyMap.getObjectPropertyName(regularPropertyName);
 		if (this._realPropertyName == null) this._realPropertyName = regularPropertyName;
 		return this.currentCollection.getValue(this._realPropertyName);
@@ -214,6 +246,8 @@ class ValEditObject extends EventDispatcher
 		this.className = clss.className;
 		this.isDisplayObject = clss.isDisplayObject;
 		this.displayObjectType = clss.displayObjectType;
+		
+		this._isInPool = false;
 		
 		return this;
 	}
