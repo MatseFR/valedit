@@ -41,6 +41,7 @@ abstract class ExposedValue extends EventDispatcher
 	public var isAbsolute:Bool = false;
 	public var isConstructor(get, set):Bool;
 	public var isEditable(get, set):Bool;
+	/* Tells whether value is a group or not */
 	public var isGroup(default, null):Bool;
 	public var isNullable:Bool = false;
 	public var isReadOnly(get, set):Bool;
