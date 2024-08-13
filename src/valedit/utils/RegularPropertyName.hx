@@ -23,6 +23,8 @@ class RegularPropertyName
 	inline static public var SCALE_X:String = "scaleX";
 	inline static public var SCALE_Y:String = "scaleY";
 	inline static public var SCALE_Z:String = "scaleZ";
+	inline static public var SKEW_X:String = "skewX";
+	inline static public var SKEW_Y:String = "skewY";
 	inline static public var TRANSFORM:String = "transform";
 	inline static public var TRANSFORMATION_MATRIX:String = "transformationMatrix";
 	inline static public var VISIBLE:String = "visible";
