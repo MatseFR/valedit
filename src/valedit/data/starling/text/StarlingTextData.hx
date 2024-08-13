@@ -14,6 +14,7 @@ import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFontName;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedIntDrag;
+import valedit.value.ExposedObject;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedText;
@@ -32,11 +33,14 @@ class StarlingTextData
 	{
 		var bool:ExposedBool;
 		var floatDrag:ExposedFloatDrag;
+		var object:ExposedObject;
 		var objectRef:ExposedObjectReference;
 		var select:ExposedSelect;
 		var text:ExposedText;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		StarlingDisplayData.exposeDisplayObjectContainer(collection, groupName);
 		
 		if (!collection.hasValue("autoScale"))
 		{
@@ -54,57 +58,6 @@ class StarlingTextData
 			collection.addValue(select, groupName);
 		}
 		
-		if (!collection.hasValue("batchable"))
-		{
-			bool = new ExposedBool("batchable");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("border"))
-		{
-			bool = new ExposedBool("border");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("format"))
-		{
-			objectRef = new ExposedObjectReference("format");
-			objectRef.addClass(TextFormat);
-			collection.addValue(objectRef, groupName);
-		}
-		
-		if (!collection.hasValue("isHtmlText"))
-		{
-			bool = new ExposedBool("isHtmlText");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("padding"))
-		{
-			floatDrag = new ExposedFloatDrag("padding");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("pixelSnapping"))
-		{
-			bool = new ExposedBool("pixelSnapping");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("style"))
-		{
-			objectRef = new ExposedObjectReference("style");
-			objectRef.addClass(MeshStyle);
-			collection.addValue(objectRef, groupName);
-		}
-		
-		if (!collection.hasValue("styleSheet"))
-		{
-			objectRef = new ExposedObjectReference("styleSheet");
-			objectRef.addClass(StyleSheet);
-			collection.addValue(objectRef, groupName);
-		}
-		
 		if (!collection.hasValue("text"))
 		{
 			text = new ExposedText("text");
@@ -117,7 +70,55 @@ class StarlingTextData
 			collection.addValue(bool, groupName);
 		}
 		
-		StarlingDisplayData.exposeDisplayObjectContainer(collection, groupName);
+		if (!collection.hasValue("padding"))
+		{
+			floatDrag = new ExposedFloatDrag("padding");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("isHtmlText"))
+		{
+			bool = new ExposedBool("isHtmlText");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("format"))
+		{
+			object = new ExposedObject("format");
+			collection.addValue(object, groupName);
+		}
+		
+		if (!collection.hasValue("batchable"))
+		{
+			bool = new ExposedBool("batchable");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("border"))
+		{
+			bool = new ExposedBool("border");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("pixelSnapping"))
+		{
+			bool = new ExposedBool("pixelSnapping");
+			collection.addValue(bool, groupName);
+		}
+		
+		//if (!collection.hasValue("style"))
+		//{
+			//objectRef = new ExposedObjectReference("style");
+			//objectRef.addClass(MeshStyle);
+			//collection.addValue(objectRef, groupName);
+		//}
+		
+		//if (!collection.hasValue("styleSheet"))
+		//{
+			//objectRef = new ExposedObjectReference("styleSheet");
+			//objectRef.addClass(StyleSheet);
+			//collection.addValue(objectRef, groupName);
+		//}
 		
 		return collection;
 	}
@@ -135,8 +136,8 @@ class StarlingTextData
 		collection.add(ClassValueVisibility.fromPool("isHtmlText", true, false));
 		collection.add(ClassValueVisibility.fromPool("padding", true, false));
 		collection.add(ClassValueVisibility.fromPool("pixelSnapping", true, false));
-		collection.add(ClassValueVisibility.fromPool("style", true, false));
-		collection.add(ClassValueVisibility.fromPool("styleSheet", true, false));
+		//collection.add(ClassValueVisibility.fromPool("style", true, false));
+		//collection.add(ClassValueVisibility.fromPool("styleSheet", true, false));
 		collection.add(ClassValueVisibility.fromPool("text"));
 		collection.add(ClassValueVisibility.fromPool("wordWrap", true, false));
 		
@@ -176,17 +177,17 @@ class StarlingTextData
 			collection.addValue(text, groupName);
 		}
 		
-		if (!collection.hasValue("format"))
-		{
-			objectRef = new ExposedObjectReference("format");
-			collection.addValue(objectRef, groupName);
-		}
+		//if (!collection.hasValue("format"))
+		//{
+			//objectRef = new ExposedObjectReference("format");
+			//collection.addValue(objectRef, groupName);
+		//}
 		
-		if (!collection.hasValue("options"))
-		{
-			objectRef = new ExposedObjectReference("options");
-			collection.addValue(objectRef, groupName);
-		}
+		//if (!collection.hasValue("options"))
+		//{
+			//objectRef = new ExposedObjectReference("options");
+			//collection.addValue(objectRef, groupName);
+		//}
 		
 		return collection;
 	}
@@ -201,10 +202,16 @@ class StarlingTextData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		if (!collection.hasValue("bold"))
+		if (!collection.hasValue("font"))
 		{
-			bool = new ExposedBool("bold");
-			collection.addValue(bool, groupName);
+			font = new ExposedFontName("font");
+			collection.addValue(font, groupName);
+		}
+		
+		if (!collection.hasValue("size"))
+		{
+			floatDrag = new ExposedFloatDrag("size", null, 0);
+			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("color"))
@@ -213,10 +220,22 @@ class StarlingTextData
 			collection.addValue(color, groupName);
 		}
 		
-		if (!collection.hasValue("font"))
+		if (!collection.hasValue("bold"))
 		{
-			font = new ExposedFontName("font");
-			collection.addValue(font, groupName);
+			bool = new ExposedBool("bold");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("italic"))
+		{
+			bool = new ExposedBool("italic");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("underline"))
+		{
+			bool = new ExposedBool("underline");
+			collection.addValue(bool, groupName);
 		}
 		
 		if (!collection.hasValue("horizontalAlign"))
@@ -228,10 +247,13 @@ class StarlingTextData
 			collection.addValue(select, groupName);
 		}
 		
-		if (!collection.hasValue("italic"))
+		if (!collection.hasValue("verticalAlign"))
 		{
-			bool = new ExposedBool("italic");
-			collection.addValue(bool, groupName);
+			select = new ExposedSelect("verticalAlign");
+			select.add("BOTTOM", Align.BOTTOM);
+			select.add("CENTER", Align.CENTER);
+			select.add("TOP", Align.TOP);
+			collection.addValue(select, groupName);
 		}
 		
 		if (!collection.hasValue("kerning"))
@@ -250,27 +272,6 @@ class StarlingTextData
 		{
 			floatDrag = new ExposedFloatDrag("letterSpacing");
 			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("size"))
-		{
-			floatDrag = new ExposedFloatDrag("size", null, 0);
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("underline"))
-		{
-			bool = new ExposedBool("underline");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("verticalAlign"))
-		{
-			select = new ExposedSelect("verticalAlign");
-			select.add("BOTTOM", Align.BOTTOM);
-			select.add("CENTER", Align.CENTER);
-			select.add("TOP", Align.TOP);
-			collection.addValue(select, groupName);
 		}
 		
 		return collection;
@@ -354,9 +355,9 @@ class StarlingTextData
 			collection.addValue(select, groupName);
 		}
 		
-		if (!collection.hasValue("isHtmlText"))
+		if (!collection.hasValue("wordWrap"))
 		{
-			bool = new ExposedBool("isHtmlText");
+			bool = new ExposedBool("wordWrap");
 			collection.addValue(bool, groupName);
 		}
 		
@@ -366,12 +367,18 @@ class StarlingTextData
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("styleSheet"))
+		if (!collection.hasValue("isHtmlText"))
 		{
-			objectRef = new ExposedObjectReference("styleSheet");
-			objectRef.addClass(StyleSheet);
-			collection.addValue(objectRef, groupName);
+			bool = new ExposedBool("isHtmlText");
+			collection.addValue(bool, groupName);
 		}
+		
+		//if (!collection.hasValue("styleSheet"))
+		//{
+			//objectRef = new ExposedObjectReference("styleSheet");
+			//objectRef.addClass(StyleSheet);
+			//collection.addValue(objectRef, groupName);
+		//}
 		
 		if (!collection.hasValue("textureFormat"))
 		{
@@ -389,12 +396,6 @@ class StarlingTextData
 		{
 			floatDrag = new ExposedFloatDrag("textureScale", null, 0);
 			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("wordWrap"))
-		{
-			bool = new ExposedBool("wordWrap");
-			collection.addValue(bool, groupName);
 		}
 		
 		if (!collection.hasValue("copyFrom"))
