@@ -4,9 +4,9 @@ import juggler.animation.Juggler;
 /**
  * @author Matse
  */
-interface IValEditTimeLineContainer
+interface ITimeLineContainer
 {
-	public var currentLayer(get, set):ValEditLayer;
+	public var currentLayer(get, set):ITimeLineLayer;
 	public var frameIndex(get, set):Int;
 	public var frameRate(get, set):Float;
 	public var isPlaying(get, never):Bool;
@@ -16,4 +16,5 @@ interface IValEditTimeLineContainer
 	
 	function play():Void;
 	function stop():Void;
+	function createLayer():ITimeLineLayer;
 }

@@ -2,7 +2,7 @@ package valedit.value;
 
 import valedit.value.base.ExposedValueTweenable;
 import valedit.value.data.NumericMode;
-import valeditor.ui.feathers.variant.TextInputVariant;
+import valeditor.ui.feathers.theme.variant.TextInputVariant;
 import valedit.value.base.ExposedValue;
 
 /**

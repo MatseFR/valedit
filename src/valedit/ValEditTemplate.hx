@@ -98,7 +98,6 @@ class ValEditTemplate extends EventDispatcher
 		this.id = id;
 		this.collection = collection;
 		this.constructorCollection = constructorCollection;
-		
 		return this;
 	}
 	

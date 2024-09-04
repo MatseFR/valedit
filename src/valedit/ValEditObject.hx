@@ -20,7 +20,7 @@ class ValEditObject extends EventDispatcher
 	
 	public var className:String;
 	public var clss:ValEditClass;
-	public var container(get, set):IValEditContainer;
+	public var container(get, set):IContainer;
 	public var currentCollection(default, null):ExposedCollection;
 	public var currentKeyFrame(default, null):ValEditKeyFrame;
 	public var defaultCollection(get, set):ExposedCollection;
@@ -33,15 +33,16 @@ class ValEditObject extends EventDispatcher
 	#end
 	public var isDisplayObject:Bool;
 	public var isInPool(get, never):Bool;
+	public var isTimeLineContainer:Bool;
 	public var numKeyFrames(default, null):Int = 0;
 	public var object:Dynamic;
 	public var objectID(get, set):String;
 	public var propertyMap:PropertyMap;
 	public var template:ValEditTemplate;
 	
-	private var _container:IValEditContainer;
-	private function get_container():IValEditContainer { return this._container; }
-	private function set_container(value:IValEditContainer):IValEditContainer
+	private var _container:IContainer;
+	private function get_container():IContainer { return this._container; }
+	private function set_container(value:IContainer):IContainer
 	{
 		if (value == this._container) return value;
 		
@@ -109,11 +110,12 @@ class ValEditObject extends EventDispatcher
 		this.isContainerStarling = false;
 		#end
 		this.isDisplayObject = false;
+		this.isTimeLineContainer = false;
 		this.numKeyFrames = 0;
 		this.object = null;
 		this.objectID = null;
-		this.template = null;
 		this.propertyMap = null;
+		this.template = null;
 	}
 	
 	public function pool():Void

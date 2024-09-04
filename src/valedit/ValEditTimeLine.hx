@@ -438,29 +438,29 @@ class ValEditTimeLine extends EventDispatcher implements IAnimatable
 		keyFrame.addEventListener(KeyFrameEvent.OBJECT_ADDED, onKeyFrameObjectAdded);
 		keyFrame.addEventListener(KeyFrameEvent.OBJECT_REMOVED, onKeyFrameObjectRemoved);
 		
-		#if valeditor
-		var pos:Int = -1;
-		var count:Int = this.keyFrames.length;
-		for (i in 0...count)
-		{
-			if (this._keyFrames[i].indexStart > keyFrame.indexStart)
-			{
-				pos = i;
-				break;
-			}
-		}
-		
-		if (pos == -1)
-		{
-			this._keyFrames[count] = keyFrame;
-		}
-		else
-		{
-			this._keyFrames.insert(pos, keyFrame);
-		}
-		#else
+		//#if valeditor
+		//var pos:Int = -1;
+		//var count:Int = this.keyFrames.length;
+		//for (i in 0...count)
+		//{
+			//if (this._keyFrames[i].indexStart > keyFrame.indexStart)
+			//{
+				//pos = i;
+				//break;
+			//}
+		//}
+		//
+		//if (pos == -1)
+		//{
+			//this._keyFrames[count] = keyFrame;
+		//}
+		//else
+		//{
+			//this._keyFrames.insert(pos, keyFrame);
+		//}
+		//#else
 		this._keyFrames[this._keyFrames.length] = keyFrame;
-		#end
+		//#end
 	}
 	
 	public function unregisterKeyFrame(keyFrame:ValEditKeyFrame):Void

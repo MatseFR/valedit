@@ -141,6 +141,7 @@ class ValEdit
 		v.isContainerOpenFL = settings.isContainerOpenFL;
 		v.isContainerStarling = settings.isContainerStarling;
 		v.isDisplayObject = settings.isDisplayObject;
+		v.isTimeLineContainer = settings.isTimeLineContainer;
 		v.propertyMap = settings.propertyMap;
 		v.removeFromDisplayFunction = settings.removeFromDisplayFunction;
 		v.removeFromDisplayFunctionName = settings.removeFromDisplayFunctionName;
@@ -322,6 +323,7 @@ class ValEdit
 		#if starling
 		valObject.isContainerStarling = valClass.isContainerStarling;
 		#end
+		valObject.isTimeLineContainer = valClass.isTimeLineContainer;
 		
 		if (valClass.creationInitFunction != null)
 		{

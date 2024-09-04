@@ -103,7 +103,7 @@ class AssetLib
 	private var _loadStack:Array<Void->Void>;
 	private var _loadCompleteCallback:Void->Void;
 	
-	private var _debug:Bool = true;
+	private var _debug:Bool = false;
 	
 	public function new() 
 	{
@@ -255,7 +255,8 @@ class AssetLib
 		var asset:BinaryAsset;
 		var bytes:ByteArray;
 		var strList:Array<String> = Assets.list(AssetType.BINARY);
-		//trace("AssetLib initBinaries " + strList);
+		if (_debug) trace("AssetLib.initBinaries " + strList);
+		
 		for (id in strList)
 		{
 			if (this._excludedPaths.exists(Path.directory(id)))
@@ -424,7 +425,8 @@ class AssetLib
 		var asset:BitmapAsset;
 		var bmd:BitmapData;
 		var strList:Array<String> = Assets.list(AssetType.IMAGE);
-		if (_debug) trace("AssetLib initBitmaps " + strList);
+		if (_debug) trace("AssetLib.initBitmaps " + strList);
+		
 		for (id in strList)
 		{
 			if (this._excludedPaths.exists(Path.directory(id)))
@@ -437,7 +439,6 @@ class AssetLib
 			asset.name = Path.withoutDirectory(id);
 			try
 			{
-				if (this._debug) trace("try " + id);
 				bmd = Assets.getBitmapData(id);
 				asset.content = bmd;
 				asset.source = AssetSource.ASSETS_EMBEDDED;
@@ -446,7 +447,6 @@ class AssetLib
 			}
 			catch (e)
 			{
-				if (this._debug) trace("catch " + id);
 				asset.source = AssetSource.ASSETS;
 				asset.isLoaded = false;
 			}
@@ -644,6 +644,7 @@ class AssetLib
 	//####################################################################################################
 	private function initMovieClips():Void
 	{
+		// TODO : look into MovieClips and see what's doable with them
 		var strList:Array<String> = Assets.list(AssetType.MOVIE_CLIP);
 	}
 	//####################################################################################################
@@ -659,6 +660,7 @@ class AssetLib
 		var sound:Sound;
 		var strList:Array<String> = Assets.list(AssetType.SOUND);
 		if (_debug) trace("AssetLib initSounds " + strList);
+		
 		for (id in strList)
 		{
 			if (this._excludedPaths.exists(Path.directory(id)))
@@ -1096,10 +1098,7 @@ class AssetLib
 		{
 			path = bitmapAsset.path;
 		}
-		//else
-		//{
-			//path = Path.normalize(path);
-		//}
+		
 		asset.path = path;
 		if (name == null)
 		{

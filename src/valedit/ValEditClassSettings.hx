@@ -72,6 +72,9 @@ class ValEditClassSettings
 	/** @default false **/
 	public var isDisplayObject:Bool;
 	
+	/** @default false **/
+	public var isTimeLineContainer:Bool;
+	
 	public var propertyMap:PropertyMap;
 	
 	/** external/static function of type Dynamic->DisplayObjectContainer->Void to call instead of doing a simple removeChild

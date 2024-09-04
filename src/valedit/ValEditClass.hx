@@ -45,6 +45,7 @@ class ValEditClass extends EventDispatcher
 	public var isContainerStarling:Bool;
 	#end
 	public var isDisplayObject:Bool;
+	public var isTimeLineContainer:Bool;
 	public var numInstances(get, never):Int;
 	public var numTemplates(get, never):Int;
 	public var propertyMap:PropertyMap;
@@ -53,16 +54,17 @@ class ValEditClass extends EventDispatcher
 	public var removeFromDisplayFunctionName:String;
 	public var superClassNames(default, null):Array<String> = new Array<String>();
 	
+	private var _numObjects:Int = 0;
 	private function get_numInstances():Int { return this._numObjects; }
+	
+	private var _numTemplates:Int = 0;
 	private function get_numTemplates():Int { return this._numTemplates; }
 	
 	private var _IDToObject:Map<String, ValEditObject> = new Map<String, ValEditObject>();
-	private var _numObjects:Int = 0;
 	private var _objectIDIndex:Int = -1;
 	private var _objectToValEditObject:ObjectMap<Dynamic, ValEditObject> = new ObjectMap<Dynamic, ValEditObject>();
 	
 	private var _IDToTemplate:Map<String, ValEditTemplate> = new Map<String, ValEditTemplate>();
-	private var _numTemplates:Int = 0;
 	private var _templateIDIndex:Int = -1;
 	
 	private var _pool:Array<ExposedCollection> = new Array<ExposedCollection>();
@@ -116,6 +118,7 @@ class ValEditClass extends EventDispatcher
 		this.isContainerStarling = false;
 		#end
 		this.isDisplayObject = false;
+		this.isTimeLineContainer = false;
 		this._numObjects = 0;
 		this._numTemplates = 0;
 		
@@ -237,10 +240,7 @@ class ValEditClass extends EventDispatcher
 	
 	public function removeObjectByID(id:String):Void
 	{
-		var object:ValEditObject = this._IDToObject.get(id);
-		this._IDToObject.remove(id);
-		this._objectToValEditObject.remove(object.object);
-		this._numObjects--;
+		removeObject(this._IDToObject.get(id));
 	}
 	
 	public function templateIDExists(id:String):Bool
@@ -281,10 +281,7 @@ class ValEditClass extends EventDispatcher
 	
 	public function removeTemplateByID(id:String):Void
 	{
-		if (this._IDToTemplate.remove(id))
-		{
-			this._numTemplates--;
-		}
+		removeTemplate(this._IDToTemplate.get(id));
 	}
 	
 	public function loadComplete():Void

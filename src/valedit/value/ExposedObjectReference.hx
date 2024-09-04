@@ -2,7 +2,11 @@ package valedit.value;
 
 import openfl.errors.Error;
 import valedit.value.base.ExposedValue;
+#if valeditor
+import valeditor.ValEditorObject;
+#else
 import valedit.ValEditObject;
+#end
 
 /**
  * ...
@@ -27,7 +31,11 @@ class ExposedObjectReference extends ExposedValue
 	public var allowSelfReference:Bool;
 	public var classList(default, null):Array<String>;
 	
+	#if valeditor
+	private var _valEditObjectReference:ValEditorObject;
+	#else
 	private var _valEditObjectReference:ValEditObject;
+	#end
 	
 	// LOADING
 	private var _objectID:String;
@@ -36,11 +44,19 @@ class ExposedObjectReference extends ExposedValue
 	
 	override function set_value(value:Dynamic):Dynamic 
 	{
+		#if valeditor
+		if (Std.isOfType(value, ValEditorObject))
+		{
+			this._valEditObjectReference = cast value;
+			return super.set_value(this._valEditObjectReference.object);
+		}
+		#else
 		if (Std.isOfType(value, ValEditObject))
 		{
 			this._valEditObjectReference = cast value;
 			return super.set_value(this._valEditObjectReference.object);
 		}
+		#end
 		this._valEditObjectReference = null;
 		return super.set_value(value);
 	}

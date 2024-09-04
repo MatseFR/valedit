@@ -3,7 +3,7 @@ import juggler.animation.Transitions;
 import openfl.events.EventDispatcher;
 import valedit.animation.FrameTween;
 import valedit.animation.TweenData;
-import valeditor.events.KeyFrameEvent;
+import valedit.events.KeyFrameEvent;
 
 /**
  * ...

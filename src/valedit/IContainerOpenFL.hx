@@ -4,7 +4,7 @@ import openfl.display.DisplayObjectContainer;
 /**
  * @author Matse
  */
-interface IValEditOpenFLContainer 
+interface IContainerOpenFL 
 {
 	public var container(get, never):DisplayObjectContainer;
 	public var rootContainer(get, set):DisplayObjectContainer;

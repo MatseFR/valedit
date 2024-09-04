@@ -18,24 +18,12 @@ import valeditor.editor.visibility.ClassVisibilityCollection;
 class ContainerData 
 {
 	
-	static public function exposeSpriteContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	static private function exposeContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
+		var bool:ExposedBool;
 		var floatDrag:ExposedFloatDrag;
-		var select:ExposedSelect;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (!collection.hasValue("cameraX"))
-		{
-			floatDrag = new ExposedFloatDrag("cameraX");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("cameraY"))
-		{
-			floatDrag = new ExposedFloatDrag("cameraY");
-			collection.addValue(floatDrag, groupName);
-		}
 		
 		if (!collection.hasValue("x"))
 		{
@@ -49,38 +37,16 @@ class ContainerData
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("alpha"))
+		if (!collection.hasValue("width"))
 		{
-			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
+			floatDrag = new ExposedFloatDrag("width");
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("rotation"))
+		if (!collection.hasValue("height"))
 		{
-			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.5);
-			floatDrag.isAbsolute = true;
+			floatDrag = new ExposedFloatDrag("height");
 			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("blendMode"))
-		{
-			select = new ExposedSelect("blendMode");
-			select.add("ADD", BlendMode.ADD);
-			select.add("ALPHA", BlendMode.ALPHA);
-			select.add("DARKEN", BlendMode.DARKEN);
-			select.add("DIFFERENCE", BlendMode.DIFFERENCE);
-			select.add("ERASE", BlendMode.ERASE);
-			select.add("HARDLIGHT", BlendMode.HARDLIGHT);
-			select.add("INVERT", BlendMode.INVERT);
-			select.add("LAYER", BlendMode.LAYER);
-			select.add("LIGHTEN", BlendMode.LIGHTEN);
-			select.add("MULTIPLY", BlendMode.MULTIPLY);
-			select.add("NORMAL", BlendMode.NORMAL);
-			select.add("OVERLAY", BlendMode.OVERLAY);
-			select.add("SCREEN", BlendMode.SCREEN);
-			select.add("SHADER", BlendMode.SHADER);
-			select.add("SUBTRACT", BlendMode.SUBTRACT);
-			collection.addValue(select, groupName);
 		}
 		
 		if (!collection.hasValue("scaleX"))
@@ -95,62 +61,42 @@ class ContainerData
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		return collection;
-	}
-	
-	static public function getSpriteContainerVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
-	{
-		if (collection == null) collection = ClassVisibilityCollection.fromPool();
-		
-		collection.add(ClassValueVisibility.fromPool("cameraX"));
-		collection.add(ClassValueVisibility.fromPool("cameraY"));
-		collection.add(ClassValueVisibility.fromPool("x"));
-		collection.add(ClassValueVisibility.fromPool("y"));
-		collection.add(ClassValueVisibility.fromPool("alpha"));
-		collection.add(ClassValueVisibility.fromPool("rotation"));
-		collection.add(ClassValueVisibility.fromPool("blendMode"));
-		collection.add(ClassValueVisibility.fromPool("scaleX"));
-		collection.add(ClassValueVisibility.fromPool("scaleY"));
-		
-		return collection;
-	}
-	
-	static public function exposeSpriteContainerStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
-	{
-		var floatDrag:ExposedFloatDrag;
-		var select:ExposedSelect;
-		
-		if (collection == null) collection = new ExposedCollection();
-		
-		if (!collection.hasValue("cameraX"))
-		{
-			floatDrag = new ExposedFloatDrag("cameraX");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("cameraY"))
-		{
-			floatDrag = new ExposedFloatDrag("cameraY");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("x"))
-		{
-			floatDrag = new ExposedFloatDrag("x");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("y"))
-		{
-			floatDrag = new ExposedFloatDrag("y");
-			collection.addValue(floatDrag, groupName);
-		}
-		
 		if (!collection.hasValue("alpha"))
 		{
 			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
 			collection.addValue(floatDrag, groupName);
 		}
+		
+		if (!collection.hasValue("visible"))
+		{
+			bool = new ExposedBool("visible");
+			collection.addValue(bool, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static private function getContainerVisibilities(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		if (!collection.has("x")) collection.add(ClassValueVisibility.fromPool("x"));
+		if (!collection.has("y")) collection.add(ClassValueVisibility.fromPool("y"));
+		if (!collection.has("width")) collection.add(ClassValueVisibility.fromPool("width"));
+		if (!collection.has("height")) collection.add(ClassValueVisibility.fromPool("height"));
+		if (!collection.has("scaleX")) collection.add(ClassValueVisibility.fromPool("scaleX"));
+		if (!collection.has("scaleY")) collection.add(ClassValueVisibility.fromPool("scaleY"));
+		if (!collection.has("alpha")) collection.add(ClassValueVisibility.fromPool("alpha"));
+		if (!collection.has("visible")) collection.add(ClassValueVisibility.fromPool("visible"));
+		
+		return collection;
+	}
+	
+	static private function exposeContainerStarling2D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var floatDrag:ExposedFloatDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
 		
 		if (!collection.hasValue("rotation"))
 		{
@@ -159,242 +105,93 @@ class ContainerData
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("blendMode"))
-		{
-			select = new ExposedSelect("blendMode");
-			select.add("ADD", starling.display.BlendMode.ADD);
-			select.add("AUTO", starling.display.BlendMode.AUTO);
-			select.add("BELOW", starling.display.BlendMode.BELOW);
-			select.add("ERASE", starling.display.BlendMode.ERASE);
-			select.add("MASK", starling.display.BlendMode.MASK);
-			select.add("MULTIPLY", starling.display.BlendMode.MULTIPLY);
-			select.add("NONE", starling.display.BlendMode.NONE);
-			select.add("NORMAL", starling.display.BlendMode.NORMAL);
-			select.add("SCREEN", starling.display.BlendMode.SCREEN);
-			collection.addValue(select, groupName);
-		}
-		
-		if (!collection.hasValue("scaleX"))
-		{
-			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("scaleY"))
-		{
-			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
-			collection.addValue(floatDrag, groupName);
-		}
-		
 		return collection;
 	}
 	
-	static public function getSpriteContainerStarlingVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	static private function getContainerStarling2DVisibilities(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		if (collection == null) collection = new ClassVisibilityCollection();
 		
-		collection.add(ClassValueVisibility.fromPool("cameraX"));
-		collection.add(ClassValueVisibility.fromPool("cameraY"));
-		collection.add(ClassValueVisibility.fromPool("x"));
-		collection.add(ClassValueVisibility.fromPool("y"));
-		collection.add(ClassValueVisibility.fromPool("alpha"));
-		collection.add(ClassValueVisibility.fromPool("rotation"));
-		collection.add(ClassValueVisibility.fromPool("blendMode"));
-		collection.add(ClassValueVisibility.fromPool("scaleX"));
-		collection.add(ClassValueVisibility.fromPool("scaleY"));
+		if (!collection.has("rotation")) collection.add(ClassValueVisibility.fromPool("rotation"));
 		
 		return collection;
 	}
 	
-	static public function exposeSpriteContainerStarling3D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	#if starling
+	static private function exposeContainerStarling3D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var floatDrag:ExposedFloatDrag;
-		var select:ExposedSelect;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (!collection.hasValue("cameraX"))
-		{
-			floatDrag = new ExposedFloatDrag("cameraX");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("cameraY"))
-		{
-			floatDrag = new ExposedFloatDrag("cameraY");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("x"))
-		{
-			floatDrag = new ExposedFloatDrag("x");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("y"))
-		{
-			floatDrag = new ExposedFloatDrag("y");
-			collection.addValue(floatDrag, groupName);
-		}
 		
 		if (!collection.hasValue("z"))
 		{
 			floatDrag = new ExposedFloatDrag("z");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("alpha"))
-		{
-			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
-			collection.addValue(floatDrag, groupName);
+			collection.addValueAfter(floatDrag, "y", groupName);
 		}
 		
 		if (!collection.hasValue("rotationX"))
 		{
 			floatDrag = new ExposedFloatDrag("rotationX", null, null, null, 0.01);
 			floatDrag.isAbsolute = true;
-			collection.addValue(floatDrag, groupName);
+			collection.addValueAfter(floatDrag, "height", groupName);
 		}
 		
 		if (!collection.hasValue("rotationY"))
 		{
 			floatDrag = new ExposedFloatDrag("rotationY", null, null, null, 0.01);
 			floatDrag.isAbsolute = true;
-			collection.addValue(floatDrag, groupName);
+			collection.addValueAfter(floatDrag, "rotationX", groupName);
 		}
 		
 		if (!collection.hasValue("rotationZ"))
 		{
 			floatDrag = new ExposedFloatDrag("rotationZ", null, null, null, 0.01);
 			floatDrag.isAbsolute = true;
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("blendMode"))
-		{
-			select = new ExposedSelect("blendMode");
-			select.add("ADD", starling.display.BlendMode.ADD);
-			select.add("AUTO", starling.display.BlendMode.AUTO);
-			select.add("BELOW", starling.display.BlendMode.BELOW);
-			select.add("ERASE", starling.display.BlendMode.ERASE);
-			select.add("MASK", starling.display.BlendMode.MASK);
-			select.add("MULTIPLY", starling.display.BlendMode.MULTIPLY);
-			select.add("NONE", starling.display.BlendMode.NONE);
-			select.add("NORMAL", starling.display.BlendMode.NORMAL);
-			select.add("SCREEN", starling.display.BlendMode.SCREEN);
-			collection.addValue(select, groupName);
-		}
-		
-		if (!collection.hasValue("scaleX"))
-		{
-			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("scaleY"))
-		{
-			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
-			collection.addValue(floatDrag, groupName);
+			collection.addValueAfter(floatDrag, "rotationY", groupName);
 		}
 		
 		if (!collection.hasValue("scaleZ"))
 		{
 			floatDrag = new ExposedFloatDrag("scaleZ", null, null, null, 0.05);
-			collection.addValue(floatDrag, groupName);
+			collection.addValueAfter(floatDrag, "scaleY", groupName);
 		}
 		
-		if (!collection.hasValue("pivotX"))
-		{
-			floatDrag = new ExposedFloatDrag("pivotX");
-			collection.addValue(floatDrag);
-		}
-		
-		if (!collection.hasValue("pivotY"))
-		{
-			floatDrag = new ExposedFloatDrag("pivotY");
-			collection.addValue(floatDrag);
-		}
-		
-		if (!collection.hasValue("pivotZ"))
-		{
-			floatDrag = new ExposedFloatDrag("pivotZ");
-			collection.addValue(floatDrag);
-		}
+		//if (!collection.hasValue("pivotZ"))
+		//{
+			//floatDrag = new ExposedFloatDrag("pivotZ");
+			//collection.addValueAfter(floatDrag, "pivotY", groupName);
+		//}
 		
 		return collection;
 	}
 	
-	static public function getSpriteContainerStarling3DVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	static private function getContainerStarling3DVisibilities(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		if (collection == null) collection = new ClassVisibilityCollection();
 		
-		collection.add(ClassValueVisibility.fromPool("cameraX"));
-		collection.add(ClassValueVisibility.fromPool("cameraY"));
-		collection.add(ClassValueVisibility.fromPool("x"));
-		collection.add(ClassValueVisibility.fromPool("y"));
-		collection.add(ClassValueVisibility.fromPool("z"));
-		collection.add(ClassValueVisibility.fromPool("alpha"));
-		collection.add(ClassValueVisibility.fromPool("rotationX"));
-		collection.add(ClassValueVisibility.fromPool("rotationY"));
-		collection.add(ClassValueVisibility.fromPool("rotationZ"));
-		collection.add(ClassValueVisibility.fromPool("blendMode"));
-		collection.add(ClassValueVisibility.fromPool("scaleX"));
-		collection.add(ClassValueVisibility.fromPool("scaleY"));
-		collection.add(ClassValueVisibility.fromPool("scaleZ"));
+		if (!collection.has("z")) collection.add(ClassValueVisibility.fromPool("z"));
+		if (!collection.has("rotationX")) collection.add(ClassValueVisibility.fromPool("rotationX"));
+		if (!collection.has("rotationY")) collection.add(ClassValueVisibility.fromPool("rotationY"));
+		if (!collection.has("rotationZ")) collection.add(ClassValueVisibility.fromPool("rotationZ"));
+		if (!collection.has("scaleZ")) collection.add(ClassValueVisibility.fromPool("scaleZ"));
 		
 		return collection;
 	}
-
-	static public function exposeValEditContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	#end
+	
+	static private function exposeContainerOpenFL(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
-		var bool:ExposedBool;
 		var floatDrag:ExposedFloatDrag;
-		var intDrag:ExposedIntDrag;
 		var select:ExposedSelect;
 		
 		if (collection == null) collection = new ExposedCollection();
-		
-		if (!collection.hasValue("autoPlay"))
-		{
-			bool = new ExposedBool("autoPlay");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("cameraX"))
-		{
-			floatDrag = new ExposedFloatDrag("cameraX");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("cameraY"))
-		{
-			floatDrag = new ExposedFloatDrag("cameraY");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("x"))
-		{
-			floatDrag = new ExposedFloatDrag("x");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("y"))
-		{
-			floatDrag = new ExposedFloatDrag("y");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("alpha"))
-		{
-			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.005);
-			collection.addValue(floatDrag, groupName);
-		}
 		
 		if (!collection.hasValue("rotation"))
 		{
 			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.5);
 			floatDrag.isAbsolute = true;
-			collection.addValue(floatDrag, groupName);
+			collection.addValueAfter(floatDrag, "height", groupName);
 		}
 		
 		if (!collection.hasValue("blendMode"))
@@ -415,10 +212,58 @@ class ContainerData
 			select.add("SCREEN", BlendMode.SCREEN);
 			select.add("SHADER", BlendMode.SHADER);
 			select.add("SUBTRACT", BlendMode.SUBTRACT);
-			collection.addValue(select, groupName);
+			collection.addValueAfter(select, "alpha", groupName);
 		}
 		
-		#if starling
+		return collection;
+	}
+	
+	static private function getContainerOpenFLVisibilities(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		if (!collection.has("rotation")) collection.add(ClassValueVisibility.fromPool("rotation"));
+		if (!collection.has("blendMode")) collection.add(ClassValueVisibility.fromPool("blendMode"));
+		
+		return collection;
+	}
+	
+	#if starling
+	static private function exposeContainerOpenFLStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var floatDrag:ExposedFloatDrag;
+		var select:ExposedSelect;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("rotation"))
+		{
+			floatDrag = new ExposedFloatDrag("rotation", null, null, null, 0.5);
+			floatDrag.isAbsolute = true;
+			collection.addValueAfter(floatDrag, "height", groupName);
+		}
+		
+		if (!collection.hasValue("blendMode"))
+		{
+			select = new ExposedSelect("blendMode");
+			select.add("ADD", BlendMode.ADD);
+			select.add("ALPHA", BlendMode.ALPHA);
+			select.add("DARKEN", BlendMode.DARKEN);
+			select.add("DIFFERENCE", BlendMode.DIFFERENCE);
+			select.add("ERASE", BlendMode.ERASE);
+			select.add("HARDLIGHT", BlendMode.HARDLIGHT);
+			select.add("INVERT", BlendMode.INVERT);
+			select.add("LAYER", BlendMode.LAYER);
+			select.add("LIGHTEN", BlendMode.LIGHTEN);
+			select.add("MULTIPLY", BlendMode.MULTIPLY);
+			select.add("NORMAL", BlendMode.NORMAL);
+			select.add("OVERLAY", BlendMode.OVERLAY);
+			select.add("SCREEN", BlendMode.SCREEN);
+			select.add("SHADER", BlendMode.SHADER);
+			select.add("SUBTRACT", BlendMode.SUBTRACT);
+			collection.addValueAfter(select, "alpha", groupName);
+		}
+		
 		if (!collection.hasValue("blendModeStarling"))
 		{
 			select = new ExposedSelect("blendModeStarling");
@@ -431,20 +276,71 @@ class ContainerData
 			select.add("NONE", starling.display.BlendMode.NONE);
 			select.add("NORMAL", starling.display.BlendMode.NORMAL);
 			select.add("SCREEN", starling.display.BlendMode.SCREEN);
-			collection.addValue(select, groupName);
-		}
-		#end
-		
-		if (!collection.hasValue("scaleX"))
-		{
-			floatDrag = new ExposedFloatDrag("scaleX", null, null, null, 0.05);
-			collection.addValue(floatDrag, groupName);
+			collection.addValueAfter(select, "blendMode", groupName);
 		}
 		
-		if (!collection.hasValue("scaleY"))
+		return collection;
+	}
+	
+	static private function getContainerOpenFLStarlingVisibilities(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		if (!collection.has("rotation")) collection.add(ClassValueVisibility.fromPool("rotation"));
+		if (!collection.has("blendMode")) collection.add(ClassValueVisibility.fromPool("blendMode"));
+		if (!collection.has("blendModeStarling")) collection.add(ClassValueVisibility.fromPool("blendModeStarling"));
+		
+		return collection;
+	}
+	#end
+	
+	#if starling
+	static private function exposeContainerStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var select:ExposedSelect;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("blendMode"))
 		{
-			floatDrag = new ExposedFloatDrag("scaleY", null, null, null, 0.05);
-			collection.addValue(floatDrag, groupName);
+			select = new ExposedSelect("blendMode");
+			select.add("ADD", starling.display.BlendMode.ADD);
+			select.add("AUTO", starling.display.BlendMode.AUTO);
+			select.add("BELOW", starling.display.BlendMode.BELOW);
+			select.add("ERASE", starling.display.BlendMode.ERASE);
+			select.add("MASK", starling.display.BlendMode.MASK);
+			select.add("MULTIPLY", starling.display.BlendMode.MULTIPLY);
+			select.add("NONE", starling.display.BlendMode.NONE);
+			select.add("NORMAL", starling.display.BlendMode.NORMAL);
+			select.add("SCREEN", starling.display.BlendMode.SCREEN);
+			collection.addValueAfter(select, "alpha", groupName);
+		}
+		
+		return collection;
+	}
+	
+	static private function getContainerStarlingVisibilities(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		if (!collection.has("blendMode")) collection.add(ClassValueVisibility.fromPool("blendMode"));
+		
+		return collection;
+	}
+	#end
+	
+	static private function exposeContainerTimeLine(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var floatDrag:ExposedFloatDrag;
+		var intDrag:ExposedIntDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("autoPlay"))
+		{
+			bool = new ExposedBool("autoPlay");
+			collection.addValue(bool, groupName);
 		}
 		
 		if (!collection.hasValue("frameRate"))
@@ -483,61 +379,328 @@ class ContainerData
 			collection.addValue(intDrag, groupName);
 		}
 		
-		if (!collection.hasValue("visible"))
-		{
-			bool = new ExposedBool("visible");
-			collection.addValue(bool, groupName);
-		}
-		
 		return collection;
 	}
 	
-	static public function getValEditContainerVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	static private function getContainerTimeLineVisibilities(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
-		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		if (collection == null) collection = new ClassVisibilityCollection();
 		
-		collection.add(ClassValueVisibility.fromPool("autoPlay"));
-		collection.add(ClassValueVisibility.fromPool("cameraX"));
-		collection.add(ClassValueVisibility.fromPool("cameraY"));
-		collection.add(ClassValueVisibility.fromPool("x"));
-		collection.add(ClassValueVisibility.fromPool("y"));
-		collection.add(ClassValueVisibility.fromPool("alpha"));
-		collection.add(ClassValueVisibility.fromPool("rotation"));
-		collection.add(ClassValueVisibility.fromPool("blendMode"));
-		#if starling
-		collection.add(ClassValueVisibility.fromPool("blendModeStarling"));
-		#end
-		collection.add(ClassValueVisibility.fromPool("scaleX"));
-		collection.add(ClassValueVisibility.fromPool("scaleY"));
-		collection.add(ClassValueVisibility.fromPool("frameRate"));
-		collection.add(ClassValueVisibility.fromPool("numFrames"));
-		//collection.add(ClassValueVisibility.fromPool("frameIndex"));
-		collection.add(ClassValueVisibility.fromPool("numFrames"));
-		collection.add(ClassValueVisibility.fromPool("loop"));
-		collection.add(ClassValueVisibility.fromPool("reverse"));
-		collection.add(ClassValueVisibility.fromPool("numLoops"));
-		collection.add(ClassValueVisibility.fromPool("visible"));
+		if (!collection.has("autoPlay")) collection.add(ClassValueVisibility.fromPool("autoPlay"));
+		if (!collection.has("frameRate")) collection.add(ClassValueVisibility.fromPool("frameRate"));
+		if (!collection.has("numFrames")) collection.add(ClassValueVisibility.fromPool("numFrames"));
+		if (!collection.has("loop")) collection.add(ClassValueVisibility.fromPool("loop"));
+		if (!collection.has("reverse")) collection.add(ClassValueVisibility.fromPool("reverse"));
+		if (!collection.has("numLoops")) collection.add(ClassValueVisibility.fromPool("numLoops"));
 		
 		return collection;
 	}
 	
-	static public function exposeValEditorContainer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	static public function exposeSpriteContainerOpenFL(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
 		
-		exposeValEditContainer(collection, groupName);
+		exposeContainer(collection, groupName);
+		exposeContainerOpenFL(collection, groupName);
 		
 		return collection;
 	}
 	
-	static public function getValEditorContainerVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	static public function getSpriteContainerOpenFLVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
 	{
 		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		getValEditContainerVisibility(collection);
+		getContainerVisibilities(collection);
+		getContainerOpenFLVisibilities(collection);
 		
 		return collection;
 	}
+	
+	#if valeditor
+	static public function exposeSpriteContainerOpenFLEditable(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeSpriteContainerOpenFL(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerOpenFLEditableVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getSpriteContainerOpenFLVisibility(collection);
+		
+		return collection;
+	}
+	#end
+	
+	#if starling
+	static public function exposeSpriteContainerStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeContainer(collection, groupName);
+		exposeContainerStarling(collection, groupName);
+		exposeContainerStarling2D(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerStarlingVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		getContainerVisibilities(collection);
+		getContainerStarlingVisibilities(collection);
+		getContainerStarling2DVisibilities(collection);
+		
+		return collection;
+	}
+	
+	#if valeditor
+	static public function exposeSpriteContainerStarlingEditable(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeSpriteContainerStarling(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerStarlingEditableVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getSpriteContainerStarlingVisibility(collection);
+		
+		return collection;
+	}
+	#end
+	#end
+	
+	#if starling
+	static public function exposeSpriteContainerStarling3D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeContainer(collection, groupName);
+		exposeContainerStarling(collection, groupName);
+		exposeContainerStarling3D(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerStarling3DVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		getContainerVisibilities(collection);
+		getContainerStarlingVisibilities(collection);
+		getContainerStarling3DVisibilities(collection);
+		
+		return collection;
+	}
+	
+	#if valeditor
+	static public function exposeSpriteContainerStarling3DEditable(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeSpriteContainerStarling3D(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerStarling3DEditableVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getSpriteContainerStarling3DVisibility(collection);
+		
+		return collection;
+	}
+	#end
+	#end
+	
+	#if starling
+	static public function exposeTimeLineContainerOpenFLStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeContainer(collection, groupName);
+		exposeContainerOpenFLStarling(collection, groupName);
+		exposeContainerTimeLine(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getTimeLineContainerOpenFLStarlingVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		getContainerVisibilities(collection);
+		getContainerOpenFLStarlingVisibilities(collection);
+		getContainerTimeLineVisibilities(collection);
+		
+		return collection;
+	}
+	
+	#if valeditor
+	static public function exposeTimeLineContainerOpenFLStarlingEditable(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeTimeLineContainerOpenFLStarling(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getTimeLineContainerOpenFLStarlingEditableVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		getTimeLineContainerOpenFLStarlingVisibility(collection);
+		
+		return collection;
+	}
+	#end
+	#end
+	
+	static public function exposeTimeLineContainerOpenFL(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeContainer(collection, groupName);
+		exposeContainerOpenFL(collection, groupName);
+		exposeContainerTimeLine(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getTimeLineContainerOpenFLVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getContainerVisibilities(collection);
+		getContainerOpenFLVisibilities(collection);
+		getContainerTimeLineVisibilities(collection);
+		
+		return collection;
+	}
+	
+	#if valeditor
+	static public function exposeTimeLineContainerOpenFLEditable(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeTimeLineContainerOpenFL(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getTimeLineContainerOpenFLEditableVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getTimeLineContainerOpenFLVisibility(collection);
+		
+		return collection;
+	}
+	#end
+	
+	#if starling
+	static public function exposeTimeLineContainerStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeContainer(collection, groupName);
+		exposeContainerStarling(collection, groupName);
+		exposeContainerStarling2D(collection, groupName);
+		exposeContainerTimeLine(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getTimeLineContainerStarlingVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getContainerVisibilities(collection);
+		getContainerStarlingVisibilities(collection);
+		getContainerStarling2DVisibilities(collection);
+		getContainerTimeLineVisibilities(collection);
+		
+		return collection;
+	}
+	
+	#if valeditor
+	static public function exposeTimeLineContainerStarlingEditable(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeTimeLineContainerStarling(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getTimeLineContainerStarlingEditableVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getTimeLineContainerStarlingVisibility(collection);
+		
+		return collection;
+	}
+	#end
+	#end
+	
+	#if starling
+	static public function exposeTimeLineContainerStarling3D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeContainer(collection, groupName);
+		exposeContainerStarling(collection, groupName);
+		exposeContainerStarling3D(collection, groupName);
+		exposeContainerTimeLine(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getTimeLineContainerStarling3DVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getContainerVisibilities(collection);
+		getContainerStarlingVisibilities(collection);
+		getContainerStarling3DVisibilities(collection);
+		getContainerTimeLineVisibilities(collection);
+		
+		return collection;
+	}
+	
+	#if valeditor
+	static public function exposeTimeLineContainerStarling3DEditable(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeTimeLineContainerStarling3D(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getTimeLineContainerStarling3DEditableVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getTimeLineContainerStarling3DVisibility(collection);
+		
+		return collection;
+	}
+	#end
+	#end
 	
 	static public function exposeValEditorContainerRoot(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
@@ -545,7 +708,7 @@ class ContainerData
 		
 		var value:ExposedValue;
 		
-		exposeValEditorContainer(collection, groupName);
+		exposeTimeLineContainerOpenFLStarlingEditable(collection, groupName);
 		
 		value = collection.getValue("alpha");
 		collection.removeValue(value);
@@ -592,7 +755,7 @@ class ContainerData
 		
 		var visibility:ClassValueVisibility;
 		
-		getValEditorContainerVisibility(collection);
+		getTimeLineContainerOpenFLStarlingEditableVisibility(collection);
 		
 		visibility = collection.get("alpha");
 		collection.remove(visibility);
