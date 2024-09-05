@@ -1,9 +1,8 @@
 package valedit.value;
 
+import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueTweenable;
 import valedit.value.data.NumericMode;
-import valeditor.ui.feathers.theme.variant.TextInputVariant;
-import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -18,16 +17,18 @@ class ExposedFloat extends ExposedValueTweenable
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, liveTyping:Bool = true, inputVariant:String = TextInputVariant.FULL_WIDTH):ExposedFloat
+	static public function fromPool(propertyName:String, name:String = null#if valeditor, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative#end):ExposedFloat
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, precision, numericMode, liveTyping, inputVariant);
-		return new ExposedFloat(propertyName, name, precision, numericMode, liveTyping, inputVariant);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name#if valeditor, precision, numericMode#end);
+		return new ExposedFloat(propertyName, name#if valeditor, precision, numericMode#end);
 	}
 	
+	#if valeditor
 	public var inputVariant:String;
-	public var liveTyping:Bool;
+	public var liveTyping:Bool = true;
 	public var numericMode:NumericMode;
 	public var precision:Int;
+	#end
 	
 	/**
 	   
@@ -37,13 +38,13 @@ class ExposedFloat extends ExposedValueTweenable
 	   @param	numericMode
 	   @param	inputPercentWidth
 	**/
-	public function new(propertyName:String, name:String = null, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative, liveTyping:Bool = true, inputVariant:String = TextInputVariant.FULL_WIDTH) 
+	public function new(propertyName:String, name:String = null#if valeditor, precision:Int = 2, numericMode:NumericMode = NumericMode.PositiveOrNegative#end) 
 	{
 		super(propertyName, name);
+		#if valeditor
 		this.precision = precision;
 		this.numericMode = numericMode;
-		this.liveTyping = liveTyping;
-		this.inputVariant = inputVariant;
+		#end
 		this.defaultValue = 0.0;
 	}
 	
@@ -51,6 +52,10 @@ class ExposedFloat extends ExposedValueTweenable
 	{
 		super.clear();
 		this.defaultValue = 0.0;
+		#if valeditor
+		this.inputVariant = null;
+		this.liveTyping = true;
+		#end
 	}
 	
 	public function pool():Void
@@ -59,19 +64,23 @@ class ExposedFloat extends ExposedValueTweenable
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, precision:Int, numericMode:NumericMode, liveTyping:Bool, inputVariant:String):ExposedFloat
+	private function setTo(propertyName:String, name:String#if valeditor, precision:Int, numericMode:NumericMode#end):ExposedFloat
 	{
 		setNames(propertyName, name);
+		#if valeditor
 		this.precision = precision;
 		this.numericMode = numericMode;
-		this.liveTyping = liveTyping;
-		this.inputVariant = inputVariant;
+		#end
 		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var float:ExposedFloat = fromPool(this.propertyName, this.name, this.precision, this.numericMode, this.liveTyping, this.inputVariant);
+		var float:ExposedFloat = fromPool(this.propertyName, this.name#if valeditor, this.precision, this.numericMode#end);
+		#if valeditor
+		float.liveTyping = this.liveTyping;
+		float.inputVariant = this.inputVariant;
+		#end
 		super.clone_internal(float, copyValue);
 		return float;
 	}

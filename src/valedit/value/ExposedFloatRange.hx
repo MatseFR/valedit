@@ -1,8 +1,7 @@
 package valedit.value;
 
-import valedit.value.base.ExposedValueTweenable;
-import valeditor.ui.feathers.theme.variant.TextInputVariant;
 import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueTweenable;
 
 /**
  * ...
@@ -17,18 +16,22 @@ class ExposedFloatRange extends ExposedValueTweenable
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, min:Float = 0, max:Float = 100, step:Float = 1, precision:Int = 2, liveTyping:Bool = true, inputVariant:String = TextInputVariant.NUMERIC_MEDIUM):ExposedFloatRange
+	static public function fromPool(propertyName:String, name:String = null, min:Float = 0, max:Float = 100#if valeditor, step:Float = 1, precision:Int = 2#end):ExposedFloatRange
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, min, max, step, precision, liveTyping, inputVariant);
-		return new ExposedFloatRange(propertyName, name, min, max, step, precision, liveTyping, inputVariant);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, min, max#if valeditor, step, precision#end);
+		return new ExposedFloatRange(propertyName, name, min, max#if valeditor, step, precision#end);
 	}
 	
+	#if valeditor
 	public var inputVariant:String;
-	public var liveTyping:Bool;
+	public var liveTyping:Bool = true;
+	#end
 	public var max(get, set):Float;
 	public var min(get, set):Float;
+	#if valeditor
 	public var precision:Int;
 	public var step:Float = 1.0;
+	#end
 	
 	private var _max:Float;
 	private function get_max():Float { return _max; }
@@ -57,15 +60,16 @@ class ExposedFloatRange extends ExposedValueTweenable
 	   @param	sliderPercentWidth
 	   @param	inputPercentWidth
 	**/
-	public function new(propertyName:String, name:String = null, min:Float = 0, max:Float = 100, step:Float = 1, precision:Int = 2, liveTyping:Bool = true, inputVariant:String = TextInputVariant.NUMERIC_MEDIUM) 
+	public function new(propertyName:String, name:String = null, min:Float = 0, max:Float = 100#if valeditor, step:Float = 1, precision:Int = 2#end) 
 	{
 		super(propertyName, name);
 		this.min = min;
 		this.max = max;
+		#if valeditor
 		this.step = step;
 		this.precision = precision;
-		this.liveTyping = liveTyping;
-		this.inputVariant = inputVariant;
+		#end
+		
 		this.defaultValue = 0.0;
 	}
 	
@@ -73,6 +77,10 @@ class ExposedFloatRange extends ExposedValueTweenable
 	{
 		super.clear();
 		this.defaultValue = 0.0;
+		#if valeditor
+		this.inputVariant = null;
+		this.liveTyping = true;
+		#end
 	}
 	
 	public function pool():Void
@@ -81,21 +89,25 @@ class ExposedFloatRange extends ExposedValueTweenable
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, min:Float, max:Float, step:Float, precision:Int, liveTyping:Bool, inputVariant:String):ExposedFloatRange
+	private function setTo(propertyName:String, name:String, min:Float, max:Float#if valeditor, step:Float, precision:Int#end):ExposedFloatRange
 	{
 		setNames(propertyName, name);
 		this.min = min;
 		this.max = max;
+		#if valeditor
 		this.step = step;
 		this.precision = precision;
-		this.liveTyping = liveTyping;
-		this.inputVariant = inputVariant;
+		#end
 		return this;
 	}
 	
 	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var range:ExposedFloatRange = fromPool(this.propertyName, this.name, this._min, this._max, this.step, this.precision, this.liveTyping, this.inputVariant);
+		var range:ExposedFloatRange = fromPool(this.propertyName, this.name, this._min, this._max#if valeditor, this.step, this.precision#end);
+		#if valeditor
+		range.liveTyping = this.liveTyping;
+		range.inputVariant = this.inputVariant;
+		#end
 		super.clone_internal(range, copyValue);
 		return range;
 	}
