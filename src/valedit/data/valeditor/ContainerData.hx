@@ -40,12 +40,14 @@ class ContainerData
 		if (!collection.hasValue("width"))
 		{
 			floatDrag = new ExposedFloatDrag("width");
+			floatDrag.isTweenable = false; // don't tween width since it will become messy with rotation, scaleX will be used instead
 			collection.addValue(floatDrag, groupName);
 		}
 		
 		if (!collection.hasValue("height"))
 		{
 			floatDrag = new ExposedFloatDrag("height");
+			floatDrag.isTweenable = false; // don't tween height since it will become messy with rotation, scaleY will be used instead
 			collection.addValue(floatDrag, groupName);
 		}
 		
@@ -351,7 +353,8 @@ class ContainerData
 		
 		if (!collection.hasValue("numFrames"))
 		{
-			intDrag = new ExposedIntDrag("numFrames", null, 1, null, 1, 1, true, false);
+			intDrag = new ExposedIntDrag("numFrames", null, 1, null, 1, 1);
+			intDrag.liveTyping = false;
 			collection.addValue(intDrag, groupName);
 		}
 		

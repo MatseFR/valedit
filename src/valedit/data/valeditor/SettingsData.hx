@@ -92,7 +92,8 @@ class SettingsData
 		#if desktop
 		if (!collection.hasValue("filePath"))
 		{
-			path = new ExposedPath("filePath", "export path", true, "export path");
+			path = new ExposedPath("filePath", "export path");
+			path.dialogTitle = "export path";
 			collection.addValue(path, groupName);
 		}
 		#end
@@ -151,7 +152,8 @@ class SettingsData
 		#if desktop
 		if (!collection.hasValue("filePath"))
 		{
-			path = new ExposedPath("filePath", "file path", true, "file path");
+			path = new ExposedPath("filePath", "file path");
+			path.dialogTitle = "file path";
 			collection.addValue(path, groupName);
 		}
 		#end
