@@ -16,31 +16,33 @@ class ExposedFilePath extends ExposedValue
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, fileMustExist:Bool = true, liveTyping:Bool = true, ?fileFilters:Array<FileFilter>, ?dialogTitle:String):ExposedFilePath
+	static public function fromPool(propertyName:String, name:String = null):ExposedFilePath
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, fileMustExist, liveTyping, fileFilters, dialogTitle);
-		return new ExposedFilePath(propertyName, name, fileMustExist, liveTyping, fileFilters, dialogTitle);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name);
+		return new ExposedFilePath(propertyName, name);
 	}
 	
+	#if valeditor
 	public var dialogTitle:String;
-	public var fileMustExist:Bool;
+	public var fileMustExist:Bool = true;
 	public var fileFilters:Array<FileFilter>;
-	public var liveTyping:Bool;
+	public var liveTyping:Bool = true;
+	#end
 
-	public function new(propertyName:String, name:String=null, fileMustExist:Bool = true, liveTyping:Bool = true, ?fileFilters:Array<FileFilter>, ?dialogTitle:String) 
+	public function new(propertyName:String, name:String=null) 
 	{
 		super(propertyName, name);
-		this.fileMustExist = fileMustExist;
-		this.liveTyping = liveTyping;
-		if (fileFilters == null) fileFilters = new Array<FileFilter>();
-		this.fileFilters = fileFilters;
-		this.dialogTitle = dialogTitle;
 	}
 	
 	override public function clear():Void 
 	{
 		super.clear();
-		this.fileFilters = null;
+		#if valeditor
+		this.dialogTitle = null;
+		this.fileMustExist = true;
+		this.fileFilters.resize(0);
+		this.liveTyping = true;
+		#end
 	}
 	
 	public function pool():Void
@@ -49,14 +51,9 @@ class ExposedFilePath extends ExposedValue
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, fileMustExist:Bool, liveTyping:Bool, fileFilters:Array<FileFilter>, dialogTitle:String):ExposedFilePath
+	private function setTo(propertyName:String, name:String):ExposedFilePath
 	{
 		setNames(propertyName, name);
-		this.fileMustExist = fileMustExist;
-		this.liveTyping = liveTyping;
-		if (fileFilters == null) fileFilters = new Array<FileFilter>();
-		this.fileFilters = fileFilters;
-		this.dialogTitle = dialogTitle;
 		return this;
 	}
 	
@@ -66,13 +63,18 @@ class ExposedFilePath extends ExposedValue
 		this.fileFilters.push(filter);
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var file:ExposedFilePath = fromPool(this.propertyName, this.name, this.fileMustExist, this.liveTyping, this.dialogTitle);
+		var file:ExposedFilePath = fromPool(this.propertyName, this.name);
+		#if valeditor
+		file.dialogTitle = this.dialogTitle;
+		file.fileMustExist = this.fileMustExist;
+		file.liveTyping = this.liveTyping;
 		for (filter in this.fileFilters)
 		{
 			file.addFilter(filter.description, filter.extension, filter.macType);
 		}
+		#end
 		clone_internal(file, copyValue);
 		return file;
 	}

@@ -214,8 +214,8 @@ abstract class ExposedValueWithCollection extends ExposedValue
 	
 	public function childValueChanged(value:ExposedValue):Void
 	{
-		this._collection.readValues();
-		this._childCollection.readValues();
+		this._collection.read();
+		this._childCollection.read();
 		if (this.parentValue != null) this.parentValue.childValueChanged(value);
 	}
 	
@@ -239,13 +239,13 @@ abstract class ExposedValueWithCollection extends ExposedValue
 		return false;
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	override public function read(dispatchEventIfChange:Bool = true):Void 
 	{
-		super.readValue(dispatchEventIfChange);
+		super.read(dispatchEventIfChange);
 		
 		if (this._childCollection != null)
 		{
-			this._childCollection.readValues(dispatchEventIfChange);
+			this._childCollection.read(dispatchEventIfChange);
 		}
 	}
 	

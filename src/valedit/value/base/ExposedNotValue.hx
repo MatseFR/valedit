@@ -18,12 +18,12 @@ abstract class ExposedNotValue extends ExposedValue
 		// nothing
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	override public function read(dispatchEventIfChange:Bool = true):Void 
 	{
 		// nothing
 	}
 	
-	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
+	override public function readFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
 	{
 		// nothing
 	}

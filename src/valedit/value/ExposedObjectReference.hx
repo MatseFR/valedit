@@ -106,7 +106,7 @@ class ExposedObjectReference extends ExposedValue
 		this.classList.push(className);
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var reference:ExposedObjectReference = fromPool(this.propertyName, this.name, this.classList.copy(), this.allowSelfReference);
 		super.clone_internal(reference, copyValue);

@@ -1,15 +1,15 @@
 package valedit.value;
 
-import valedit.events.ValueEvent;
-import valedit.value.base.ExposedValue;
-import valedit.asset.AssetLib;
+import valedit.asset.Asset;
 import valedit.asset.TextAsset;
+import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueWithAsset;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedText extends ExposedValue 
+class ExposedText extends ExposedValueWithAsset 
 {
 	static private var _POOL:Array<ExposedText> = new Array<ExposedText>();
 	
@@ -18,86 +18,20 @@ class ExposedText extends ExposedValue
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, liveTyping:Bool = true):ExposedText
+	static public function fromPool(propertyName:String, name:String = null#if valeditor, maxChars:Int = 0, restrict:String = null#end):ExposedText
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, maxChars, restrict, liveTyping);
-		return new ExposedText(propertyName, name, maxChars, restrict, liveTyping);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name#if valeditor, maxChars, restrict#end);
+		return new ExposedText(propertyName, name#if valeditor, maxChars, restrict#end);
 	}
 	
-	public var liveTyping:Bool;
+	#if valeditor
+	public var liveTyping:Bool = true;
 	/* 0 = unlimited */
 	public var maxChars:Int = 0;
 	public var restrict:String = null;
+	#end
 	
-	private var _asset:TextAsset;
-	
-	override function set_isConstructor(value:Bool):Bool 
-	{
-		if (this._isConstructor == value) return value;
-		
-		if (value)
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterValue(this);
-				this._asset.registerConstructorValue(this);
-			}
-		}
-		else
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterConstructorValue(this);
-				this._asset.registerValue(this);
-			}
-		}
-		
-		return super.set_isConstructor(value);
-	}
-	
-	override function set_value(value:Dynamic):Dynamic 
-	{
-		if (Std.isOfType(value, TextAsset))
-		{
-			if (this._asset != value)
-			{
-				if (this._asset != null)
-				{
-					if (this._isConstructor)
-					{
-						this._asset.unregisterConstructorValue(this);
-					}
-					else
-					{
-						this._asset.unregisterValue(this);
-					}
-				}
-				this._asset = cast value;
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-			return super.set_value(this._asset.content);
-		}
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			this._asset = null;
-		}
-		return super.set_value(value);
-	}
+	private var _textAsset:TextAsset;
 	
 	/**
 	   
@@ -106,32 +40,25 @@ class ExposedText extends ExposedValue
 	   @param	maxChars
 	   @param	restrict
 	**/
-	public function new(propertyName:String, name:String = null, maxChars:Int = 0, restrict:String = null, liveTyping:Bool = true) 
+	public function new(propertyName:String, name:String = null#if valeditor, maxChars:Int = 0, restrict:String = null#end) 
 	{
 		super(propertyName, name);
+		#if valeditor
 		this.maxChars = maxChars;
 		this.restrict = restrict;
-		this.liveTyping = liveTyping;
+		#end
 		this.defaultValue = "";
 	}
 	
 	override public function clear():Void 
 	{
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			this._asset = null;
-		}
-		
 		super.clear();
 		
+		this._textAsset = null;
+		
+		#if valeditor
+		this.liveTyping = true;
+		#end
 		this.defaultValue = "";
 	}
 	
@@ -141,120 +68,42 @@ class ExposedText extends ExposedValue
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, maxChars:Int, restrict:String, liveTyping:Bool):ExposedText
+	private function setTo(propertyName:String, name:String#if valeditor, maxChars:Int, restrict:String#end):ExposedText
 	{
 		setNames(propertyName, name);
+		#if valeditor
 		this.maxChars = maxChars;
 		this.restrict = restrict;
-		this.liveTyping = liveTyping;
+		#end
 		return this;
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	private function getAssetFromValue(value:Dynamic):Asset
 	{
-		var val:String = this.value;
-		var asset:TextAsset = null;
-		if (val != null)
-		{
-			asset = ValEdit.assetLib.getTextFromText(val);
-		}
-		
-		if (asset != this._asset)
-		{
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.unregisterConstructorValue(this);
-				}
-				else
-				{
-					this._asset.unregisterValue(this);
-				}
-			}
-			this._asset = asset;
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-		}
-		
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
-		}
+		return ValEdit.assetLib.getTextFromText(value);
 	}
 	
-	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
-	{
-		var val:String = Reflect.getProperty(object, this.propertyName);
-		var asset:TextAsset = null;
-		if (val != null)
-		{
-			asset = ValEdit.assetLib.getTextFromText(val);
-		}
-		
-		if (asset != this._asset)
-		{
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.unregisterConstructorValue(this);
-				}
-				else
-				{
-					this._asset.unregisterValue(this);
-				}
-			}
-			this._asset = asset;
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-		}
-		
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
-		}
-	}
-	
-	override public function clone(copyValue:Bool = false):ExposedValue 
-	{
-		var text:ExposedText = fromPool(this.propertyName, this.name, this.maxChars, this.restrict, this.liveTyping);
-		clone_internal(text, copyValue);
-		return text;
-	}
-	
-	override function cloneValue(toValue:ExposedValue):Void 
+	override function setValue(value:Dynamic):Dynamic
 	{
 		if (this._asset != null)
 		{
-			toValue.value = this._asset;
+			this._textAsset = cast this._asset;
+			return super.setValue(this._textAsset.content);
 		}
 		else
 		{
-			super.cloneValue(toValue);
+			return super.setValue(value);
 		}
+	}
+	
+	public function clone(copyValue:Bool = false):ExposedValue 
+	{
+		var text:ExposedText = fromPool(this.propertyName, this.name#if valeditor, this.maxChars, this.restrict#end);
+		#if valeditor
+		text.liveTyping = this.liveTyping;
+		#end
+		clone_internal(text, copyValue);
+		return text;
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 
@@ -273,9 +122,9 @@ class ExposedText extends ExposedValue
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
-		if (this._asset != null)
+		if (this._textAsset != null)
 		{
-			json.asset = this._asset.path;
+			json.asset = this._textAsset.path;
 		}
 		else
 		{
@@ -309,9 +158,9 @@ class ExposedText extends ExposedValue
 	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
 	{
 		var data:Dynamic;
-		if (this._asset != null)
+		if (this._textAsset != null)
 		{
-			data = {asset:this._asset.path};
+			data = {asset:this._textAsset.path};
 		}
 		else
 		{
@@ -326,9 +175,9 @@ class ExposedText extends ExposedValue
 	
 	override public function toJSONSimple(json:Dynamic):Void 
 	{
-		if (this._asset != null)
+		if (this._textAsset != null)
 		{
-			Reflect.setField(json, this.propertyName, this._asset.path);
+			Reflect.setField(json, this.propertyName, this._textAsset.path);
 		}
 		else
 		{

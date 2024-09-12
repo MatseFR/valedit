@@ -16,31 +16,35 @@ class ExposedColor extends ExposedValueTweenable
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, liveDragging:Bool = true, liveTyping:Bool = true):ExposedColor
+	static public function fromPool(propertyName:String, name:String = null):ExposedColor
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, liveDragging, liveTyping);
-		return new ExposedColor(propertyName, name, liveDragging, liveTyping);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name);
+		return new ExposedColor(propertyName, name);
 	}
 	
-	public var liveDragging:Bool;
-	public var liveTyping:Bool;
+	#if valeditor
+	public var liveDragging:Bool = true;
+	public var liveTyping:Bool = true;
+	#end
 	
 	/**
 	   
 	   @param	propertyName
 	   @param	name
 	**/
-	public function new(propertyName:String, name:String = null, liveDragging:Bool = true, liveTyping:Bool = true) 
+	public function new(propertyName:String, name:String = null) 
 	{
 		super(propertyName, name);
-		this.liveDragging = liveDragging;
-		this.liveTyping = liveTyping;
 		this.defaultValue = 0xffffff;
 	}
 	
 	override public function clear():Void 
 	{
 		super.clear();
+		#if valeditor
+		this.liveDragging = true;
+		this.liveTyping = true;
+		#end
 		this.defaultValue = 0xffffff;
 	}
 	
@@ -50,17 +54,19 @@ class ExposedColor extends ExposedValueTweenable
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, liveDragging:Bool, liveTyping:Bool):ExposedColor
+	private function setTo(propertyName:String, name:String):ExposedColor
 	{
 		setNames(propertyName, name);
-		this.liveDragging = liveDragging;
-		this.liveTyping = liveTyping;
 		return this;
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var color:ExposedColor = fromPool(this.propertyName, this.name, this.liveDragging, this.liveTyping);
+		var color:ExposedColor = fromPool(this.propertyName, this.name);
+		#if valeditor
+		color.liveDragging = this.liveDragging;
+		color.liveTyping = this.liveTyping;
+		#end
 		super.clone_internal(color, copyValue);
 		return color;
 	}

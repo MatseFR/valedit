@@ -364,7 +364,7 @@ class ValEdit
 		{
 			template = ValEditTemplate.fromPool(valClass, id, collection, constructorCollection);
 			template.object = createObjectWithTemplate(template, id, template.collection, false);
-			template.object.currentCollection.readValues();
+			template.object.currentCollection.read();
 		}
 		else
 		{

@@ -22,13 +22,15 @@ class ExposedObject extends ExposedValueWithCollection
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, reassignOnChange:Bool = false, isUIOpen:Bool = false):ExposedObject
+	static public function fromPool(propertyName:String, name:String = null, reassignOnChange:Bool = false):ExposedObject
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, reassignOnChange, isUIOpen);
-		return new ExposedObject(propertyName, name, reassignOnChange, isUIOpen);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, reassignOnChange);
+		return new ExposedObject(propertyName, name, reassignOnChange);
 	}
 	
+	#if valeditor
 	public var isUIOpen:Bool = false;
+	#end
 	public var reassignObjectExtras(get, never):ValueExtraContainer;
 	public var reassignOnChange:Bool = false;
 	public var storeValue:Bool = true;
@@ -120,14 +122,12 @@ class ExposedObject extends ExposedValueWithCollection
 	   @param	name
 	   @param	reassignOnChange	set this to true if the object needs to be reassigned after one of its properties value changed
 	**/
-	public function new(propertyName:String, name:String = null, reassignOnChange:Bool = false, isUIOpen:Bool = false) 
+	public function new(propertyName:String, name:String = null, reassignOnChange:Bool = false) 
 	{
 		super(propertyName, name);
 		this._isTweenable = true;
 		this._reassignObjectExtras.owner = this;
 		this.reassignOnChange = reassignOnChange;
-		this.isUIOpen = isUIOpen;
-		this.canCopyValueOnClone = false;
 	}
 	
 	override public function clear():Void 
@@ -135,12 +135,13 @@ class ExposedObject extends ExposedValueWithCollection
 		this._hasIgnoredReassignChildProperty = false;
 		this._ignoreReassignForChildPropertiesMap.clear();
 		this._isTweenable = true;
+		#if valeditor
 		this.isUIOpen = false;
+		#end
 		this._reassignObjectExtras.clear();
 		this._reassignObjectExtras.owner = this;
 		this.storeValue = true;
 		super.clear();
-		this.canCopyValueOnClone = false;
 	}
 	
 	public function pool():Void
@@ -149,11 +150,10 @@ class ExposedObject extends ExposedValueWithCollection
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, reassignOnChange:Bool, isUIOpen:Bool):ExposedObject
+	private function setTo(propertyName:String, name:String, reassignOnChange:Bool):ExposedObject
 	{
 		setNames(propertyName, name);
 		this.reassignOnChange = reassignOnChange;
-		this.isUIOpen = isUIOpen;
 		return this;
 	}
 	
@@ -221,16 +221,16 @@ class ExposedObject extends ExposedValueWithCollection
 		}
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	override public function read(dispatchEventIfChange:Bool = true):Void 
 	{
 		reloadObject();
 		if (this._childCollection != null)
 		{
-			this._childCollection.readValues(dispatchEventIfChange);
+			this._childCollection.read(dispatchEventIfChange);
 		}
 	}
 	
-	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
+	override public function readFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
 	{
 		if (this._storedValue == null)
 		{
@@ -243,7 +243,7 @@ class ExposedObject extends ExposedValueWithCollection
 		}
 		if (this._childCollection != null)
 		{
-			this._childCollection.readValuesFromObject(this._storedValue);
+			this._childCollection.readFromObject(this._storedValue);
 		}
 	}
 	
@@ -289,7 +289,7 @@ class ExposedObject extends ExposedValueWithCollection
 		}
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var object:ExposedObject = fromPool(this.propertyName, this.name, this.reassignOnChange);
 		if (this._childCollection != null)

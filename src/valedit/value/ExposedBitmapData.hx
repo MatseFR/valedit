@@ -1,15 +1,15 @@
 package valedit.value;
 
-import openfl.display.BitmapData;
+import valedit.asset.Asset;
 import valedit.asset.BitmapAsset;
-import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueWithAsset;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedBitmapData extends ExposedValue 
+class ExposedBitmapData extends ExposedValueWithAsset 
 {
 	static private var _POOL:Array<ExposedBitmapData> = new Array<ExposedBitmapData>();
 	
@@ -24,100 +24,18 @@ class ExposedBitmapData extends ExposedValue
 		return new ExposedBitmapData(propertyName, name);
 	}
 	
-	private var _asset:BitmapAsset;
-	
-	override function set_isConstructor(value:Bool):Bool 
-	{
-		if (this._isConstructor == value) return value;
-		
-		if (value)
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterValue(this);
-				this._asset.registerConstructorValue(this);
-			}
-		}
-		else
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterConstructorValue(this);
-				this._asset.registerValue(this);
-			}
-		}
-		
-		return super.set_isConstructor(value);
-	}
-	
-	override function set_value(value:Dynamic):Dynamic 
-	{
-		if (Std.isOfType(value, BitmapAsset))
-		{
-			if (this._asset != value)
-			{
-				if (this._asset != null)
-				{
-					if (this._isConstructor)
-					{
-						this._asset.unregisterConstructorValue(this);
-					}
-					else
-					{
-						this._asset.unregisterValue(this);
-					}
-				}
-				this._asset = cast value;
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-			return super.set_value(this._asset.content);
-		}
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			this._asset = null;
-		}
-		return super.set_value(value);
-	}
+	private var _bmpAsset:BitmapAsset;
 	
 	public function new(propertyName:String, name:String=null) 
 	{
 		super(propertyName, name);
-		this.isNullable = true;
 	}
 	
 	override public function clear():Void 
 	{
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			this._asset = null;
-		}
-		
 		super.clear();
 		
-		this.isNullable = true;
+		this._bmpAsset = null;
 	}
 	
 	public function pool():Void
@@ -132,111 +50,29 @@ class ExposedBitmapData extends ExposedValue
 		return this;
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	private function getAssetFromValue(value:Dynamic):Asset
 	{
-		var val:BitmapData = this.value;
-		var asset:BitmapAsset = null;
-		if (val != null)
+		return ValEdit.assetLib.getBitmapFromBitmapData(value);
+	}
+	
+	override function setValue(value:Dynamic):Dynamic
+	{
+		if (this._asset != null)
 		{
-			asset = ValEdit.assetLib.getBitmapFromBitmapData(val);
+			this._bmpAsset = cast this._asset;
+			return super.setValue(this._bmpAsset.content);
 		}
-		
-		if (asset != this._asset)
+		else
 		{
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.unregisterConstructorValue(this);
-				}
-				else
-				{
-					this._asset.unregisterValue(this);
-				}
-			}
-			this._asset = asset;
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-		}
-		
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+			return super.setValue(value);
 		}
 	}
 	
-	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
-	{
-		var val:BitmapData = Reflect.getProperty(object, this.propertyName);
-		var asset:BitmapAsset = null;
-		if (val != null)
-		{
-			asset = ValEdit.assetLib.getBitmapFromBitmapData(val);
-		}
-		
-		if (asset != this._asset)
-		{
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.unregisterConstructorValue(this);
-				}
-				else
-				{
-					this._asset.unregisterValue(this);
-				}
-			}
-			this._asset = asset;
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-		}
-		
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
-		}
-	}
-	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	 public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var bmd:ExposedBitmapData = fromPool(this.propertyName, this.name);
 		clone_internal(bmd, copyValue);
 		return bmd;
-	}
-	
-	override function cloneValue(toValue:ExposedValue):Void 
-	{
-		if (this._asset != null)
-		{
-			toValue.value = this._asset;
-		}
-		else
-		{
-			super.cloneValue(toValue);
-		}
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 
@@ -251,9 +87,9 @@ class ExposedBitmapData extends ExposedValue
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
-		if (this._asset != null)
+		if (this._bmpAsset != null)
 		{
-			json.asset = this._asset.path;
+			json.asset = this._bmpAsset.path;
 		}
 		return super.toJSON(json);
 	}
@@ -275,9 +111,9 @@ class ExposedBitmapData extends ExposedValue
 	
 	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
 	{
-		if (this._asset != null)
+		if (this._bmpAsset != null)
 		{
-			var data:Dynamic = {value:this._asset.path};
+			var data:Dynamic = {value:this._bmpAsset.path};
 			#if valeditor
 			data.lastChanged = this.lastChanged;
 			data.lastModified = this.lastModified;
@@ -288,9 +124,9 @@ class ExposedBitmapData extends ExposedValue
 	
 	override public function toJSONSimple(json:Dynamic):Void 
 	{
-		if (this._asset != null)
+		if (this._bmpAsset != null)
 		{
-			Reflect.setField(json, this.propertyName, this._asset.path);
+			Reflect.setField(json, this.propertyName, this._bmpAsset.path);
 		}
 	}
 	

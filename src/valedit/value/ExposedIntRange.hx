@@ -96,7 +96,7 @@ class ExposedIntRange extends ExposedValueTweenable
 		return this;
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var range:ExposedIntRange = fromPool(this.propertyName, this.name, this.min, this.max#if valeditor, this.step#end);
 		#if valeditor

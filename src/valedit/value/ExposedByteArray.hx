@@ -1,15 +1,15 @@
 package valedit.value;
 
-import openfl.utils.ByteArray;
+import valedit.asset.Asset;
 import valedit.asset.BinaryAsset;
-import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueWithAsset;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedByteArray extends ExposedValue 
+class ExposedByteArray extends ExposedValueWithAsset 
 {
 	static private var _POOL:Array<ExposedByteArray> = new Array<ExposedByteArray>();
 	
@@ -24,97 +24,23 @@ class ExposedByteArray extends ExposedValue
 		return new ExposedByteArray(propertyName, name);
 	}
 	
-	private var _asset:BinaryAsset;
+	private var _byteAsset:BinaryAsset;
 	
-	override function set_isConstructor(value:Bool):Bool 
-	{
-		if (this._isConstructor == value) return value;
-		
-		if (value)
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterValue(this);
-				this._asset.registerConstructorValue(this);
-			}
-		}
-		else
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterConstructorValue(this);
-				this._asset.registerValue(this);
-			}
-		}
-		
-		return super.set_isConstructor(value);
-	}
-	
-	override function set_value(value:Dynamic):Dynamic 
-	{
-		if (Std.isOfType(value, BinaryAsset))
-		{
-			if (this._asset != value)
-			{
-				if (this._asset != null)
-				{
-					if (this._isConstructor)
-					{
-						this._asset.unregisterConstructorValue(this);
-					}
-					else
-					{
-						this._asset.unregisterValue(this);
-					}
-				}
-				this._asset = cast value;
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-			return super.set_value(this._asset.content);
-		}
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			this._asset = null;
-		}
-		return super.set_value(value);
-	}
-
 	public function new(propertyName:String, name:String=null) 
 	{
 		super(propertyName, name);
 	}
 	
+	private function getAssetFromValue(value:Dynamic):Asset
+	{
+		return ValEdit.assetLib.getBinaryFromByteArray(value);
+	}
+	
 	override public function clear():Void 
 	{
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			this._asset = null;
-		}
-		
 		super.clear();
+		
+		this._byteAsset = null;
 	}
 	
 	public function pool():Void
@@ -129,111 +55,24 @@ class ExposedByteArray extends ExposedValue
 		return this;
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	override function setValue(value:Dynamic):Dynamic
 	{
-		var val:ByteArray = this.value;
-		var asset:BinaryAsset = null;
-		if (val != null)
+		if (this._asset != null)
 		{
-			asset = ValEdit.assetLib.getBinaryFromByteArray(val);
+			this._byteAsset = cast this._asset;
+			return super.setValue(this._byteAsset.content);
 		}
-		
-		if (asset != this._asset)
+		else
 		{
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.unregisterConstructorValue(this);
-				}
-				else
-				{
-					this._asset.unregisterValue(this);
-				}
-			}
-			this._asset = asset;
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-		}
-		
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+			return super.setValue(value);
 		}
 	}
 	
-	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
-	{
-		var val:ByteArray = Reflect.getProperty(object, this.propertyName);
-		var asset:BinaryAsset = null;
-		if (val != null)
-		{
-			asset = ValEdit.assetLib.getBinaryFromByteArray(val);
-		}
-		
-		if (asset != this._asset)
-		{
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.unregisterConstructorValue(this);
-				}
-				else
-				{
-					this._asset.unregisterValue(this);
-				}
-			}
-			this._asset = asset;
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-		}
-		
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
-		}
-	}
-	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var bytes:ExposedByteArray = fromPool(this.propertyName, this.name);
 		clone_internal(bytes, copyValue);
 		return bytes;
-	}
-	
-	override function cloneValue(toValue:ExposedValue):Void 
-	{
-		if (this._asset != null)
-		{
-			toValue.value = this._asset;
-		}
-		else
-		{
-			super.cloneValue(toValue);
-		}
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 
@@ -248,9 +87,9 @@ class ExposedByteArray extends ExposedValue
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
-		if (this._asset != null)
+		if (this._byteAsset != null)
 		{
-			json.asset = this._asset.path;
+			json.asset = this._byteAsset.path;
 		}
 		return super.toJSON(json);
 	}
@@ -272,9 +111,9 @@ class ExposedByteArray extends ExposedValue
 	
 	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
 	{
-		if (this._asset != null)
+		if (this._byteAsset != null)
 		{
-			var data:Dynamic = {asset:this._asset.path};
+			var data:Dynamic = {asset:this._byteAsset.path};
 			#if valeditor
 			data.lastChanged = this.lastChanged;
 			data.lastModified = this.lastModified;
@@ -285,9 +124,9 @@ class ExposedByteArray extends ExposedValue
 	
 	override public function toJSONSimple(json:Dynamic):Void 
 	{
-		if (this._asset != null)
+		if (this._byteAsset != null)
 		{
-			Reflect.setField(json, this.propertyName, this._asset.path);
+			Reflect.setField(json, this.propertyName, this._byteAsset.path);
 		}
 	}
 	

@@ -157,15 +157,15 @@ class ExposedFunctionExternal extends ExposedFunctionBase
 		return false;
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	override public function read(dispatchEventIfChange:Bool = true):Void 
 	{
 		for (param in this._parameterValues)
 		{
-			param.readValue(false);
+			param.read(false);
 		}
 	}
 	
-	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
+	override public function readFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
 	{
 		// nothing
 	}
@@ -308,7 +308,7 @@ class ExposedFunctionExternal extends ExposedFunctionBase
 		this._values.resize(0);
 		
 		if (this.parentValue != null) this.parentValue.childValueChanged(this);
-		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
+		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.read();
 	}
 	
 	public function executeWithParameters(parameters:Array<Dynamic>):Void
@@ -316,10 +316,10 @@ class ExposedFunctionExternal extends ExposedFunctionBase
 		Reflect.callMethod(this.callObject, this.value, parameters);
 		
 		if (this.parentValue != null) this.parentValue.childValueChanged(this);
-		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
+		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.read();
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue
+	public function clone(copyValue:Bool = false):ExposedValue
 	{
 		var func:ExposedFunctionExternal = fromPool(this.propertyName, this.name, this.callObject, this.parameters);
 		super.clone_internal(func, copyValue);

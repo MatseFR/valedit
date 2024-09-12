@@ -16,10 +16,10 @@ class ExposedSelectCombo extends ExposedSelectBase
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null, listPercentWidth:Float = 100):ExposedSelectCombo
+	static public function fromPool(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null):ExposedSelectCombo
 	{
-		if (_POOL.length != 0) return cast _POOL.pop().setTo(propertyName, name, choiceList, valueList, listPercentWidth);
-		return new ExposedSelectCombo(propertyName, name, choiceList, valueList, listPercentWidth);
+		if (_POOL.length != 0) return cast _POOL.pop().setTo(propertyName, name, choiceList, valueList);
+		return new ExposedSelectCombo(propertyName, name, choiceList, valueList);
 	}
 	
 	/**
@@ -30,9 +30,9 @@ class ExposedSelectCombo extends ExposedSelectBase
 	   @param	valueList
 	   @param	listPercentWidth
 	**/
-	public function new(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null, listPercentWidth:Float = 100) 
+	public function new(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null) 
 	{
-		super(propertyName, name, choiceList, valueList, listPercentWidth);
+		super(propertyName, name, choiceList, valueList);
 	}
 	
 	public function pool():Void
@@ -41,10 +41,9 @@ class ExposedSelectCombo extends ExposedSelectBase
 		_POOL[_POOL.length] = this;
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var select:ExposedSelectCombo = fromPool(this.propertyName, this.name, choiceList != null ? choiceList.copy():null, valueList != null ? valueList.copy():null, listPercentWidth);
-		select.selectOnKeyboardNavigation = this.selectOnKeyboardNavigation;
+		var select:ExposedSelectCombo = fromPool(this.propertyName, this.name, this.choiceList != null ? this.choiceList.copy():null, this.valueList != null ? this.valueList.copy():null);
 		super.clone_internal(select, copyValue);
 		return select;
 	}

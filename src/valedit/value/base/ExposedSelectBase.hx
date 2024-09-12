@@ -1,4 +1,5 @@
 package valedit.value.base;
+import valedit.value.base.ExposedValue;
 
 /**
  * ...
@@ -8,18 +9,19 @@ abstract class ExposedSelectBase extends ExposedValue
 {
 	public var choiceList(default, null):Array<String>;
 	public var valueList(default, null):Array<Dynamic>;
-	public var listPercentWidth:Float;
+	#if valeditor
+	public var listPercentWidth:Float = 100;
 	/* if true, moving up or down using keyboard will select the item. Default is false. */
 	public var selectOnKeyboardNavigation:Bool = false;
+	#end
 
-	public function new(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null, listPercentWidth:Float = 100) 
+	public function new(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null) 
 	{
 		super(propertyName, name);
 		if (choiceList == null) choiceList = new Array<String>();
 		if (valueList == null) valueList = new Array<Dynamic>();
 		this.choiceList = choiceList;
 		this.valueList = valueList;
-		this.listPercentWidth = listPercentWidth;
 	}
 	
 	override public function clear():Void 
@@ -27,19 +29,31 @@ abstract class ExposedSelectBase extends ExposedValue
 		super.clear();
 		this.choiceList = null;
 		this.valueList = null;
+		#if valeditor
+		this.listPercentWidth = 100;
 		this.selectOnKeyboardNavigation = false;
+		#end
 	}
 	
-	private function setTo(propertyName:String, name:String, choiceList:Array<String>, valueList:Array<Dynamic>, listPercentWidth:Float):ExposedSelectBase
+	private function setTo(propertyName:String, name:String, choiceList:Array<String>, valueList:Array<Dynamic>):ExposedSelectBase
 	{
 		setNames(propertyName, name);
 		if (choiceList == null) choiceList = new Array<String>();
 		if (valueList == null) valueList = new Array<Dynamic>();
 		this.choiceList = choiceList;
 		this.valueList = valueList;
-		this.listPercentWidth = listPercentWidth;
 		return this;
 	}
+	
+	#if valeditor
+	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
+	{
+		var select:ExposedSelectBase = cast value;
+		select.listPercentWidth = this.listPercentWidth;
+		select.selectOnKeyboardNavigation = this.selectOnKeyboardNavigation;
+		super.clone_internal(value, copyValue);
+	}
+	#end
 	
 	/**
 	   if value is null choice is used as value

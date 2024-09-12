@@ -88,7 +88,7 @@ class ReadValuesExtra extends ValueExtra
 		for (propertyName in this._valueNames)
 		{
 			value = collection.getValue(propertyName);
-			value.readValue(this._dispatchEventIfChange);
+			value.read(this._dispatchEventIfChange);
 		}
 	}
 	
@@ -98,7 +98,7 @@ class ReadValuesExtra extends ValueExtra
 		for (propertyName in this._valueNames)
 		{
 			value = this._collection.getValue(propertyName);
-			value.readValue(this._dispatchEventIfChange);
+			value.read(this._dispatchEventIfChange);
 		}
 	}
 	

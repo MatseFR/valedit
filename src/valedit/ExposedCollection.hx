@@ -262,7 +262,7 @@ class ExposedCollection extends EventDispatcher
 	public function readAndSetObject(object:Dynamic):Void
 	{
 		this.object = object;
-		readValuesFromObject(object);
+		readFromObject(object);
 	}
 	
 	public function applyToObject(object:Dynamic, visibleOnly:Bool = true, ?applyIfDefaultValue:Bool):Void
@@ -404,19 +404,19 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
-	public function readValues(dispatchEventIfChange:Bool = true):Void
+	public function read(dispatchEventIfChange:Bool = true):Void
 	{
 		for (value in this._valueList)
 		{
-			value.readValue(dispatchEventIfChange);
+			value.read(dispatchEventIfChange);
 		}
 	}
 	
-	public function readValuesFromObject(object:Dynamic, dispatchEventIfChange:Bool = true):Void
+	public function readFromObject(object:Dynamic, dispatchEventIfChange:Bool = true):Void
 	{
 		for (value in this._valueList)
 		{
-			value.readValueFromObject(object, dispatchEventIfChange);
+			value.readFromObject(object, dispatchEventIfChange);
 		}
 	}
 	

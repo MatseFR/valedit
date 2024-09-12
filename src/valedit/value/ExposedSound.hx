@@ -1,13 +1,15 @@
 package valedit.value;
 
+import valedit.asset.Asset;
 import valedit.asset.SoundAsset;
 import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueWithAsset;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedSound extends ExposedValue 
+class ExposedSound extends ExposedValueWithAsset 
 {
 	static private var _POOL:Array<ExposedSound> = new Array<ExposedSound>();
 	
@@ -22,101 +24,18 @@ class ExposedSound extends ExposedValue
 		return new ExposedSound(propertyName, name);
 	}
 	
-	private var _asset:SoundAsset;
-	
-	override function set_isConstructor(value:Bool):Bool 
-	{
-		if (this._isConstructor == value) return value;
-		
-		if (value)
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterValue(this);
-				this._asset.registerConstructorValue(this);
-			}
-		}
-		else
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterConstructorValue(this);
-				this._asset.registerValue(this);
-			}
-		}
-		
-		return super.set_isConstructor(value);
-	}
-	
-	override function set_value(value:Dynamic):Dynamic 
-	{
-		if (Std.isOfType(value, SoundAsset))
-		{
-			if (this._asset != value)
-			{
-				if (this._asset != null)
-				{
-					if (this._isConstructor)
-					{
-						this._asset.unregisterConstructorValue(this);
-					}
-					else
-					{
-						this._asset.unregisterValue(this);
-					}
-				}
-				this._asset = cast value;
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-			return super.set_value(this._asset.content);
-		}
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			this._asset = null;
-		}
-		return super.set_value(value);
-	}
+	private var _soundAsset:SoundAsset;
 	
 	public function new(propertyName:String, name:String=null) 
 	{
 		super(propertyName, name);
-		this.isNullable = true;
 	}
 	
 	override public function clear():Void 
 	{
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			
-			this._asset = null;
-		}
-		
 		super.clear();
 		
-		this.isNullable = true;
+		this._soundAsset = null;
 	}
 	
 	public function pool():Void
@@ -131,33 +50,29 @@ class ExposedSound extends ExposedValue
 		return this;
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	private function getAssetFromValue(value:Dynamic):Asset
+	{
+		return ValEdit.assetLib.getSoundFromSound(value);
+	}
+	
+	override function setValue(value:Dynamic):Dynamic 
+	{
+		if (this._asset != null)
+		{
+			this._soundAsset = cast this._asset;
+			return super.setValue(this._soundAsset.content);
+		}
+		else
+		{
+			return super.setValue(value);
+		}
+	}
+	
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var snd:ExposedSound = fromPool(this.propertyName, this.name);
 		clone_internal(snd, copyValue);
 		return snd;
-	}
-	
-	//override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
-	//{
-		//if (copyValue && this._asset != null)
-		//{
-			//value.value = this._asset;
-			//copyValue = false;
-		//}
-		//super.clone_internal(value, copyValue);
-	//}
-	
-	override function cloneValue(toValue:ExposedValue):Void 
-	{
-		if (this._asset != null)
-		{
-			toValue.value = this._asset;
-		}
-		else
-		{
-			super.cloneValue(toValue);
-		}
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 
@@ -172,9 +87,9 @@ class ExposedSound extends ExposedValue
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
-		if (this._asset != null)
+		if (this._soundAsset != null)
 		{
-			json.asset = this._asset.path;
+			json.asset = this._soundAsset.path;
 		}
 		return super.toJSON(json);
 	}
@@ -196,9 +111,9 @@ class ExposedSound extends ExposedValue
 	
 	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
 	{
-		if (this._asset != null)
+		if (this._soundAsset != null)
 		{
-			var data:Dynamic = {asset:this._asset.path};
+			var data:Dynamic = {asset:this._soundAsset.path};
 			#if valeditor
 			data.lastChanged = this.lastChanged;
 			data.lastModified = this.lastModified;
@@ -209,9 +124,9 @@ class ExposedSound extends ExposedValue
 	
 	override public function toJSONSimple(json:Dynamic):Void 
 	{
-		if (this._asset != null)
+		if (this._soundAsset != null)
 		{
-			Reflect.setField(json, this.propertyName, this._asset.path);
+			Reflect.setField(json, this.propertyName, this._soundAsset.path);
 		}
 	}
 	

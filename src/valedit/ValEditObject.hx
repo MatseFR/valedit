@@ -154,7 +154,7 @@ class ValEditObject extends EventDispatcher
 		if (collection == null)
 		{
 			collection = this.clss.getCollection();
-			collection.readValuesFromObject(this.object);
+			collection.readFromObject(this.object);
 		}
 		
 		return collection;

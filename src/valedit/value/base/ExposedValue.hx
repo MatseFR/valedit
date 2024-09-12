@@ -25,7 +25,6 @@ abstract class ExposedValue extends EventDispatcher
 		_FACTORIES.set(className, factory);
 	}
 	
-	public var canCopyValueOnClone:Bool = true;
 	/* Tells wether value should be checked for change when calling ExposedCollection's or ExposedGroup's getActionChanges function. Default is true. */
 	public var checkForChange:Bool = true;
 	public var collection(get, set):ExposedCollection;
@@ -177,15 +176,6 @@ abstract class ExposedValue extends EventDispatcher
 	private function get_uiControl():IValueUI { return this._uiControl; }
 	private function set_uiControl(value:IValueUI):IValueUI
 	{
-		if (this._uiControl == value) return value;
-		//if (value != null)
-		//{
-			//value.exposedValue = this;
-		//}
-		//else if (this._uiControl != null)
-		//{
-			//this._uiControl.exposedValue = null;
-		//}
 		return this._uiControl = value;
 	}
 	#end
@@ -233,39 +223,7 @@ abstract class ExposedValue extends EventDispatcher
 	}
 	private function set_value(value:Dynamic):Dynamic
 	{
-		if (this._object == null)
-		{
-			if (this._storedValue != value)
-			{
-				this._storedValue = value;
-				#if valeditor
-				this.lastChanged = Timer.stamp();
-				#end
-				ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
-			}
-			
-		}
-		else if (this._storedValue != value)
-		{
-			this._storedValue = value;
-			Reflect.setProperty(this._object, this.propertyName, value);
-			#if valeditor
-			this.lastChanged = ValEdit.TIME_STAMP_CURRENT;
-			#end
-			this._extras.execute();
-			if (this.parentValue != null) this.parentValue.childValueChanged(this);
-			if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
-			
-			#if valeditor
-			if (this._valEditorObject != null)
-			{
-				this._valEditorObject.valueChange(this);
-			}
-			#end
-			
-			ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
-		}
-		return value;
+		return setValue(value);
 	}
 	
 	private var _visible:Bool = true;
@@ -295,7 +253,6 @@ abstract class ExposedValue extends EventDispatcher
 	**/
 	public function clear():Void
 	{
-		this.canCopyValueOnClone = true;
 		this.checkForChange = true;
 		this.collection = null;
 		this.defaultValue = null;
@@ -327,13 +284,47 @@ abstract class ExposedValue extends EventDispatcher
 	
 	private function setNames(propertyName:String, name:String):Void
 	{
-		//if (propertyName == null)
-		//{
-			//throw new ArgumentError("ExposedValue ::: propertyName cannot be null");
-		//}
 		this.propertyName = propertyName;
 		if (name == null) name = propertyName;
 		this.name = name;
+	}
+	
+	private function setValue(value:Dynamic):Dynamic
+	{
+		if (this._object == null)
+		{
+			if (this._storedValue != value)
+			{
+				this._storedValue = value;
+				#if valeditor
+				this.lastChanged = Timer.stamp();
+				#end
+				ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+			}
+			
+		}
+		else if (this._storedValue != value)
+		{
+			this._storedValue = value;
+			Reflect.setProperty(this._object, this.propertyName, value);
+			#if valeditor
+			this.lastChanged = ValEdit.TIME_STAMP_CURRENT;
+			#end
+			this._extras.execute();
+			if (this.parentValue != null) this.parentValue.childValueChanged(this);
+			if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.read();
+			
+			#if valeditor
+			if (this._valEditorObject != null)
+			{
+				this._valEditorObject.valueChange(this);
+			}
+			#end
+			
+			ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+		}
+		
+		return value;
 	}
 	
 	public function getPropertyNames():Array<String>
@@ -383,30 +374,18 @@ abstract class ExposedValue extends EventDispatcher
 		return this.value != value.value;
 	}
 	
-	public function readValue(dispatchEventIfChange:Bool = true):Void
+	public function read(dispatchEventIfChange:Bool = true):Void
 	{
 		if (this.isAbsolute && this._storedValue != null) return;
 		
-		var val:Dynamic = this.value;
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
-		}
+		updateValueIfDifferent(this.value, dispatchEventIfChange);
 	}
 	
-	public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void
+	public function readFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void
 	{
 		if (this.isAbsolute && this._storedValue != null) return;
 		
-		var val:Dynamic = Reflect.getProperty(object, this.propertyName);
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
-		}
+		updateValueIfDifferent(Reflect.getProperty(object, this.propertyName), dispatchEventIfChange);
 	}
 	
 	public function reassignValue():Void
@@ -432,12 +411,22 @@ abstract class ExposedValue extends EventDispatcher
 		}
 	}
 	
+	private function updateValueIfDifferent(value:Dynamic, dispatchEventIfChange:Bool):Void
+	{
+		if (this._storedValue != value)
+		{
+			this._storedValue = value;
+			if (this._uiControl != null) this._uiControl.updateExposedValue();
+			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+		}
+	}
+	
 	/**
 	   
 	**/
 	public function valueChanged():Void
 	{
-		readValue(false);
+		read(false);
 	}
 	
 	/**
@@ -452,17 +441,13 @@ abstract class ExposedValue extends EventDispatcher
 	   
 	   @return
 	**/
-	public function clone(copyValue:Bool = false):ExposedValue
-	{
-		throw new Error("You have to override ExposedValue.clone");
-	}
+	abstract public function clone(copyValue:Bool = false):ExposedValue;
 	
 	private function clone_internal(value:ExposedValue, copyValue:Bool = false):Void
 	{
-		value.canCopyValueOnClone = this.canCopyValueOnClone;
 		value.checkForChange = this.checkForChange;
 		value.defaultValue = this.defaultValue;
-		if (copyValue && this.canCopyValueOnClone)
+		if (copyValue)
 		{
 			cloneValue(value);
 		}

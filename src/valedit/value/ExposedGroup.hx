@@ -387,19 +387,19 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	override public function read(dispatchEventIfChange:Bool = true):Void 
 	{
 		for (value in this._valueList)
 		{
-			value.readValue(dispatchEventIfChange);
+			value.read(dispatchEventIfChange);
 		}
 	}
 	
-	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
+	override public function readFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
 	{
 		for (value in this._valueList)
 		{
-			value.readValueFromObject(object, dispatchEventIfChange);
+			value.readFromObject(object, dispatchEventIfChange);
 		}
 	}
 	
@@ -740,7 +740,7 @@ class ExposedGroup extends ExposedValue
 	   
 	   @return
 	**/
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var group:ExposedGroup = fromPool(this.propertyName, this.name, this.isUIOpen);
 		

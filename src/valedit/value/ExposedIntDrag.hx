@@ -16,39 +16,42 @@ class ExposedIntDrag extends ExposedValueTweenable
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, minimum:Null<Float> = null, maximum:Null<Float> = null,
-									dragScaleFactor:Float = 1, step:Int = 1, liveDragging:Bool = true, liveTyping:Bool = true):ExposedIntDrag
+	static public function fromPool(propertyName:String, name:String = null#if valeditor, minimum:Null<Float> = null, maximum:Null<Float> = null, dragScaleFactor:Float = 1, step:Int = 1#end):ExposedIntDrag
 	{
-		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name, minimum, maximum, dragScaleFactor, step, liveDragging, liveTyping);
-		return new ExposedIntDrag(propertyName, name, minimum, maximum, dragScaleFactor, step, liveDragging, liveTyping);
+		if (_POOL.length != 0) return _POOL.pop().setTo(propertyName, name#if valeditor, minimum, maximum, dragScaleFactor, step#end);
+		return new ExposedIntDrag(propertyName, name#if valeditor, minimum, maximum, dragScaleFactor, step#end);
 	}
 	
+	#if valeditor
 	public var dragScaleFactor:Float;
-	public var liveDragging:Bool;
-	public var liveTyping:Bool;
+	public var liveDragging:Bool = true;
+	public var liveTyping:Bool = true;
 	public var maximum:Float;
 	public var minimum:Float;
 	public var step:Int;
+	#end
 	
-	public function new(propertyName:String, name:String = null, minimum:Null<Float> = null, maximum:Null<Float> = null,
-						dragScaleFactor:Float = 1, step:Int = 1, liveDragging:Bool = true, liveTyping:Bool = true)
+	public function new(propertyName:String, name:String = null#if valeditor, minimum:Null<Float> = null, maximum:Null<Float> = null, dragScaleFactor:Float = 1, step:Int = 1#end)
 	{
 		super(propertyName, name);
-		
+		#if valeditor
 		if (minimum == null) minimum = Math.NEGATIVE_INFINITY;
 		if (maximum == null) maximum = Math.POSITIVE_INFINITY;
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.dragScaleFactor = dragScaleFactor;
 		this.step = step;
-		this.liveDragging = liveDragging;
-		this.liveTyping = liveTyping;
+		#end
 		this.defaultValue = 0;
 	}
 	
 	override public function clear():Void 
 	{
 		super.clear();
+		#if valeditor
+		this.liveDragging = true;
+		this.liveTyping = true;
+		#end
 		this.defaultValue = 0;
 	}
 	
@@ -58,25 +61,27 @@ class ExposedIntDrag extends ExposedValueTweenable
 		_POOL[_POOL.length] = this;
 	}
 	
-	private function setTo(propertyName:String, name:String, minimum:Null<Float>, maximum:Null<Float>, dragScaleFactor:Float,
-						   step:Int, liveDragging:Bool, liveTyping:Bool):ExposedIntDrag
+	private function setTo(propertyName:String, name:String#if valeditor, minimum:Null<Float>, maximum:Null<Float>, dragScaleFactor:Float, step:Int#end):ExposedIntDrag
 	{
 		setNames(propertyName, name);
+		#if valeditor
 		if (minimum == null) minimum = Math.NEGATIVE_INFINITY;
 		if (maximum == null) maximum = Math.POSITIVE_INFINITY;
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.dragScaleFactor = dragScaleFactor;
 		this.step = step;
-		this.liveDragging = liveDragging;
-		this.liveTyping = liveTyping;
+		#end
 		return this;
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var int:ExposedIntDrag = fromPool(this.propertyName, this.name, this.minimum, this.maximum,
-										  this.dragScaleFactor, this.step, this.liveDragging, this.liveTyping);
+		var int:ExposedIntDrag = fromPool(this.propertyName, this.name, this.minimum, this.maximum, this.dragScaleFactor, this.step);
+		#if valeditor
+		int.liveDragging = this.liveDragging;
+		int.liveTyping = this.liveTyping;
+		#end
 		super.clone_internal(int, copyValue);
 		return int;
 	}

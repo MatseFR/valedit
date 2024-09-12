@@ -74,14 +74,12 @@ class ExposedFunction extends ExposedFunctionBase
 				addParameter(param);
 			}
 		}
-		this.canCopyValueOnClone = false;
 		this.checkForChange = false;
 	}
 	
 	override public function clear():Void 
 	{
 		super.clear();
-		this.canCopyValueOnClone = false;
 		this.checkForChange = false;
 		this.parameters.resize(0);
 		clearParameterValues();
@@ -119,15 +117,15 @@ class ExposedFunction extends ExposedFunctionBase
 		return false;
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	override public function read(dispatchEventIfChange:Bool = true):Void 
 	{
 		for (param in this._parameterValues)
 		{
-			param.readValue(false);
+			param.read(false);
 		}
 	}
 	
-	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void
+	override public function readFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void
 	{
 		// nothing
 	}
@@ -267,7 +265,7 @@ class ExposedFunction extends ExposedFunctionBase
 		this._values.resize(0);
 		
 		if (this.parentValue != null) this.parentValue.childValueChanged(this);
-		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
+		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.read();
 	}
 	
 	public function executeWithParameters(parameters:Array<Dynamic>):Void
@@ -275,13 +273,13 @@ class ExposedFunction extends ExposedFunctionBase
 		Reflect.callMethod(this._object, this.value, parameters);
 		
 		if (this.parentValue != null) this.parentValue.childValueChanged(this);
-		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.readValues();
+		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.read();
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var func:ExposedFunction = fromPool(this.propertyName, this.name, this.parameters);
-		super.clone_internal(func, false); // don't copy value, whatever the copyValue param says
+		super.clone_internal(func, copyValue);
 		return func;
 	}
 	

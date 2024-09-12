@@ -1,15 +1,15 @@
 package valedit.value.starling;
 
-import starling.textures.Texture;
+import valedit.asset.Asset;
 import valedit.asset.starling.StarlingTextureAsset;
-import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
+import valedit.value.base.ExposedValueWithAsset;
 
 /**
  * ...
  * @author Matse
  */
-class ExposedStarlingTexture extends ExposedValue 
+class ExposedStarlingTexture extends ExposedValueWithAsset 
 {
 	static private var _POOL:Array<ExposedStarlingTexture> = new Array<ExposedStarlingTexture>();
 	
@@ -24,99 +24,18 @@ class ExposedStarlingTexture extends ExposedValue
 		return new ExposedStarlingTexture(propertyName, name);
 	}
 	
-	private var _asset:StarlingTextureAsset;
+	private var _textureAsset:StarlingTextureAsset;
 	
-	override function set_isConstructor(value:Bool):Bool 
-	{
-		if (this._isConstructor == value) return value;
-		
-		if (value)
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterValue(this);
-				this._asset.registerConstructorValue(this);
-			}
-		}
-		else
-		{
-			if (this._asset != null)
-			{
-				this._asset.unregisterConstructorValue(this);
-				this._asset.registerValue(this);
-			}
-		}
-		
-		return super.set_isConstructor(value);
-	}
-	
-	override function set_value(value:Dynamic):Dynamic 
-	{
-		if (Std.isOfType(value, StarlingTextureAsset))
-		{
-			if (this._asset != value)
-			{
-				if (this._asset != null)
-				{
-					if (this._isConstructor)
-					{
-						this._asset.unregisterConstructorValue(this);
-					}
-					else
-					{
-						this._asset.unregisterValue(this);
-					}
-				}
-				this._asset = cast value;
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-			return super.set_value(this._asset.content);
-		}
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			this._asset = null;
-		}
-		return super.set_value(value);
-	}
-
 	public function new(propertyName:String, name:String = null)
 	{
 		super(propertyName, name);
-		this.isNullable = true;
 	}
 	
 	override public function clear():Void 
 	{
-		if (this._asset != null)
-		{
-			if (this._isConstructor)
-			{
-				this._asset.unregisterConstructorValue(this);
-			}
-			else
-			{
-				this._asset.unregisterValue(this);
-			}
-			this._asset = null;
-		}
 		super.clear();
 		
-		this.isNullable = true;
+		this._textureAsset = null;
 	}
 	
 	public function pool():Void
@@ -131,111 +50,29 @@ class ExposedStarlingTexture extends ExposedValue
 		return this;
 	}
 	
-	override public function readValue(dispatchEventIfChange:Bool = true):Void 
+	private function getAssetFromValue(value:Dynamic):Asset
 	{
-		var val:Texture = this.value;
-		var asset:StarlingTextureAsset = null;
-		if (val != null)
+		return ValEdit.assetLib.getStarlingTextureAssetFromTexture(value);
+	}
+	
+	override function setValue(value:Dynamic):Dynamic
+	{
+		if (this._asset != null)
 		{
-			asset = ValEdit.assetLib.getStarlingTextureAssetFromTexture(val);
+			this._textureAsset = cast this._asset;
+			return super.setValue(this._textureAsset.content);
 		}
-		
-		if (asset != this._asset)
+		else
 		{
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.unregisterConstructorValue(this);
-				}
-				else
-				{
-					this._asset.unregisterValue(this);
-				}
-			}
-			this._asset = asset;
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-		}
-		
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+			return super.setValue(value);
 		}
 	}
 	
-	override public function readValueFromObject(object:Dynamic, dispatchEventIfChange:Bool = false):Void 
-	{
-		var val:Texture = Reflect.getProperty(object, this.propertyName);
-		var asset:StarlingTextureAsset = null;
-		if (val != null)
-		{
-			asset = ValEdit.assetLib.getStarlingTextureAssetFromTexture(val);
-		}
-		
-		if (asset != this._asset)
-		{
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.unregisterConstructorValue(this);
-				}
-				else
-				{
-					this._asset.unregisterValue(this);
-				}
-			}
-			this._asset = asset;
-			if (this._asset != null)
-			{
-				if (this._isConstructor)
-				{
-					this._asset.registerConstructorValue(this);
-				}
-				else
-				{
-					this._asset.registerValue(this);
-				}
-			}
-		}
-		
-		if (this._storedValue != val)
-		{
-			this._storedValue = val;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
-		}
-	}
-	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var tex:ExposedStarlingTexture = fromPool(this.propertyName, this.name);
 		clone_internal(tex, copyValue);
 		return tex;
-	}
-	
-	override function cloneValue(toValue:ExposedValue):Void 
-	{
-		if (this._asset != null)
-		{
-			toValue.value = this._asset;
-		}
-		else
-		{
-			super.cloneValue(toValue);
-		}
 	}
 	
 	override public function fromJSON(json:Dynamic):Void 
@@ -250,9 +87,9 @@ class ExposedStarlingTexture extends ExposedValue
 	override public function toJSON(json:Dynamic = null):Dynamic 
 	{
 		if (json == null) json = {};
-		if (this._asset != null)
+		if (this._textureAsset != null)
 		{
-			json.asset = this._asset.path;
+			json.asset = this._textureAsset.path;
 		}
 		return super.toJSON(json);
 	}
@@ -274,9 +111,9 @@ class ExposedStarlingTexture extends ExposedValue
 	
 	override public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void 
 	{
-		if (this._asset != null)
+		if (this._textureAsset != null)
 		{
-			var data:Dynamic = {asset:this._asset.path};
+			var data:Dynamic = {asset:this._textureAsset.path};
 			#if valeditor
 			data.lastChanged = this.lastChanged;
 			data.lastModified = this.lastModified;
@@ -287,9 +124,9 @@ class ExposedStarlingTexture extends ExposedValue
 	
 	override public function toJSONSimple(json:Dynamic):Void 
 	{
-		if (this._asset != null)
+		if (this._textureAsset != null)
 		{
-			Reflect.setField(json, this.propertyName, this._asset.path);
+			Reflect.setField(json, this.propertyName, this._textureAsset.path);
 		}
 	}
 	

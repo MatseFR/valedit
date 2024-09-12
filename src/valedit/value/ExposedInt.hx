@@ -39,8 +39,9 @@ class ExposedInt extends ExposedValueTweenable
 	public function new(propertyName:String, name:String = null#if valeditor, numericMode:NumericMode = NumericMode.PositiveOrNegative#end) 
 	{
 		super(propertyName, name);
+		#if valeditor
 		this.numericMode = numericMode;
-		
+		#end
 		this.defaultValue = 0;
 	}
 	
@@ -69,13 +70,12 @@ class ExposedInt extends ExposedValueTweenable
 		return this;
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var int:ExposedInt = fromPool(this.propertyName, this.name#if valeditor, this.numericMode#end);
 		#if valeditor
 		int.inputVariant = this.inputVariant;
 		int.liveTyping = this.liveTyping;
-		int.numericMode = this.numericMode;
 		#end
 		super.clone_internal(int, copyValue);
 		return int;

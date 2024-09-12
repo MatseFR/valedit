@@ -74,7 +74,7 @@ class ExposedFloat extends ExposedValueTweenable
 		return this;
 	}
 	
-	override public function clone(copyValue:Bool = false):ExposedValue 
+	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var float:ExposedFloat = fromPool(this.propertyName, this.name#if valeditor, this.precision, this.numericMode#end);
 		#if valeditor
