@@ -67,9 +67,12 @@ abstract class ExposedValue extends EventDispatcher
 	public var updateCollectionOnChange:Bool = true;
 	public var updateCollectionLocked(get, set):Bool;
 	#if valeditor
+	/** When true, ValEditor will use the action system so that changes can be undone/redone.
+	 * @default	true */
 	public var useActions(get, set):Bool;
 	/* When set to true, ValEditor will check that value to decide if 2 objects should be considered the same or not. Default is false. */
 	public var useForObjectMatching:Bool = false;
+	/* This is used by 'Asset' when updating it and ExposedFunction/ExposedFunctionExternal when they are executed */
 	public var valEditorObject(get, set):ValEditorObject;
 	#end
 	public var value(get, set):Dynamic;
@@ -313,13 +316,6 @@ abstract class ExposedValue extends EventDispatcher
 			this._extras.execute();
 			if (this.parentValue != null) this.parentValue.childValueChanged(this);
 			if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.read();
-			
-			#if valeditor
-			if (this._valEditorObject != null)
-			{
-				this._valEditorObject.valueChange(this);
-			}
-			#end
 			
 			ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
 		}

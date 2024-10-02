@@ -36,33 +36,36 @@ abstract class ExposedValueWithAsset extends ExposedValue
 	
 	override function set_value(value:Dynamic):Dynamic 
 	{
-		if (this._asset != null && this._asset != value)
+		if (this._asset != value)
 		{
-			if (this._isConstructor)
+			if (this._asset != null)
 			{
-				this._asset.unregisterConstructorValue(this);
+				if (this._isConstructor)
+				{
+					this._asset.unregisterConstructorValue(this);
+				}
+				else
+				{
+					this._asset.unregisterValue(this);
+				}
+			}
+			
+			if (Std.isOfType(value, Asset))
+			{
+				this._asset = cast value;
+				if (this._isConstructor)
+				{
+					this._asset.registerConstructorValue(this);
+				}
+				else
+				{
+					this._asset.registerValue(this);
+				}
 			}
 			else
 			{
-				this._asset.unregisterValue(this);
+				this._asset = null;
 			}
-		}
-		
-		if (Std.isOfType(value, Asset))
-		{
-			this._asset = cast value;
-			if (this._isConstructor)
-			{
-				this._asset.registerConstructorValue(this);
-			}
-			else
-			{
-				this._asset.registerValue(this);
-			}
-		}
-		else
-		{
-			this._asset = null;
 		}
 		
 		return setValue(value);

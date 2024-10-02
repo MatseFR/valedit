@@ -48,8 +48,10 @@ class ExposedCollection extends EventDispatcher
 	#if valeditor
 	public var uiCollection(default, null):UICollection;
 	public var uiContainer(get, set):DisplayObjectContainer;
-	/* Default is true */
+	/** When true, ValEditor will use the action system so that changes can be undone/redone.
+	 * @default	true */
 	public var useActions(get, set):Bool;
+	/* This is only used by 'Asset' when updating it */
 	public var valEditorObject(get, set):ValEditorObject;
 	#end
 	/* when true, prevents a changed value from updating other values in the collection */

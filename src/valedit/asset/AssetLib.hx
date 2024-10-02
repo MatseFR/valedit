@@ -216,6 +216,34 @@ class AssetLib
 		this._excludedPaths.set(path, path);
 	}
 	
+	public function hasAssetWithPath(path:String, assetType:String):Bool
+	{
+		switch (assetType)
+		{
+			case valedit.asset.AssetType.BINARY :
+				return hasBinaryWithPath(path);
+			
+			case valedit.asset.AssetType.BITMAP :
+				return hasBitmapWithPath(path);
+			
+			case valedit.asset.AssetType.SOUND :
+				return hasSoundWithPath(path);
+			
+			case valedit.asset.AssetType.TEXT :
+				return hasTextWithPath(path);
+			
+			case valedit.asset.AssetType.STARLING_ATLAS :
+				return hasStarlingAtlasWithPath(path);
+			
+			case valedit.asset.AssetType.STARLING_TEXTURE :
+				return hasStarlingTextureWithPath(path);
+			
+			default :
+				trace("unknown asset type : " + assetType);
+				return false;
+		}
+	}
+	
 	public function isValidExtension(fileExtension:String):Bool
 	{
 		return this._registeredExtensions.exists(fileExtension);
@@ -344,6 +372,11 @@ class AssetLib
 	public function getBinaryFromPath(path:String):BinaryAsset
 	{
 		return this._binaryMap[path];
+	}
+	
+	public function hasBinaryWithPath(path:String):Bool
+	{
+		return this._binaryMap.exists(path);
 	}
 	
 	private function loadBinaries():Void
@@ -526,6 +559,11 @@ class AssetLib
 	public function getBitmapFromPath(path:String):BitmapAsset
 	{
 		return this._bitmapMap[path];
+	}
+	
+	public function hasBitmapWithPath(path:String):Bool
+	{
+		return this._bitmapMap.exists(path);
 	}
 	
 	private function loadBitmaps():Void
@@ -749,6 +787,11 @@ class AssetLib
 		return this._soundToAsset.get(sound);
 	}
 	
+	public function hasSoundWithPath(path:String):Bool
+	{
+		return this._soundMap.exists(path);
+	}
+	
 	private function loadSounds():Void
 	{
 		var idList:Array<String> = new Array<String>();
@@ -917,6 +960,11 @@ class AssetLib
 		return this._textToAsset[text];
 	}
 	
+	public function hasTextWithPath(path:String):Bool
+	{
+		return this._textMap.exists(path);
+	}
+	
 	private function loadTexts():Void
 	{
 		var idList:Array<String> = new Array<String>();
@@ -1078,6 +1126,11 @@ class AssetLib
 	{
 		if (texture == this.defaultStarlingTextureAsset.content) return this.defaultStarlingTextureAsset;
 		return this._starlingTextureToAsset.get(texture);
+	}
+	
+	public function hasStarlingTextureWithPath(path:String):Bool
+	{
+		return this._starlingTextureMap.exists(path);
 	}
 	
 	public function updateStarlingTexture(asset:StarlingTextureAsset, bitmapAsset:BitmapAsset, ?path:String, ?texture:Texture, ?textureParams:TextureCreationParameters, ?name:String, ?preview:BitmapData, ?atlasAsset:StarlingAtlasAsset):Void
@@ -1417,6 +1470,11 @@ class AssetLib
 	public function getStarlingAtlasAssetFromTexture(texture:Texture):StarlingAtlasAsset
 	{
 		return this._starlingAtlasTextureToAsset.get(texture);
+	}
+	
+	public function hasStarlingAtlasWithPath(path:String):Bool
+	{
+		return this._starlingAtlasMap.exists(path);
 	}
 	
 	#if valeditor

@@ -210,10 +210,10 @@ class ExposedFunction extends ExposedFunctionBase
 				val = val.clone(true);
 				val.isEditable = this._isEditable;
 				val.isReadOnly = this._isReadOnly;
-				//val.object = this._object;
-				//#if valeditor
-				//val.valEditorObject = this._valEditorObject;
-				//#end
+				val.object = this._object;
+				#if valeditor
+				val.valEditorObject = this._valEditorObject;
+				#end
 				this._parameterValues[this._parameterValues.length] = val;
 				this._parameterValuesEditable[this._parameterValuesEditable.length] = val;
 				this._parameterValuesToPool[this._parameterValuesToPool.length] = val;
