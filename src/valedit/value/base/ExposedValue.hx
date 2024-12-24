@@ -45,9 +45,11 @@ abstract class ExposedValue extends EventDispatcher
 	public var isNullable:Bool = false;
 	public var isReadOnly(get, set):Bool;
 	private var isReadOnlyInternal(get, set):Bool;
-	/* tells whether this value is real (true, default) or not (false).
+	/* Tells whether this value is real (true, default) or not (false).
 	 * Values that are not "real" : ExposedName, ExposedNote, ExposedSeparator, ExposedSpacing... */
 	public var isRealValue(get, never):Bool;
+	/** Tells whether this value is required for constructor to be valid. Default is false. */
+	public var isRequiredForConstructor:Bool = false;
 	public var isTweenable(get, set):Bool;
 	#if valeditor
 	/* time at which this value last changed, whatever the reason */
@@ -267,6 +269,7 @@ abstract class ExposedValue extends EventDispatcher
 		this.isNullable = false;
 		this._isReadOnly = false;
 		this._isReadOnlyInternal = false;
+		this.isRequiredForConstructor = false;
 		#if valeditor
 		this.lastChanged = ValEdit.TIME_STAMP_ORIGIN;
 		this.lastModified = ValEdit.TIME_STAMP_ORIGIN;
@@ -340,7 +343,7 @@ abstract class ExposedValue extends EventDispatcher
 	
 	public function apply():Void
 	{
-		if (this._object == null || this._storedValue == null)
+		if (this._isReadOnly || this._isReadOnlyInternal || this._object == null || this._storedValue == null)
 		{
 			return;
 		}
@@ -350,7 +353,7 @@ abstract class ExposedValue extends EventDispatcher
 	
 	public function applyToObject(object:Dynamic, visibleOnly:Bool = true, applyIfDefaultValue:Bool = false):Void
 	{
-		if (!applyIfDefaultValue && this._object == null && this._storedValue == null)
+		if (this._isReadOnly || this._isReadOnlyInternal || (!applyIfDefaultValue && this._object == null && this._storedValue == null))
 		{
 			return;
 		}
@@ -453,6 +456,7 @@ abstract class ExposedValue extends EventDispatcher
 		value.isNullable = this.isNullable;
 		value.isReadOnly = this._isReadOnly;
 		value.isReadOnlyInternal = this._isReadOnlyInternal;
+		value.isRequiredForConstructor = this.isRequiredForConstructor;
 		value.isTweenable = this._isTweenable;
 		value.updateCollectionOnChange = this.updateCollectionOnChange;
 		#if valeditor
