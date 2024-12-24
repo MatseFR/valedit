@@ -1,5 +1,5 @@
 package valedit.value;
-#if desktop
+#if (desktop || air)
 import valedit.value.base.ExposedValue;
 
 /**

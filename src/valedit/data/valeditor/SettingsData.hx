@@ -9,7 +9,7 @@ import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
-#if desktop
+#if (desktop || air)
 import valedit.value.ExposedPath;
 #end
 #if valeditor
@@ -31,7 +31,7 @@ class SettingsData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		#if desktop
+		#if (desktop || air)
 		if (!collection.hasValue("autoSave"))
 		{
 			bool = new ExposedBool("autoSave", "auto save");
@@ -82,14 +82,14 @@ class SettingsData
 	static public function exposeExportSettings(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
-		#if desktop
+		#if (desktop || air)
 		var path:ExposedPath;
 		#end
 		var str:ExposedString;
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		#if desktop
+		#if (desktop || air)
 		if (!collection.hasValue("filePath"))
 		{
 			path = new ExposedPath("filePath", "export path");
@@ -125,7 +125,7 @@ class SettingsData
 		if (!collection.hasValue("useZip"))
 		{
 			bool = new ExposedBool("useZip", "ZIP");
-			#if !desktop
+			#if !(desktop || air)
 			bool.isEditable = false;
 			#end
 			collection.addValue(bool, groupName);
@@ -141,7 +141,7 @@ class SettingsData
 		var funcExternal:ExposedFunctionExternal;
 		var intDrag:ExposedIntDrag;
 		var object:ExposedObject;
-		#if desktop
+		#if (desktop || air)
 		var path:ExposedPath;
 		#end
 		var select:ExposedSelect;
@@ -149,7 +149,7 @@ class SettingsData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		#if desktop
+		#if (desktop || air)
 		if (!collection.hasValue("filePath"))
 		{
 			path = new ExposedPath("filePath", "file path");
