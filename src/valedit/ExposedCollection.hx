@@ -595,6 +595,7 @@ class ExposedCollection extends EventDispatcher
 		value.parentValue = this._parentValue;
 		#if valeditor
 		value.useActions = this._useActions;
+		value.valEditorObject = this._valEditorObject;
 		#end
 		
 		this._valueMap[value.propertyName] = value;
@@ -836,6 +837,15 @@ class ExposedCollection extends EventDispatcher
 		}
 		
 		return false;
+	}
+	
+	public function validateConstructor():Bool
+	{
+		for (value in this._valueList)
+		{
+			if (value.isRequiredForConstructor && value.value == null) return false;
+		}
+		return true;
 	}
 	
 	public function clone(copyValues:Bool = false):ExposedCollection
