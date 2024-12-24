@@ -48,21 +48,21 @@ class ExposedSelect extends ExposedSelectBase
 		return select;
 	}
 	
-	override public function fromJSON(json:Dynamic):Void 
-	{
-		super.fromJSON(json);
-		//var index:Int = choiceList.indexOf(json.choice);
-		//if (index != -1) this.value = valueList[index];
-		this.value = json.value;
-	}
+	//override public function fromJSON(json:Dynamic):Void 
+	//{
+		//super.fromJSON(json);
+		////var index:Int = choiceList.indexOf(json.choice);
+		////if (index != -1) this.value = valueList[index];
+		//this.value = json.value;
+	//}
 	
-	override public function toJSON(json:Dynamic = null):Dynamic 
-	{
-		if (json == null) json = {};
-		//var index:Int = valueList.indexOf(this.value);
-		//if (index != -1) json.choice = choiceList[index];
-		json.value = this.value;
-		return super.toJSON(json);
-	}
+	//override public function toJSON(json:Dynamic = null):Dynamic 
+	//{
+		//if (json == null) json = {};
+		////var index:Int = valueList.indexOf(this.value);
+		////if (index != -1) json.choice = choiceList[index];
+		//json.value = this.value;
+		//return super.toJSON(json);
+	//}
 	
 }
