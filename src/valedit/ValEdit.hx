@@ -139,7 +139,9 @@ class ValEdit
 		v.disposeFunctionName = settings.disposeFunctionName;
 		v.isContainer = settings.isContainer;
 		v.isContainerOpenFL = settings.isContainerOpenFL;
+		#if starling
 		v.isContainerStarling = settings.isContainerStarling;
+		#end
 		v.isDisplayObject = settings.isDisplayObject;
 		v.isTimeLineContainer = settings.isTimeLineContainer;
 		v.propertyMap = settings.propertyMap;
