@@ -1,5 +1,5 @@
 package valedit.asset.starling;
-
+#if starling
 import haxe.zip.Entry;
 import openfl.display.BitmapData;
 import openfl.errors.Error;
@@ -118,3 +118,4 @@ class StarlingAtlasAsset extends Asset
 	}
 	
 }
+#end

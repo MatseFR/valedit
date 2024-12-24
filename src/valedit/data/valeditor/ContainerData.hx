@@ -705,6 +705,7 @@ class ContainerData
 	#end
 	#end
 	
+	#if starling
 	static public function exposeValEditorContainerRoot(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
@@ -800,6 +801,7 @@ class ContainerData
 		
 		return collection;
 	}
+	#end
 	
 	static public function exposeValEditKeyFrame(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{

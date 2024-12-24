@@ -1,4 +1,5 @@
 package valedit.data.starling.display;
+#if starling
 import starling.display.BlendMode;
 import starling.display.DisplayObject;
 import starling.textures.TextureSmoothing;
@@ -135,7 +136,7 @@ class StarlingDisplayData
 		if (!collection.hasValue("mask"))
 		{
 			objectRef = new ExposedObjectReference("mask");
-			objectRef.addClass(DisplayObject);
+			objectRef.allowClass(DisplayObject);
 			collection.addValue(objectRef, groupName);
 		}
 		
@@ -494,3 +495,4 @@ class StarlingDisplayData
 	}
 	
 }
+#end

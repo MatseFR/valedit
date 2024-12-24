@@ -1,5 +1,5 @@
 package valedit;
-
+#if starling
 import starling.display.DisplayObjectContainer;
 import starling.display.Sprite;
 
@@ -131,3 +131,4 @@ class SpriteContainerStarling extends Sprite implements IContainer implements IC
 	}
 	
 }
+#end

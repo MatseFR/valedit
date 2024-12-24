@@ -1,9 +1,7 @@
 package valedit.data.starling.text;
+#if starling
 import flash.display3D.Context3DTextureFormat;
-import openfl.text.StyleSheet;
-import starling.styles.MeshStyle;
 import starling.text.TextFieldAutoSize;
-import starling.text.TextFormat;
 import starling.text.TextOptions;
 import starling.utils.Align;
 import valedit.ExposedCollection;
@@ -402,7 +400,7 @@ class StarlingTextData
 		{
 			func = new ExposedFunction("copyFrom");
 			objectRef = new ExposedObjectReference("options");
-			objectRef.addClass(TextOptions);
+			objectRef.allowClass(TextOptions);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}
@@ -438,3 +436,4 @@ class StarlingTextData
 	}
 	
 }
+#end

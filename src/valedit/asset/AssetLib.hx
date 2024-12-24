@@ -232,11 +232,13 @@ class AssetLib
 			case valedit.asset.AssetType.TEXT :
 				return hasTextWithPath(path);
 			
+			#if starling
 			case valedit.asset.AssetType.STARLING_ATLAS :
 				return hasStarlingAtlasWithPath(path);
 			
 			case valedit.asset.AssetType.STARLING_TEXTURE :
 				return hasStarlingTextureWithPath(path);
+			#end
 			
 			default :
 				trace("unknown asset type : " + assetType);

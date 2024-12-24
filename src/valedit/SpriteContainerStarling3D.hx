@@ -1,5 +1,5 @@
 package valedit;
-
+#if starling
 import starling.display.DisplayObjectContainer;
 import starling.display.Sprite3D;
 
@@ -131,3 +131,4 @@ class SpriteContainerStarling3D extends Sprite3D implements IContainer implement
 	}
 	
 }
+#end

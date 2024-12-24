@@ -1,5 +1,5 @@
 package valedit;
-
+#if starling
 import openfl.display.BlendMode;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Sprite;
@@ -272,3 +272,4 @@ class SpriteContainerOpenFLStarling extends EventDispatcher implements IContaine
 	}
 	
 }
+#end
