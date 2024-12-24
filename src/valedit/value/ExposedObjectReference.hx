@@ -7,6 +7,7 @@ import valeditor.ValEditorObject;
 #else
 import valedit.ValEditObject;
 #end
+import valedit.value.reference.ReferenceRange;
 
 /**
  * ...
@@ -27,9 +28,13 @@ class ExposedObjectReference extends ExposedValue
 		return new ExposedObjectReference(propertyName, name, classList, allowSelfReference);
 	}
 	
+	/** see ReferenceRange for possible values */
+	public var allowedReferenceRanges:Array<String> = new Array<String>();
 	/** if false, current object won't be available for selection. Default is false */
 	public var allowSelfReference:Bool;
 	public var classList(default, null):Array<String>;
+	
+	private var _referenceRange:String;// = ReferenceRange.CONTAINER;
 	
 	#if valeditor
 	private var _valEditObjectReference:ValEditorObject;
@@ -39,7 +44,7 @@ class ExposedObjectReference extends ExposedValue
 	
 	// LOADING
 	private var _objectID:String;
-	private var _objectClassName:String;
+	//private var _objectClassName:String;
 	//\LOADING
 	
 	override function set_value(value:Dynamic):Dynamic 
@@ -48,6 +53,7 @@ class ExposedObjectReference extends ExposedValue
 		if (Std.isOfType(value, ValEditorObject))
 		{
 			this._valEditObjectReference = cast value;
+			trace("ExposedObjectReference " + this.propertyName + " value set to ValEditorObject " + this._valEditObjectReference.objectID);
 			return super.set_value(this._valEditObjectReference.object);
 		}
 		#else
@@ -57,6 +63,7 @@ class ExposedObjectReference extends ExposedValue
 			return super.set_value(this._valEditObjectReference.object);
 		}
 		#end
+		trace("ExposedObjectReference " + this.propertyName + " value set to NOT ValEditorObject");
 		this._valEditObjectReference = null;
 		return super.set_value(value);
 	}
@@ -72,12 +79,18 @@ class ExposedObjectReference extends ExposedValue
 	
 	override public function clear():Void 
 	{
+		trace("ExposedObjectReference " + this.propertyName + " clear");
+		
 		super.clear();
+		
+		this.allowedReferenceRanges.resize(0);
+		this.allowSelfReference = false;
 		this.classList = null;
 		this._valEditObjectReference = null;
 		this.isNullable = true;
 		this._objectID = null;
-		this._objectClassName = null;
+		//this._objectClassName = null;
+		this._referenceRange = null;
 	}
 	
 	public function pool():Void
@@ -95,29 +108,65 @@ class ExposedObjectReference extends ExposedValue
 		return this;
 	}
 	
-	public function addClass(clss:Class<Dynamic>):Void
+	public function allowClass(clss:Class<Dynamic>):Void
 	{
 		var className:String = Type.getClassName(clss);
-		addClassName(className);
+		allowClassName(className);
 	}
 	
-	public function addClassName(className:String):Void
+	public function allowClassName(className:String):Void
 	{
 		this.classList.push(className);
+	}
+	
+	/** see ReferenceRange for possible values */
+	public function allowRange(range:String):Void
+	{
+		this.allowedReferenceRanges[this.allowedReferenceRanges.length] = range;
 	}
 	
 	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var reference:ExposedObjectReference = fromPool(this.propertyName, this.name, this.classList.copy(), this.allowSelfReference);
+		reference.allowedReferenceRanges = this.allowedReferenceRanges.copy();
+		reference._referenceRange = this._referenceRange;
 		super.clone_internal(reference, copyValue);
 		return reference;
+	}
+	
+	override public function cloneValue(toValue:ExposedValue):Void 
+	{
+		if (this._valEditObjectReference != null)
+		{
+			toValue.value = this._valEditObjectReference;
+		}
+		else if (this._storedValue != null)
+		{
+			toValue.value = this._storedValue;
+		}
+		else
+		{
+			toValue.value = this.value;
+		}
+		if (toValue.uiControl != null)
+		{
+			toValue.uiControl.updateExposedValue();
+		}
 	}
 	
 	override public function loadComplete():Void 
 	{
 		if (this._objectID != null)
 		{
-			this.value = ValEdit.getObjectWithClassName(this._objectID, this._objectClassName);
+			//this.value = ValEdit.getObjectWithClassName(this._objectID, this._objectClassName);
+			switch (this._referenceRange)
+			{
+				case ReferenceRange.CONTAINER :
+					this.value = this._valEditorObject.container.getObject(this._objectID);
+				
+				case ReferenceRange.CONTAINER_LIBRARY :
+					this.value = this._valEditorObject.container.getObjectFromLibrary(this._objectID);
+			}
 		}
 	}
 	
@@ -137,8 +186,8 @@ class ExposedObjectReference extends ExposedValue
 		{
 			if (this._valEditObjectReference != null)
 			{
-				json.value = this._valEditObjectReference.id;
-				json.clss = this._valEditObjectReference.className;
+				json.value = this._valEditObjectReference.objectID;
+				//json.clss = this._valEditObjectReference.className;
 			}
 			else
 			{
@@ -155,7 +204,7 @@ class ExposedObjectReference extends ExposedValue
 	override public function fromJSONSave(json:Dynamic):Void 
 	{
 		this._objectID = json.value;
-		this._objectClassName = json.clss;
+		this._referenceRange = json.range;
 		#if valeditor
 		if (json.lastChanged != null)
 		{
@@ -172,7 +221,7 @@ class ExposedObjectReference extends ExposedValue
 	{
 		if (this.value != null)
 		{
-			var data:Dynamic = {value:this._valEditObjectReference.id, clss:this._valEditObjectReference.className};
+			var data:Dynamic = {value:this._valEditObjectReference.objectID, range:this._referenceRange};
 			#if valeditor
 			data.lastChanged = this.lastChanged;
 			data.lastModified = this.lastModified;
