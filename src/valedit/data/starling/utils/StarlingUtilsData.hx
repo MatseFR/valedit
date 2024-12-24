@@ -48,7 +48,7 @@ class StarlingUtilsData
 		{
 			func = new ExposedFunction("copyFrom");
 			objectRef = new ExposedObjectReference("padding");
-			objectRef.addClass(Padding);
+			objectRef.allowClass(Padding);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}

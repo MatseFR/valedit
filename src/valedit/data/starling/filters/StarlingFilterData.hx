@@ -439,7 +439,7 @@ class StarlingFilterData
 		{
 			func = new ExposedFunction("addFilter");
 			objectRef = new ExposedObjectReference("filter");
-			objectRef.addClass(FragmentFilter);
+			objectRef.allowClass(FragmentFilter);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}
@@ -448,7 +448,7 @@ class StarlingFilterData
 		{
 			func = new ExposedFunction("removeFilter");
 			objectRef = new ExposedObjectReference("filter");
-			objectRef.addClass(FragmentFilter);
+			objectRef.allowClass(FragmentFilter);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}

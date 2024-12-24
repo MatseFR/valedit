@@ -247,7 +247,7 @@ class GeomData
 		{
 			func = new ExposedFunction("append");
 			objectRef = new ExposedObjectReference("lhs");
-			objectRef.addClass(Matrix3D);
+			objectRef.allowClass(Matrix3D);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}
@@ -259,10 +259,10 @@ class GeomData
 			floatDrag.defaultValue = 0.0;
 			func.addParameter(floatDrag);
 			objectRef = new ExposedObjectReference("axis");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			func.addParameter(objectRef);
 			objectRef = new ExposedObjectReference("pivotPoint");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			objectRef.isNullable = true;
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
@@ -296,7 +296,7 @@ class GeomData
 		{
 			func = new ExposedFunction("copyFrom");
 			objectRef = new ExposedObjectReference("other");
-			objectRef.addClass(Matrix3D);
+			objectRef.allowClass(Matrix3D);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}
@@ -311,7 +311,7 @@ class GeomData
 		{
 			func = new ExposedFunction("interpolateTo");
 			objectRef = new ExposedObjectReference("toMat");
-			objectRef.addClass(Matrix3D);
+			objectRef.allowClass(Matrix3D);
 			func.addParameter(objectRef);
 			floatDrag = new ExposedFloatDrag("percent");
 			func.addParameter(floatDrag);
@@ -328,14 +328,14 @@ class GeomData
 		{
 			func = new ExposedFunction("pointAt");
 			objectRef = new ExposedObjectReference("pos");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			func.addParameter(objectRef);
 			objectRef = new ExposedObjectReference("at");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			objectRef.isNullable = true;
 			func.addParameter(objectRef);
 			objectRef = new ExposedObjectReference("up");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			objectRef.isNullable = true;
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
@@ -345,7 +345,7 @@ class GeomData
 		{
 			func = new ExposedFunction("prepend");
 			objectRef = new ExposedObjectReference("rhs");
-			objectRef.addClass(Matrix3D);
+			objectRef.allowClass(Matrix3D);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}
@@ -356,10 +356,10 @@ class GeomData
 			floatDrag = new ExposedFloatDrag("degrees", null, null, null, 0.1);
 			func.addParameter(floatDrag);
 			objectRef = new ExposedObjectReference("axis");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			func.addParameter(objectRef);
 			objectRef = new ExposedObjectReference("pivotPoint");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			objectRef.isNullable = true;
 			func.addParameter(objectRef);
 			collection.addValue(func);
@@ -662,7 +662,7 @@ class GeomData
 		{
 			func = new ExposedFunction("copyFrom");
 			objectRef = new ExposedObjectReference("sourceVector3D");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}
@@ -671,7 +671,7 @@ class GeomData
 		{
 			func = new ExposedFunction("decrementBy");
 			objectRef = new ExposedObjectReference("a");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}
@@ -680,7 +680,7 @@ class GeomData
 		{
 			func = new ExposedFunction("incrementBy");
 			objectRef = new ExposedObjectReference("a");
-			objectRef.addClass(Vector3D);
+			objectRef.allowClass(Vector3D);
 			func.addParameter(objectRef);
 			collection.addValue(func, groupName);
 		}

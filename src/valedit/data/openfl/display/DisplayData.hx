@@ -207,7 +207,7 @@ class DisplayData
 		if (!collection.hasValue("mask"))
 		{
 			objRef = new ExposedObjectReference("mask");
-			objRef.addClass(DisplayObject);
+			objRef.allowClass(DisplayObject);
 			collection.addValue(objRef, groupName);
 		}
 		
