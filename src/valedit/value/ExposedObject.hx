@@ -1,5 +1,6 @@
 package valedit.value;
 
+import openfl.errors.Error;
 import valedit.ExposedCollection;
 import valedit.animation.TweenData;
 import valedit.animation.TweenProperties;
@@ -28,6 +29,11 @@ class ExposedObject extends ExposedValueWithCollection
 		return new ExposedObject(propertyName, name, reassignOnChange);
 	}
 	
+	public var autoCreateIfNull:Bool = false;
+	public var autoCreationClassName:String;
+	public var autoCreationParametersCollection:ExposedCollection;
+	public var autoCreationObject(default, null):ValEditorObject;
+	
 	#if valeditor
 	public var isUIOpen:Bool = false;
 	#end
@@ -52,30 +58,42 @@ class ExposedObject extends ExposedValueWithCollection
 		if (value != null)
 		{
 			if (this._storedValue == null) this._storedValue = Reflect.getProperty(value, this.propertyName);
-			if (this._childCollection == null)
+			
+			if (this._storedValue == null && this.autoCreateIfNull)
 			{
-				var childCollection:ExposedCollection = ValEditor.getCollectionForObject(this._storedValue);
-				if (this._childCollectionSaveData == null)
-				{
-					childCollection.readAndSetObject(this._storedValue);
-					this.childCollection = childCollection;
-				}
-				else
-				{
-					childCollection.fromJSONSave(this._childCollectionSaveData);
-					childCollection.applyAndSetObject(this._storedValue);
-					this.childCollection = childCollection;
-					if (this.reassignOnChange) 
-					{
-						this._object = value;
-						reassignObject();
-					}
-				}
-				
+				autoCreate();
 			}
 			else
 			{
-				this._childCollection.object = this._storedValue;
+				if (this._childCollection == null)
+				{
+					//var childCollection:ExposedCollection = ValEditor.getCollectionForObject(this._storedValue);
+					//if (this._childCollectionSaveData == null)
+					//{
+						//if (childCollection != null)
+						//{
+							//childCollection.readAndSetObject(this._storedValue);
+							//this.childCollection = childCollection;
+						//}
+					//}
+					//else
+					//{
+						//childCollection.fromJSONSave(this._childCollectionSaveData);
+						//childCollection.applyAndSetObject(this._storedValue);
+						//this.childCollection = childCollection;
+						//if (this.reassignOnChange) 
+						//{
+							//this._object = value;
+							//reassignObject();
+						//}
+					//}
+					getChildCollection();
+					
+				}
+				else
+				{
+					this._childCollection.object = this._storedValue;
+				}
 			}
 			if (!this.storeValue) this._storedValue = null;
 		}
@@ -132,6 +150,18 @@ class ExposedObject extends ExposedValueWithCollection
 	
 	override public function clear():Void 
 	{
+		this.autoCreateIfNull = false;
+		this.autoCreationClassName = null;
+		if (this.autoCreationParametersCollection != null)
+		{
+			this.autoCreationParametersCollection.pool();
+			this.autoCreationParametersCollection = null;
+		}
+		if (this.autoCreationObject != null)
+		{
+			ValEditor.destroyObject(this.autoCreationObject);
+			this.autoCreationObject = null;
+		}
 		this._hasIgnoredReassignChildProperty = false;
 		this._ignoreReassignForChildPropertiesMap.clear();
 		this._isTweenable = true;
@@ -155,6 +185,53 @@ class ExposedObject extends ExposedValueWithCollection
 		setNames(propertyName, name);
 		this.reassignOnChange = reassignOnChange;
 		return this;
+	}
+	
+	public function autoCreate():Void
+	{
+		if (this.autoCreationObject != null)
+		{
+			throw new Error("ExposedObject ::: autoCreate function called while autoCreationObject is already set");
+		}
+		var params:Array<Dynamic> = new Array<Dynamic>();
+		if (this.autoCreationParametersCollection != null)
+		{
+			this.autoCreationParametersCollection.toValueArray(params);
+		}
+		this.autoCreationObject = ValEditor.createObjectWithClassName(this.autoCreationClassName, null, params);
+		this._storedValue = this.autoCreationObject.object;
+		if (this._childCollection == null)
+		{
+			getChildCollection();
+		}
+		else
+		{
+			this._childCollection.object = this._storedValue;
+		}
+	}
+	
+	private function getChildCollection():Void
+	{
+		var childCollection:ExposedCollection = ValEditor.getCollectionForObject(this._storedValue);
+		if (this._childCollectionSaveData == null)
+		{
+			if (childCollection != null)
+			{
+				childCollection.readAndSetObject(this._storedValue);
+				this.childCollection = childCollection;
+			}
+		}
+		else
+		{
+			childCollection.fromJSONSave(this._childCollectionSaveData);
+			childCollection.applyAndSetObject(this._storedValue);
+			this.childCollection = childCollection;
+			if (this.reassignOnChange) 
+			{
+				this._object = value;
+				reassignObject();
+			}
+		}
 	}
 	
 	public function ignoreObjectReassignForChildProperty(propertyName:String):Void
@@ -239,7 +316,10 @@ class ExposedObject extends ExposedValueWithCollection
 		if (this._childCollection == null)
 		{
 			this.childCollection = ValEditor.getCollectionForObject(this._storedValue);
-			this._childCollection.object = this._storedValue;
+			if (this._childCollection != null)
+			{
+				this._childCollection.object = this._storedValue;
+			}
 		}
 		if (this._childCollection != null)
 		{
@@ -282,7 +362,14 @@ class ExposedObject extends ExposedValueWithCollection
 	
 	public function reloadObject():Void
 	{
-		this._storedValue = Reflect.getProperty(this._object, propertyName);
+		if (this._object == null && this.autoCreationObject != null)
+		{
+			this._storedValue = this.autoCreationObject.object;
+		}
+		else
+		{
+			this._storedValue = Reflect.getProperty(this._object, propertyName);
+		}
 		if (this._childCollection != null)
 		{
 			this._childCollection.readAndSetObject(this._storedValue);
@@ -292,6 +379,16 @@ class ExposedObject extends ExposedValueWithCollection
 	public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var object:ExposedObject = fromPool(this.propertyName, this.name, this.reassignOnChange);
+		object.isUIOpen = this.isUIOpen;
+		if (this.autoCreateIfNull)
+		{
+			object.autoCreateIfNull = true;
+			object.autoCreationClassName = this.autoCreationClassName;
+			if (this.autoCreationParametersCollection != null)
+			{
+				object.autoCreationParametersCollection = this.autoCreationParametersCollection.clone(true);
+			}
+		}
 		if (this._childCollection != null)
 		{
 			object.childCollection = this._childCollection.clone(true);
@@ -318,6 +415,16 @@ class ExposedObject extends ExposedValueWithCollection
 				//addChildValue(value);
 			//}
 		//}
+	}
+	
+	override public function fromJSONSave(json:Dynamic):Void 
+	{
+		super.fromJSONSave(json);
+		
+		if (this.autoCreateIfNull && this.isConstructor)
+		{
+			autoCreate();
+		}
 	}
 	
 	override public function toJSON(json:Dynamic = null):Dynamic 
