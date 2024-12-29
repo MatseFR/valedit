@@ -165,7 +165,7 @@ class ExposedObjectReference extends ExposedValue
 					this.value = this._valEditorObject.container.getObject(this._objectID);
 				
 				case ReferenceRange.CONTAINER_LIBRARY :
-					this.value = this._valEditorObject.container.getObjectFromLibrary(this._objectID);
+					this.value = this._valEditorObject.container.objectLibrary.getObject(this._objectID);
 			}
 		}
 	}
