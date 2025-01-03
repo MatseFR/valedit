@@ -290,6 +290,8 @@ class ExposedFunctionExternal extends ExposedFunctionBase
 	
 	public function execute():Void
 	{
+		if (this.value == null) return;
+		
 		for (val in this._parameterValues)
 		{
 			if (val.isRealValue)
