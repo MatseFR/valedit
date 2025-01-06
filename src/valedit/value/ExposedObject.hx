@@ -97,13 +97,13 @@ class ExposedObject extends ExposedValueWithCollection
 			}
 			if (!this.storeValue) this._storedValue = null;
 		}
-		else
-		{
-			if (this._childCollection != null)
-			{
-				this._childCollection.object = null;
-			}
-		}
+		//else
+		//{
+			//if (this._childCollection != null)
+			//{
+				//this._childCollection.object = null;
+			//}
+		//}
 		this._reassignObjectExtras.object = value;
 		return super.set_object(value);
 	}
