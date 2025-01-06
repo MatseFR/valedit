@@ -521,7 +521,8 @@ abstract class ExposedValue extends EventDispatcher
 	public function toJSONSave(json:Dynamic, includeNotVisible:Bool = false, refValue:ExposedValue = null):Void
 	{
 		var data:Dynamic = {
-			value:this.value,
+			value:this._storedValue != null ? this._storedValue : this.value,
+			//value:this.value
 		};
 		#if valeditor
 		data.lastChanged = this.lastChanged;
