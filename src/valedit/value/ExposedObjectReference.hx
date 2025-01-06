@@ -8,6 +8,7 @@ import valeditor.ValEditorObject;
 import valedit.ValEditObject;
 #end
 import valedit.value.reference.ReferenceRange;
+import valeditor.ValEditor;
 
 /**
  * ...
@@ -56,6 +57,10 @@ class ExposedObjectReference extends ExposedValue
 			trace("ExposedObjectReference " + this.propertyName + " value set to ValEditorObject " + this._valEditObjectReference.objectID);
 			return super.set_value(this._valEditObjectReference.object);
 		}
+		//else
+		//{
+			//this._valEditObjectReference = ValEditor
+		//}
 		#else
 		if (Std.isOfType(value, ValEditObject))
 		{
