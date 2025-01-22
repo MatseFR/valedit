@@ -183,14 +183,22 @@ class ExposedObject extends ExposedValueWithCollection
 	
 	public function pool():Void
 	{
+		#if debug
+		if (this.isInPool)
+		{
+			throw new Error("ExposedObject.pool ::: already in pool");
+		}
+		#end
 		clear();
 		_POOL[_POOL.length] = this;
+		this.isInPool = true;
 	}
 	
 	private function setTo(propertyName:String, name:String, reassignOnChange:Bool):ExposedObject
 	{
 		setNames(propertyName, name);
 		this.reassignOnChange = reassignOnChange;
+		this.isInPool = false;
 		return this;
 	}
 	

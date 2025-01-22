@@ -1,5 +1,6 @@
 package valedit.value;
 
+import openfl.errors.Error;
 import valedit.value.base.ExposedValue;
 
 /**
@@ -34,13 +35,21 @@ class ExposedBool extends ExposedValue
 	
 	public function pool():Void
 	{
+		#if debug
+		if (this.isInPool)
+		{
+			throw new Error("ExposedBool.pool ::: already in pool");
+		}
+		#end
 		clear();
 		_POOL[_POOL.length] = this;
+		this.isInPool = true;
 	}
 	
 	private function setTo(propertyName:String, name:String):ExposedBool
 	{
 		setNames(propertyName, name);
+		this.isInPool = false;
 		return this;
 	}
 	

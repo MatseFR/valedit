@@ -172,6 +172,7 @@ abstract class ExposedSelectBase extends ExposedValue
 		if (valueList == null) valueList = new Array<Dynamic>();
 		this.choiceList = choiceList;
 		this.valueList = valueList;
+		this.isInPool = false;
 		return this;
 	}
 	

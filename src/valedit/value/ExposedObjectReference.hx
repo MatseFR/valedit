@@ -100,8 +100,15 @@ class ExposedObjectReference extends ExposedValue
 	
 	public function pool():Void
 	{
+		#if debug
+		if (this.isInPool)
+		{
+			throw new Error("ExposedObjectReference.pool ::: already in pool");
+		}
+		#end
 		clear();
 		_POOL[_POOL.length] = this;
+		this.isInPool = true;
 	}
 	
 	private function setTo(propertyName:String, name:String, classList:Array<String>, allowSelfReference:Bool):ExposedObjectReference
@@ -110,6 +117,7 @@ class ExposedObjectReference extends ExposedValue
 		if (classList == null) classList = new Array<String>();
 		this.classList = classList;
 		this.allowSelfReference = allowSelfReference;
+		this.isInPool = false;
 		return this;
 	}
 	
