@@ -1,5 +1,6 @@
 package valedit.value;
 
+import openfl.errors.Error;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueTweenable;
 
@@ -24,7 +25,7 @@ class ExposedFloatRange extends ExposedValueTweenable
 	
 	#if valeditor
 	public var inputVariant:String;
-	public var liveTyping:Bool = true;
+	public var liveTyping:Bool = false;
 	#end
 	public var max(get, set):Float;
 	public var min(get, set):Float;
@@ -79,14 +80,21 @@ class ExposedFloatRange extends ExposedValueTweenable
 		this.defaultValue = 0.0;
 		#if valeditor
 		this.inputVariant = null;
-		this.liveTyping = true;
+		this.liveTyping = false;
 		#end
 	}
 	
 	public function pool():Void
 	{
+		#if debug
+		if (this.isInPool)
+		{
+			throw new Error("ExposedFloatRange.pool ::: already in pool");
+		}
+		#end
 		clear();
 		_POOL[_POOL.length] = this;
+		this.isInPool = true;
 	}
 	
 	private function setTo(propertyName:String, name:String, min:Float, max:Float#if valeditor, step:Float, precision:Int#end):ExposedFloatRange
@@ -98,6 +106,7 @@ class ExposedFloatRange extends ExposedValueTweenable
 		this.step = step;
 		this.precision = precision;
 		#end
+		this.isInPool = false;
 		return this;
 	}
 	

@@ -1,5 +1,6 @@
 package valedit.value;
 
+import openfl.errors.Error;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueTweenable;
 
@@ -25,7 +26,7 @@ class ExposedIntDrag extends ExposedValueTweenable
 	#if valeditor
 	public var dragScaleFactor:Float;
 	public var liveDragging:Bool = true;
-	public var liveTyping:Bool = true;
+	public var liveTyping:Bool = false;
 	public var maximum:Float;
 	public var minimum:Float;
 	public var step:Int;
@@ -50,15 +51,22 @@ class ExposedIntDrag extends ExposedValueTweenable
 		super.clear();
 		#if valeditor
 		this.liveDragging = true;
-		this.liveTyping = true;
+		this.liveTyping = false;
 		#end
 		this.defaultValue = 0;
 	}
 	
 	public function pool():Void
 	{
+		#if debug
+		if (this.isInPool)
+		{
+			throw new Error("ExposedIntDrag.pool ::: already in pool");
+		}
+		#end
 		clear();
 		_POOL[_POOL.length] = this;
+		this.isInPool = true;
 	}
 	
 	private function setTo(propertyName:String, name:String#if valeditor, minimum:Null<Float>, maximum:Null<Float>, dragScaleFactor:Float, step:Int#end):ExposedIntDrag
@@ -72,6 +80,7 @@ class ExposedIntDrag extends ExposedValueTweenable
 		this.dragScaleFactor = dragScaleFactor;
 		this.step = step;
 		#end
+		this.isInPool = false;
 		return this;
 	}
 	

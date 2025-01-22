@@ -1,5 +1,6 @@
 package valedit.value;
 
+import openfl.errors.Error;
 import valedit.value.base.ExposedValue;
 import valedit.value.base.ExposedValueTweenable;
 import valedit.value.data.NumericMode;
@@ -25,7 +26,7 @@ class ExposedInt extends ExposedValueTweenable
 	
 	#if valeditor
 	public var inputVariant:String;
-	public var liveTyping:Bool = true;
+	public var liveTyping:Bool = false;
 	public var numericMode:NumericMode;
 	#end
 	
@@ -51,14 +52,21 @@ class ExposedInt extends ExposedValueTweenable
 		this.defaultValue = 0;
 		#if valeditor
 		this.inputVariant = null;
-		this.liveTyping = true;
+		this.liveTyping = false;
 		#end
 	}
 	
 	public function pool():Void
 	{
+		#if debug
+		if (this.isInPool)
+		{
+			throw new Error("ExposedInt.pool ::: already in pool");
+		}
+		#end
 		clear();
 		_POOL[_POOL.length] = this;
+		this.isInPool = true;
 	}
 	
 	private function setTo(propertyName:String, name:String, numericMode:NumericMode):ExposedInt
@@ -67,6 +75,7 @@ class ExposedInt extends ExposedValueTweenable
 		#if valeditor
 		this.numericMode = numericMode;
 		#end
+		this.isInPool = false;
 		return this;
 	}
 	
