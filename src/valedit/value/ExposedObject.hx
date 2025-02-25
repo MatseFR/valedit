@@ -17,7 +17,9 @@ import valeditor.ValEditorObject;
 class ExposedObject extends ExposedValueWithCollection 
 {
 	static private var _POOL:Array<ExposedObject> = new Array<ExposedObject>();
-	
+	// DEBUG
+	//static private var _OUT:Array<ExposedObject> = new Array<ExposedObject>();
+	//\DEBUG
 	static public function disposePool():Void
 	{
 		_POOL.resize(0);
@@ -67,28 +69,7 @@ class ExposedObject extends ExposedValueWithCollection
 			{
 				if (this._childCollection == null)
 				{
-					//var childCollection:ExposedCollection = ValEditor.getCollectionForObject(this._storedValue);
-					//if (this._childCollectionSaveData == null)
-					//{
-						//if (childCollection != null)
-						//{
-							//childCollection.readAndSetObject(this._storedValue);
-							//this.childCollection = childCollection;
-						//}
-					//}
-					//else
-					//{
-						//childCollection.fromJSONSave(this._childCollectionSaveData);
-						//childCollection.applyAndSetObject(this._storedValue);
-						//this.childCollection = childCollection;
-						//if (this.reassignOnChange) 
-						//{
-							//this._object = value;
-							//reassignObject();
-						//}
-					//}
 					getChildCollection();
-					
 				}
 				else
 				{
@@ -153,6 +134,9 @@ class ExposedObject extends ExposedValueWithCollection
 		this._isTweenable = true;
 		this._reassignObjectExtras.owner = this;
 		this.reassignOnChange = reassignOnChange;
+		// DEBUG
+		//_OUT.push(this);
+		//\DEBUG
 	}
 	
 	override public function clear():Void 
@@ -192,6 +176,9 @@ class ExposedObject extends ExposedValueWithCollection
 		clear();
 		_POOL[_POOL.length] = this;
 		this.isInPool = true;
+		// DEBUG
+		//_OUT.remove(this);
+		//\DEBUG
 	}
 	
 	private function setTo(propertyName:String, name:String, reassignOnChange:Bool):ExposedObject
@@ -199,6 +186,9 @@ class ExposedObject extends ExposedValueWithCollection
 		setNames(propertyName, name);
 		this.reassignOnChange = reassignOnChange;
 		this.isInPool = false;
+		// DEBUG
+		//_OUT.push(this);
+		//\DEBUG
 		return this;
 	}
 	
