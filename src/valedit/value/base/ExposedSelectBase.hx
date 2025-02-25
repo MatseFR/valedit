@@ -16,24 +16,32 @@ abstract class ExposedSelectBase extends ExposedValue
 	public var choiceList(default, null):Array<String>;
 	/** if not null and choiceListObjectFunctionName is null, this function will be called to retrieve choices */
 	public var choiceListFunction:Function;
+	/** if true the collection will be used as a parameter when calling choiceListFunction. Default is false. */
+	public var choiceListFunctionUseCollectionAsParameter:Bool;
 	/** if true the object will be used as a parameter when calling choiceListFunction. Default is false. */
 	public var choiceListFunctionUseObjectAsParameter:Bool;
 	/** if not null, this function will be called on the object to retrieve choices */
 	public var choiceListObjectFunctionName:String;
 	/** parameters to use when calling choiceListObjectFunctionName */
 	public var choiceListObjectFunctionParams:Array<Dynamic> = new Array<Dynamic>();
+	/** if not null, this property will be read to retrieve choices */
+	public var choiceListProperty:String;
 	
 	public var choiceSaved:String;
 	
 	public var valueList(default, null):Array<Dynamic>;
 	/** if not null and valueListObjectFunctionName is null, this function will be called to retrieve values */
 	public var valueListFunction:Function;
+	/** if true the collection will be used as a parameter when calling valueListFunction. Default is false. */
+	public var valueListFunctionUseCollectionAsParameter:Bool;
 	/** if true the object will be used as a parameter when calling valueListFunction. Default is false. */
 	public var valueListFunctionUseObjectAsParameter:Bool;
 	/** if not null, this function will be called on the object to retrieve values */
 	public var valueListObjectFunctionName:String;
 	/** parameters to use when calling valueListObjectFunctionName */
 	public var valueListObjectFunctionParams:Array<Dynamic> = new Array<Dynamic>();
+	/** if not null, this property will be read to retrieve values */
+	public var valueListProperty:String;
 	
 	#if valeditor
 	public var contentJustify:Bool = true;
@@ -71,7 +79,11 @@ abstract class ExposedSelectBase extends ExposedValue
 			}
 			else if (this.choiceListFunction != null)
 			{
-				if (this.choiceListFunctionUseObjectAsParameter)
+				if (this.choiceListFunctionUseCollectionAsParameter)
+				{
+					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, [this.collection]);
+				}
+				else if (this.choiceListFunctionUseObjectAsParameter)
 				{
 					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, [targetObject]);
 				}
@@ -80,6 +92,10 @@ abstract class ExposedSelectBase extends ExposedValue
 					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, []);
 				}
 			}
+			else if (this.choiceListProperty != null)
+			{
+				this.choiceList = Reflect.getProperty(targetObject, this.choiceListProperty);
+			}
 			
 			if (this.valueListObjectFunctionName != null)
 			{
@@ -87,7 +103,11 @@ abstract class ExposedSelectBase extends ExposedValue
 			}
 			else if (this.valueListFunction != null)
 			{
-				if (this.valueListFunctionUseObjectAsParameter)
+				if (this.valueListFunctionUseCollectionAsParameter)
+				{
+					this.valueList = Reflect.callMethod(null, this.valueListFunction, [this.collection]);
+				}
+				else if (this.valueListFunctionUseObjectAsParameter)
 				{
 					this.valueList = Reflect.callMethod(null, this.valueListFunction, [targetObject]);
 				}
@@ -95,6 +115,10 @@ abstract class ExposedSelectBase extends ExposedValue
 				{
 					this.valueList = Reflect.callMethod(null, this.valueListFunction, []);
 				}
+			}
+			else if (this.valueListProperty != null)
+			{
+				this.valueList = Reflect.getProperty(targetObject, this.valueListProperty);
 			}
 			
 			if (this.choiceSaved != null)
@@ -111,11 +135,7 @@ abstract class ExposedSelectBase extends ExposedValue
 		{
 			if (this.choiceListFunction != null)
 			{
-				if (this.choiceListFunctionUseObjectAsParameter)
-				{
-					//this.choiceList = Reflect.callMethod(null, this.choiceListFunction, [targetObject]);
-				}
-				else
+				if (!this.choiceListFunctionUseCollectionAsParameter && !this.choiceListFunctionUseObjectAsParameter)
 				{
 					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, []);
 				}
@@ -123,11 +143,7 @@ abstract class ExposedSelectBase extends ExposedValue
 			
 			if (this.valueListFunction != null)
 			{
-				if (this.valueListFunctionUseObjectAsParameter)
-				{
-					//this.valueList = Reflect.callMethod(null, this.valueListFunction, [targetObject]);
-				}
-				else
+				if (!this.valueListFunctionUseCollectionAsParameter && !this.valueListFunctionUseObjectAsParameter)
 				{
 					this.valueList = Reflect.callMethod(null, this.valueListFunction, []);
 				}
@@ -150,15 +166,19 @@ abstract class ExposedSelectBase extends ExposedValue
 		super.clear();
 		this.choiceList = null;
 		this.choiceListFunction = null;
+		this.choiceListFunctionUseCollectionAsParameter = false;
 		this.choiceListFunctionUseObjectAsParameter = false;
 		this.choiceListObjectFunctionName = null;
 		this.choiceListObjectFunctionParams.resize(0);
+		this.choiceListProperty = null;
 		this.choiceSaved = null;
 		this.valueList = null;
 		this.valueListFunction = null;
+		this.valueListFunctionUseCollectionAsParameter = false;
 		this.valueListFunctionUseObjectAsParameter = false;
 		this.valueListObjectFunctionName = null;
 		this.valueListObjectFunctionParams.resize(0);
+		this.valueListProperty = null;
 		#if valeditor
 		this.listPercentWidth = 100;
 		this.selectOnKeyboardNavigation = false;
@@ -183,13 +203,17 @@ abstract class ExposedSelectBase extends ExposedValue
 		select.listPercentWidth = this.listPercentWidth;
 		select.selectOnKeyboardNavigation = this.selectOnKeyboardNavigation;
 		select.choiceListFunction = this.choiceListFunction;
+		select.choiceListFunctionUseCollectionAsParameter = this.choiceListFunctionUseCollectionAsParameter;
 		select.choiceListFunctionUseObjectAsParameter = this.choiceListFunctionUseObjectAsParameter;
 		select.choiceListObjectFunctionName = this.choiceListObjectFunctionName;
 		select.choiceListObjectFunctionParams = this.choiceListObjectFunctionParams.copy();
+		select.choiceListProperty = this.choiceListProperty;
 		select.valueListFunction = this.valueListFunction;
+		select.valueListFunctionUseCollectionAsParameter = this.valueListFunctionUseCollectionAsParameter;
 		select.valueListFunctionUseObjectAsParameter = this.valueListFunctionUseObjectAsParameter;
 		select.valueListObjectFunctionName = this.valueListObjectFunctionName;
 		select.valueListObjectFunctionParams = this.valueListObjectFunctionParams;
+		select.valueListProperty = this.valueListProperty;
 		super.clone_internal(value, copyValue);
 	}
 	#end
@@ -235,7 +259,11 @@ abstract class ExposedSelectBase extends ExposedValue
 		}
 		else if (this.choiceListFunction != null)
 		{
-			if (this.choiceListFunctionUseObjectAsParameter)
+			if (this.choiceListFunctionUseCollectionAsParameter)
+			{
+				this.choiceList = Reflect.callMethod(null, this.choiceListFunction, [this.collection]);
+			}
+			else if (this.choiceListFunctionUseObjectAsParameter)
 			{
 				if (forObject != null)
 				{
@@ -247,6 +275,10 @@ abstract class ExposedSelectBase extends ExposedValue
 				this.choiceList = Reflect.callMethod(null, this.choiceListFunction, []);
 			}
 		}
+		else if (this.choiceListProperty != null && forObject != null)
+		{
+			this.choiceList = Reflect.getProperty(forObject, this.choiceListProperty);
+		}
 	}
 	
 	public function retrieveValueList(forObject:Dynamic = null):Void
@@ -257,7 +289,11 @@ abstract class ExposedSelectBase extends ExposedValue
 		}
 		else if (this.valueListFunction != null)
 		{
-			if (this.valueListFunctionUseObjectAsParameter)
+			if (this.valueListFunctionUseCollectionAsParameter)
+			{
+				this.valueList = Reflect.callMethod(null, this.valueListFunction, [this.collection]);
+			}
+			else if (this.valueListFunctionUseObjectAsParameter)
 			{
 				if (forObject != null)
 				{
@@ -268,6 +304,10 @@ abstract class ExposedSelectBase extends ExposedValue
 			{
 				this.valueList = Reflect.callMethod(null, this.valueListFunction, []);
 			}
+		}
+		else if (this.valueListProperty != null && forObject != null)
+		{
+			this.valueList = Reflect.getProperty(forObject, this.valueListProperty);
 		}
 	}
 	
