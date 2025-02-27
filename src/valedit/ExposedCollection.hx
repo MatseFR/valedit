@@ -202,6 +202,10 @@ class ExposedCollection extends EventDispatcher
 	private var _valueList:Array<ExposedValue> = new Array<ExposedValue>();
 	private var _valueMap:Map<String, ExposedValue> = new Map<String, ExposedValue>();
 	
+	#if valeditor
+	private var _valueChangeCallbacks:Map<String, Array<ExposedValue->Void>> = new Map<String, Array<ExposedValue->Void>>();
+	#end
+	
 	/**
 	   
 	**/
@@ -224,6 +228,7 @@ class ExposedCollection extends EventDispatcher
 		this.uiContainer = null;
 		this._useActions = true;
 		this._valEditorObject = null;
+		this._valueChangeCallbacks.clear();
 		#end
 		for (value in this._valueList)
 		{
@@ -430,6 +435,46 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
+	// NEW
+	#if valeditor
+	public function registerForValueChange(propertyName:String, callback:ExposedValue->Void):Void
+	{
+		if (!this._valueChangeCallbacks.exists(propertyName))
+		{
+			this._valueChangeCallbacks.set(propertyName, new Array<ExposedValue->Void>());
+		}
+		this._valueChangeCallbacks.get(propertyName).push(callback);
+	}
+	
+	public function unregisterForValueChange(propertyName:String, callback:ExposedValue-> Void):Void
+	{
+		var callbacks:Array<ExposedValue->Void> = this._valueChangeCallbacks.get(propertyName);
+		if (callbacks.length == 1)
+		{
+			this._valueChangeCallbacks.remove(propertyName);
+		}
+		else
+		{
+			callbacks.splice(callbacks.indexOf(callback), 1);
+		}
+	}
+	
+	public function valueChange(value:ExposedValue):Void
+	{
+		var callbacks:Array<ExposedValue->Void> = this._valueChangeCallbacks.get(value.propertyName);
+		if (callbacks != null)
+		{
+			for (callback in callbacks)
+			{
+				callback(value);
+			}
+		}
+		
+		read();
+	}
+	#end
+	//\NEW
+	
 	private function onValueChange(evt:ValueEvent):Void
 	{
 		dispatchEvent(evt);
@@ -449,7 +494,7 @@ class ExposedCollection extends EventDispatcher
 		else
 		{
 			registerValue(value);
-			this._valueList.push(value);
+			this._valueList[this._valueList.length] = value;
 		}
 	}
 	
