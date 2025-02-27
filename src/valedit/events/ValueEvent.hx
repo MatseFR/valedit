@@ -13,6 +13,7 @@ class ValueEvent extends Event
 {
 	/** dispatched when the value's isReadOnly property changes */
 	inline static public var ACCESS_CHANGE:EventType<ValueEvent> = "access_change";
+	inline static public var DATA_CHANGE:EventType<ValueEvent> = "data_change";
 	/** dispatched when the value's isEditable property changes */
 	inline static public var EDITABLE_CHANGE:EventType<ValueEvent> = "editable_change";
 	inline static public var OBJECT_CHANGE:EventType<ValueEvent> = "object_change";
