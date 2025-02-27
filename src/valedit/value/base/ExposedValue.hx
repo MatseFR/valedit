@@ -319,7 +319,10 @@ abstract class ExposedValue extends EventDispatcher
 			#end
 			this._extras.execute();
 			if (this.parentValue != null) this.parentValue.childValueChanged(this);
-			if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.read();
+			//if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.read();
+			#if valeditor
+			if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.valueChange(this);
+			#end
 			
 			ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
 		}
