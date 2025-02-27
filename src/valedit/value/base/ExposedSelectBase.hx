@@ -1,5 +1,7 @@
 package valedit.value.base;
 import haxe.Constraints.Function;
+import valedit.ExposedCollection;
+import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
 #if valeditor
 import valeditor.ValEditorObject;
@@ -42,6 +44,27 @@ abstract class ExposedSelectBase extends ExposedValue
 	public var valueListObjectFunctionParams:Array<Dynamic> = new Array<Dynamic>();
 	/** if not null, this property will be read to retrieve values */
 	public var valueListProperty:String;
+	
+	private var _choicesAndValuesUpdateWithPropertyNames:Array<String> = new Array<String>();
+	
+	override function set_collection(value:ExposedCollection):ExposedCollection 
+	{
+		if (this._collection != null)
+		{
+			for (propertyName in this._choicesAndValuesUpdateWithPropertyNames)
+			{
+				this._collection.unregisterForValueChange(propertyName, this.choicesAndValuesUpdate);
+			}
+		}
+		if (value != null)
+		{
+			for (propertyName in this._choicesAndValuesUpdateWithPropertyNames)
+			{
+				value.registerForValueChange(propertyName, this.choicesAndValuesUpdate);
+			}
+		}
+		return super.set_collection(value);
+	}
 	
 	#if valeditor
 	public var contentJustify:Bool = true;
@@ -182,6 +205,7 @@ abstract class ExposedSelectBase extends ExposedValue
 		#if valeditor
 		this.listPercentWidth = 100;
 		this.selectOnKeyboardNavigation = false;
+		this._choicesAndValuesUpdateWithPropertyNames.resize(0);
 		#end
 	}
 	
@@ -214,7 +238,36 @@ abstract class ExposedSelectBase extends ExposedValue
 		select.valueListObjectFunctionName = this.valueListObjectFunctionName;
 		select.valueListObjectFunctionParams = this.valueListObjectFunctionParams;
 		select.valueListProperty = this.valueListProperty;
+		for (propertyName in this._choicesAndValuesUpdateWithPropertyNames)
+		{
+			select._choicesAndValuesUpdateWithPropertyNames[select._choicesAndValuesUpdateWithPropertyNames.length] = propertyName;
+		}
 		super.clone_internal(value, copyValue);
+	}
+	
+	public function addChoicesAndValuesUpdatePropertyName(propertyName:String):Void
+	{
+		this._choicesAndValuesUpdateWithPropertyNames[this._choicesAndValuesUpdateWithPropertyNames.length] = propertyName;
+		if (this._collection != null)
+		{
+			this._collection.registerForValueChange(propertyName, this.choicesAndValuesUpdate);
+		}
+	}
+	
+	public function removeChoicesAndValuesUpdatePropertyName(propertyName:String):Void
+	{
+		this._choicesAndValuesUpdateWithPropertyNames.splice(this._choicesAndValuesUpdateWithPropertyNames.indexOf(propertyName), 1);
+		if (this._collection != null)
+		{
+			this._collection.unregisterForValueChange(propertyName, this.choicesAndValuesUpdate);
+		}
+	}
+	
+	private function choicesAndValuesUpdate(value:ExposedValue):Void
+	{
+		retrieveChoiceList(this.object);
+		retrieveValueList(this.object);
+		ValueEvent.dispatch(this, ValueEvent.DATA_CHANGE, this);
 	}
 	#end
 	
