@@ -888,7 +888,8 @@ class ExposedCollection extends EventDispatcher
 	{
 		for (value in this._valueList)
 		{
-			if (value.isRequiredForConstructor && value.value == null) return false;
+			//if (value.isRequiredForConstructor && value.value == null) return false;
+			if (!value.validateForConstructor()) return false;
 		}
 		return true;
 	}
