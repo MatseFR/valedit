@@ -424,6 +424,12 @@ abstract class ExposedValue extends EventDispatcher
 		}
 	}
 	
+	public function validateForConstructor():Bool
+	{
+		if (!this.isRequiredForConstructor) return true;
+		return this.value != null;
+	}
+	
 	/**
 	   
 	**/
