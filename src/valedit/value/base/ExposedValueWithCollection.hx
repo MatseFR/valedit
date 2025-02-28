@@ -28,6 +28,7 @@ abstract class ExposedValueWithCollection extends ExposedValue
 		{
 			this._childCollection.parentValue = this;
 			this._childCollection.valEditorObject = this._valEditorObject;
+			this._childCollection.isConstructor = this._isConstructor;
 			this._childCollection.isEditable = this._isEditable;
 			this._childCollection.isReadOnly = this._isReadOnly;
 			this._childCollection.isReadOnlyInternal = this._isReadOnlyInternal;
@@ -247,6 +248,17 @@ abstract class ExposedValueWithCollection extends ExposedValue
 		{
 			this._childCollection.read(dispatchEventIfChange);
 		}
+	}
+	
+	override public function validateForConstructor():Bool 
+	{
+		if (!this.isRequiredForConstructor) return true;
+		if (this.value == null) return false;
+		if (this._childCollection != null)
+		{
+			return this._childCollection.validateConstructor();
+		}
+		return true;
 	}
 	
 	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
