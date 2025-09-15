@@ -204,6 +204,7 @@ class ExposedCollection extends EventDispatcher
 	
 	#if valeditor
 	private var _valueChangeCallbacks:Map<String, Array<ExposedValue->Void>> = new Map<String, Array<ExposedValue->Void>>();
+	private var _valueChangeCallbacksExternal:Map<String, Array<ExposedValue->Void>> = new Map<String, Array<ExposedValue->Void>>();
 	#end
 	
 	/**
@@ -229,6 +230,7 @@ class ExposedCollection extends EventDispatcher
 		this._useActions = true;
 		this._valEditorObject = null;
 		this._valueChangeCallbacks.clear();
+		this._valueChangeCallbacksExternal.clear();
 		#end
 		for (value in this._valueList)
 		{
@@ -269,7 +271,10 @@ class ExposedCollection extends EventDispatcher
 	public function readAndSetObject(object:Dynamic):Void
 	{
 		this.object = object;
-		readFromObject(object);
+		if (this.object != null)
+		{
+			readFromObject(object);
+		}
 	}
 	
 	public function applyToObject(object:Dynamic, visibleOnly:Bool = true, ?applyIfDefaultValue:Bool):Void
@@ -437,18 +442,20 @@ class ExposedCollection extends EventDispatcher
 	
 	// NEW
 	#if valeditor
-	public function registerForValueChange(propertyName:String, callback:ExposedValue->Void):Void
+	private function registerForValueChange(propertyName:String, callback:ExposedValue->Void):Void
 	{
 		if (!this._valueChangeCallbacks.exists(propertyName))
 		{
 			this._valueChangeCallbacks.set(propertyName, new Array<ExposedValue->Void>());
 		}
-		this._valueChangeCallbacks.get(propertyName).push(callback);
+		var callbacks:Array<ExposedValue->Void> = this._valueChangeCallbacks.get(propertyName);
+		callbacks[callbacks.length] = callback;
 	}
 	
-	public function unregisterForValueChange(propertyName:String, callback:ExposedValue-> Void):Void
+	private function unregisterForValueChange(propertyName:String, callback:ExposedValue->Void):Void
 	{
 		var callbacks:Array<ExposedValue->Void> = this._valueChangeCallbacks.get(propertyName);
+		if (callbacks == null) return;
 		if (callbacks.length == 1)
 		{
 			this._valueChangeCallbacks.remove(propertyName);
@@ -459,9 +466,42 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
+	public function registerForValueChangeExternal(propertyName:String, callback:ExposedValue->Void):Void
+	{
+		if (!this._valueChangeCallbacksExternal.exists(propertyName))
+		{
+			this._valueChangeCallbacksExternal.set(propertyName, new Array<ExposedValue->Void>());
+		}
+		var callbacks:Array<ExposedValue->Void> = this._valueChangeCallbacksExternal.get(propertyName);
+		callbacks[callbacks.length] = callback;
+	}
+	
+	public function unregisterForValueChangeExternal(propertyName:String, callback:ExposedValue->Void):Void
+	{
+		var callbacks:Array<ExposedValue->Void> = this._valueChangeCallbacksExternal.get(propertyName);
+		if (callbacks == null) return;
+		if (callbacks.length == 1)
+		{
+			this._valueChangeCallbacksExternal.remove(propertyName);
+		}
+		else
+		{
+			callbacks.splice(callbacks.indexOf(callback), 1);
+		}
+	}
+	
 	public function valueChange(value:ExposedValue):Void
 	{
 		var callbacks:Array<ExposedValue->Void> = this._valueChangeCallbacks.get(value.propertyName);
+		if (callbacks != null)
+		{
+			for (callback in callbacks)
+			{
+				callback(value);
+			}
+		}
+		
+		callbacks = this._valueChangeCallbacksExternal.get(value.propertyName);
 		if (callbacks != null)
 		{
 			for (callback in callbacks)
@@ -910,6 +950,13 @@ class ExposedCollection extends EventDispatcher
 			collection.addValue(val.clone(copyValues));
 		}
 		
+		#if valeditor
+		for (propertyName in this._valueChangeCallbacksExternal.keys())
+		{
+			collection._valueChangeCallbacksExternal.set(propertyName, this._valueChangeCallbacksExternal.get(propertyName).copy());
+		}
+		#end
+		
 		return collection;
 	}
 	
@@ -948,6 +995,29 @@ class ExposedCollection extends EventDispatcher
 			if (data != null)
 			{
 				value.fromJSONSave(data);
+			}
+		}
+		
+		// call all value change callbacks
+		var value:ExposedValue;
+		var callbacks:Array<ExposedValue->Void>;
+		for (propertyName in this._valueChangeCallbacks.keys())
+		{
+			value = getValue(propertyName);
+			callbacks = this._valueChangeCallbacks.get(propertyName);
+			for (callback in callbacks)
+			{
+				callback(value);
+			}
+		}
+		
+		for (propertyName in this._valueChangeCallbacksExternal.keys())
+		{
+			value = getValue(propertyName);
+			callbacks = this._valueChangeCallbacksExternal.get(propertyName);
+			for (callback in callbacks)
+			{
+				callback(value);
 			}
 		}
 	}
