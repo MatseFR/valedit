@@ -47,6 +47,7 @@ abstract class ExposedSelectBase extends ExposedValue
 	
 	private var _choicesAndValuesUpdateWithPropertyNames:Array<String> = new Array<String>();
 	
+	@:access(valedit.ExposedCollection)
 	override function set_collection(value:ExposedCollection):ExposedCollection 
 	{
 		if (this._collection != null)
@@ -96,53 +97,9 @@ abstract class ExposedSelectBase extends ExposedValue
 			{
 				targetObject = value;
 			}
-			if (this.choiceListObjectFunctionName != null)
-			{
-				this.choiceList = Reflect.callMethod(targetObject, Reflect.getProperty(targetObject, this.choiceListObjectFunctionName), this.choiceListObjectFunctionParams);
-			}
-			else if (this.choiceListFunction != null)
-			{
-				if (this.choiceListFunctionUseCollectionAsParameter)
-				{
-					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, [this.collection]);
-				}
-				else if (this.choiceListFunctionUseObjectAsParameter)
-				{
-					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, [targetObject]);
-				}
-				else
-				{
-					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, []);
-				}
-			}
-			else if (this.choiceListProperty != null)
-			{
-				this.choiceList = Reflect.getProperty(targetObject, this.choiceListProperty);
-			}
 			
-			if (this.valueListObjectFunctionName != null)
-			{
-				this.valueList = Reflect.callMethod(targetObject, Reflect.getProperty(targetObject, this.valueListObjectFunctionName), this.valueListObjectFunctionParams);
-			}
-			else if (this.valueListFunction != null)
-			{
-				if (this.valueListFunctionUseCollectionAsParameter)
-				{
-					this.valueList = Reflect.callMethod(null, this.valueListFunction, [this.collection]);
-				}
-				else if (this.valueListFunctionUseObjectAsParameter)
-				{
-					this.valueList = Reflect.callMethod(null, this.valueListFunction, [targetObject]);
-				}
-				else
-				{
-					this.valueList = Reflect.callMethod(null, this.valueListFunction, []);
-				}
-			}
-			else if (this.valueListProperty != null)
-			{
-				this.valueList = Reflect.getProperty(targetObject, this.valueListProperty);
-			}
+			retrieveChoiceList(targetObject);
+			retrieveValueList(targetObject);
 			
 			if (this.choiceSaved != null)
 			{
@@ -156,21 +113,8 @@ abstract class ExposedSelectBase extends ExposedValue
 		}
 		else if (this.choiceList.length == 0)
 		{
-			if (this.choiceListFunction != null)
-			{
-				if (!this.choiceListFunctionUseCollectionAsParameter && !this.choiceListFunctionUseObjectAsParameter)
-				{
-					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, []);
-				}
-			}
-			
-			if (this.valueListFunction != null)
-			{
-				if (!this.valueListFunctionUseCollectionAsParameter && !this.valueListFunctionUseObjectAsParameter)
-				{
-					this.valueList = Reflect.callMethod(null, this.valueListFunction, []);
-				}
-			}
+			retrieveChoiceList(value);
+			retrieveValueList(value);
 		}
 		return super.set_object(value);
 	}
@@ -245,6 +189,7 @@ abstract class ExposedSelectBase extends ExposedValue
 		super.clone_internal(value, copyValue);
 	}
 	
+	@:access(valedit.ExposedCollection)
 	public function addChoicesAndValuesUpdatePropertyName(propertyName:String):Void
 	{
 		this._choicesAndValuesUpdateWithPropertyNames[this._choicesAndValuesUpdateWithPropertyNames.length] = propertyName;
@@ -254,6 +199,7 @@ abstract class ExposedSelectBase extends ExposedValue
 		}
 	}
 	
+	@:access(valedit.ExposedCollection)
 	public function removeChoicesAndValuesUpdatePropertyName(propertyName:String):Void
 	{
 		this._choicesAndValuesUpdateWithPropertyNames.splice(this._choicesAndValuesUpdateWithPropertyNames.indexOf(propertyName), 1);
@@ -387,12 +333,26 @@ abstract class ExposedSelectBase extends ExposedValue
 		{
 			if (this.choiceListFunction != null && !this.choiceListFunctionUseObjectAsParameter)
 			{
-				this.choiceList = Reflect.callMethod(null, this.choiceListFunction, []);
+				if (this.choiceListFunctionUseCollectionAsParameter)
+				{
+					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, [this.collection]);
+				}
+				else
+				{
+					this.choiceList = Reflect.callMethod(null, this.choiceListFunction, []);
+				}
 			}
 			
 			if (this.valueListFunction != null && !this.valueListFunctionUseObjectAsParameter)
 			{
-				this.valueList = Reflect.callMethod(null, this.valueListFunction, []);
+				if (this.valueListFunctionUseCollectionAsParameter)
+				{
+					this.valueList = Reflect.callMethod(null, this.valueListFunction, [this.collection]);
+				}
+				else
+				{
+					this.valueList = Reflect.callMethod(null, this.valueListFunction, []);
+				}
 			}
 		}
 		
