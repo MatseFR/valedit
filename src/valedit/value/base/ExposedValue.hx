@@ -25,6 +25,7 @@ abstract class ExposedValue extends EventDispatcher
 		_FACTORIES.set(className, factory);
 	}
 	
+	public var applyIfNull:Bool = false;
 	/* Tells wether value should be checked for change when calling ExposedCollection's or ExposedGroup's getActionChanges function. Default is true. */
 	public var checkForChange:Bool = true;
 	public var collection(get, set):ExposedCollection;
@@ -259,6 +260,7 @@ abstract class ExposedValue extends EventDispatcher
 	**/
 	public function clear():Void
 	{
+		this.applyIfNull = false;
 		this.checkForChange = true;
 		this.collection = null;
 		this.defaultValue = null;
@@ -363,7 +365,18 @@ abstract class ExposedValue extends EventDispatcher
 		}
 		if (this._storedValue == null)
 		{
-			Reflect.setProperty(object, this.propertyName, this.value);
+			if (this.applyIfNull)
+			{
+				Reflect.setProperty(object, this.propertyName, this.value);
+			}
+			else
+			{
+				var val:Dynamic = this.value;
+				if (val != null)
+				{
+					Reflect.setProperty(object, this.propertyName, this.value);
+				}
+			}
 		}
 		else
 		{
