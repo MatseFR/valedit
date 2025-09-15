@@ -216,7 +216,7 @@ abstract class ExposedValueWithCollection extends ExposedValue
 	public function childValueChanged(value:ExposedValue):Void
 	{
 		this._collection.read();
-		this._childCollection.read();
+		//this._childCollection.read();
 		if (this.parentValue != null) this.parentValue.childValueChanged(value);
 	}
 	
