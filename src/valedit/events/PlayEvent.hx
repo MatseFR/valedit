@@ -2,7 +2,6 @@ package valedit.events;
 
 import openfl.events.Event;
 import openfl.events.IEventDispatcher;
-import valeditor.events.DefaultEvent;
 
 /**
  * ...
@@ -10,6 +9,7 @@ import valeditor.events.DefaultEvent;
  */
 class PlayEvent extends Event 
 {
+	inline static public var COMPLETE:String = "complete";
 	inline static public var PLAY:String = "play";
 	inline static public var STOP:String = "stop";
 	
