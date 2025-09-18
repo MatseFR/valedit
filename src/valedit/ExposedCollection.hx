@@ -271,7 +271,7 @@ class ExposedCollection extends EventDispatcher
 	public function readAndSetObject(object:Dynamic):Void
 	{
 		this.object = object;
-		if (this.object != null)
+		if (this._object != null)
 		{
 			readFromObject(object);
 		}
