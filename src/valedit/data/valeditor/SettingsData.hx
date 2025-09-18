@@ -158,6 +158,8 @@ class SettingsData
 		if (!collection.hasValue("rootContainerClass"))
 		{
 			combo = new ExposedSelectCombo("rootContainerClass", "root container class", ValEditor.rootContainerClassNames, ValEditor.rootContainerClasses);
+			combo.defaultValue = "undefined";
+			combo.value = "undefined";
 			collection.addValue(combo, groupName);
 			collection.registerForValueChangeExternal("rootContainerClass", rootContainerClassChange);
 		}
@@ -229,9 +231,15 @@ class SettingsData
 		trace("rootContainerClassChange");
 		
 		var clss:ValEditorClass = classValue.value;
-		var obj:ValEditorObject = ValEditor.createObjectWithClassName(clss.className, "rootContainerClassChange", null, null, "rootContainerClassChange");
+		var obj:ValEditorObject = null;
 		var value:ExposedValue;
-		if (Std.isOfType(obj.object, ITimeLineContainerEditable))
+		
+		if (clss != null)
+		{
+			obj = ValEditor.createObjectWithClassName(clss.className, "rootContainerClassChange", null, null, "rootContainerClassChange");
+		}
+		
+		if (obj != null && Std.isOfType(obj.object, ITimeLineContainerEditable))
 		{
 			value = classValue.collection.getValue("frameRateDefault");
 			value.isReadOnly = false;
@@ -259,7 +267,11 @@ class SettingsData
 			value = classValue.collection.getValue("tweenTransitionDefault");
 			value.isReadOnly = true;
 		}
-		ValEditor.destroyObject(obj);
+		
+		if (obj != null)
+		{
+			ValEditor.destroyObject(obj);
+		}
 	}
 	
 	static public function exposeInteractiveObjectController(?collection:ExposedCollection, ?groupName:String):ExposedCollection
