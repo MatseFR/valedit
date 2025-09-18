@@ -250,13 +250,21 @@ abstract class ExposedValueWithCollection extends ExposedValue
 		}
 	}
 	
-	override public function validateForConstructor():Bool 
+	override public function restoreDefaultValue():Void 
 	{
-		if (!this.isRequiredForConstructor) return true;
+		if (this._childCollection != null)
+		{
+			this._childCollection.restoreDefaultValues();
+		}
+	}
+	
+	override public function validateMandatory():Bool 
+	{
+		if (!this.isMandatory) return true;
 		if (this.value == null) return false;
 		if (this._childCollection != null)
 		{
-			return this._childCollection.validateConstructor();
+			return this._childCollection.validateMandatory();
 		}
 		return true;
 	}

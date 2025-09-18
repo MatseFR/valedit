@@ -44,14 +44,14 @@ abstract class ExposedValue extends EventDispatcher
 	/* Tells whether value is a group or not */
 	public var isGroup(default, null):Bool;
 	public var isInPool(default, null):Bool = false;
+	/** Tells whether this value can be null or not when calling validateMandatory. Default is false (can be null). */
+	public var isMandatory:Bool = false;
 	public var isNullable:Bool = false;
 	public var isReadOnly(get, set):Bool;
 	private var isReadOnlyInternal(get, set):Bool;
 	/* Tells whether this value is real (true, default) or not (false).
 	 * Values that are not "real" : ExposedName, ExposedNote, ExposedSeparator, ExposedSpacing... */
 	public var isRealValue(get, never):Bool;
-	/** Tells whether this value is required for constructor to be valid. Default is false. */
-	public var isRequiredForConstructor:Bool = false;
 	public var isTweenable(get, set):Bool;
 	#if valeditor
 	/* time at which this value last changed, whatever the reason */
@@ -272,7 +272,7 @@ abstract class ExposedValue extends EventDispatcher
 		this.isNullable = false;
 		this._isReadOnly = false;
 		this._isReadOnlyInternal = false;
-		this.isRequiredForConstructor = false;
+		this.isMandatory = false;
 		#if valeditor
 		this.lastChanged = ValEdit.TIME_STAMP_ORIGIN;
 		this.lastModified = ValEdit.TIME_STAMP_ORIGIN;
@@ -420,11 +420,13 @@ abstract class ExposedValue extends EventDispatcher
 	
 	public function restoreDefaultValue():Void
 	{
-		if (this._storedValue != null)
-		{
-			this._storedValue = null;
-			if (this._uiControl != null) this._uiControl.updateExposedValue();
-		}
+		//if (this._storedValue != null)
+		//{
+			//this._storedValue = null;
+			//if (this._uiControl != null) this._uiControl.updateExposedValue();
+		//}
+		this.value = this.defaultValue;
+		if (this._uiControl != null) this._uiControl.updateExposedValue();
 	}
 	
 	private function updateValueIfDifferent(value:Dynamic, dispatchEventIfChange:Bool):Void
@@ -440,9 +442,9 @@ abstract class ExposedValue extends EventDispatcher
 		}
 	}
 	
-	public function validateForConstructor():Bool
+	public function validateMandatory():Bool
 	{
-		if (!this.isRequiredForConstructor) return true;
+		if (!this.isMandatory) return true;
 		return this.value != null;
 	}
 	
@@ -482,7 +484,7 @@ abstract class ExposedValue extends EventDispatcher
 		value.isNullable = this.isNullable;
 		value.isReadOnly = this._isReadOnly;
 		value.isReadOnlyInternal = this._isReadOnlyInternal;
-		value.isRequiredForConstructor = this.isRequiredForConstructor;
+		value.isMandatory = this.isMandatory;
 		value.isTweenable = this._isTweenable;
 		value.updateCollectionOnChange = this.updateCollectionOnChange;
 		#if valeditor

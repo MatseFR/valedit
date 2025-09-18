@@ -924,12 +924,12 @@ class ExposedCollection extends EventDispatcher
 		return false;
 	}
 	
-	public function validateConstructor():Bool
+	public function validateMandatory():Bool
 	{
 		for (value in this._valueList)
 		{
 			//if (value.isRequiredForConstructor && value.value == null) return false;
-			if (!value.validateForConstructor()) return false;
+			if (!value.validateMandatory()) return false;
 		}
 		return true;
 	}
