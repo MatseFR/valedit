@@ -8,6 +8,7 @@ import valedit.value.ExposedFunctionExternal;
 import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
+import valedit.value.ExposedSelectCombo;
 import valedit.value.ExposedString;
 #if (desktop || air)
 import valedit.value.ExposedPath;
@@ -15,6 +16,10 @@ import valedit.value.ExposedPath;
 #if valeditor
 import valeditor.ValEditor;
 #end
+import valedit.value.base.ExposedValue;
+import valeditor.ValEditorClass;
+import valeditor.ValEditorObject;
+import valeditor.container.ITimeLineContainerEditable;
 
 /**
  * ...
@@ -137,6 +142,7 @@ class SettingsData
 	static public function exposeFileSettings(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
+		var combo:ExposedSelectCombo;
 		var floatDrag:ExposedFloatDrag;
 		var funcExternal:ExposedFunctionExternal;
 		var intDrag:ExposedIntDrag;
@@ -148,6 +154,13 @@ class SettingsData
 		var str:ExposedString;
 		
 		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("rootContainerClass"))
+		{
+			combo = new ExposedSelectCombo("rootContainerClass", "root container class", ValEditor.rootContainerClassNames, ValEditor.rootContainerClasses);
+			collection.addValue(combo, groupName);
+			collection.registerForValueChangeExternal("rootContainerClass", rootContainerClassChange);
+		}
 		
 		#if (desktop || air)
 		if (!collection.hasValue("filePath"))
@@ -211,6 +224,44 @@ class SettingsData
 		return collection;
 	}
 	
+	static private function rootContainerClassChange(classValue:ExposedValue):Void
+	{
+		trace("rootContainerClassChange");
+		
+		var clss:ValEditorClass = classValue.value;
+		var obj:ValEditorObject = ValEditor.createObjectWithClassName(clss.className, "rootContainerClassChange", null, null, "rootContainerClassChange");
+		var value:ExposedValue;
+		if (Std.isOfType(obj.object, ITimeLineContainerEditable))
+		{
+			value = classValue.collection.getValue("frameRateDefault");
+			value.isReadOnly = false;
+			
+			value = classValue.collection.getValue("numFramesDefault");
+			value.isReadOnly = false;
+			
+			value = classValue.collection.getValue("numFramesAutoIncrease");
+			value.isReadOnly = false;
+			
+			value = classValue.collection.getValue("tweenTransitionDefault");
+			value.isReadOnly = false;
+		}
+		else
+		{
+			value = classValue.collection.getValue("frameRateDefault");
+			value.isReadOnly = true;
+			
+			value = classValue.collection.getValue("numFramesDefault");
+			value.isReadOnly = true;
+			
+			value = classValue.collection.getValue("numFramesAutoIncrease");
+			value.isReadOnly = true;
+			
+			value = classValue.collection.getValue("tweenTransitionDefault");
+			value.isReadOnly = true;
+		}
+		ValEditor.destroyObject(obj);
+	}
+	
 	static public function exposeInteractiveObjectController(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
@@ -227,7 +278,7 @@ class SettingsData
 		
 		if (!collection.hasValue("debugAlpha"))
 		{
-			floatDrag = new ExposedFloatDrag("debugAlpha");
+			floatDrag = new ExposedFloatDrag("debugAlpha", null, 0.0, 1.0, 0.01, 0.01);
 			collection.addValue(floatDrag, groupName);
 		}
 		
