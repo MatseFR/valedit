@@ -434,6 +434,9 @@ abstract class ExposedValue extends EventDispatcher
 			this._storedValue = value;
 			if (this._uiControl != null) this._uiControl.updateExposedValue();
 			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
+			#if valeditor
+			if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.valueChange(this);
+			#end
 		}
 	}
 	
