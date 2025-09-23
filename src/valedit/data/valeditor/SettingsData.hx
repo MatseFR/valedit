@@ -158,8 +158,10 @@ class SettingsData
 		if (!collection.hasValue("rootContainerClass"))
 		{
 			combo = new ExposedSelectCombo("rootContainerClass", "root container class", ValEditor.rootContainerClassNames, ValEditor.rootContainerClasses);
+			combo.iconFromValueProperty = "iconBitmapData";
 			combo.defaultValue = "undefined";
 			combo.value = "undefined";
+			combo.isMandatory = true;
 			collection.addValue(combo, groupName);
 			collection.registerForValueChangeExternal("rootContainerClass", rootContainerClassChange);
 		}
