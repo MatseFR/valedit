@@ -94,6 +94,7 @@ class ContainerData
 		return collection;
 	}
 	
+	#if starling
 	static private function exposeContainerStarling2D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var floatDrag:ExposedFloatDrag;
@@ -119,7 +120,7 @@ class ContainerData
 		return collection;
 	}
 	
-	#if starling
+	
 	static private function exposeContainerStarling3D(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var floatDrag:ExposedFloatDrag;
@@ -230,8 +231,8 @@ class ContainerData
 		return collection;
 	}
 	
-	#if starling
 	static private function exposeContainerOpenFLStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	#if starling
 	{
 		var floatDrag:ExposedFloatDrag;
 		var select:ExposedSelect;
@@ -440,6 +441,46 @@ class ContainerData
 	#end
 	
 	#if starling
+	static public function exposeSpriteContainerOpenFLStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeContainer(collection, groupName);
+		exposeContainerOpenFLStarling(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerOpenFLStarlingVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = new ClassVisibilityCollection();
+		
+		getContainerVisibilities();
+		getContainerOpenFLStarlingVisibilities();
+		
+		return collection;
+	}
+	
+	#if valeditor
+	static public function exposeSpriteContainerOpenFLStarlingEditable(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeSpriteContainerOpenFLStarling(collection, groupName);
+		
+		return collection;
+	}
+	
+	static public function getSpriteContainerOpenFLStarlingEditableVisibility(?collection:ClassVisibilityCollection):ClassVisibilityCollection
+	{
+		if (collection == null) collection = ClassVisibilityCollection.fromPool();
+		
+		getSpriteContainerOpenFLStarlingVisibility(collection);
+		
+		return collection;
+	}
+	#end
+	
 	static public function exposeSpriteContainerStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
