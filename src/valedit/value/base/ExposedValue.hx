@@ -291,6 +291,14 @@ abstract class ExposedValue extends EventDispatcher
 	
 	abstract public function pool():Void;
 	
+	public function clearObject():Void
+	{
+		this.object = null;
+		#if valeditor
+		this.valEditorObject = null;
+		#end
+	}
+	
 	private function setNames(propertyName:String, name:String):Void
 	{
 		this.propertyName = propertyName;
@@ -481,10 +489,10 @@ abstract class ExposedValue extends EventDispatcher
 		value.isAbsolute = this.isAbsolute;
 		value.isConstructor = this._isConstructor;
 		value.isEditable = this._isEditable;
+		value.isMandatory = this.isMandatory;
 		value.isNullable = this.isNullable;
 		value.isReadOnly = this._isReadOnly;
 		value.isReadOnlyInternal = this._isReadOnlyInternal;
-		value.isMandatory = this.isMandatory;
 		value.isTweenable = this._isTweenable;
 		value.updateCollectionOnChange = this.updateCollectionOnChange;
 		#if valeditor

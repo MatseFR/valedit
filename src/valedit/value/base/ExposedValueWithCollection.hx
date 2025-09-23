@@ -101,6 +101,17 @@ abstract class ExposedValueWithCollection extends ExposedValue
 		super.clear();
 	}
 	
+	override public function clearObject():Void 
+	{
+		super.clearObject();
+		
+		if (this._childCollection != null)
+		{
+			//this._childCollection.object = null;
+			this._childCollection.clearObject();
+		}
+	}
+	
 	public function addNonTweenablePropertyName(propertyName:String):Void
 	{
 		this._hasNonTweenableProperty = true;

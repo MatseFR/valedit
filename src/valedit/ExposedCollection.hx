@@ -268,6 +268,16 @@ class ExposedCollection extends EventDispatcher
 		applyToObject(object, visibleOnly, applyIfDefaultValue);
 	}
 	
+	public function clearObject():Void
+	{
+		this._object = null;
+		this._valEditorObject = null;
+		for (value in this._valueList)
+		{
+			value.clearObject();
+		}
+	}
+	
 	public function readAndSetObject(object:Dynamic):Void
 	{
 		this.object = object;
@@ -906,6 +916,10 @@ class ExposedCollection extends EventDispatcher
 		if (tweenProperties.numProperties != 0)
 		{
 			tweenData.addProperties(tweenProperties);
+		}
+		else
+		{
+			tweenProperties.pool();
 		}
 		
 		return hasTween;
