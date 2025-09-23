@@ -226,7 +226,7 @@ class ExposedObject extends ExposedValueWithCollection
 				this.childCollection = childCollection;
 			}
 		}
-		else
+		else if (childCollection != null)
 		{
 			childCollection.fromJSONSave(this._childCollectionSaveData);
 			childCollection.applyAndSetObject(this._storedValue);
