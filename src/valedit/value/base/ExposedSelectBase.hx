@@ -4,6 +4,7 @@ import valedit.ExposedCollection;
 import valedit.events.ValueEvent;
 import valedit.value.base.ExposedValue;
 #if valeditor
+import openfl.display.BitmapData;
 import valeditor.ValEditorObject;
 #else
 import valedit.ValEditObject;
@@ -15,6 +16,7 @@ import valedit.ValEditObject;
  */
 abstract class ExposedSelectBase extends ExposedValue 
 {
+	// Choices
 	public var choiceList(default, null):Array<String>;
 	/** if not null and choiceListObjectFunctionName is null, this function will be called to retrieve choices */
 	public var choiceListFunction:Function;
@@ -31,6 +33,26 @@ abstract class ExposedSelectBase extends ExposedValue
 	
 	public var choiceSaved:String;
 	
+	#if valeditor
+	// Icons
+	public var iconFromValueProperty:String;
+	
+	public var iconList(default, null):Array<BitmapData>;
+	
+	public var iconListFunction:Function;
+	
+	public var iconListFunctionUseCollectionAsParameter:Bool;
+	
+	public var iconListFunctionUseObjectAsParameter:Bool;
+	
+	public var iconListObjectFunctionName:String;
+	
+	public var iconListObjectFunctionParams:Array<Dynamic> = new Array<Dynamic>();
+	
+	public var iconListProperty:String;
+	#end
+	
+	// Values
 	public var valueList(default, null):Array<Dynamic>;
 	/** if not null and valueListObjectFunctionName is null, this function will be called to retrieve values */
 	public var valueListFunction:Function;
@@ -69,6 +91,7 @@ abstract class ExposedSelectBase extends ExposedValue
 	
 	#if valeditor
 	public var contentJustify:Bool = true;
+	public var prompt:String = "- select -";
 	public var requestedMaxRowCount:Int = 12;
 	public var requestedMinRowCount:Int = 1;
 	
@@ -79,7 +102,7 @@ abstract class ExposedSelectBase extends ExposedValue
 	
 	override function set_object(value:Dynamic):Dynamic 
 	{
-		if (value != null && this.choiceList.length == 0)
+		if (value != null) //&& this.choiceList.length == 0)
 		{
 			var targetObject:Dynamic;
 			#if valeditor
@@ -98,8 +121,11 @@ abstract class ExposedSelectBase extends ExposedValue
 				targetObject = value;
 			}
 			
-			retrieveChoiceList(targetObject);
-			retrieveValueList(targetObject);
+			if (this.choiceList.length == 0) retrieveChoiceList(targetObject);
+			if (this.valueList.length == 0) retrieveValueList(targetObject);
+			#if valeditor
+			if (this.iconList.length == 0) retrieveIconList(targetObject);
+			#end
 			
 			if (this.choiceSaved != null)
 			{
@@ -111,21 +137,30 @@ abstract class ExposedSelectBase extends ExposedValue
 				this.choiceSaved = null;
 			}
 		}
-		else if (this.choiceList.length == 0)
+		else //if (this.choiceList.length == 0)
 		{
-			retrieveChoiceList(value);
-			retrieveValueList(value);
+			if (this.choiceList.length == 0) retrieveChoiceList(value);
+			if (this.valueList.length == 0) retrieveValueList(value);
+			#if valeditor
+			if (this.iconList.length == 0) retrieveIconList(value);
+			#end
 		}
 		return super.set_object(value);
 	}
 
-	public function new(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null) 
+	public function new(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null #if valeditor , iconList:Array<BitmapData> = null#end) 
 	{
 		super(propertyName, name);
 		if (choiceList == null) choiceList = new Array<String>();
 		if (valueList == null) valueList = new Array<Dynamic>();
+		#if valeditor
+		if (iconList == null) iconList = new Array<BitmapData>();
+		#end
 		this.choiceList = choiceList;
 		this.valueList = valueList;
+		#if valeditor
+		this.iconList = iconList;
+		#end
 	}
 	
 	override public function clear():Void 
@@ -139,6 +174,16 @@ abstract class ExposedSelectBase extends ExposedValue
 		this.choiceListObjectFunctionParams.resize(0);
 		this.choiceListProperty = null;
 		this.choiceSaved = null;
+		#if valeditor
+		this.iconFromValueProperty = null;
+		this.iconList = null;
+		this.iconListFunction = null;
+		this.iconListFunctionUseCollectionAsParameter = false;
+		this.iconListFunctionUseObjectAsParameter = false;
+		this.iconListObjectFunctionName = null;
+		this.iconListObjectFunctionParams.resize(0);
+		this.iconListProperty = null;
+		#end
 		this.valueList = null;
 		this.valueListFunction = null;
 		this.valueListFunctionUseCollectionAsParameter = false;
@@ -147,19 +192,26 @@ abstract class ExposedSelectBase extends ExposedValue
 		this.valueListObjectFunctionParams.resize(0);
 		this.valueListProperty = null;
 		#if valeditor
+		this.prompt = "- select -";
 		this.listPercentWidth = 100;
 		this.selectOnKeyboardNavigation = false;
 		this._choicesAndValuesUpdateWithPropertyNames.resize(0);
 		#end
 	}
 	
-	private function setTo(propertyName:String, name:String, choiceList:Array<String>, valueList:Array<Dynamic>):ExposedSelectBase
+	private function setTo(propertyName:String, name:String, choiceList:Array<String>, valueList:Array<Dynamic> #if valeditor , iconList:Array<BitmapData>#end):ExposedSelectBase
 	{
 		setNames(propertyName, name);
 		if (choiceList == null) choiceList = new Array<String>();
 		if (valueList == null) valueList = new Array<Dynamic>();
+		#if valeditor
+		if (iconList == null) iconList = new Array<BitmapData>();
+		#end
 		this.choiceList = choiceList;
 		this.valueList = valueList;
+		#if valeditor
+		this.iconList = iconList;
+		#end
 		this.isInPool = false;
 		return this;
 	}
@@ -168,6 +220,7 @@ abstract class ExposedSelectBase extends ExposedValue
 	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
 	{
 		var select:ExposedSelectBase = cast value;
+		select.prompt = this.prompt;
 		select.listPercentWidth = this.listPercentWidth;
 		select.selectOnKeyboardNavigation = this.selectOnKeyboardNavigation;
 		select.choiceListFunction = this.choiceListFunction;
@@ -176,6 +229,15 @@ abstract class ExposedSelectBase extends ExposedValue
 		select.choiceListObjectFunctionName = this.choiceListObjectFunctionName;
 		select.choiceListObjectFunctionParams = this.choiceListObjectFunctionParams.copy();
 		select.choiceListProperty = this.choiceListProperty;
+		#if valeditor
+		select.iconFromValueProperty = this.iconFromValueProperty;
+		select.iconListFunction = this.iconListFunction;
+		select.iconListFunctionUseCollectionAsParameter = this.iconListFunctionUseCollectionAsParameter;
+		select.iconListFunctionUseObjectAsParameter = this.iconListFunctionUseObjectAsParameter;
+		select.iconListObjectFunctionName = this.iconListObjectFunctionName;
+		select.iconListObjectFunctionParams = this.iconListObjectFunctionParams.copy();
+		select.iconListProperty = this.iconListProperty;
+		#end
 		select.valueListFunction = this.valueListFunction;
 		select.valueListFunctionUseCollectionAsParameter = this.valueListFunctionUseCollectionAsParameter;
 		select.valueListFunctionUseObjectAsParameter = this.valueListFunctionUseObjectAsParameter;
@@ -213,6 +275,9 @@ abstract class ExposedSelectBase extends ExposedValue
 	{
 		retrieveChoiceList(this.object);
 		retrieveValueList(this.object);
+		#if valeditor
+		retrieveIconList(this.object);
+		#end
 		ValueEvent.dispatch(this, ValueEvent.DATA_CHANGE, this);
 	}
 	#end
@@ -222,11 +287,14 @@ abstract class ExposedSelectBase extends ExposedValue
 	   @param	choice
 	   @param	value
 	**/
-	public function add(choice:String, value:Dynamic = null):Void
+	public function add(choice:String, value:Dynamic = null #if valeditor , icon:BitmapData = null#end):Void
 	{
 		if (value == null) value = choice;
-		this.choiceList.push(choice);
-		this.valueList.push(value);
+		this.choiceList[this.choiceList.length] = choice;
+		this.valueList[this.valueList.length] = value;
+		#if valeditor
+		this.iconList[this.iconList.length] = icon;
+		#end
 		if (this.defaultValue == null) this.defaultValue = value;
 	}
 	
@@ -237,6 +305,9 @@ abstract class ExposedSelectBase extends ExposedValue
 		{
 			this.choiceList.splice(index, 1);
 			this.valueList.splice(index, 1);
+			#if valeditor
+			this.iconList.splice(index, 1);
+			#end
 		}
 	}
 	
@@ -247,6 +318,9 @@ abstract class ExposedSelectBase extends ExposedValue
 		{
 			this.choiceList.splice(index, 1);
 			this.valueList.splice(index, 1);
+			#if valeditor
+			this.iconList.splice(index, 1);
+			#end
 		}
 	}
 	
@@ -309,6 +383,74 @@ abstract class ExposedSelectBase extends ExposedValue
 			this.valueList = Reflect.getProperty(forObject, this.valueListProperty);
 		}
 	}
+	
+	#if valeditor
+	public function retrieveIconList(forObject:Dynamic = null):Void
+	{
+		if (forObject != null && this.iconListObjectFunctionName != null)
+		{
+			this.iconList = Reflect.callMethod(forObject, Reflect.getProperty(forObject, this.iconListObjectFunctionName), this.iconListObjectFunctionParams);
+		}
+		else if (this.iconListFunction != null)
+		{
+			if (this.iconListFunctionUseCollectionAsParameter)
+			{
+				this.iconList = Reflect.callMethod(null, this.iconListFunction, [this.collection]);
+			}
+			else if (this.iconListFunctionUseObjectAsParameter)
+			{
+				if (forObject != null)
+				{
+					this.iconList = Reflect.callMethod(null, this.iconListFunction, [forObject]);
+				}
+			}
+			else
+			{
+				this.iconList = Reflect.callMethod(null, this.iconListFunction, []);
+			}
+		}
+		else if (this.iconListProperty != null && forObject != null)
+		{
+			this.iconList = Reflect.getProperty(forObject, this.iconListProperty);
+		}
+		else if (this.iconFromValueProperty != null)
+		{
+			if (this.iconList == null)
+			{
+				this.iconList = new Array<BitmapData>();
+			}
+			else
+			{
+				this.iconList.resize(0);
+			}
+			
+			if (this.valueList != null)
+			{
+				var count:Int = this.valueList.length;
+				for (i in 0...count)
+				{
+					this.iconList[i] = Reflect.getProperty(this.valueList[i], this.iconFromValueProperty);
+				}
+			}
+		}
+		else
+		{
+			if (this.iconList == null)
+			{
+				this.iconList = new Array<BitmapData>();
+			}
+			else
+			{
+				this.iconList.resize(0);
+			}
+			
+			if (this.valueList != null)
+			{
+				this.iconList.resize(this.valueList.length);
+			}
+		}
+	}
+	#end
 	
 	override public function fromJSON(json:Dynamic):Void 
 	{

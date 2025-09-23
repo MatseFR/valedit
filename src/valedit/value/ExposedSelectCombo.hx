@@ -3,6 +3,9 @@ package valedit.value;
 import openfl.errors.Error;
 import valedit.value.base.ExposedSelectBase;
 import valedit.value.base.ExposedValue;
+#if valeditor
+import openfl.display.BitmapData;
+#end
 
 /**
  * ...
@@ -17,10 +20,10 @@ class ExposedSelectCombo extends ExposedSelectBase
 		_POOL.resize(0);
 	}
 	
-	static public function fromPool(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null):ExposedSelectCombo
+	static public function fromPool(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null #if valeditor , iconList:Array<BitmapData> = null#end):ExposedSelectCombo
 	{
-		if (_POOL.length != 0) return cast _POOL.pop().setTo(propertyName, name, choiceList, valueList);
-		return new ExposedSelectCombo(propertyName, name, choiceList, valueList);
+		if (_POOL.length != 0) return cast _POOL.pop().setTo(propertyName, name, choiceList, valueList #if valeditor , iconList#end);
+		return new ExposedSelectCombo(propertyName, name, choiceList, valueList #if valeditor , iconList#end);
 	}
 	
 	/**
@@ -31,9 +34,9 @@ class ExposedSelectCombo extends ExposedSelectBase
 	   @param	valueList
 	   @param	listPercentWidth
 	**/
-	public function new(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null) 
+	public function new(propertyName:String, name:String = null, choiceList:Array<String> = null, valueList:Array<Dynamic> = null #if valeditor , iconList:Array<BitmapData> = null#end) 
 	{
-		super(propertyName, name, choiceList, valueList);
+		super(propertyName, name, choiceList, valueList #if valeditor , iconList#end);
 	}
 	
 	public function pool():Void
@@ -51,7 +54,7 @@ class ExposedSelectCombo extends ExposedSelectBase
 	
 	public function clone(copyValue:Bool = false):ExposedValue 
 	{
-		var select:ExposedSelectCombo = fromPool(this.propertyName, this.name, this.choiceList != null ? this.choiceList.copy():null, this.valueList != null ? this.valueList.copy():null);
+		var select:ExposedSelectCombo = fromPool(this.propertyName, this.name, this.choiceList != null ? this.choiceList.copy():null, this.valueList != null ? this.valueList.copy():null #if valeditor , this.iconList != null ? this.iconList.copy():null#end);
 		super.clone_internal(select, copyValue);
 		return select;
 	}
