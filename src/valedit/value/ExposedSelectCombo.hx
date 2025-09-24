@@ -26,6 +26,11 @@ class ExposedSelectCombo extends ExposedSelectBase
 		return new ExposedSelectCombo(propertyName, name, choiceList, valueList #if valeditor , iconList#end);
 	}
 	
+	#if valeditor
+	/* Allows the user to type a custom value into the text input. Default is false.*/
+	public var allowCustomUserValue:Bool = false;
+	#end
+	
 	/**
 	   
 	   @param	propertyName
@@ -38,6 +43,15 @@ class ExposedSelectCombo extends ExposedSelectBase
 	{
 		super(propertyName, name, choiceList, valueList #if valeditor , iconList#end);
 	}
+	
+	#if valeditor
+	override public function clear():Void 
+	{
+		this.allowCustomUserValue = false;
+		
+		super.clear();
+	}
+	#end
 	
 	public function pool():Void
 	{
@@ -58,6 +72,16 @@ class ExposedSelectCombo extends ExposedSelectBase
 		super.clone_internal(select, copyValue);
 		return select;
 	}
+	
+	#if valeditor
+	override function clone_internal(value:ExposedValue, copyValue:Bool = false):Void 
+	{
+		var combo:ExposedSelectCombo = cast value;
+		combo.allowCustomUserValue = this.allowCustomUserValue;
+		
+		super.clone_internal(value, copyValue);
+	}
+	#end
 	
 	//override public function fromJSON(json:Dynamic):Void 
 	//{
