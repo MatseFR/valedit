@@ -163,6 +163,12 @@ class SettingsData
 			combo.value = "undefined";
 			combo.isMandatory = true;
 			collection.addValue(combo, groupName);
+			//select = new ExposedSelect("rootContainerClass", "root container class", ValEditor.rootContainerClassNames, ValEditor.rootContainerClasses);
+			//select.iconFromValueProperty = "iconBitmapData";
+			//select.defaultValue = "undefined";
+			//select.value = "undefined";
+			//select.isMandatory = true;
+			//collection.addValue(select, groupName);
 			collection.registerForValueChangeExternal("rootContainerClass", rootContainerClassChange);
 		}
 		
@@ -230,8 +236,6 @@ class SettingsData
 	
 	static private function rootContainerClassChange(classValue:ExposedValue):Void
 	{
-		trace("rootContainerClassChange");
-		
 		var clss:ValEditorClass = classValue.value;
 		var obj:ValEditorObject = null;
 		var value:ExposedValue;
