@@ -207,6 +207,8 @@ class ExposedCollection extends EventDispatcher
 	private var _valueChangeCallbacksExternal:Map<String, Array<ExposedValue->Void>> = new Map<String, Array<ExposedValue->Void>>();
 	#end
 	
+	private var _isReading:Bool = false;
+	
 	/**
 	   
 	**/
@@ -428,18 +430,24 @@ class ExposedCollection extends EventDispatcher
 	
 	public function read(dispatchEventIfChange:Bool = true):Void
 	{
+		if (this._isReading) return;
+		this._isReading = true;
 		for (value in this._valueList)
 		{
 			value.read(dispatchEventIfChange);
 		}
+		this._isReading = false;
 	}
 	
 	public function readFromObject(object:Dynamic, dispatchEventIfChange:Bool = true):Void
 	{
+		if (this._isReading) return;
+		this._isReading = true;
 		for (value in this._valueList)
 		{
 			value.readFromObject(object, dispatchEventIfChange);
 		}
+		this._isReading = false;
 	}
 	
 	public function restoreDefaultValues():Void
