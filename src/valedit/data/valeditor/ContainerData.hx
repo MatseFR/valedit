@@ -231,8 +231,8 @@ class ContainerData
 		return collection;
 	}
 	
-	static private function exposeContainerOpenFLStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	#if starling
+	static private function exposeContainerOpenFLStarling(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var floatDrag:ExposedFloatDrag;
 		var select:ExposedSelect;

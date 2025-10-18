@@ -245,34 +245,18 @@ class SettingsData
 			obj = ValEditor.createObjectWithClassName(clss.className, "rootContainerClassChange", null, null, "rootContainerClassChange");
 		}
 		
-		if (obj != null && Std.isOfType(obj.object, ITimeLineContainerEditable))
-		{
-			value = classValue.collection.getValue("frameRateDefault");
-			value.isReadOnly = false;
-			
-			value = classValue.collection.getValue("numFramesDefault");
-			value.isReadOnly = false;
-			
-			value = classValue.collection.getValue("numFramesAutoIncrease");
-			value.isReadOnly = false;
-			
-			value = classValue.collection.getValue("tweenTransitionDefault");
-			value.isReadOnly = false;
-		}
-		else
-		{
-			value = classValue.collection.getValue("frameRateDefault");
-			value.isReadOnly = true;
-			
-			value = classValue.collection.getValue("numFramesDefault");
-			value.isReadOnly = true;
-			
-			value = classValue.collection.getValue("numFramesAutoIncrease");
-			value.isReadOnly = true;
-			
-			value = classValue.collection.getValue("tweenTransitionDefault");
-			value.isReadOnly = true;
-		}
+		var readOnly:Bool = !(obj != null && Std.isOfType(obj.object, ITimeLineContainerEditable));
+		value = classValue.collection.getValue("frameRateDefault");
+		value.isReadOnly = readOnly;
+		
+		value = classValue.collection.getValue("numFramesDefault");
+		value.isReadOnly = readOnly;
+		
+		value = classValue.collection.getValue("numFramesAutoIncrease");
+		value.isReadOnly = readOnly;
+		
+		value = classValue.collection.getValue("tweenTransitionDefault");
+		value.isReadOnly = readOnly;
 		
 		if (obj != null)
 		{
