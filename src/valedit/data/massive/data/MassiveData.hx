@@ -1,17 +1,12 @@
-package valedit.data.starling.libs.massive;
-import massive.data.MassiveConstants;
-import starling.textures.TextureSmoothing;
+package valedit.data.massive.data;
 import starling.utils.Align;
 import valedit.ExposedCollection;
-import valedit.data.starling.display.StarlingDisplayData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFunction;
-import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
-import valedit.value.ExposedString;
 import valedit.value.extra.FunctionCallExtra;
 import valedit.value.starling.ExposedStarlingTexture;
 
@@ -310,135 +305,6 @@ class MassiveData
 			collection = new ExposedCollection();
 			collection.isConstructor = true;
 		}
-		
-		return collection;
-	}
-	
-	static private function exposeMassiveDisplayData(?collection:ExposedCollection, ?groupName:String):ExposedCollection
-	{
-		var bool:ExposedBool;
-		var floatDrag:ExposedFloatDrag;
-		var intDrag:ExposedIntDrag;
-		var select:ExposedSelect;
-		var texture:ExposedStarlingTexture;
-		
-		if (collection == null) collection = new ExposedCollection();
-		
-		if (!collection.hasValue("autoHandleJuggler"))
-		{
-			bool = new ExposedBool("autoHandleJuggler");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("bufferSize"))
-		{
-			intDrag = new ExposedIntDrag("bufferSize", null, 0, MassiveConstants.MAX_QUADS);
-			collection.addValue(intDrag, groupName);
-		}
-		
-		if (!collection.hasValue("numBuffers"))
-		{
-			intDrag = new ExposedIntDrag("numBuffers", null, 1, 8);
-			collection.addValue(intDrag, groupName);
-		}
-		
-		if (!collection.hasValue("colorRed"))
-		{
-			floatDrag = new ExposedFloatDrag("colorRed", null, 0, 10, 0.1);
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("colorGreen"))
-		{
-			floatDrag = new ExposedFloatDrag("colorGreen", null, 0, 10, 0.1);
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("colorBlue"))
-		{
-			floatDrag = new ExposedFloatDrag("colorBlue", null, 0, 10, 0.1);
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("renderOffsetX"))
-		{
-			floatDrag = new ExposedFloatDrag("renderOffsetX");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("renderOffsetY"))
-		{
-			floatDrag = new ExposedFloatDrag("renderOffsetY");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("texture"))
-		{
-			texture = new ExposedStarlingTexture("texture");
-			collection.addValue(texture, groupName);
-		}
-		
-		if (!collection.hasValue("textureRepeat"))
-		{
-			bool = new ExposedBool("textureRepeat");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("textureSmoothing"))
-		{
-			select = new ExposedSelect("textureSmoothing");
-			select.add("BILINEAR", TextureSmoothing.BILINEAR);
-			select.add("NONE", TextureSmoothing.NONE);
-			select.add("TRILINEAR", TextureSmoothing.TRILINEAR);
-			collection.addValue(select, groupName);
-		}
-		
-		if (!collection.hasValue("useByteArray"))
-		{
-			bool = new ExposedBool("useByteArray");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("useColor"))
-		{
-			bool = new ExposedBool("useColor");
-			collection.addValue(bool, groupName);
-		}
-		
-		StarlingDisplayData.exposeDisplayObject(collection, groupName);
-		
-		return collection;
-	}
-	
-	static private function exposeMassiveLayer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
-	{
-		var string:ExposedString;
-		
-		if (collection == null) collection = new ExposedCollection();
-		
-		if (!collection.hasValue("name"))
-		{
-			string = new ExposedString("name");
-			collection.addValue(string, groupName);
-		}
-		
-		return collection;
-	}
-	
-	static public function exposeMassiveImageLayer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeMassiveLayer(collection, groupName);
-		
-		return collection;
-	}
-	
-	static public function exposeMassiveQuadLayer(?collection:ExposedCollection, ?groupName:String):ExposedCollection
-	{
-		if (collection == null) collection = new ExposedCollection();
-		
-		exposeMassiveLayer(collection, groupName);
 		
 		return collection;
 	}
