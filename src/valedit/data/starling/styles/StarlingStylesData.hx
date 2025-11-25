@@ -1,5 +1,6 @@
 package valedit.data.starling.styles;
 import starling.styles.DistanceFieldStyle;
+import starling.textures.TextureSmoothing;
 import valedit.ExposedCollection;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
@@ -142,7 +143,7 @@ class StarlingStylesData
 			floatDrag = new ExposedFloatDrag(null, "width", 0, 1, 0.05);
 			floatDrag.defaultValue = 0.25;
 			func.addParameter(floatDrag);
-			color = new ExposedColor(null, "color")
+			color = new ExposedColor(null, "color");
 			color.defaultValue = 0x0;
 			func.addParameter(color);
 			floatDrag = new ExposedFloatDrag(null, "alpha", 0, 1, 0.05);
@@ -215,17 +216,6 @@ class StarlingStylesData
 			select.add("NONE", TextureSmoothing.NONE);
 			select.add("TRILINEAR", TextureSmoothing.TRILINEAR);
 			collection.addValue(select, groupName);
-		}
-		
-		return collection;
-	}
-	
-	static public function exposeMeshStyleConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
-	{
-		if (collection == null)
-		{
-			collection = new ExposedCollection();
-			collection.isConstructor = true;
 		}
 		
 		return collection;

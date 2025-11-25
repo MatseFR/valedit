@@ -685,7 +685,7 @@ class AssetLib
 	private function initMovieClips():Void
 	{
 		// TODO : look into MovieClips and see what's doable with them
-		var strList:Array<String> = Assets.list(AssetType.MOVIE_CLIP);
+		//var strList:Array<String> = Assets.list(AssetType.MOVIE_CLIP);
 	}
 	//####################################################################################################
 	//\MOVIE CLIPS
