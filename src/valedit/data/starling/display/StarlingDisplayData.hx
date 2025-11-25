@@ -1,5 +1,8 @@
 package valedit.data.starling.display;
 #if starling
+import starling.display.ButtonState;
+import starling.display.Mesh;
+import starling.geom.Polygon;
 import starling.display.BlendMode;
 import starling.display.DisplayObject;
 import starling.textures.TextureSmoothing;
@@ -9,7 +12,9 @@ import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFunction;
+import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedNote;
+import valedit.value.ExposedObject;
 import valedit.value.ExposedObjectReference;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
@@ -24,6 +29,303 @@ import valeditor.editor.visibility.ClassVisibilityCollection;
  */
 class StarlingDisplayData 
 {
+	
+	static public function exposeButton(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var color:ExposedColor;
+		var floatDrag:ExposedFloatDrag;
+		var func:ExposedFunction;
+		var obj:ExposedObject;
+		var select:ExposedSelect;
+		var str:ExposedString;
+		var texture:ExposedStarlingTexture;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeDisplayObjectContainer(collection, groupName);
+		
+		if (!collection.hasValue("abortDistance"))
+		{
+			floatDrag = new ExposedFloatDrag("abortDistance", null, 0.0);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("alphaWhenDisabled"))
+		{
+			floatDrag = new ExposedFloatDrag("alphaWhenDisabled", null, 0.0, 1.0, 0.01);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("alphaWhenDown"))
+		{
+			floatDrag = new ExposedFloatDrag("alphaWhenDown", null, 0.0, 1.0, 0.01);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			collection.addValue(color, groupName);
+		}
+		
+		if (!collection.hasValue("disabledState"))
+		{
+			texture = new ExposedStarlingTexture("disabledState");
+			collection.addValue(texture, groupName);
+		}
+		
+		if (!collection.hasValue("downState"))
+		{
+			texture = new ExposedStarlingTexture("downState");
+			collection.addValue(texture, groupName);
+		}
+		
+		if (!collection.hasValue("enabled"))
+		{
+			bool = new ExposedBool("enabled");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("minHitAreaSize"))
+		{
+			floatDrag = new ExposedFloatDrag("minHitAreaSize");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("overlay"))
+		{
+			obj = new ExposedObject("overlay");
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("overState"))
+		{
+			texture = new ExposedStarlingTexture("overState");
+			collection.addValue(texture, groupName);
+		}
+		
+		if (!collection.hasValue("pixelSnapping"))
+		{
+			bool = new ExposedBool("pixelSnapping");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("scale9grid"))
+		{
+			obj = new ExposedObject("scale9grid");
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("scaleWhenDown"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleWhenDown");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("scaleWhenOver"))
+		{
+			floatDrag = new ExposedFloatDrag("scaleWhenOver");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("state"))
+		{
+			select = new ExposedSelect("state");
+			select.add(ButtonState.DISABLED);
+			select.add(ButtonState.DOWN);
+			select.add(ButtonState.OVER);
+			select.add(ButtonState.UP);
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("style"))
+		{
+			obj = new ExposedObject("style");
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("text"))
+		{
+			str = new ExposedString("text");
+			collection.addValue(str, groupName);
+		}
+		
+		if (!collection.hasValue("textBounds"))
+		{
+			obj = new ExposedObject("textBounds");
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("textFormat"))
+		{
+			obj = new ExposedObject("textFormat");
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("textStyle"))
+		{
+			obj = new ExposedObject("textStyle");
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("textureSmoothing"))
+		{
+			select = new ExposedSelect("textureSmoothing");
+			select.add(TextureSmoothing.NONE);
+			select.add(TextureSmoothing.BILINEAR);
+			select.add(TextureSmoothing.TRILINEAR);
+			collection.addValue(select, groupName);
+		}
+		
+		if (!collection.hasValue("upState"))
+		{
+			texture = new ExposedStarlingTexture("upState");
+			collection.addValue(texture, groupName);
+		}
+		
+		if (!collection.hasValue("readjustSize"))
+		{
+			func = new ExposedFunction("readjustSize");
+			collection.addValue(func, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeButtonConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var str:ExposedString;
+		var texture:ExposedStarlingTexture;
+		
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
+		
+		if (!collection.hasValue("upState"))
+		{
+			texture = new ExposedStarlingTexture("upState");
+			texture.isMandatory = true;
+			collection.addValue(texture, groupName);
+		}
+		
+		if (!collection.hasValue("text"))
+		{
+			str = new ExposedString("text");
+			str.isMandatory = true;
+			collection.addValue(str, groupName);
+		}
+		
+		if (!collection.hasValue("downState"))
+		{
+			texture = new ExposedStarlingTexture("downState");
+			collection.addValue(texture, groupName);
+		}
+		
+		if (!collection.hasValue("overState"))
+		{
+			texture = new ExposedStarlingTexture("overState");
+			collection.addValue(texture, groupName);
+		}
+		
+		if (!collection.hasValue("disabledState"))
+		{
+			texture = new ExposedStarlingTexture("disabledState");
+			collection.addValue(texture, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeCanvas(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var color:ExposedColor;
+		var floatDrag:ExposedFloatDrag;
+		var func:ExposedFunction;
+		var intDrag:ExposedIntDrag;
+		var objRef:ExposedObjectReference;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("beginFill"))
+		{
+			func = new ExposedFunction("beginFill");
+			color = new ExposedColor("color");
+			func.addParameter(color);
+			floatDrag = new ExposedFloatDrag("alpha", null, 0.0, 1.0, 0.01);
+			func.addParameter(floatDrag);
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("endFill"))
+		{
+			func = new ExposedFunction("endFill");
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("clear"))
+		{
+			func = new ExposedFunction("clear");
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("drawCircle"))
+		{
+			func = new ExposedFunction("drawCircle");
+			floatDrag = new ExposedFloatDrag("x");
+			func.addParameter(floatDrag);
+			floatDrag = new ExposedFloatDrag("y");
+			func.addParameter(floatDrag);
+			floatDrag = new ExposedFloatDrag("radius");
+			func.addParameter(floatDrag);
+			intDrag = new ExposedIntDrag("numSides", null, -1);
+			func.addParameter(intDrag);
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("drawEllipse"))
+		{
+			func = new ExposedFunction("drawEllipse");
+			floatDrag = new ExposedFloatDrag("x");
+			func.addParameter(floatDrag);
+			floatDrag = new ExposedFloatDrag("y");
+			func.addParameter(floatDrag);
+			floatDrag = new ExposedFloatDrag("width");
+			func.addParameter(floatDrag);
+			floatDrag = new ExposedFloatDrag("height");
+			func.addParameter(floatDrag);
+			intDrag = new ExposedIntDrag("numSides", null, -1);
+			func.addParameter(intDrag);
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("drawPolygon"))
+		{
+			func = new ExposedFunction("drawPolygon");
+			objRef = new ExposedObjectReference("polygon");
+			objRef.allowClass(Polygon);
+			func.addParameter(objRef);
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("drawRectangle"))
+		{
+			func = new ExposedFunction("drawRectangle");
+			floatDrag = new ExposedFloatDrag("x");
+			func.addParameter(floatDrag);
+			floatDrag = new ExposedFloatDrag("y");
+			func.addParameter(floatDrag);
+			floatDrag = new ExposedFloatDrag("width");
+			func.addParameter(floatDrag);
+			floatDrag = new ExposedFloatDrag("height");
+			func.addParameter(floatDrag);
+			collection.addValue(func, groupName);
+		}
+		
+		return collection;
+	}
 
 	static public function exposeDisplayObject(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
@@ -121,15 +423,24 @@ class StarlingDisplayData
 		if (!collection.hasValue("blendMode"))
 		{
 			select = new ExposedSelect("blendMode");
-			select.add("ADD", BlendMode.ADD);
-			select.add("AUTO", BlendMode.AUTO);
-			select.add("BELOW", BlendMode.BELOW);
-			select.add("ERASE", BlendMode.ERASE);
-			select.add("MASK", BlendMode.MASK);
-			select.add("MULTIPLY", BlendMode.MULTIPLY);
-			select.add("NONE", BlendMode.NONE);
-			select.add("NORMAL", BlendMode.NORMAL);
-			select.add("SCREEN", BlendMode.SCREEN);
+			select.add(BlendMode.ADD);
+			select.add(BlendMode.AUTO);
+			select.add(BlendMode.BELOW);
+			select.add(BlendMode.ERASE);
+			select.add(BlendMode.MASK);
+			select.add(BlendMode.MULTIPLY);
+			select.add(BlendMode.NONE);
+			select.add(BlendMode.NORMAL);
+			select.add(BlendMode.SCREEN);
+			//select.add("ADD", BlendMode.ADD);
+			//select.add("AUTO", BlendMode.AUTO);
+			//select.add("BELOW", BlendMode.BELOW);
+			//select.add("ERASE", BlendMode.ERASE);
+			//select.add("MASK", BlendMode.MASK);
+			//select.add("MULTIPLY", BlendMode.MULTIPLY);
+			//select.add("NONE", BlendMode.NONE);
+			//select.add("NORMAL", BlendMode.NORMAL);
+			//select.add("SCREEN", BlendMode.SCREEN);
 			collection.addValue(select, groupName);
 		}
 		
@@ -361,6 +672,153 @@ class StarlingDisplayData
 		return collection;
 	}
 	
+	static public function exposeMeshBatch(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var func:ExposedFunction;
+		var intDrag:ExposedIntDrag;
+		var objRef:ExposedObjectReference;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeMesh(collection, groupName);
+		
+		if (!collection.hasValue("batchable"))
+		{
+			bool = new ExposedBool("batchable");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("numIndices"))
+		{
+			intDrag = new ExposedIntDrag("numIndices");
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("numVertices"))
+		{
+			intDrag = new ExposedIntDrag("numVertices");
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("addMesh"))
+		{
+			func = new ExposedFunction("addMesh");
+			objRef = new ExposedObjectReference("mesh");
+			objRef.allowClass(Mesh);
+			func.addParameter(objRef);
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("addMeshAt"))
+		{
+			func = new ExposedFunction("addMeshAt");
+			objRef = new ExposedObjectReference("mesh");
+			objRef.allowClass(Mesh);
+			func.addParameter(objRef);
+			intDrag = new ExposedIntDrag("index", null, -1);
+			func.addParameter(intDrag);
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("clear"))
+		{
+			func = new ExposedFunction("clear");
+			collection.addValue(func, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeMovieClip(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var bool:ExposedBool;
+		var floatDrag:ExposedFloatDrag;
+		var intDrag:ExposedIntDrag;
+		var obj:ExposedObject;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		exposeImage(collection, groupName);
+		
+		if (!collection.hasValue("currentFrame"))
+		{
+			intDrag = new ExposedIntDrag("currentFrame");
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("currentTime"))
+		{
+			floatDrag = new ExposedFloatDrag("currentTime");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("fps"))
+		{
+			floatDrag = new ExposedFloatDrag("fps");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("isComplete"))
+		{
+			bool = new ExposedBool("isComplete");
+			bool.isReadOnly = true;
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("isPlaying"))
+		{
+			bool = new ExposedBool("isPlaying");
+			bool.isReadOnly = true;
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("loop"))
+		{
+			bool = new ExposedBool("loop");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("muted"))
+		{
+			bool = new ExposedBool("muted");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("numFrames"))
+		{
+			intDrag = new ExposedIntDrag("numFrames");
+			intDrag.isReadOnly = true;
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("soundTransform"))
+		{
+			obj = new ExposedObject("soundTransform");
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("totalTime"))
+		{
+			floatDrag = new ExposedFloatDrag("totalTime");
+			floatDrag.isReadOnly = true;
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		return collection;
+	}
+	
+	static public function exposeMovieClipConstructor(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		if (collection == null)
+		{
+			collection = new ExposedCollection();
+			collection.isConstructor = true;
+		}
+		
+		return collection;
+	}
+	
 	static public function exposeQuad(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		if (collection == null) collection = new ExposedCollection();
@@ -490,6 +948,60 @@ class StarlingDisplayData
 		collection.add(ClassValueVisibility.fromPool("rotationY"));
 		collection.add(ClassValueVisibility.fromPool("rotationZ"));
 		collection.add(ClassValueVisibility.fromPool("scaleZ"));
+		
+		return collection;
+	}
+	
+	static public function exposeStage(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var color:ExposedColor;
+		var floatDrag:ExposedFloatDrag;
+		var intDrag:ExposedIntDrag;
+		var obj:ExposedObject;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("cameraPosition"))
+		{
+			obj = new ExposedObject("cameraPosition");
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("color"))
+		{
+			color = new ExposedColor("color");
+			collection.addValue(color, groupName);
+		}
+		
+		if (!collection.hasValue("fieldOfView"))
+		{
+			floatDrag = new ExposedFloatDrag("fieldOfView", null, 0.0, Math.PI, 0.05);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("focalLength"))
+		{
+			floatDrag = new ExposedFloatDrag("focalLength");
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("projectionOffset"))
+		{
+			obj = new ExposedObject("projectionOffset");
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("stageHeight"))
+		{
+			intDrag = new ExposedIntDrag("stageHeight");
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("stageWidth"))
+		{
+			intDrag = new ExposedIntDrag("stageWidth");
+			collection.addValue(intDrag, groupName);
+		}
 		
 		return collection;
 	}
