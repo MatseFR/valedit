@@ -7,7 +7,7 @@ import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFieldType;
 import openfl.text.TextFormatAlign;
 import valedit.ExposedCollection;
-import valedit.data.openfl.display.DisplayData;
+import valedit.data.openfl.display.OpenFLDisplayData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
 import valedit.value.ExposedFloatDrag;
@@ -18,7 +18,6 @@ import valedit.value.ExposedSelect;
 import valedit.value.ExposedString;
 import valedit.value.ExposedText;
 import valedit.value.extra.ReassignLastModifiedValueExtra;
-import valedit.value.extra.ReassignValuesExtra;
 import valeditor.editor.visibility.ClassValueVisibility;
 import valeditor.editor.visibility.ClassVisibilityCollection;
 
@@ -26,8 +25,8 @@ import valeditor.editor.visibility.ClassVisibilityCollection;
  * ...
  * @author Matse
  */
-@:access(valedit.data.openfl.display.DisplayData)
-class TextData 
+@:access(valedit.data.openfl.display.OpenFLDisplayData)
+class OpenFLTextData 
 {
 	static public function exposeFont(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
@@ -98,7 +97,7 @@ class TextData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeInteractiveObject(collection, groupName);
+		OpenFLDisplayData.exposeInteractiveObject(collection, groupName);
 		
 		if (!collection.hasValue("type"))
 		{
@@ -276,7 +275,7 @@ class TextData
 	{
 		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		DisplayData.getInteractiveObjectVisibility(collection);
+		OpenFLDisplayData.getInteractiveObjectVisibility(collection);
 		collection.add(ClassValueVisibility.fromPool("alwaysShowSelection", true, false));
 		collection.add(ClassValueVisibility.fromPool("antiAliasType", true, false));
 		collection.add(ClassValueVisibility.fromPool("autoSize", true, false));
