@@ -3,6 +3,7 @@ import starling.utils.Padding;
 import valedit.ExposedCollection;
 import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFunction;
+import valedit.value.ExposedIntDrag;
 import valedit.value.ExposedObjectReference;
 
 /**
@@ -11,6 +12,39 @@ import valedit.value.ExposedObjectReference;
  */
 class StarlingUtilsData 
 {
+	
+	static public function exposeMeshSubSet(?collection:ExposedCollection, ?groupName:String):ExposedCollection
+	{
+		var intDrag:ExposedIntDrag;
+		
+		if (collection == null) collection = new ExposedCollection();
+		
+		if (!collection.hasValue("indexID"))
+		{
+			intDrag = new ExposedIntDrag("indexID", null, 0);
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("numIndices"))
+		{
+			intDrag = new ExposedIntDrag("numIndices", null, 0);
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("numVertices"))
+		{
+			intDrag = new ExposedIntDrag("numVertices", null, 0);
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("vertexID"))
+		{
+			intDrag = new ExposedIntDrag("vertexID", null, 0);
+			collection.addValue(intDrag, groupName);
+		}
+		
+		return collection;
+	}
 
 	static public function exposePadding(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
