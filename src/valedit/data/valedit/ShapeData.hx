@@ -1,6 +1,6 @@
 package valedit.data.valedit;
 import valedit.ExposedCollection;
-import valedit.data.openfl.display.DisplayData;
+import valedit.data.openfl.display.OpenFLDisplayData;
 import valedit.value.ExposedBitmapData;
 import valedit.value.ExposedBool;
 import valedit.value.ExposedColor;
@@ -15,7 +15,7 @@ import valeditor.editor.visibility.ClassVisibilityCollection;
  * ...
  * @author Matse
  */
-@:access(valedit.data.openfl.display.DisplayData)
+@:access(valedit.data.openfl.display.OpenFLDisplayData)
 class ShapeData 
 {
 	static public function exposeBaseShape(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -227,7 +227,7 @@ class ShapeData
 	{
 		if (collection == null) collection = ClassVisibilityCollection.fromPool();
 		
-		DisplayData.getDisplayObjectVisibility(collection);
+		OpenFLDisplayData.getDisplayObjectVisibility(collection);
 		collection.add(ClassValueVisibility.fromPool("fill"));
 		collection.add(ClassValueVisibility.fromPool("fillAlpha"));
 		collection.add(ClassValueVisibility.fromPool("fillColor"));
@@ -255,7 +255,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("arc"))
 		{
@@ -350,7 +350,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("arrowLength"))
 		{
@@ -460,7 +460,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("numSides"))
 		{
@@ -548,7 +548,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("radius"))
 		{
@@ -600,7 +600,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("radius"))
 		{
@@ -666,7 +666,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("radiusX"))
 		{
@@ -733,7 +733,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("numSides"))
 		{
@@ -823,7 +823,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("numSides"))
 		{
@@ -933,7 +933,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("numSides"))
 		{
@@ -1007,7 +1007,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("rectangleWidth"))
 		{
@@ -1073,7 +1073,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("rectangleWidth"))
 		{
@@ -1168,7 +1168,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("numPoints"))
 		{
@@ -1256,7 +1256,7 @@ class ShapeData
 		
 		if (collection == null) collection = new ExposedCollection();
 		
-		DisplayData.exposeDisplayObject(collection);
+		OpenFLDisplayData.exposeDisplayObject(collection);
 		
 		if (!collection.hasValue("arc"))
 		{
