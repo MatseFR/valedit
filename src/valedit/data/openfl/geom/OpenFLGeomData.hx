@@ -12,7 +12,7 @@ import valedit.value.ExposedObjectReference;
  * ...
  * @author Matse
  */
-class GeomData 
+class OpenFLGeomData 
 {
 	
 	static public function exposeColorTransform(?collection:ExposedCollection, ?groupName:String):ExposedCollection
@@ -620,6 +620,32 @@ class GeomData
 		if (!collection.hasValue("matrix"))
 		{
 			obj = new ExposedObject("matrix", null, true);
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("matrix3D"))
+		{
+			obj = new ExposedObject("matrix3D", null, true);
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("pixelBounds"))
+		{
+			obj = new ExposedObject("pixelBounds", null, true);
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("concatenatedColorTransform"))
+		{
+			obj = new ExposedObject("concatenatedColorTransform", null, true);
+			obj.isReadOnly = true;
+			collection.addValue(obj, groupName);
+		}
+		
+		if (!collection.hasValue("concatenatedMatrix"))
+		{
+			obj = new ExposedObject("concatenatedMatrix", null, true);
+			obj.isReadOnly = true;
 			collection.addValue(obj, groupName);
 		}
 		
