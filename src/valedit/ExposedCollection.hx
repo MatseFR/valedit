@@ -458,7 +458,6 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
-	// NEW
 	#if valeditor
 	private function registerForValueChange(propertyName:String, callback:ExposedValue->Void):Void
 	{
@@ -531,7 +530,6 @@ class ExposedCollection extends EventDispatcher
 		read();
 	}
 	#end
-	//\NEW
 	
 	private function onValueChange(evt:ValueEvent):Void
 	{
@@ -606,6 +604,22 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	
+	public function getGroup(name:String, includeSubGroups:Bool = false):ExposedGroup
+	{
+		var group:ExposedGroup = this._groupMap[name];
+		if (group != null) return group;
+		
+		if (includeSubGroups)
+		{
+			for (grp in this._groupList)
+			{
+				group = grp.getGroup(name);
+				if (group != null) return group;
+			}
+		}
+		return null;
+	}
+	
 	public function getValue(propertyName:String):ExposedValue
 	{
 		var value:ExposedValue;
@@ -632,6 +646,21 @@ class ExposedCollection extends EventDispatcher
 		}
 		
 		return value.childCollection.getValue(propertyNames[count-1]);
+	}
+	
+	public function hasGroup(name:String, includeSubGroups:Bool = false):Bool
+	{
+		if (this._groupMap.exists(name)) return true;
+		
+		if (includeSubGroups)
+		{
+			for (grp in this._groupList)
+			{
+				if (grp.hasGroup(name, includeSubGroups)) return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public function hasValue(propertyName:String):Bool
@@ -837,22 +866,6 @@ class ExposedCollection extends EventDispatcher
 		}
 	}
 	#end
-	
-	public function getGroup(name:String, includeSubGroups:Bool = false):ExposedGroup
-	{
-		var group:ExposedGroup = this._groupMap[name];
-		if (group != null) return group;
-		
-		if (includeSubGroups)
-		{
-			for (grp in this._groupList)
-			{
-				group = grp.getGroup(name);
-				if (group != null) return group;
-			}
-		}
-		return null;
-	}
 	
 	/**
 	   Useful to create a constructor parameters array
