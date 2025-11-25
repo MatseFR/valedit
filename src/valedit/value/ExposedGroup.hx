@@ -496,6 +496,28 @@ class ExposedGroup extends ExposedValue
 	
 	/**
 	   
+	   @param	name
+	   @param	includeSubGroups
+	   @return
+	**/
+	public function getGroup(name:String, includeSubGroups:Bool = false):ExposedGroup
+	{
+		var group:ExposedGroup = this._groupMap[name];
+		if (group != null) return group;
+		
+		if (includeSubGroups)
+		{
+			for (grp in this._groupList)
+			{
+				group = grp.getGroup(name);
+				if (group != null) return group;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	   
 	   @param	propertyName
 	   @return
 	**/
@@ -509,6 +531,21 @@ class ExposedGroup extends ExposedValue
 			if (value != null) return value;
 		}
 		return null;
+	}
+	
+	public function hasGroup(name:String, includeSubGroups:Bool = false):Bool
+	{
+		if (this._groupMap.exists(name)) return true;
+		
+		if (includeSubGroups)
+		{
+			for (grp in this._groupList)
+			{
+				if (grp.hasGroup(name, includeSubGroups)) return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -650,28 +687,6 @@ class ExposedGroup extends ExposedValue
 		}
 	}
 	#end
-	
-	/**
-	   
-	   @param	name
-	   @param	includeSubGroups
-	   @return
-	**/
-	public function getGroup(name:String, includeSubGroups:Bool = false):ExposedGroup
-	{
-		var group:ExposedGroup = this._groupMap[name];
-		if (group != null) return group;
-		
-		if (includeSubGroups)
-		{
-			for (grp in this._groupList)
-			{
-				group = grp.getGroup(name);
-				if (group != null) return group;
-			}
-		}
-		return null;
-	}
 	
 	override public function toValueArray(values:Array<Dynamic>):Void 
 	{
