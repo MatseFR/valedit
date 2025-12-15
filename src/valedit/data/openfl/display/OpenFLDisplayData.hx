@@ -1,12 +1,16 @@
 package valedit.data.openfl.display;
+#if air
 import flash.display.NativeWindowRenderMode;
+#end
 import openfl.display.BlendMode;
 import openfl.display.DisplayObject;
+#if desktop
 import openfl.display.NativeWindow;
 import openfl.display.NativeWindowDisplayState;
 import openfl.display.NativeWindowInitOptions;
 import openfl.display.NativeWindowSystemChrome;
 import openfl.display.NativeWindowType;
+#end
 import openfl.display.PixelSnapping;
 import openfl.display.StageAlign;
 import openfl.display.StageDisplayState;
@@ -535,6 +539,7 @@ class OpenFLDisplayData
 		return collection;
 	}
 	
+	#if desktop
 	static public function exposeNativeWindow(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
@@ -615,6 +620,7 @@ class OpenFLDisplayData
 		
 		if (!collection.hasValue("renderMode"))
 		{
+			#if flash
 			select = new ExposedSelect("renderMode");
 			select.isReadOnly = true;
 			select.add("AUTO", NativeWindowRenderMode.AUTO);
@@ -622,6 +628,11 @@ class OpenFLDisplayData
 			select.add("DIRECT", NativeWindowRenderMode.DIRECT);
 			select.add("GPU", NativeWindowRenderMode.GPU);
 			collection.addValue(select, groupName);
+			#else
+			str = new ExposedString("renderMode");
+			str.isReadOnly = true;
+			collection.addValue(str, groupName);
+			#end
 		}
 		
 		if (!collection.hasValue("resizable"))
@@ -717,12 +728,17 @@ class OpenFLDisplayData
 		
 		return collection;
 	}
+	#end
 	
+	#if desktop
 	static public function exposeNativeWindowInitOptions(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
 		var bool:ExposedBool;
 		var objRef:ExposedObjectReference;
 		var select:ExposedSelect;
+		#if !flash
+		var str:ExposedString;
+		#end
 		
 		if (collection == null) collection = new ExposedCollection();
 		
@@ -747,12 +763,17 @@ class OpenFLDisplayData
 		
 		if (!collection.hasValue("renderMode"))
 		{
+			#if flash
 			select = new ExposedSelect("renderMode");
 			select.add("AUTO", NativeWindowRenderMode.AUTO);
 			select.add("CPU", NativeWindowRenderMode.CPU);
 			select.add("DIRECT", NativeWindowRenderMode.DIRECT);
 			select.add("GPU", NativeWindowRenderMode.GPU);
 			collection.addValue(select, groupName);
+			#else
+			str = new ExposedString("renderMode");
+			collection.addValue(str, groupName);
+			#end
 		}
 		
 		if (!collection.hasValue("resizable"))
@@ -787,6 +808,7 @@ class OpenFLDisplayData
 		
 		return collection;
 	}
+	#end
 	
 	static public function exposeScreen(?collection:ExposedCollection, ?groupName:String):ExposedCollection
 	{
