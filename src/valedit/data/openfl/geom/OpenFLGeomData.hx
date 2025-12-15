@@ -631,20 +631,21 @@ class OpenFLGeomData
 		
 		if (!collection.hasValue("pixelBounds"))
 		{
-			obj = new ExposedObject("pixelBounds", null, true);
+			obj = new ExposedObject("pixelBounds");
+			obj.isReadOnly = true;
 			collection.addValue(obj, groupName);
 		}
 		
 		if (!collection.hasValue("concatenatedColorTransform"))
 		{
-			obj = new ExposedObject("concatenatedColorTransform", null, true);
+			obj = new ExposedObject("concatenatedColorTransform");
 			obj.isReadOnly = true;
 			collection.addValue(obj, groupName);
 		}
 		
 		if (!collection.hasValue("concatenatedMatrix"))
 		{
-			obj = new ExposedObject("concatenatedMatrix", null, true);
+			obj = new ExposedObject("concatenatedMatrix");
 			obj.isReadOnly = true;
 			collection.addValue(obj, groupName);
 		}
