@@ -279,7 +279,7 @@ class ExposedFunction extends ExposedFunctionBase
 		if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.read();
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var func:ExposedFunction = fromPool(this.propertyName, this.name, this.parameters);
 		super.clone_internal(func, copyValue);

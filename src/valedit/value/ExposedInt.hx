@@ -79,7 +79,7 @@ class ExposedInt extends ExposedValueTweenable
 		return this;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var int:ExposedInt = fromPool(this.propertyName, this.name#if valeditor, this.numericMode#end);
 		#if valeditor

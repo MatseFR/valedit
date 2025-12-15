@@ -476,7 +476,11 @@ abstract class ExposedValue extends EventDispatcher
 	   
 	   @return
 	**/
-	abstract public function clone(copyValue:Bool = false):ExposedValue;
+	public function clone(copyValue:Bool = false):ExposedValue
+	{
+		// This *should* be an abstract function, but when it is it creates a problem with ExposedCollection.clone() where cloned values are null for some reason
+		throw new Error("You have to override ExposedValue.clone");
+	}
 	
 	private function clone_internal(value:ExposedValue, copyValue:Bool = false):Void
 	{

@@ -68,7 +68,7 @@ class ExposedByteArray extends ExposedValueWithAsset
 		}
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var bytes:ExposedByteArray = fromPool(this.propertyName, this.name);
 		clone_internal(bytes, copyValue);

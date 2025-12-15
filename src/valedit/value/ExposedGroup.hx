@@ -755,7 +755,7 @@ class ExposedGroup extends ExposedValue
 	   
 	   @return
 	**/
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var group:ExposedGroup = fromPool(this.propertyName, this.name, this.isUIOpen);
 		

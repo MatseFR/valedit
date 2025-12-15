@@ -110,7 +110,7 @@ class ExposedFloatRange extends ExposedValueTweenable
 		return this;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var range:ExposedFloatRange = fromPool(this.propertyName, this.name, this._min, this._max#if valeditor, this.step, this.precision#end);
 		#if valeditor

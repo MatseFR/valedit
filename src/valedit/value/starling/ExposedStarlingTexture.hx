@@ -68,7 +68,7 @@ class ExposedStarlingTexture extends ExposedValueWithAsset
 		}
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var tex:ExposedStarlingTexture = fromPool(this.propertyName, this.name);
 		clone_internal(tex, copyValue);

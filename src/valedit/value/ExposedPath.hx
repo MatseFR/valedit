@@ -52,7 +52,7 @@ class ExposedPath extends ExposedValue
 		return this;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var path:ExposedPath = fromPool(this.propertyName, this.name);
 		#if valeditor

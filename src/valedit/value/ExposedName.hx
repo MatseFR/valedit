@@ -39,7 +39,7 @@ class ExposedName extends ExposedNotValue
 		return this;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var name:ExposedName = fromPool(this.name);
 		return name;

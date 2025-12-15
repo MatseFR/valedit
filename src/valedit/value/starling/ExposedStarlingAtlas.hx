@@ -68,7 +68,7 @@ class ExposedStarlingAtlas extends ExposedValueWithAsset
 		}
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var atlas:ExposedStarlingAtlas = fromPool(this.propertyName, this.name);
 		clone_internal(atlas, copyValue);

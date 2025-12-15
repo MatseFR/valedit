@@ -84,7 +84,7 @@ class ExposedIntDrag extends ExposedValueTweenable
 		return this;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var int:ExposedIntDrag = fromPool(this.propertyName, this.name, this.minimum, this.maximum, this.dragScaleFactor, this.step);
 		#if valeditor

@@ -59,7 +59,7 @@ class ExposedFontName extends ExposedValue
 		return this;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var font:ExposedFontName = fromPool(this.propertyName, this.name#if valeditor, this.fontSelection#end);
 		#if valeditor

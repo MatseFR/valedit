@@ -52,7 +52,7 @@ class ExposedSelect extends ExposedSelectBase
 		this.isInPool = true;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var select:ExposedSelect = fromPool(this.propertyName, this.name, this.choiceList != null ? this.choiceList.copy():null, this.valueList != null ? this.valueList.copy():null #if valeditor , this.iconList != null ? this.iconList.copy():null#end);
 		super.clone_internal(select, copyValue);

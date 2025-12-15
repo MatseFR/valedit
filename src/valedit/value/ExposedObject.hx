@@ -381,7 +381,7 @@ class ExposedObject extends ExposedValueWithCollection
 		}
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var object:ExposedObject = fromPool(this.propertyName, this.name, this.reassignOnChange);
 		object.isUIOpen = this.isUIOpen;

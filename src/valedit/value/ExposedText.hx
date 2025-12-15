@@ -96,7 +96,7 @@ class ExposedText extends ExposedValueWithAsset
 		}
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var text:ExposedText = fromPool(this.propertyName, this.name#if valeditor, this.maxChars, this.restrict#end);
 		#if valeditor

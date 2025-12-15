@@ -82,7 +82,7 @@ class ExposedBitmap extends ExposedValueWithAsset
 		}
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var bmp:ExposedBitmap = fromPool(this.propertyName, this.name);
 		clone_internal(bmp, copyValue);

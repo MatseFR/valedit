@@ -52,7 +52,7 @@ class ExposedNote extends ExposedNotValue
 		return this;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var note:ExposedNote = fromPool(this.name, this.text, this.textPercentWidth);
 		return note;

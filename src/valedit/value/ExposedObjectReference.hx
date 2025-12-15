@@ -138,7 +138,7 @@ class ExposedObjectReference extends ExposedValue
 		this.allowedReferenceRanges[this.allowedReferenceRanges.length] = range;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var reference:ExposedObjectReference = fromPool(this.propertyName, this.name, this.classList.copy(), this.allowSelfReference);
 		reference.allowedReferenceRanges = this.allowedReferenceRanges.copy();

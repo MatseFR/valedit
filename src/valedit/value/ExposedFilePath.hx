@@ -63,7 +63,7 @@ class ExposedFilePath extends ExposedValue
 		this.fileFilters.push(filter);
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var file:ExposedFilePath = fromPool(this.propertyName, this.name);
 		#if valeditor

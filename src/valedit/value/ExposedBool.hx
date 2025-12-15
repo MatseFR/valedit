@@ -53,7 +53,7 @@ class ExposedBool extends ExposedValue
 		return this;
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var bool:ExposedBool = fromPool(this.propertyName, this.name);
 		super.clone_internal(bool, copyValue);

@@ -68,7 +68,7 @@ class ExposedSound extends ExposedValueWithAsset
 		}
 	}
 	
-	public function clone(copyValue:Bool = false):ExposedValue 
+	override public function clone(copyValue:Bool = false):ExposedValue 
 	{
 		var snd:ExposedSound = fromPool(this.propertyName, this.name);
 		clone_internal(snd, copyValue);
