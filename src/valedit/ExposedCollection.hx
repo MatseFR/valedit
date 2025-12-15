@@ -980,9 +980,10 @@ class ExposedCollection extends EventDispatcher
 		collection.useActions = this.useActions;
 		#end
 		
-		for (val in this._valueList)
+		var count:Int = this._valueList.length;
+		for (i in 0...count)
 		{
-			collection.addValue(val.clone(copyValues));
+			collection.addValue(this._valueList[i].clone(copyValues));
 		}
 		
 		#if valeditor
