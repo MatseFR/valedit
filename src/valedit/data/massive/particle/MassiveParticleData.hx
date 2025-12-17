@@ -1,6 +1,7 @@
 package valedit.data.massive.particle;
 //#if massive-starling
 import massive.data.MassiveConstants;
+import massive.particle.EmitterType;
 import massive.particle.ParticleSystem;
 import valedit.ExposedCollection;
 import valedit.data.massive.display.MassiveDisplayData;
@@ -82,8 +83,8 @@ class MassiveParticleData
 		if (!group.hasValue("emitterType"))
 		{
 			select = new ExposedSelect("emitterType");
-			select.add("gravity", ParticleSystem.EMITTER_TYPE_GRAVITY);
-			select.add("radial", ParticleSystem.EMITTER_TYPE_RADIAL);
+			select.add("gravity", EmitterType.GRAVITY);
+			select.add("radial", EmitterType.RADIAL);
 			group.addValue(select);
 		}
 		
@@ -141,28 +142,38 @@ class MassiveParticleData
 			group.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("emitterRadiusMin"))
+		if (!group.hasGroup("Radius"))
 		{
-			floatDrag = new ExposedFloatDrag("emitterRadiusMin");
-			group.addValue(floatDrag);
+			subGroup = new ExposedGroup("Radius");
+			group.addValue(subGroup);
+		}
+		else
+		{
+			subGroup = group.getGroup("Radius");
 		}
 		
-		if (!group.hasValue("emitterRadiusMinVariance"))
+		if (!subGroup.hasValue("emitterRadiusMin"))
 		{
-			floatDrag = new ExposedFloatDrag("emitterRadiusMinVariance");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("emitterRadiusMin", "min");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("emitterRadiusMax"))
+		if (!subGroup.hasValue("emitterRadiusMinVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("emitterRadiusMax");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("emitterRadiusMinVariance", "min variance");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("emitterRadiusMaxVariance"))
+		if (!subGroup.hasValue("emitterRadiusMax"))
 		{
-			floatDrag = new ExposedFloatDrag("emitterRadiusMaxVariance");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("emitterRadiusMax", "max");
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("emitterRadiusMaxVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("emitterRadiusMaxVariance", "max variance");
+			subGroup.addValue(floatDrag);
 		}
 		
 		if (!group.hasValue("emitAngle"))
@@ -174,12 +185,6 @@ class MassiveParticleData
 		if (!group.hasValue("emitAngleVariance"))
 		{
 			floatDrag = new ExposedFloatDrag("emitAngleVariance", null, null, null, 0.005, 0.005);
-			group.addValue(floatDrag);
-		}
-		
-		if (!group.hasValue("emitRotation"))
-		{
-			floatDrag = new ExposedFloatDrag("emitRotation", null, null, null, 0.005, 0.005);
 			group.addValue(floatDrag);
 		}
 		
@@ -244,76 +249,96 @@ class MassiveParticleData
 			group.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("sizeXStart"))
+		if (!group.hasGroup("Size"))
 		{
-			floatDrag = new ExposedFloatDrag("sizeXStart");
-			group.addValue(floatDrag);
+			subGroup = new ExposedGroup("Size");
+			group.addValue(subGroup);
+		}
+		else
+		{
+			subGroup = group.getGroup("Size");
 		}
 		
-		if (!group.hasValue("sizeYStart"))
+		if (!subGroup.hasValue("sizeXStart"))
 		{
-			floatDrag = new ExposedFloatDrag("sizeYStart");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("sizeXStart", "x start");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("sizeXStartVariance"))
+		if (!subGroup.hasValue("sizeXStartVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("sizeXStartVariance");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("sizeXStartVariance", "x start variance");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("sizeYStartVariance"))
+		if (!subGroup.hasValue("sizeYStart"))
 		{
-			floatDrag = new ExposedFloatDrag("sizeYStartVariance");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("sizeYStart", "y start");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("sizeXEnd"))
+		if (!subGroup.hasValue("sizeYStartVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("sizeXEnd");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("sizeYStartVariance", "y start variance");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("sizeYEnd"))
+		if (!subGroup.hasValue("sizeXEnd"))
 		{
-			floatDrag = new ExposedFloatDrag("sizeYEnd");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("sizeXEnd", "x end");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("sizeXEndVariance"))
+		if (!subGroup.hasValue("sizeXEndVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("sizeXEndVariance");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("sizeXEndVariance", "x end variance");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("sizeYEndVariance"))
+		if (!subGroup.hasValue("sizeYEnd"))
 		{
-			floatDrag = new ExposedFloatDrag("sizeYEndVariance");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("sizeYEnd", "y end");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("rotationStart"))
+		if (!subGroup.hasValue("sizeYEndVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("rotationStart", null, null, null, 0.005, 0.005);
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("sizeYEndVariance", "y end variance");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("rotationStartVariance"))
+		if (!group.hasGroup("Rotation"))
 		{
-			floatDrag = new ExposedFloatDrag("rotationStartVariance", null, null, null, 0.005, 0.005);
-			group.addValue(floatDrag);
+			subGroup = new ExposedGroup("Rotation");
+			group.addValue(subGroup);
+		}
+		else
+		{
+			subGroup = group.getGroup("Rotation");
 		}
 		
-		if (!group.hasValue("rotationEnd"))
+		if (!subGroup.hasValue("rotationStart"))
 		{
-			floatDrag = new ExposedFloatDrag("rotationEnd", null, null, null, 0.005, 0.005);
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("rotationStart", "start", null, null, 0.005, 0.005);
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("rotationEndVariance"))
+		if (!subGroup.hasValue("rotationStartVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("rotationEndVariance", null, null, null, 0.005, 0.005);
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("rotationStartVariance", "start variance", null, null, 0.005, 0.005);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("rotationEnd"))
+		{
+			floatDrag = new ExposedFloatDrag("rotationEnd", "end", null, null, 0.005, 0.005);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("rotationEndVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("rotationEndVariance", "end variance", null, null, 0.005, 0.005);
+			subGroup.addValue(floatDrag);
 		}
 		
 		// Animation
@@ -404,28 +429,38 @@ class MassiveParticleData
 			group.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("radialAcceleration"))
+		if (!group.hasGroup("Acceleration"))
 		{
-			floatDrag = new ExposedFloatDrag("radialAcceleration");
-			group.addValue(floatDrag);
+			subGroup = new ExposedGroup("Acceleration");
+			group.addValue(subGroup);
+		}
+		else
+		{
+			subGroup = group.getGroup("Acceleration");
 		}
 		
-		if (!group.hasValue("radialAccelerationVariance"))
+		if (!subGroup.hasValue("radialAcceleration"))
 		{
-			floatDrag = new ExposedFloatDrag("radialAccelerationVariance");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("radialAcceleration", "radial");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("tangentialAcceleration"))
+		if (!subGroup.hasValue("radialAccelerationVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("tangentialAcceleration");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("radialAccelerationVariance", "radial variance");
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("tangentialAccelerationVariance"))
+		if (!subGroup.hasValue("tangentialAcceleration"))
 		{
-			floatDrag = new ExposedFloatDrag("tangentialAccelerationVariance");
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("tangentialAcceleration", "tangential");
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("tangentialAccelerationVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("tangentialAccelerationVariance", "tangential variance");
+			subGroup.addValue(floatDrag);
 		}
 		
 		if (!group.hasValue("drag"))
@@ -440,11 +475,11 @@ class MassiveParticleData
 			group.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("repellentForce"))
-		{
-			floatDrag = new ExposedFloatDrag("repellentForce");// , null, null, null, 0.001, 0.001);
-			group.addValue(floatDrag);
-		}
+		//if (!group.hasValue("repellentForce"))
+		//{
+			//floatDrag = new ExposedFloatDrag("repellentForce");// , null, null, null, 0.001, 0.001);
+			//group.addValue(floatDrag);
+		//}
 		
 		// radial config
 		if (!collection.hasGroup("Radial config"))
@@ -483,13 +518,13 @@ class MassiveParticleData
 		
 		if (!group.hasValue("rotatePerSecond"))
 		{
-			floatDrag = new ExposedFloatDrag("rotatePerSecond");
+			floatDrag = new ExposedFloatDrag("rotatePerSecond", null, null, null, 0.05);
 			group.addValue(floatDrag);
 		}
 		
 		if (!group.hasValue("rotatePerSecondVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("rotatePerSecondVariance");
+			floatDrag = new ExposedFloatDrag("rotatePerSecondVariance", null, null, null, 0.05);
 			group.addValue(floatDrag);
 		}
 		
@@ -514,7 +549,7 @@ class MassiveParticleData
 		if (!group.hasValue("colorStartVariance"))
 		{
 			obj = new ExposedObject("colorStartVariance");
-			obj.isUIOpen = true;
+			//obj.isUIOpen = true;
 			group.addValue(obj);
 		}
 		
@@ -528,7 +563,7 @@ class MassiveParticleData
 		if (!group.hasValue("colorEndVariance"))
 		{
 			obj = new ExposedObject("colorEndVariance");
-			obj.isUIOpen = true;
+			//obj.isUIOpen = true;
 			group.addValue(obj);
 		}
 		
@@ -543,28 +578,38 @@ class MassiveParticleData
 			group = collection.getGroup("Velocity");
 		}
 		
-		if (!group.hasValue("velocityXInheritRatio"))
+		if (!group.hasGroup("Inheritance"))
 		{
-			floatDrag = new ExposedFloatDrag("velocityXInheritRatio", null, null, null, 0.01, 0.01);
-			group.addValue(floatDrag);
+			subGroup = new ExposedGroup("Inheritance");
+			group.addValue(subGroup);
+		}
+		else
+		{
+			subGroup = group.getGroup("Inheritance");
 		}
 		
-		if (!group.hasValue("velocityXInheritRatioVariance"))
+		if (!subGroup.hasValue("velocityXInheritRatio"))
 		{
-			floatDrag = new ExposedFloatDrag("velocityXInheritRatioVariance", null, null, null, 0.01, 0.01);
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("velocityXInheritRatio", "x ratio", null, null, 0.01, 0.01);
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("velocityYInheritRatio"))
+		if (!subGroup.hasValue("velocityXInheritRatioVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("velocityYInheritRatio", null, null, null, 0.01, 0.01);
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("velocityXInheritRatioVariance", "x ratio variance", null, null, 0.01, 0.01);
+			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("velocityYInheritRatioVariance"))
+		if (!subGroup.hasValue("velocityYInheritRatio"))
 		{
-			floatDrag = new ExposedFloatDrag("velocityYInheritRatioVariance", null, null, null, 0.01, 0.01);
-			group.addValue(floatDrag);
+			floatDrag = new ExposedFloatDrag("velocityYInheritRatio", "y ratio", null, null, 0.01, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("velocityYInheritRatioVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("velocityYInheritRatioVariance", "y ratio variance", null, null, 0.01, 0.01);
+			subGroup.addValue(floatDrag);
 		}
 		
 		if (!group.hasValue("velocityX"))
@@ -628,13 +673,13 @@ class MassiveParticleData
 		
 		if (!subGroup.hasValue("oscillationPositionAngle"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionAngle", "angle", null, null, 0.05);
+			floatDrag = new ExposedFloatDrag("oscillationPositionAngle", "angle", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("oscillationPositionAngleVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionAngleVariance", "angle variance", null, null, 0.05);
+			floatDrag = new ExposedFloatDrag("oscillationPositionAngleVariance", "angle variance", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
@@ -652,13 +697,13 @@ class MassiveParticleData
 		
 		if (!subGroup.hasValue("oscillationPositionFrequency"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionFrequency", "frequency");
+			floatDrag = new ExposedFloatDrag("oscillationPositionFrequency", "frequency", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("oscillationPositionFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionFrequencyVariance", "frequency variance");
+			floatDrag = new ExposedFloatDrag("oscillationPositionFrequencyVariance", "frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
@@ -680,13 +725,13 @@ class MassiveParticleData
 		
 		if (!subGroup.hasValue("oscillationPosition2Angle"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2Angle", "angle", null, null, 0.05);
+			floatDrag = new ExposedFloatDrag("oscillationPosition2Angle", "angle", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("oscillationPosition2AngleVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2AngleVariance", "angle variance", null, null, 0.05);
+			floatDrag = new ExposedFloatDrag("oscillationPosition2AngleVariance", "angle variance", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
@@ -704,13 +749,13 @@ class MassiveParticleData
 		
 		if (!subGroup.hasValue("oscillationPosition2Frequency"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2Frequency", "frequency");
+			floatDrag = new ExposedFloatDrag("oscillationPosition2Frequency", "frequency", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("oscillationPosition2FrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2FrequencyVariance", "frequency variance");
+			floatDrag = new ExposedFloatDrag("oscillationPosition2FrequencyVariance", "frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
@@ -732,13 +777,13 @@ class MassiveParticleData
 		
 		if (!subGroup.hasValue("oscillationRotationAngle"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationRotationAngle", "angle", null, null, 0.01);
+			floatDrag = new ExposedFloatDrag("oscillationRotationAngle", "angle", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("oscillationRotationAngleVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationRotationAngleVariance", "angle variance", null, null, 0.01);
+			floatDrag = new ExposedFloatDrag("oscillationRotationAngleVariance", "angle variance", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
@@ -772,19 +817,19 @@ class MassiveParticleData
 		
 		if (!subGroup.hasValue("oscillationScaleXVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleXVariance", "x variance", null, 0.01);
+			floatDrag = new ExposedFloatDrag("oscillationScaleXVariance", "x variance", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("oscillationScaleXFrequency"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleXFrequency", "x frequency");
+			floatDrag = new ExposedFloatDrag("oscillationScaleXFrequency", "x frequency", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("oscillationScaleXFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleXFrequencyVariance", "x frequency variance");
+			floatDrag = new ExposedFloatDrag("oscillationScaleXFrequencyVariance", "x frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
@@ -802,13 +847,13 @@ class MassiveParticleData
 		
 		if (!subGroup.hasValue("oscillationScaleYFrequency"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleYFrequency", "y frequency");
+			floatDrag = new ExposedFloatDrag("oscillationScaleYFrequency", "y frequency", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("oscillationScaleYFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleYFrequencyVariance", "y frequency variance");
+			floatDrag = new ExposedFloatDrag("oscillationScaleYFrequencyVariance", "y frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
@@ -946,8 +991,8 @@ class MassiveParticleData
 		if (!group.hasValue("emitterType"))
 		{
 			select = new ExposedSelect("emitterType");
-			select.add("gravity", ParticleSystem.EMITTER_TYPE_GRAVITY);
-			select.add("radial", ParticleSystem.EMITTER_TYPE_RADIAL);
+			select.add("gravity", EmitterType.GRAVITY);
+			select.add("radial", EmitterType.RADIAL);
 			group.addValue(select);
 		}
 		
