@@ -445,7 +445,7 @@ abstract class ExposedValue extends EventDispatcher
 			if (this._uiControl != null) this._uiControl.updateExposedValue();
 			if (dispatchEventIfChange) ValueEvent.dispatch(this, ValueEvent.VALUE_CHANGE, this);
 			#if valeditor
-			if (this.updateCollectionOnChange && !this.updateCollectionLocked) this._collection.valueChange(this);
+			if (this.updateCollectionOnChange && this._collection != null && !this.updateCollectionLocked) this._collection.valueChange(this);
 			#end
 		}
 	}
@@ -509,13 +509,18 @@ abstract class ExposedValue extends EventDispatcher
 	
 	public function cloneValue(toValue:ExposedValue):Void
 	{
+		toValue.defaultValue = this.defaultValue;
 		if (this._storedValue != null)
 		{
 			toValue.value = this._storedValue;
 		}
-		else
+		else if (this._object != null)
 		{
 			toValue.value = this.value;
+		}
+		else
+		{
+			toValue.value = null;
 		}
 		if (toValue.uiControl != null)
 		{
