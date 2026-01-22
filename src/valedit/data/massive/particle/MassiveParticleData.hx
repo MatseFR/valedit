@@ -593,6 +593,14 @@ class MassiveParticleData
 		{
 			bool = new ExposedBool("colorEndRelativeToStart", "end relative to start");
 			group.addValue(bool);
+			
+			collection.registerForValueChangeExternal("colorEndRelativeToStart", colorEndRelativeToStartChange);
+		}
+		
+		if (!group.hasValue("colorEndIsMultiplier"))
+		{
+			bool = new ExposedBool("colorEndIsMultiplier", "end is multiplier");
+			group.addValue(bool);
 		}
 		
 		// Velocity
@@ -1202,6 +1210,19 @@ class MassiveParticleData
 		
 		value = collection.getValue("lifeSpanVariance");
 		value.isReadOnly = enabled;
+	}
+	
+	static private function colorEndRelativeToStartChange(colorEndValue:ExposedValue):Void
+	{
+		var value:ExposedValue = colorEndValue.collection.getValue("colorEndIsMultiplier");
+		if (colorEndValue.value == true)
+		{
+			value.isReadOnly = false;
+		}
+		else
+		{
+			value.isReadOnly = true;
+		}
 	}
 	
 	static private function linkRotationToVelocityChange(linkValue:ExposedValue):Void
