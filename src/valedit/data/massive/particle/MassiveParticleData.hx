@@ -106,6 +106,8 @@ class MassiveParticleData
 		{
 			bool = new ExposedBool("autoSetEmissionRate");
 			group.addValue(bool);
+			
+			collection.registerForValueChangeExternal("autoSetEmissionRate", autoSetEmissionRateChange);
 		}
 		
 		if (!group.hasValue("emissionRate"))
@@ -223,9 +225,9 @@ class MassiveParticleData
 		{
 			bool = new ExposedBool("useAnimationLifeSpan");
 			group.addValue(bool);
+			
+			collection.registerForValueChangeExternal("useAnimationLifeSpan", useAnimationLifeSpanChange);
 		}
-		
-		collection.registerForValueChangeExternal("useAnimationLifeSpan", useAnimationLifeSpanChange);
 		
 		if (!group.hasValue("lifeSpan"))
 		{
@@ -341,6 +343,12 @@ class MassiveParticleData
 		{
 			floatDrag = new ExposedFloatDrag("rotationEndVariance", "end variance", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("rotationEndRelativeToStart"))
+		{
+			bool = new ExposedBool("rotationEndRelativeToStart", "relative to start");
+			subGroup.addValue(bool);
 		}
 		
 		// Animation
@@ -1162,6 +1170,19 @@ class MassiveParticleData
 		MassiveDisplayData.exposeMassiveImageLayer(collection, groupName);
 		
 		return collection;
+	}
+	
+	static private function autoSetEmissionRateChange(autoSetValue:ExposedValue):Void
+	{
+		var value:ExposedValue = autoSetValue.collection.getValue("emissionRate");
+		if (autoSetValue.value == true)
+		{
+			value.isReadOnly = true;
+		}
+		else
+		{
+			value.isReadOnly = false;
+		}
 	}
 	
 	static private function useAnimationLifeSpanChange(useValue:ExposedValue):Void
