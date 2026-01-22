@@ -146,13 +146,6 @@ class MassiveDisplayData
 			collection.addValue(bool, groupName);
 		}
 		
-		if (!collection.hasValue("useColor"))
-		{
-			bool = new ExposedBool("useColor");
-			bool.isReadOnly = true;
-			collection.addValue(bool, groupName);
-		}
-		
 		return collection;
 	}
 	
