@@ -589,6 +589,12 @@ class MassiveParticleData
 			group.addValue(obj);
 		}
 		
+		if (!group.hasValue("colorEndRelativeToStart"))
+		{
+			bool = new ExposedBool("colorEndRelativeToStart", "end relative to start");
+			group.addValue(bool);
+		}
+		
 		// Velocity
 		if (!collection.hasGroup("Velocity"))
 		{
