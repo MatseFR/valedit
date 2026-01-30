@@ -67,27 +67,27 @@ class MassiveData
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("colorRed"))
+		if (!collection.hasValue("red"))
 		{
-			floatDrag = new ExposedFloatDrag("colorRed", null, -1, 10, 0.1);
+			floatDrag = new ExposedFloatDrag("red", null, -1, 10, 0.1);
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("colorGreen"))
+		if (!collection.hasValue("green"))
 		{
-			floatDrag = new ExposedFloatDrag("colorGreen", null, -1, 10, 0.1);
+			floatDrag = new ExposedFloatDrag("green", null, -1, 10, 0.1);
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("colorBlue"))
+		if (!collection.hasValue("blue"))
 		{
-			floatDrag = new ExposedFloatDrag("colorBlue", null, -1, 10, 0.1);
+			floatDrag = new ExposedFloatDrag("blue", null, -1, 10, 0.1);
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("colorAlpha"))
+		if (!collection.hasValue("alpha"))
 		{
-			floatDrag = new ExposedFloatDrag("colorAlpha", null, 0, 1, 0.1);
+			floatDrag = new ExposedFloatDrag("alpha", null, 0, 1, 0.1);
 			collection.addValue(floatDrag, groupName);
 		}
 		

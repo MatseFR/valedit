@@ -1,5 +1,7 @@
 package valedit.data.massive.display;
 import massive.data.MassiveConstants;
+import massive.display.MassiveColorMode;
+import massive.display.MassiveRenderMode;
 import starling.textures.TextureSmoothing;
 import valedit.data.starling.display.StarlingDisplayData;
 import valedit.value.ExposedBool;
@@ -45,21 +47,21 @@ class MassiveDisplayData
 			collection.addValue(intDrag, groupName);
 		}
 		
-		if (!collection.hasValue("colorRed"))
+		if (!collection.hasValue("red"))
 		{
-			floatDrag = new ExposedFloatDrag("colorRed", null, 0, 10, 0.1);
+			floatDrag = new ExposedFloatDrag("red", null, 0, 10, 0.1);
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("colorGreen"))
+		if (!collection.hasValue("green"))
 		{
-			floatDrag = new ExposedFloatDrag("colorGreen", null, 0, 10, 0.1);
+			floatDrag = new ExposedFloatDrag("green", null, 0, 10, 0.1);
 			collection.addValue(floatDrag, groupName);
 		}
 		
-		if (!collection.hasValue("colorBlue"))
+		if (!collection.hasValue("blue"))
 		{
-			floatDrag = new ExposedFloatDrag("colorBlue", null, 0, 10, 0.1);
+			floatDrag = new ExposedFloatDrag("blue", null, 0, 10, 0.1);
 			collection.addValue(floatDrag, groupName);
 		}
 		
@@ -96,16 +98,20 @@ class MassiveDisplayData
 			collection.addValue(select, groupName);
 		}
 		
-		if (!collection.hasValue("useByteArray"))
+		if (!collection.hasValue("renderMode"))
 		{
-			bool = new ExposedBool("useByteArray");
-			collection.addValue(bool, groupName);
+			select = new ExposedSelect("renderMode");
+			select.choiceListFunction = MassiveRenderMode.getValues;
+			select.valueListFunction = MassiveRenderMode.getValues;
+			collection.addValue(select, groupName);
 		}
 		
-		if (!collection.hasValue("useColor"))
+		if (!collection.hasValue("colorMode"))
 		{
-			bool = new ExposedBool("useColor");
-			collection.addValue(bool, groupName);
+			select = new ExposedSelect("colorMode");
+			select.choiceListFunction = MassiveColorMode.getValues;
+			select.valueListFunction = MassiveColorMode.getValues;
+			collection.addValue(select, groupName);
 		}
 		
 		StarlingDisplayData.exposeDisplayObject(collection, groupName);
