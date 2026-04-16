@@ -1,7 +1,7 @@
 package valedit.data.massive.display;
 import massive.data.MassiveConstants;
-import massive.display.MassiveColorMode;
-import massive.display.MassiveRenderMode;
+import massive.display.ColorMode;
+import massive.display.RenderMode;
 import starling.textures.TextureSmoothing;
 import valedit.data.starling.display.StarlingDisplayData;
 import valedit.value.ExposedBool;
@@ -101,16 +101,16 @@ class MassiveDisplayData
 		if (!collection.hasValue("renderMode"))
 		{
 			select = new ExposedSelect("renderMode");
-			select.choiceListFunction = MassiveRenderMode.getValues;
-			select.valueListFunction = MassiveRenderMode.getValues;
+			select.choiceListFunction = RenderMode.getValues;
+			select.valueListFunction = RenderMode.getValues;
 			collection.addValue(select, groupName);
 		}
 		
 		if (!collection.hasValue("colorMode"))
 		{
 			select = new ExposedSelect("colorMode");
-			select.choiceListFunction = MassiveColorMode.getValues;
-			select.valueListFunction = MassiveColorMode.getValues;
+			select.choiceListFunction = ColorMode.getValues;
+			select.valueListFunction = ColorMode.getValues;
 			collection.addValue(select, groupName);
 		}
 		

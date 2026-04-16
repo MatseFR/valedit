@@ -12,6 +12,7 @@ import valedit.value.ExposedFloatDrag;
 import valedit.value.ExposedFunction;
 import valedit.value.ExposedGroup;
 import valedit.value.ExposedIntDrag;
+import valedit.value.ExposedNote;
 import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
 import valedit.value.base.ExposedValue;
@@ -48,6 +49,7 @@ class MassiveParticleData
 		var func:ExposedFunction;
 		var group:ExposedGroup;
 		var intDrag:ExposedIntDrag;
+		var note:ExposedNote;
 		var obj:ExposedObject;
 		var select:ExposedSelect;
 		var subGroup:ExposedGroup;
@@ -180,6 +182,26 @@ class MassiveParticleData
 			subGroup.addValue(floatDrag);
 		}
 		
+		if (!subGroup.hasValue("emitterRadiusOverridesParticleAngle"))
+		{
+			bool = new ExposedBool("emitterRadiusOverridesParticleAngle", "override particle angle");
+			subGroup.addValue(bool);
+			
+			collection.registerForValueChangeExternal("emitterRadiusOverridesParticleAngle", emitterRadiusOverridesParticleAngleChange);
+		}
+		
+		if (!subGroup.hasValue("emitterRadiusParticleAngleOffset"))
+		{
+			floatDrag = new ExposedFloatDrag("emitterRadiusParticleAngleOffset", "angle offset", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("emitterRadiusParticleAngleOffsetVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("emitterRadiusParticleAngleOffsetVariance", "angle offset variance", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
 		if (!group.hasValue("emitAngle"))
 		{
 			floatDrag = new ExposedFloatDrag("emitAngle", null, null, null, 0.005, 0.005);
@@ -196,6 +218,14 @@ class MassiveParticleData
 		{
 			bool = new ExposedBool("emitAngleAlignedRotation");
 			group.addValue(bool);
+			
+			collection.registerForValueChangeExternal("emitAngleAlignedRotation", emitAngleAlignedRotationChange);
+		}
+		
+		if (!group.hasValue("emitAngleAlignedRotationOffset"))
+		{
+			floatDrag = new ExposedFloatDrag("emitAngleAlignedRotationOffset", "aligned rotation offset", null, null, 0.01);
+			group.addValue(floatDrag);
 		}
 		
 		if (!group.hasValue("useDisplayRect"))
@@ -299,6 +329,12 @@ class MassiveParticleData
 			subGroup.addValue(floatDrag);
 		}
 		
+		if (!subGroup.hasValue("sizeXEndRelativeToStart"))
+		{
+			bool = new ExposedBool("sizeXEndRelativeToStart", "relative to start");
+			subGroup.addValue(bool);
+		}
+		
 		if (!subGroup.hasValue("sizeYEnd"))
 		{
 			floatDrag = new ExposedFloatDrag("sizeYEnd", "y end");
@@ -309,6 +345,12 @@ class MassiveParticleData
 		{
 			floatDrag = new ExposedFloatDrag("sizeYEndVariance", "y end variance");
 			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("sizeYEndRelativeToStart"))
+		{
+			bool = new ExposedBool("sizeYEndRelativeToStart", "relative to start");
+			subGroup.addValue(bool);
 		}
 		
 		if (!group.hasGroup("Rotation"))
@@ -348,6 +390,76 @@ class MassiveParticleData
 		if (!subGroup.hasValue("rotationEndRelativeToStart"))
 		{
 			bool = new ExposedBool("rotationEndRelativeToStart", "relative to start");
+			subGroup.addValue(bool);
+		}
+		
+		if (!group.hasGroup("Skew"))
+		{
+			subGroup = new ExposedGroup("Skew");
+			group.addValue(subGroup);
+		}
+		else
+		{
+			subGroup = group.getGroup("Skew");
+		}
+		
+		if (!subGroup.hasValue("skewXStart"))
+		{
+			floatDrag = new ExposedFloatDrag("skewXStart", "x start", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewXStartVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("skewXStartVariance", "x start variance", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewYStart"))
+		{
+			floatDrag = new ExposedFloatDrag("skewYStart", "y start", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewYStartVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("skewYStartVariance", "y start variance", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewXEnd"))
+		{
+			floatDrag = new ExposedFloatDrag("skewXEnd", "x end", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewXEndVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("skewXEndVariance", "x end variance", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewXEndRelativeToStart"))
+		{
+			bool = new ExposedBool("skewXEndRelativeToStart", "relative to start");
+			subGroup.addValue(bool);
+		}
+		
+		if (!subGroup.hasValue("skewYEnd"))
+		{
+			floatDrag = new ExposedFloatDrag("skewYEnd", "y end", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewYEndVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("skewYEndVariance", "y end variance", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewYEndRelativeToStart"))
+		{
+			bool = new ExposedBool("skewYEndRelativeToStart", "relative to start");
 			subGroup.addValue(bool);
 		}
 		
@@ -463,25 +575,25 @@ class MassiveParticleData
 		
 		if (!subGroup.hasValue("radialAcceleration"))
 		{
-			floatDrag = new ExposedFloatDrag("radialAcceleration", "radial");
+			floatDrag = new ExposedFloatDrag("radialAcceleration", "radial", null, null, 1.0);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("radialAccelerationVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("radialAccelerationVariance", "radial variance");
+			floatDrag = new ExposedFloatDrag("radialAccelerationVariance", "radial variance", null, null, 1.0);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("tangentialAcceleration"))
 		{
-			floatDrag = new ExposedFloatDrag("tangentialAcceleration", "tangential");
+			floatDrag = new ExposedFloatDrag("tangentialAcceleration", "tangential", null, null, 1.0);
 			subGroup.addValue(floatDrag);
 		}
 		
 		if (!subGroup.hasValue("tangentialAccelerationVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("tangentialAccelerationVariance", "tangential variance");
+			floatDrag = new ExposedFloatDrag("tangentialAccelerationVariance", "tangential variance", null, null, 1.0);
 			subGroup.addValue(floatDrag);
 		}
 		
@@ -550,6 +662,26 @@ class MassiveParticleData
 			group.addValue(floatDrag);
 		}
 		
+		if (!group.hasValue("alignRadialRotation"))
+		{
+			bool = new ExposedBool("alignRadialRotation");
+			group.addValue(bool);
+			
+			collection.registerForValueChangeExternal("alignRadialRotation", alignRadialRotationChange);
+		}
+		
+		if (!group.hasValue("alignRadialRotationOffset"))
+		{
+			floatDrag = new ExposedFloatDrag("alignRadialRotationOffset", null, null, null, 0.01);
+			group.addValue(floatDrag);
+		}
+		
+		if (!group.hasValue("alignRadialRotationOffsetVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("alignRadialRotationOffsetVariance", null, null, null, 0.01);
+			group.addValue(floatDrag);
+		}
+		
 		// color
 		if (!collection.hasGroup("Color"))
 		{
@@ -559,6 +691,12 @@ class MassiveParticleData
 		else
 		{
 			group = collection.getGroup("Color");
+		}
+		
+		if (!group.hasValue("ColorNote"))
+		{
+			note = new ExposedNote("ColorNote", "note that this won't have any effect if Display's colorMode is set to 'none' or 'display'");
+			group.addValue(note);
 		}
 		
 		if (!group.hasValue("colorStart"))
@@ -600,6 +738,61 @@ class MassiveParticleData
 		if (!group.hasValue("colorEndIsMultiplier"))
 		{
 			bool = new ExposedBool("colorEndIsMultiplier", "end is multiplier");
+			group.addValue(bool);
+		}
+		
+		// color offset
+		if (!collection.hasGroup("ColorOffset"))
+		{
+			group = new ExposedGroup("ColorOffset", "Color Offset");
+			collection.addValue(group);
+		}
+		else
+		{
+			group = collection.getGroup("ColorOffset");
+		}
+		
+		if (!group.hasValue("ColorOffsetNote"))
+		{
+			note = new ExposedNote("ColorOffsetNote", "note that this won't have any effect unless Display's colorOffsetMode is set to 'object' or 'display_and_object'");
+			group.addValue(note);
+		}
+		
+		if (!group.hasValue("colorOffsetStart"))
+		{
+			obj = new ExposedObject("colorOffsetStart");
+			group.addValue(obj);
+		}
+		
+		if (!group.hasValue("colorOffsetStartVariance"))
+		{
+			obj = new ExposedObject("colorOffsetStartVariance");
+			group.addValue(obj);
+		}
+		
+		if (!group.hasValue("colorOffsetEnd"))
+		{
+			obj = new ExposedObject("colorOffsetEnd");
+			group.addValue(obj);
+		}
+		
+		if (!group.hasValue("colorOffsetEndVariance"))
+		{
+			obj = new ExposedObject("colorOffsetEndVariance");
+			group.addValue(obj);
+		}
+		
+		if (!group.hasValue("colorOffsetEndRelativeToStart"))
+		{
+			bool = new ExposedBool("colorOffsetEndRelativeToStart", "end relative to start");
+			group.addValue(bool);
+			
+			collection.registerForValueChangeExternal("colorOffsetEndRelativeToStart", colorOffsetEndRelativeToStartChange);
+		}
+		
+		if (!group.hasValue("colorOffsetEndIsMultiplier"))
+		{
+			bool = new ExposedBool("colorOffsetEndIsMultiplier", "end is multiplier");
 			group.addValue(bool);
 		}
 		
@@ -648,15 +841,35 @@ class MassiveParticleData
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("velocityX"))
+		if (!subGroup.hasValue("velocityX"))
 		{
 			floatDrag = new ExposedFloatDrag("velocityX");
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("velocityY"))
+		{
+			floatDrag = new ExposedFloatDrag("velocityY");
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!group.hasValue("linkRotationToVelocity"))
+		{
+			bool = new ExposedBool("linkRotationToVelocity");
+			group.addValue(bool);
+		}
+		
+		collection.registerForValueChangeExternal("linkRotationToVelocity", linkRotationToVelocityChange);
+		
+		if (!group.hasValue("velocityRotationOffset"))
+		{
+			floatDrag = new ExposedFloatDrag("velocityRotationOffset", null, null, null, 0.005, 0.005);
 			group.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("velocityY"))
+		if (!group.hasValue("velocityRotationFactor"))
 		{
-			floatDrag = new ExposedFloatDrag("velocityY");
+			floatDrag = new ExposedFloatDrag("velocityRotationFactor", null, null, null, 0.0001, 0.0001);
 			group.addValue(floatDrag);
 		}
 		
@@ -672,17 +885,15 @@ class MassiveParticleData
 			group.addValue(floatDrag);
 		}
 		
-		if (!group.hasValue("linkRotationToVelocity"))
+		if (!group.hasValue("velocitySkewFactorX"))
 		{
-			bool = new ExposedBool("linkRotationToVelocity");
-			group.addValue(bool);
+			floatDrag = new ExposedFloatDrag("velocitySkewFactorX", null, null, null, 0.0001, 0.0001);
+			group.addValue(floatDrag);
 		}
 		
-		collection.registerForValueChangeExternal("linkRotationToVelocity", linkRotationToVelocityChange);
-		
-		if (!group.hasValue("velocityRotationOffset"))
+		if (!group.hasValue("velocitySkewFactorY"))
 		{
-			floatDrag = new ExposedFloatDrag("velocityRotationOffset", null, null, null, 0.005, 0.005);
+			floatDrag = new ExposedFloatDrag("velocitySkewFactorY", null, null, null, 0.0001, 0.0001);
 			group.addValue(floatDrag);
 		}
 		
@@ -719,77 +930,83 @@ class MassiveParticleData
 			subGroup = group.getGroup("Position");
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionFrequencyMode"))
+		if (!subGroup.hasValue("positionOscillationFrequencyMode"))
 		{
-			select = new ExposedSelect("oscillationPositionFrequencyMode", "frequency mode");
+			select = new ExposedSelect("positionOscillationFrequencyMode", "frequency mode");
 			select.choiceListFunction = OscillationFrequencyMode.getValues;
 			select.valueListFunction = OscillationFrequencyMode.getValues;
 			subGroup.addValue(select);
 			
-			collection.registerForValueChangeExternal("oscillationPositionFrequencyMode", oscillationPositionFrequencyModeChange);
+			collection.registerForValueChangeExternal("positionOscillationFrequencyMode", positionOscillationFrequencyModeChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionAngle"))
+		if (!subGroup.hasValue("positionOscillationGroupStartStep"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionAngle", "angle", null, null, 0.005, 0.005);
+			floatDrag = new ExposedFloatDrag("positionOscillationGroupStartStep", "group start step", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionAngleVariance"))
+		if (!subGroup.hasValue("positionOscillationAngle"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionAngleVariance", "angle variance", null, null, 0.005, 0.005);
+			floatDrag = new ExposedFloatDrag("positionOscillationAngle", "angle", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionAngleRelativeTo"))
+		if (!subGroup.hasValue("positionOscillationAngleVariance"))
 		{
-			select = new ExposedSelect("oscillationPositionAngleRelativeTo", "angle relative to");
+			floatDrag = new ExposedFloatDrag("positionOscillationAngleVariance", "angle variance", null, null, 0.005, 0.005);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("positionOscillationAngleRelativeTo"))
+		{
+			select = new ExposedSelect("positionOscillationAngleRelativeTo", "angle relative to");
 			select.choiceListFunction = AngleRelativeTo.getValues;
 			select.valueListFunction = AngleRelativeTo.getValues;
 			subGroup.addValue(select);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionRadius"))
+		if (!subGroup.hasValue("positionOscillationRadius"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionRadius", "radius");
+			floatDrag = new ExposedFloatDrag("positionOscillationRadius", "radius");
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionRadiusVariance"))
+		if (!subGroup.hasValue("positionOscillationRadiusVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionRadiusVariance", "radius variance");
+			floatDrag = new ExposedFloatDrag("positionOscillationRadiusVariance", "radius variance");
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionFrequency"))
+		if (!subGroup.hasValue("positionOscillationFrequency"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionFrequency", "frequency", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("positionOscillationFrequency", "frequency", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionUnifiedFrequencyVariance"))
+		if (!subGroup.hasValue("positionOscillationUnifiedFrequencyVariance"))
 		{
-			bool = new ExposedBool("oscillationPositionUnifiedFrequencyVariance", "unified frequency variance");
+			bool = new ExposedBool("positionOscillationUnifiedFrequencyVariance", "unified frequency variance");
 			subGroup.addValue(bool);
 			
-			collection.registerForValueChangeExternal("oscillationPositionUnifiedFrequencyVariance", oscillationPositionUnifiedFrequencyVarianceChange);
+			collection.registerForValueChangeExternal("positionOscillationUnifiedFrequencyVariance", positionOscillationUnifiedFrequencyVarianceChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionFrequencyVariance"))
+		if (!subGroup.hasValue("positionOscillationFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPositionFrequencyVariance", "frequency variance", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("positionOscillationFrequencyVariance", "frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionFrequencyInverted"))
+		if (!subGroup.hasValue("positionOscillationFrequencyInverted"))
 		{
-			bool = new ExposedBool("oscillationPositionFrequencyInverted", "invert frequency");
+			bool = new ExposedBool("positionOscillationFrequencyInverted", "invert frequency");
 			subGroup.addValue(bool);
 		}
 		
-		if (!subGroup.hasValue("oscillationPositionFrequencyStart"))
+		if (!subGroup.hasValue("positionOscillationFrequencyStart"))
 		{
-			select = new ExposedSelect("oscillationPositionFrequencyStart", "frequency start");
+			select = new ExposedSelect("positionOscillationFrequencyStart", "frequency start");
 			select.choiceListFunction = OscillationFrequencyStart.getValues;
 			select.valueListFunction = OscillationFrequencyStart.getValues;
 			subGroup.addValue(select);
@@ -805,77 +1022,83 @@ class MassiveParticleData
 			subGroup = group.getGroup("Position2");
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2FrequencyMode"))
+		if (!subGroup.hasValue("position2OscillationFrequencyMode"))
 		{
-			select = new ExposedSelect("oscillationPosition2FrequencyMode", "frequency mode");
+			select = new ExposedSelect("position2OscillationFrequencyMode", "frequency mode");
 			select.choiceListFunction = OscillationFrequencyMode.getValues;
 			select.valueListFunction = OscillationFrequencyMode.getValues;
 			subGroup.addValue(select);
 			
-			collection.registerForValueChangeExternal("oscillationPosition2FrequencyMode", oscillationPosition2FrequencyModeChange);
+			collection.registerForValueChangeExternal("position2OscillationFrequencyMode", position2OscillationFrequencyModeChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2Angle"))
+		if (!subGroup.hasValue("position2OscillationGroupStartStep"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2Angle", "angle", null, null, 0.005, 0.005);
+			floatDrag = new ExposedFloatDrag("position2OscillationGroupStartStep", "group start step", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2AngleVariance"))
+		if (!subGroup.hasValue("position2OscillationAngle"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2AngleVariance", "angle variance", null, null, 0.005, 0.005);
+			floatDrag = new ExposedFloatDrag("position2OscillationAngle", "angle", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2AngleRelativeTo"))
+		if (!subGroup.hasValue("position2OscillationAngleVariance"))
 		{
-			select = new ExposedSelect("oscillationPosition2AngleRelativeTo", "angle relative to");
+			floatDrag = new ExposedFloatDrag("position2OscillationAngleVariance", "angle variance", null, null, 0.005, 0.005);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("position2OscillationAngleRelativeTo"))
+		{
+			select = new ExposedSelect("position2OscillationAngleRelativeTo", "angle relative to");
 			select.choiceListFunction = AngleRelativeTo.getValues;
 			select.valueListFunction = AngleRelativeTo.getValues;
 			subGroup.addValue(select);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2Radius"))
+		if (!subGroup.hasValue("position2OscillationRadius"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2Radius", "radius");
+			floatDrag = new ExposedFloatDrag("position2OscillationRadius", "radius");
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2RadiusVariance"))
+		if (!subGroup.hasValue("position2OscillationRadiusVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2RadiusVariance", "radius variance");
+			floatDrag = new ExposedFloatDrag("position2OscillationRadiusVariance", "radius variance");
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2Frequency"))
+		if (!subGroup.hasValue("position2OscillationFrequency"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2Frequency", "frequency", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("position2OscillationFrequency", "frequency", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2UnifiedFrequencyVariance"))
+		if (!subGroup.hasValue("position2OscillationUnifiedFrequencyVariance"))
 		{
-			bool = new ExposedBool("oscillationPosition2UnifiedFrequencyVariance", "unified frequency variance");
+			bool = new ExposedBool("position2OscillationUnifiedFrequencyVariance", "unified frequency variance");
 			subGroup.addValue(bool);
 			
-			collection.registerForValueChangeExternal("oscillationPosition2UnifiedFrequencyVariance", oscillationPosition2UnifiedFrequencyVarianceChange);
+			collection.registerForValueChangeExternal("position2OscillationUnifiedFrequencyVariance", position2OscillationUnifiedFrequencyVarianceChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2FrequencyVariance"))
+		if (!subGroup.hasValue("position2OscillationFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationPosition2FrequencyVariance", "frequency variance", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("position2OscillationFrequencyVariance", "frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2FrequencyInverted"))
+		if (!subGroup.hasValue("position2OscillationFrequencyInverted"))
 		{
-			bool = new ExposedBool("oscillationPosition2FrequencyInverted", "invert frequency");
+			bool = new ExposedBool("position2OscillationFrequencyInverted", "invert frequency");
 			subGroup.addValue(bool);
 		}
 		
-		if (!subGroup.hasValue("oscillationPosition2FrequencyStart"))
+		if (!subGroup.hasValue("position2OscillationFrequencyStart"))
 		{
-			select = new ExposedSelect("oscillationPosition2FrequencyStart", "frequency start");
+			select = new ExposedSelect("position2OscillationFrequencyStart", "frequency start");
 			select.choiceListFunction = OscillationFrequencyStart.getValues;
 			select.valueListFunction = OscillationFrequencyStart.getValues;
 			subGroup.addValue(select);
@@ -891,57 +1114,63 @@ class MassiveParticleData
 			subGroup = group.getGroup("Rotation");
 		}
 		
-		if (!subGroup.hasValue("oscillationRotationFrequencyMode"))
+		if (!subGroup.hasValue("rotationOscillationFrequencyMode"))
 		{
-			select = new ExposedSelect("oscillationRotationFrequencyMode", "frequency mode");
+			select = new ExposedSelect("rotationOscillationFrequencyMode", "frequency mode");
 			select.choiceListFunction = OscillationFrequencyMode.getValues;
 			select.valueListFunction = OscillationFrequencyMode.getValues;
 			subGroup.addValue(select);
 			
-			collection.registerForValueChangeExternal("oscillationRotationFrequencyMode", oscillationRotationFrequencyModeChange);
+			collection.registerForValueChangeExternal("rotationOscillationFrequencyMode", rotationOscillationFrequencyModeChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationRotationAngle"))
+		if (!subGroup.hasValue("rotationOscillationGroupStartStep"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationRotationAngle", "angle", null, null, 0.005, 0.005);
+			floatDrag = new ExposedFloatDrag("rotationOscillationGroupStartStep", "group start step", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationRotationAngleVariance"))
+		if (!subGroup.hasValue("rotationOscillationAngle"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationRotationAngleVariance", "angle variance", null, null, 0.005, 0.005);
+			floatDrag = new ExposedFloatDrag("rotationOscillationAngle", "angle", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationRotationFrequency"))
+		if (!subGroup.hasValue("rotationOscillationAngleVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationRotationFrequency", "frequency", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("rotationOscillationAngleVariance", "angle variance", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationRotationUnifiedFrequencyVariance"))
+		if (!subGroup.hasValue("rotationOscillationFrequency"))
 		{
-			bool = new ExposedBool("oscillationRotationUnifiedFrequencyVariance", "unified frequency variance");
+			floatDrag = new ExposedFloatDrag("rotationOscillationFrequency", "frequency", null, null, 0.1);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("rotationOscillationUnifiedFrequencyVariance"))
+		{
+			bool = new ExposedBool("rotationOscillationUnifiedFrequencyVariance", "unified frequency variance");
 			subGroup.addValue(bool);
 			
-			collection.registerForValueChangeExternal("oscillationRotationUnifiedFrequencyVariance", oscillationRotationUnifiedFrequencyVarianceChange);
+			collection.registerForValueChangeExternal("rotationOscillationUnifiedFrequencyVariance", rotationOscillationUnifiedFrequencyVarianceChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationRotationFrequencyVariance"))
+		if (!subGroup.hasValue("rotationOscillationFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationRotationFrequencyVariance", "frequency variance", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("rotationOscillationFrequencyVariance", "frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationRotationFrequencyInverted"))
+		if (!subGroup.hasValue("rotationOscillationFrequencyInverted"))
 		{
-			bool = new ExposedBool("oscillationRotationFrequencyInverted", "invert frequency");
+			bool = new ExposedBool("rotationOscillationFrequencyInverted", "invert frequency");
 			subGroup.addValue(bool);
 		}
 		
-		if (!subGroup.hasValue("oscillationRotationFrequencyStart"))
+		if (!subGroup.hasValue("rotationOscillationFrequencyStart"))
 		{
-			select = new ExposedSelect("oscillationRotationFrequencyStart", "frequency start");
+			select = new ExposedSelect("rotationOscillationFrequencyStart", "frequency start");
 			select.choiceListFunction = OscillationFrequencyStart.getValues;
 			select.valueListFunction = OscillationFrequencyStart.getValues;
 			subGroup.addValue(select);
@@ -957,57 +1186,63 @@ class MassiveParticleData
 			subGroup = group.getGroup("ScaleX");
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleXFrequencyMode"))
+		if (!subGroup.hasValue("scaleXOscillationFrequencyMode"))
 		{
-			select = new ExposedSelect("oscillationScaleXFrequencyMode", "frequency mode");
+			select = new ExposedSelect("scaleXOscillationFrequencyMode", "frequency mode");
 			select.choiceListFunction = OscillationFrequencyMode.getValues;
 			select.valueListFunction = OscillationFrequencyMode.getValues;
 			subGroup.addValue(select);
 			
-			collection.registerForValueChangeExternal("oscillationScaleXFrequencyMode", oscillationScaleXFrequencyModeChange);
+			collection.registerForValueChangeExternal("scaleXOscillationFrequencyMode", scaleXOscillationFrequencyModeChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleX"))
+		if (!subGroup.hasValue("scaleXOscillationGroupStartStep"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleX", "x", null, null, 0.01);
+			floatDrag = new ExposedFloatDrag("scaleXOscillationGroupStartStep", "group start step", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleXVariance"))
+		if (!subGroup.hasValue("scaleXOscillation"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleXVariance", "x variance", null, null, 0.01);
+			floatDrag = new ExposedFloatDrag("scaleXOscillation", "x", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleXFrequency"))
+		if (!subGroup.hasValue("scaleXOscillationVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleXFrequency", "x frequency", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("scaleXOscillationVariance", "x variance", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleXUnifiedFrequencyVariance"))
+		if (!subGroup.hasValue("scaleXOscillationFrequency"))
 		{
-			bool = new ExposedBool("oscillationScaleXUnifiedFrequencyVariance", "unified frequency variance");
+			floatDrag = new ExposedFloatDrag("scaleXOscillationFrequency", "x frequency", null, null, 0.1);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("scaleXOscillationUnifiedFrequencyVariance"))
+		{
+			bool = new ExposedBool("scaleXOscillationUnifiedFrequencyVariance", "unified frequency variance");
 			subGroup.addValue(bool);
 			
-			collection.registerForValueChangeExternal("oscillationScaleXUnifiedFrequencyVariance", oscillationScaleXUnifiedFrequencyVarianceChange);
+			collection.registerForValueChangeExternal("scaleXOscillationUnifiedFrequencyVariance", scaleXOscillationUnifiedFrequencyVarianceChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleXFrequencyVariance"))
+		if (!subGroup.hasValue("scaleXOscillationFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleXFrequencyVariance", "x frequency variance", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("scaleXOscillationFrequencyVariance", "x frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleXFrequencyInverted"))
+		if (!subGroup.hasValue("scaleXOscillationFrequencyInverted"))
 		{
-			bool = new ExposedBool("oscillationScaleXFrequencyInverted", "invert x frequency");
+			bool = new ExposedBool("scaleXOscillationFrequencyInverted", "invert x frequency");
 			subGroup.addValue(bool);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleXFrequencyStart"))
+		if (!subGroup.hasValue("scaleXOscillationFrequencyStart"))
 		{
-			select = new ExposedSelect("oscillationScaleXFrequencyStart", "frequency start");
+			select = new ExposedSelect("scaleXOscillationFrequencyStart", "frequency start");
 			select.choiceListFunction = OscillationFrequencyStart.getValues;
 			select.valueListFunction = OscillationFrequencyStart.getValues;
 			subGroup.addValue(select);
@@ -1023,57 +1258,207 @@ class MassiveParticleData
 			subGroup = group.getGroup("ScaleY");
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleYFrequencyMode"))
+		if (!subGroup.hasValue("scaleYOscillationFrequencyMode"))
 		{
-			select = new ExposedSelect("oscillationScaleYFrequencyMode", "frequency mode");
+			select = new ExposedSelect("scaleYOscillationFrequencyMode", "frequency mode");
 			select.choiceListFunction = OscillationFrequencyMode.getValues;
 			select.valueListFunction = OscillationFrequencyMode.getValues;
 			subGroup.addValue(select);
 			
-			collection.registerForValueChangeExternal("oscillationScaleYFrequencyMode", oscillationScaleYFrequencyModeChange);
+			collection.registerForValueChangeExternal("scaleYOscillationFrequencyMode", scaleYOscillationFrequencyModeChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleY"))
+		if (!subGroup.hasValue("scaleYOscillationGroupStartStep"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleY", "y", null, null, 0.01);
+			floatDrag = new ExposedFloatDrag("scaleYOscillationGroupStartStep", "group start step", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleYVariance"))
+		if (!subGroup.hasValue("scaleYOscillation"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleYVariance", "y variance", null, null, 0.01);
+			floatDrag = new ExposedFloatDrag("scaleYOscillation", "y", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleYFrequency"))
+		if (!subGroup.hasValue("scaleYOscillationVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleYFrequency", "y frequency", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("scaleYOscillationVariance", "y variance", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleYUnifiedFrequencyVariance"))
+		if (!subGroup.hasValue("scaleYOscillationFrequency"))
 		{
-			bool = new ExposedBool("oscillationScaleYUnifiedFrequencyVariance", "unified frequency variance");
+			floatDrag = new ExposedFloatDrag("scaleYOscillationFrequency", "y frequency", null, null, 0.1);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("scaleYOscillationUnifiedFrequencyVariance"))
+		{
+			bool = new ExposedBool("scaleYOscillationUnifiedFrequencyVariance", "unified frequency variance");
 			subGroup.addValue(bool);
 			
-			collection.registerForValueChangeExternal("oscillationScaleYUnifiedFrequencyVariance", oscillationScaleYUnifiedFrequencyVarianceChange);
+			collection.registerForValueChangeExternal("scaleYOscillationUnifiedFrequencyVariance", scaleYOscillationUnifiedFrequencyVarianceChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleYFrequencyVariance"))
+		if (!subGroup.hasValue("scaleYOscillationFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationScaleYFrequencyVariance", "y frequency variance", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("scaleYOscillationFrequencyVariance", "y frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleYFrequencyInverted"))
+		if (!subGroup.hasValue("scaleYOscillationFrequencyInverted"))
 		{
-			bool = new ExposedBool("oscillationScaleYFrequencyInverted", "invert y frequency");
+			bool = new ExposedBool("scaleYOscillationFrequencyInverted", "invert y frequency");
 			subGroup.addValue(bool);
 		}
 		
-		if (!subGroup.hasValue("oscillationScaleYFrequencyStart"))
+		if (!subGroup.hasValue("scaleYOscillationFrequencyStart"))
 		{
-			select = new ExposedSelect("oscillationScaleYFrequencyStart", "frequency start");
+			select = new ExposedSelect("scaleYOscillationFrequencyStart", "frequency start");
+			select.choiceListFunction = OscillationFrequencyStart.getValues;
+			select.valueListFunction = OscillationFrequencyStart.getValues;
+			subGroup.addValue(select);
+		}
+		
+		if (!group.hasGroup("SkewX"))
+		{
+			subGroup = new ExposedGroup("SkewX");
+			group.addValue(subGroup);
+		}
+		else
+		{
+			subGroup = group.getGroup("SkewX");
+		}
+		
+		if (!subGroup.hasValue("skewXOscillationFrequencyMode"))
+		{
+			select = new ExposedSelect("skewXOscillationFrequencyMode", "frequency mode");
+			select.choiceListFunction = OscillationFrequencyMode.getValues;
+			select.valueListFunction = OscillationFrequencyMode.getValues;
+			subGroup.addValue(select);
+			
+			collection.registerForValueChangeExternal("skewXOscillationFrequencyMode", skewXOscillationFrequencyModeChange);
+		}
+		
+		if (!subGroup.hasValue("skewXOscillationGroupStartStep"))
+		{
+			floatDrag = new ExposedFloatDrag("skewXOscillationGroupStartStep", "group start step", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewXOscillation"))
+		{
+			floatDrag = new ExposedFloatDrag("skewXOscillation", "x", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewXOscillationVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("skewXOscillationVariance", "x variance", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewXOscillationFrequency"))
+		{
+			floatDrag = new ExposedFloatDrag("skewXOscillationFrequency", "x frequency", null, null, 0.1);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewXOscillationUnifiedFrequencyVariance"))
+		{
+			bool = new ExposedBool("skewXOscillationUnifiedFrequencyVariance", "unified frequency variance");
+			subGroup.addValue(bool);
+			
+			collection.registerForValueChangeExternal("skewXOscillationUnifiedFrequencyVariance", skewXOscillationUnifiedFrequencyVarianceChange);
+		}
+		
+		if (!subGroup.hasValue("skewXOscillationFrequencyVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("skewXOscillationFrequencyVariance", "x frequency variance", null, null, 0.1);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewXOscillationFrequencyInverted"))
+		{
+			bool = new ExposedBool("skewXOscillationFrequencyInverted", "invert x frequency");
+			subGroup.addValue(bool);
+		}
+		
+		if (!subGroup.hasValue("skewXOscillationFrequencyStart"))
+		{
+			select = new ExposedSelect("skewXOscillationFrequencyStart", "frequency start");
+			select.choiceListFunction = OscillationFrequencyStart.getValues;
+			select.valueListFunction = OscillationFrequencyStart.getValues;
+			subGroup.addValue(select);
+		}
+		
+		if (!group.hasGroup("SkewY"))
+		{
+			subGroup = new ExposedGroup("SkewY");
+			group.addValue(subGroup);
+		}
+		else
+		{
+			subGroup = group.getGroup("SkewY");
+		}
+		
+		if (!subGroup.hasValue("skewYOscillationFrequencyMode"))
+		{
+			select = new ExposedSelect("skewYOscillationFrequencyMode", "frequency mode");
+			select.choiceListFunction = OscillationFrequencyMode.getValues;
+			select.valueListFunction = OscillationFrequencyMode.getValues;
+			subGroup.addValue(select);
+			
+			collection.registerForValueChangeExternal("skewYOscillationFrequencyMode", skewYOscillationFrequencyModeChange);
+		}
+		
+		if (!subGroup.hasValue("skewYOscillationGroupStartStep"))
+		{
+			floatDrag = new ExposedFloatDrag("skewYOscillationGroupStartStep", "group start step", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewYOscillation"))
+		{
+			floatDrag = new ExposedFloatDrag("skewYOscillation", "y", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewYOscillationVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("skewYOscillationVariance", "y variance", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewYOscillationFrequency"))
+		{
+			floatDrag = new ExposedFloatDrag("skewYOscillationFrequency", "y frequency", null, null, 0.1);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewYOscillationUnifiedFrequencyVariance"))
+		{
+			bool = new ExposedBool("skewYOscillationUnifiedFrequencyVariance", "unified frequency variance");
+			subGroup.addValue(bool);
+			
+			collection.registerForValueChangeExternal("skewYOscillationUnifiedFrequencyVariance", skewYOscillationUnifiedFrequencyVarianceChange);
+		}
+		
+		if (!subGroup.hasValue("skewYOscillationFrequencyVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("skewYOscillationFrequencyVariance", "y frequency variance", null, null, 0.1);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("skewYOscillationFrequencyInverted"))
+		{
+			bool = new ExposedBool("skewYOscillationFrequencyInverted", "invert y frequency");
+			subGroup.addValue(bool);
+		}
+		
+		if (!subGroup.hasValue("skewYOscillationFrequencyStart"))
+		{
+			select = new ExposedSelect("skewYOscillationFrequencyStart", "frequency start");
 			select.choiceListFunction = OscillationFrequencyStart.getValues;
 			select.valueListFunction = OscillationFrequencyStart.getValues;
 			subGroup.addValue(select);
@@ -1089,93 +1474,147 @@ class MassiveParticleData
 			subGroup = group.getGroup("Color");
 		}
 		
-		if (!subGroup.hasValue("oscillationColorFrequencyMode"))
+		if (!subGroup.hasValue("ColorNote"))
 		{
-			select = new ExposedSelect("oscillationColorFrequencyMode", "frequency mode");
+			note = new ExposedNote("ColorNote", "note that this won't have any effect if Display's colorMode is set to 'none' or 'display'");
+			subGroup.addValue(note);
+		}
+		
+		if (!subGroup.hasValue("colorOscillationFrequencyMode"))
+		{
+			select = new ExposedSelect("colorOscillationFrequencyMode", "frequency mode");
 			select.choiceListFunction = OscillationFrequencyMode.getValues;
 			select.valueListFunction = OscillationFrequencyMode.getValues;
 			subGroup.addValue(select);
 			
-			collection.registerForValueChangeExternal("oscillationColorFrequencyMode", oscillationColorFrequencyModeChange);
+			collection.registerForValueChangeExternal("colorOscillationFrequencyMode", oscillationColorFrequencyModeChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationColorRed"))
+		if (!subGroup.hasValue("colorOscillationGroupStartStep"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationColorRed", "red", -1.0, 10.0, 0.01);
+			floatDrag = new ExposedFloatDrag("colorOscillationGroupStartStep", "group start step", null, null, 0.01);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationColorGreen"))
+		if (!subGroup.hasValue("colorOscillation"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationColorGreen", "green", -1.0, 10.0, 0.01);
+			obj = new ExposedObject("colorOscillation", "color");
+			subGroup.addValue(obj);
+		}
+		
+		if (!subGroup.hasValue("colorOscillationVariance"))
+		{
+			obj = new ExposedObject("colorOscillationVariance", "color variance");
+			subGroup.addValue(obj);
+		}
+		
+		if (!subGroup.hasValue("colorOscillationFrequency"))
+		{
+			floatDrag = new ExposedFloatDrag("colorOscillationFrequency", "frequency", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationColorBlue"))
+		if (!subGroup.hasValue("colorOscillationUnifiedFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationColorBlue", "blue", -1.0, 10.0, 0.01);
-			subGroup.addValue(floatDrag);
-		}
-		
-		if (!subGroup.hasValue("oscillationColorAlpha"))
-		{
-			floatDrag = new ExposedFloatDrag("oscillationColorAlpha", "alpha", -1.0, 10.0, 0.01);
-			subGroup.addValue(floatDrag);
-		}
-		
-		if (!subGroup.hasValue("oscillationColorRedVariance"))
-		{
-			floatDrag = new ExposedFloatDrag("oscillationColorRedVariance", "red variance", 0.0, 10.0, 0.01);
-			subGroup.addValue(floatDrag);
-		}
-		
-		if (!subGroup.hasValue("oscillationColorGreenVariance"))
-		{
-			floatDrag = new ExposedFloatDrag("oscillationColorGreenVariance", "green variance", 0.0, 10.0, 0.01);
-			subGroup.addValue(floatDrag);
-		}
-		
-		if (!subGroup.hasValue("oscillationColorBlueVariance"))
-		{
-			floatDrag = new ExposedFloatDrag("oscillationColorBlueVariance", "blue variance", 0.0, 10.0, 0.01);
-			subGroup.addValue(floatDrag);
-		}
-		
-		if (!subGroup.hasValue("oscillationColorAlphaVariance"))
-		{
-			floatDrag = new ExposedFloatDrag("oscillationColorAlphaVariance", "alpha variance", 0.0, 1.0, 0.01);
-			subGroup.addValue(floatDrag);
-		}
-		
-		if (!subGroup.hasValue("oscillationColorFrequency"))
-		{
-			floatDrag = new ExposedFloatDrag("oscillationColorFrequency", "frequency", null, null, 0.1);
-			subGroup.addValue(floatDrag);
-		}
-		
-		if (!subGroup.hasValue("oscillationColorUnifiedFrequencyVariance"))
-		{
-			bool = new ExposedBool("oscillationColorUnifiedFrequencyVariance", "unified frequency variance");
+			bool = new ExposedBool("colorOscillationUnifiedFrequencyVariance", "unified frequency variance");
 			subGroup.addValue(bool);
 			
-			collection.registerForValueChangeExternal("oscillationColorUnifiedFrequencyVariance", oscillationColorUnifiedFrequencyVarianceChange);
+			collection.registerForValueChangeExternal("colorOscillationUnifiedFrequencyVariance", colorOscillationUnifiedFrequencyVarianceChange);
 		}
 		
-		if (!subGroup.hasValue("oscillationColorFrequencyVariance"))
+		if (!subGroup.hasValue("colorOscillationFrequencyVariance"))
 		{
-			floatDrag = new ExposedFloatDrag("oscillationColorFrequencyVariance", "frequency variance", null, null, 0.1);
+			floatDrag = new ExposedFloatDrag("colorOscillationFrequencyVariance", "frequency variance", null, null, 0.1);
 			subGroup.addValue(floatDrag);
 		}
 		
-		if (!subGroup.hasValue("oscillationColorFrequencyInverted"))
+		if (!subGroup.hasValue("colorOscillationFrequencyInverted"))
 		{
-			bool = new ExposedBool("oscillationColorFrequencyInverted", "invert frequency");
+			bool = new ExposedBool("colorOscillationFrequencyInverted", "invert frequency");
 			subGroup.addValue(bool);
 		}
 		
-		if (!subGroup.hasValue("oscillationColorFrequencyStart"))
+		if (!subGroup.hasValue("colorOscillationFrequencyStart"))
 		{
-			select = new ExposedSelect("oscillationColorFrequencyStart", "frequency start");
+			select = new ExposedSelect("colorOscillationFrequencyStart", "frequency start");
+			select.choiceListFunction = OscillationFrequencyStart.getValues;
+			select.valueListFunction = OscillationFrequencyStart.getValues;
+			subGroup.addValue(select);
+		}
+		
+		if (!group.hasGroup("ColorOffset"))
+		{
+			subGroup = new ExposedGroup("ColorOffset", "Color Offset");
+			group.addValue(subGroup);
+		}
+		else
+		{
+			subGroup = group.getGroup("ColorOffset");
+		}
+		
+		if (!subGroup.hasValue("ColorOffsetNote"))
+		{
+			note = new ExposedNote("ColorOffsetNote", "note that this won't have any effect unless Display's colorOffsetMode is set to 'object' or 'display_and_object'");
+			subGroup.addValue(note);
+		}
+		
+		if (!subGroup.hasValue("colorOffsetOscillationFrequencyMode"))
+		{
+			select = new ExposedSelect("colorOffsetOscillationFrequencyMode", "frequency mode");
+			select.choiceListFunction = OscillationFrequencyMode.getValues;
+			select.valueListFunction = OscillationFrequencyMode.getValues;
+			subGroup.addValue(select);
+			
+			collection.registerForValueChangeExternal("colorOffsetOscillationFrequencyMode", oscillationColorOffsetFrequencyModeChange);
+		}
+		
+		if (!subGroup.hasValue("colorOffsetOscillationGroupStartStep"))
+		{
+			floatDrag = new ExposedFloatDrag("colorOffsetOscillationGroupStartStep", "group start step", null, null, 0.01);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("colorOffsetOscillation"))
+		{
+			obj = new ExposedObject("colorOffsetOscillation", "color");
+			subGroup.addValue(obj);
+		}
+		
+		if (!subGroup.hasValue("colorOffsetOscillationVariance"))
+		{
+			obj = new ExposedObject("colorOffsetOscillationVariance", "color variance");
+			subGroup.addValue(obj);
+		}
+		
+		if (!subGroup.hasValue("colorOffsetOscillationFrequency"))
+		{
+			floatDrag = new ExposedFloatDrag("colorOffsetOscillationFrequency", "frequency", null, null, 0.1);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("colorOffsetOscillationUnifiedFrequencyVariance"))
+		{
+			bool = new ExposedBool("colorOffsetOscillationUnifiedFrequencyVariance", "unified frequency variance");
+			subGroup.addValue(bool);
+			
+			collection.registerForValueChangeExternal("colorOffsetOscillationUnifiedFrequencyVariance", colorOffsetOscillationUnifiedFrequencyVarianceChange);
+		}
+		
+		if (!subGroup.hasValue("colorOffsetOscillationFrequencyVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("colorOffsetOscillationFrequencyVariance", "frequency variance", null, null, 0.1);
+			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("colorOffsetOscillationFrequencyInverted"))
+		{
+			bool = new ExposedBool("colorOffsetOscillationFrequencyInverted", "invert frequency");
+			subGroup.addValue(bool);
+		}
+		
+		if (!subGroup.hasValue("colorOffsetOscillationFrequencyStart"))
+		{
+			select = new ExposedSelect("colorOffsetOscillationFrequencyStart", "frequency start");
 			select.choiceListFunction = OscillationFrequencyStart.getValues;
 			select.valueListFunction = OscillationFrequencyStart.getValues;
 			subGroup.addValue(select);
@@ -1184,6 +1623,26 @@ class MassiveParticleData
 		MassiveDisplayData.exposeMassiveImageLayer(collection, groupName);
 		
 		return collection;
+	}
+	
+	static private function alignRadialRotationChange(alignValue:ExposedValue):Void
+	{
+		var collection:ExposedCollection = alignValue.collection;
+		var value:ExposedValue;
+		if (alignValue.value == true)
+		{
+			value = collection.getValue("alignRadialRotationOffset");
+			value.isReadOnly = false;
+			value = collection.getValue("alignRadialRotationOffsetVariance");
+			value.isReadOnly = false;
+		}
+		else
+		{
+			value = collection.getValue("alignRadialRotationOffset");
+			value.isReadOnly = true;
+			value = collection.getValue("alignRadialRotationOffsetVariance");
+			value.isReadOnly = true;
+		}
 	}
 	
 	static private function autoSetEmissionRateChange(autoSetValue:ExposedValue):Void
@@ -1196,6 +1655,32 @@ class MassiveParticleData
 		else
 		{
 			value.isReadOnly = false;
+		}
+	}
+	
+	static private function emitterRadiusOverridesParticleAngleChange(overrideValue:ExposedValue):Void
+	{
+		var collection:ExposedCollection = overrideValue.collection;
+		var enabled:Bool = overrideValue.value;
+		var value:ExposedValue;
+		
+		value = collection.getValue("emitterRadiusParticleAngleOffset");
+		value.isReadOnly = !enabled;
+		
+		value = collection.getValue("emitterRadiusParticleAngleOffsetVariance");
+		value.isReadOnly = !enabled;
+	}
+	
+	static private function emitAngleAlignedRotationChange(alignedRotationValue:ExposedValue):Void
+	{
+		var value:ExposedValue = alignedRotationValue.collection.getValue("emitAngleAlignedRotationOffset");
+		if (alignedRotationValue.value == true)
+		{
+			value.isReadOnly = false;
+		}
+		else
+		{
+			value.isReadOnly = true;
 		}
 	}
 	
@@ -1216,6 +1701,19 @@ class MassiveParticleData
 	{
 		var value:ExposedValue = colorEndValue.collection.getValue("colorEndIsMultiplier");
 		if (colorEndValue.value == true)
+		{
+			value.isReadOnly = false;
+		}
+		else
+		{
+			value.isReadOnly = true;
+		}
+	}
+	
+	static private function colorOffsetEndRelativeToStartChange(offsetEndValue:ExposedValue):Void
+	{
+		var value:ExposedValue = offsetEndValue.collection.getValue("colorOffsetEndIsMultiplier");
+		if (offsetEndValue.value == true)
 		{
 			value.isReadOnly = false;
 		}
@@ -1247,287 +1745,464 @@ class MassiveParticleData
 		value.isReadOnly = enabled;
 	}
 	
-	static private function oscillationPositionFrequencyModeChange(frequencyModeValue:ExposedValue):Void
+	static private function positionOscillationFrequencyModeChange(frequencyModeValue:ExposedValue):Void
 	{
 		var collection:ExposedCollection = frequencyModeValue.collection;
 		var value:ExposedValue;
 		
 		if (frequencyModeValue.value == OscillationFrequencyMode.GLOBAL)
 		{
-			value = collection.getValue("oscillationPositionFrequency");
+			value = collection.getValue("positionOscillationGroupStartStep");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPositionUnifiedFrequencyVariance");
+			value = collection.getValue("positionOscillationFrequency");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPositionFrequencyVariance");
+			value = collection.getValue("positionOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPositionFrequencyStart");
+			value = collection.getValue("positionOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("positionOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else if (frequencyModeValue.value == OscillationFrequencyMode.GROUP)
 		{
-			value = collection.getValue("oscillationPositionFrequency");
+			value = collection.getValue("positionOscillationGroupStartStep");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationPositionUnifiedFrequencyVariance");
+			value = collection.getValue("positionOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("positionOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPositionFrequencyVariance");
+			value = collection.getValue("positionOscillationFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPositionFrequencyStart");
+			value = collection.getValue("positionOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationPositionFrequency");
+			value = collection.getValue("positionOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("positionOscillationFrequency");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationPositionUnifiedFrequencyVariance");
+			value = collection.getValue("positionOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = false;
 			
 			if (value.value == true)
 			{
-				value = collection.getValue("oscillationPositionFrequencyVariance");
+				value = collection.getValue("positionOscillationFrequencyVariance");
 				value.isReadOnly = true;
 			}
 			else
 			{
-				value = collection.getValue("oscillationPositionFrequencyVariance");
+				value = collection.getValue("positionOscillationFrequencyVariance");
 				value.isReadOnly = false;
 			}
 			
-			value = collection.getValue("oscillationPositionFrequencyStart");
+			value = collection.getValue("positionOscillationFrequencyStart");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationPosition2FrequencyModeChange(frequencyModeValue:ExposedValue):Void
+	static private function position2OscillationFrequencyModeChange(frequencyModeValue:ExposedValue):Void
 	{
 		var collection:ExposedCollection = frequencyModeValue.collection;
 		var value:ExposedValue;
 		
 		if (frequencyModeValue.value == OscillationFrequencyMode.GLOBAL)
 		{
-			value = collection.getValue("oscillationPosition2Frequency");
+			value = collection.getValue("position2OscillationGroupStartStep");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPosition2UnifiedFrequencyVariance");
+			value = collection.getValue("position2OscillationFrequency");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPosition2FrequencyVariance");
+			value = collection.getValue("position2OscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPosition2FrequencyStart");
+			value = collection.getValue("position2OscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("position2OscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else if (frequencyModeValue.value == OscillationFrequencyMode.GROUP)
 		{
-			value = collection.getValue("oscillationPosition2Frequency");
+			value = collection.getValue("position2OscillationGroupStartStep");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationPosition2UnifiedFrequencyVariance");
+			value = collection.getValue("position2OscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("position2OscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPosition2FrequencyVariance");
+			value = collection.getValue("position2OscillationFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationPosition2FrequencyStart");
+			value = collection.getValue("position2OscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationPosition2Frequency");
+			value = collection.getValue("position2OscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("position2OscillationFrequency");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationPosition2UnifiedFrequencyVariance");
+			value = collection.getValue("position2OscillationUnifiedFrequencyVariance");
 			value.isReadOnly = false;
 			
 			if (value.value == true)
 			{
-				value = collection.getValue("oscillationPosition2FrequencyVariance");
+				value = collection.getValue("position2OscillationFrequencyVariance");
 				value.isReadOnly = true;
 			}
 			else
 			{
-				value = collection.getValue("oscillationPosition2FrequencyVariance");
+				value = collection.getValue("position2OscillationFrequencyVariance");
 				value.isReadOnly = false;
 			}
 			
-			value = collection.getValue("oscillationPosition2FrequencyStart");
+			value = collection.getValue("position2OscillationFrequencyStart");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationRotationFrequencyModeChange(frequencyModeValue:ExposedValue):Void
+	static private function rotationOscillationFrequencyModeChange(frequencyModeValue:ExposedValue):Void
 	{
 		var collection:ExposedCollection = frequencyModeValue.collection;
 		var value:ExposedValue;
 		
 		if (frequencyModeValue.value == OscillationFrequencyMode.GLOBAL)
 		{
-			value = collection.getValue("oscillationRotationFrequency");
+			value = collection.getValue("rotationOscillationGroupStartStep");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationRotationUnifiedFrequencyVariance");
+			value = collection.getValue("rotationOscillationFrequency");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationRotationFrequencyVariance");
+			value = collection.getValue("rotationOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationRotationFrequencyStart");
+			value = collection.getValue("rotationOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("rotationOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else if (frequencyModeValue.value == OscillationFrequencyMode.GROUP)
 		{
-			value = collection.getValue("oscillationRotationFrequency");
+			value = collection.getValue("rotationOscillationGroupStartStep");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationRotationUnifiedFrequencyVariance");
+			value = collection.getValue("rotationOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("rotationOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationRotationFrequencyVariance");
+			value = collection.getValue("rotationOscillationFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationRotationFrequencyStart");
+			value = collection.getValue("rotationOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationRotationFrequency");
+			value = collection.getValue("rotationOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("rotationOscillationFrequency");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationRotationUnifiedFrequencyVariance");
+			value = collection.getValue("rotationOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = false;
 			
 			if (value.value == true)
 			{
-				value = collection.getValue("oscillationRotationFrequencyVariance");
+				value = collection.getValue("rotationOscillationFrequencyVariance");
 				value.isReadOnly = true;
 			}
 			else
 			{
-				value = collection.getValue("oscillationRotationFrequencyVariance");
+				value = collection.getValue("rotationOscillationFrequencyVariance");
 				value.isReadOnly = false;
 			}
 			
-			value = collection.getValue("oscillationRotationFrequencyStart");
+			value = collection.getValue("rotationOscillationFrequencyStart");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationScaleXFrequencyModeChange(frequencyModeValue:ExposedValue):Void
+	static private function scaleXOscillationFrequencyModeChange(frequencyModeValue:ExposedValue):Void
 	{
 		var collection:ExposedCollection = frequencyModeValue.collection;
 		var value:ExposedValue;
 		
 		if (frequencyModeValue.value == OscillationFrequencyMode.GLOBAL)
 		{
-			value = collection.getValue("oscillationScaleXFrequency");
+			value = collection.getValue("scaleXOscillationGroupStartStep");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleXUnifiedFrequencyVariance");
+			value = collection.getValue("scaleXOscillationFrequency");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleXFrequencyVariance");
+			value = collection.getValue("scaleXOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleXFrequencyStart");
+			value = collection.getValue("scaleXOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("scaleXOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else if (frequencyModeValue.value == OscillationFrequencyMode.GROUP)
 		{
-			value = collection.getValue("oscillationScaleXFrequency");
+			value = collection.getValue("scaleXOscillationGroupStartStep");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationScaleXUnifiedFrequencyVariance");
+			value = collection.getValue("scaleXOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("scaleXOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleXFrequencyVariance");
+			value = collection.getValue("scaleXOscillationFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleXFrequencyStart");
+			value = collection.getValue("scaleXOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationScaleXFrequency");
+			value = collection.getValue("scaleXOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("scaleXOscillationFrequency");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationScaleXUnifiedFrequencyVariance");
+			value = collection.getValue("scaleXOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = false;
 			
 			if (value.value == true)
 			{
-				value = collection.getValue("oscillationScaleXFrequencyVariance");
+				value = collection.getValue("scaleXOscillationFrequencyVariance");
 				value.isReadOnly = true;
 			}
 			else
 			{
-				value = collection.getValue("oscillationScaleXFrequencyVariance");
+				value = collection.getValue("scaleXOscillationFrequencyVariance");
 				value.isReadOnly = false;
 			}
 			
-			value = collection.getValue("oscillationScaleXFrequencyStart");
+			value = collection.getValue("scaleXOscillationFrequencyStart");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationScaleYFrequencyModeChange(frequencyModeValue:ExposedValue):Void
+	static private function scaleYOscillationFrequencyModeChange(frequencyModeValue:ExposedValue):Void
 	{
 		var collection:ExposedCollection = frequencyModeValue.collection;
 		var value:ExposedValue;
 		
 		if (frequencyModeValue.value == OscillationFrequencyMode.GLOBAL)
 		{
-			value = collection.getValue("oscillationScaleYFrequency");
+			value = collection.getValue("scaleYOscillationGroupStartStep");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleYUnifiedFrequencyVariance");
+			value = collection.getValue("scaleYOscillationFrequency");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleYFrequencyVariance");
+			value = collection.getValue("scaleYOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleYFrequencyStart");
+			value = collection.getValue("scaleYOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("scaleYOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else if (frequencyModeValue.value == OscillationFrequencyMode.GROUP)
 		{
-			value = collection.getValue("oscillationScaleYFrequency");
+			value = collection.getValue("scaleYOscillationGroupStartStep");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationScaleYUnifiedFrequencyVariance");
+			value = collection.getValue("scaleYOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("scaleYOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleYFrequencyVariance");
+			value = collection.getValue("scaleYOscillationFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationScaleYFrequencyStart");
+			value = collection.getValue("scaleYOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationScaleYFrequency");
+			value = collection.getValue("scaleYOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("scaleYOscillationFrequency");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationScaleYUnifiedFrequencyVariance");
+			value = collection.getValue("scaleYOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = false;
 			
 			if (value.value == true)
 			{
-				value = collection.getValue("oscillationScaleYFrequencyVariance");
+				value = collection.getValue("scaleYOscillationFrequencyVariance");
 				value.isReadOnly = true;
 			}
 			else
 			{
-				value = collection.getValue("oscillationScaleYFrequencyVariance");
+				value = collection.getValue("scaleYOscillationFrequencyVariance");
 				value.isReadOnly = false;
 			}
 			
-			value = collection.getValue("oscillationScaleYFrequencyStart");
+			value = collection.getValue("scaleYOscillationFrequencyStart");
+			value.isReadOnly = false;
+		}
+	}
+	
+	static private function skewXOscillationFrequencyModeChange(frequencyModeValue:ExposedValue):Void
+	{
+		var collection:ExposedCollection = frequencyModeValue.collection;
+		var value:ExposedValue;
+		
+		if (frequencyModeValue.value == OscillationFrequencyMode.GLOBAL)
+		{
+			value = collection.getValue("skewXOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewXOscillationFrequency");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewXOscillationUnifiedFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewXOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewXOscillationFrequencyStart");
+			value.isReadOnly = true;
+		}
+		else if (frequencyModeValue.value == OscillationFrequencyMode.GROUP)
+		{
+			value = collection.getValue("skewXOscillationGroupStartStep");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("skewXOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("skewXOscillationUnifiedFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewXOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewXOscillationFrequencyStart");
+			value.isReadOnly = true;
+		}
+		else
+		{
+			value = collection.getValue("skewXOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewXOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("skewXOscillationUnifiedFrequencyVariance");
+			value.isReadOnly = false;
+			
+			if (value.value == true)
+			{
+				value = collection.getValue("skewXOscillationFrequencyVariance");
+				value.isReadOnly = true;
+			}
+			else
+			{
+				value = collection.getValue("skewXOscillationFrequencyVariance");
+				value.isReadOnly = false;
+			}
+			
+			value = collection.getValue("skewXOscillationFrequencyStart");
+			value.isReadOnly = false;
+		}
+	}
+	
+	static private function skewYOscillationFrequencyModeChange(frequencyModeValue:ExposedValue):Void
+	{
+		var collection:ExposedCollection = frequencyModeValue.collection;
+		var value:ExposedValue;
+		
+		if (frequencyModeValue.value == OscillationFrequencyMode.GLOBAL)
+		{
+			value = collection.getValue("skewYOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewYOscillationFrequency");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewYOscillationUnifiedFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewYOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewYOscillationFrequencyStart");
+			value.isReadOnly = true;
+		}
+		else if (frequencyModeValue.value == OscillationFrequencyMode.GROUP)
+		{
+			value = collection.getValue("skewYOscillationGroupStartStep");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("skewYOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("skewYOscillationUnifiedFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewYOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewYOscillationFrequencyStart");
+			value.isReadOnly = true;
+		}
+		else
+		{
+			value = collection.getValue("skewYOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("skewYOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("skewYOscillationUnifiedFrequencyVariance");
+			value.isReadOnly = false;
+			
+			if (value.value == true)
+			{
+				value = collection.getValue("skewYOscillationFrequencyVariance");
+				value.isReadOnly = true;
+			}
+			else
+			{
+				value = collection.getValue("skewYOscillationFrequencyVariance");
+				value.isReadOnly = false;
+			}
+			
+			value = collection.getValue("skewYOscillationFrequencyStart");
 			value.isReadOnly = false;
 		}
 	}
@@ -1539,57 +2214,132 @@ class MassiveParticleData
 		
 		if (frequencyModeValue.value == OscillationFrequencyMode.GLOBAL)
 		{
-			value = collection.getValue("oscillationColorFrequency");
+			value = collection.getValue("colorOscillationGroupStartStep");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationColorUnifiedFrequencyVariance");
+			value = collection.getValue("colorOscillationFrequency");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationColorFrequencyVariance");
+			value = collection.getValue("colorOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationColorFrequencyStart");
+			value = collection.getValue("colorOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("colorOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else if (frequencyModeValue.value == OscillationFrequencyMode.GROUP)
 		{
-			value = collection.getValue("oscillationColorFrequency");
+			value = collection.getValue("colorOscillationGroupStartStep");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationColorUnifiedFrequencyVariance");
+			value = collection.getValue("colorOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("colorOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationColorFrequencyVariance");
+			value = collection.getValue("colorOscillationFrequencyVariance");
 			value.isReadOnly = true;
 			
-			value = collection.getValue("oscillationColorFrequencyStart");
+			value = collection.getValue("colorOscillationFrequencyStart");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationColorFrequency");
+			value = collection.getValue("colorOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("colorOscillationFrequency");
 			value.isReadOnly = false;
 			
-			value = collection.getValue("oscillationColorUnifiedFrequencyVariance");
+			value = collection.getValue("colorOscillationUnifiedFrequencyVariance");
 			value.isReadOnly = false;
 			
 			if (value.value == true)
 			{
-				value = collection.getValue("oscillationColorFrequencyVariance");
+				value = collection.getValue("colorOscillationFrequencyVariance");
 				value.isReadOnly = true;
 			}
 			else
 			{
-				value = collection.getValue("oscillationColorFrequencyVariance");
+				value = collection.getValue("colorOscillationFrequencyVariance");
 				value.isReadOnly = false;
 			}
 			
-			value = collection.getValue("oscillationColorFrequencyStart");
+			value = collection.getValue("colorOscillationFrequencyStart");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationPositionUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
+	static private function oscillationColorOffsetFrequencyModeChange(frequencyModeValue:ExposedValue):Void
+	{
+		var collection:ExposedCollection = frequencyModeValue.collection;
+		var value:ExposedValue;
+		
+		if (frequencyModeValue.value == OscillationFrequencyMode.GLOBAL)
+		{
+			value = collection.getValue("colorOffsetOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("colorOffsetOscillationFrequency");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("colorOffsetOscillationUnifiedFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("colorOffsetOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("colorOffsetOscillationFrequencyStart");
+			value.isReadOnly = true;
+		}
+		else if (frequencyModeValue.value == OscillationFrequencyMode.GROUP)
+		{
+			value = collection.getValue("colorOffsetOscillationGroupStartStep");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("colorOffsetOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("colorOffsetOscillationUnifiedFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("colorOffsetOscillationFrequencyVariance");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("colorOffsetOscillationFrequencyStart");
+			value.isReadOnly = true;
+		}
+		else
+		{
+			value = collection.getValue("colorOffsetOscillationGroupStartStep");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("colorOffsetOscillationFrequency");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("colorOffsetOscillationUnifiedFrequencyVariance");
+			value.isReadOnly = false;
+			
+			if (value.value == true)
+			{
+				value = collection.getValue("colorOffsetOscillationFrequencyVariance");
+				value.isReadOnly = true;
+			}
+			else
+			{
+				value = collection.getValue("colorOffsetOscillationFrequencyVariance");
+				value.isReadOnly = false;
+			}
+			
+			value = collection.getValue("colorOffsetOscillationFrequencyStart");
+			value.isReadOnly = false;
+		}
+	}
+	
+	static private function positionOscillationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
 	{
 		if (unifiedFrequencyVarianceValue.isReadOnly) return;
 		
@@ -1598,17 +2348,17 @@ class MassiveParticleData
 		
 		if (unifiedFrequencyVarianceValue.value == true)
 		{
-			value = collection.getValue("oscillationPositionFrequencyVariance");
+			value = collection.getValue("positionOscillationFrequencyVariance");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationPositionFrequencyVariance");
+			value = collection.getValue("positionOscillationFrequencyVariance");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationPosition2UnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
+	static private function position2OscillationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
 	{
 		if (unifiedFrequencyVarianceValue.isReadOnly) return;
 		
@@ -1617,17 +2367,17 @@ class MassiveParticleData
 		
 		if (unifiedFrequencyVarianceValue.value == true)
 		{
-			value = collection.getValue("oscillationPosition2FrequencyVariance");
+			value = collection.getValue("position2OscillationFrequencyVariance");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationPosition2FrequencyVariance");
+			value = collection.getValue("position2OscillationFrequencyVariance");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationRotationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
+	static private function rotationOscillationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
 	{
 		if (unifiedFrequencyVarianceValue.isReadOnly) return;
 		
@@ -1636,17 +2386,17 @@ class MassiveParticleData
 		
 		if (unifiedFrequencyVarianceValue.value == true)
 		{
-			value = collection.getValue("oscillationRotationFrequencyVariance");
+			value = collection.getValue("rotationOscillationFrequencyVariance");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationRotationFrequencyVariance");
+			value = collection.getValue("rotationOscillationFrequencyVariance");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationScaleXUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
+	static private function scaleXOscillationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
 	{
 		if (unifiedFrequencyVarianceValue.isReadOnly) return;
 		
@@ -1655,17 +2405,17 @@ class MassiveParticleData
 		
 		if (unifiedFrequencyVarianceValue.value == true)
 		{
-			value = collection.getValue("oscillationScaleXFrequencyVariance");
+			value = collection.getValue("scaleXOscillationFrequencyVariance");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationScaleXFrequencyVariance");
+			value = collection.getValue("scaleXOscillationFrequencyVariance");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationScaleYUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
+	static private function scaleYOscillationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
 	{
 		if (unifiedFrequencyVarianceValue.isReadOnly) return;
 		
@@ -1674,17 +2424,17 @@ class MassiveParticleData
 		
 		if (unifiedFrequencyVarianceValue.value == true)
 		{
-			value = collection.getValue("oscillationScaleYFrequencyVariance");
+			value = collection.getValue("scaleYOscillationFrequencyVariance");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationScaleYFrequencyVariance");
+			value = collection.getValue("scaleYOscillationFrequencyVariance");
 			value.isReadOnly = false;
 		}
 	}
 	
-	static private function oscillationColorUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
+	static private function skewXOscillationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
 	{
 		if (unifiedFrequencyVarianceValue.isReadOnly) return;
 		
@@ -1693,12 +2443,69 @@ class MassiveParticleData
 		
 		if (unifiedFrequencyVarianceValue.value == true)
 		{
-			value = collection.getValue("oscillationColorFrequencyVariance");
+			value = collection.getValue("skewXOscillationFrequencyVariance");
 			value.isReadOnly = true;
 		}
 		else
 		{
-			value = collection.getValue("oscillationColorFrequencyVariance");
+			value = collection.getValue("skewXOscillationFrequencyVariance");
+			value.isReadOnly = false;
+		}
+	}
+	
+	static private function skewYOscillationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
+	{
+		if (unifiedFrequencyVarianceValue.isReadOnly) return;
+		
+		var collection:ExposedCollection = unifiedFrequencyVarianceValue.collection;
+		var value:ExposedValue;
+		
+		if (unifiedFrequencyVarianceValue.value == true)
+		{
+			value = collection.getValue("skewYOscillationFrequencyVariance");
+			value.isReadOnly = true;
+		}
+		else
+		{
+			value = collection.getValue("skewYOscillationFrequencyVariance");
+			value.isReadOnly = false;
+		}
+	}
+	
+	static private function colorOscillationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
+	{
+		if (unifiedFrequencyVarianceValue.isReadOnly) return;
+		
+		var collection:ExposedCollection = unifiedFrequencyVarianceValue.collection;
+		var value:ExposedValue;
+		
+		if (unifiedFrequencyVarianceValue.value == true)
+		{
+			value = collection.getValue("colorOscillationFrequencyVariance");
+			value.isReadOnly = true;
+		}
+		else
+		{
+			value = collection.getValue("colorOscillationFrequencyVariance");
+			value.isReadOnly = false;
+		}
+	}
+	
+	static private function colorOffsetOscillationUnifiedFrequencyVarianceChange(unifiedFrequencyVarianceValue:ExposedValue):Void
+	{
+		if (unifiedFrequencyVarianceValue.isReadOnly) return;
+		
+		var collection:ExposedCollection = unifiedFrequencyVarianceValue.collection;
+		var value:ExposedValue;
+		
+		if (unifiedFrequencyVarianceValue.value == true)
+		{
+			value = collection.getValue("colorOffsetOscillationFrequencyVariance");
+			value.isReadOnly = true;
+		}
+		else
+		{
+			value = collection.getValue("colorOffsetOscillationFrequencyVariance");
 			value.isReadOnly = false;
 		}
 	}
@@ -2315,4 +3122,4 @@ class MassiveParticleData
 	}
 	
 }
-//#end
+//#end
