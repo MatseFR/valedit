@@ -226,6 +226,12 @@ class MassiveTextData
 			collection.addValue(floatDrag, groupName);
 		}
 		
+		if (!collection.hasValue("letterSpacing"))
+		{
+			floatDrag = new ExposedFloatDrag("letterSpacing");
+			collection.addValue(floatDrag, groupName);
+		}
+		
 		return collection;
 	}
 	
@@ -356,7 +362,7 @@ class MassiveTextData
 		
 		if (!collection.hasValue("hyphenationMinRatio"))
 		{
-			floatDrag = new ExposedFloatDrag("hyphenationMinRatio", null, 0.0, 1.0, 0.05, 0.05);
+			floatDrag = new ExposedFloatDrag("hyphenationMinRatio", null, 0.0, 1.0, 0.01, 0.01);
 			collection.addValue(floatDrag, groupName);
 		}
 		
@@ -374,7 +380,7 @@ class MassiveTextData
 		
 		if (!collection.hasValue("letterSpreadingMinRatio"))
 		{
-			floatDrag = new ExposedFloatDrag("letterSpreadingMinRatio", null, 0.0, 1.0, 0.05, 0.05);
+			floatDrag = new ExposedFloatDrag("letterSpreadingMinRatio", null, 0.0, 1.0, 0.01, 0.01);
 			collection.addValue(floatDrag, groupName);
 		}
 		
