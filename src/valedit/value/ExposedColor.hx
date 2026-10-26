@@ -26,6 +26,7 @@ class ExposedColor extends ExposedValueTweenable
 	#if valeditor
 	public var liveDragging:Bool = true;
 	public var liveTyping:Bool = true;
+	public var showRGBControls:Bool = true;
 	#end
 	
 	/**
@@ -45,6 +46,7 @@ class ExposedColor extends ExposedValueTweenable
 		#if valeditor
 		this.liveDragging = true;
 		this.liveTyping = true;
+		this.showRGBControls = true;
 		#end
 		this.defaultValue = 0xffffff;
 	}
@@ -75,6 +77,7 @@ class ExposedColor extends ExposedValueTweenable
 		#if valeditor
 		color.liveDragging = this.liveDragging;
 		color.liveTyping = this.liveTyping;
+		color.showRGBControls = this.showRGBControls;
 		#end
 		super.clone_internal(color, copyValue);
 		return color;
