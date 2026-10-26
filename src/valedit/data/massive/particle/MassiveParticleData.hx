@@ -2,6 +2,7 @@ package valedit.data.massive.particle;
 //#if massive-starling
 import massive.data.MassiveConstants;
 import massive.particle.AngleRelativeTo;
+import massive.particle.EmitterMode;
 import massive.particle.EmitterType;
 import massive.particle.OscillationFrequencyMode;
 import massive.particle.OscillationFrequencyStart;
@@ -72,6 +73,18 @@ class MassiveParticleData
 			collection.addValue(func, groupName);
 		}
 		
+		if (!collection.hasValue("pause"))
+		{
+			func = new ExposedFunction("pause");
+			collection.addValue(func, groupName);
+		}
+		
+		if (!collection.hasValue("resume"))
+		{
+			func = new ExposedFunction("resume");
+			collection.addValue(func, groupName);
+		}
+		
 		// Emitter
 		if (!collection.hasGroup("Emitter"))
 		{
@@ -87,9 +100,19 @@ class MassiveParticleData
 		if (!group.hasValue("emitterType"))
 		{
 			select = new ExposedSelect("emitterType");
-			select.add("gravity", EmitterType.GRAVITY);
-			select.add("radial", EmitterType.RADIAL);
+			select.choiceListFunction = EmitterType.getNames;
+			select.valueListFunction = EmitterType.getValues;
 			group.addValue(select);
+		}
+		
+		if (!group.hasValue("emitterMode"))
+		{
+			select = new ExposedSelect("emitterMode");
+			select.choiceListFunction = EmitterMode.getNames;
+			select.valueListFunction = EmitterMode.getValues;
+			group.addValue(select);
+			
+			collection.registerForValueChangeExternal("emitterMode", emitterModeChange);
 		}
 		
 		if (!group.hasValue("maxNumParticles"))
@@ -102,6 +125,30 @@ class MassiveParticleData
 		{
 			intDrag = new ExposedIntDrag("particleAmount", null, 0);
 			group.addValue(intDrag);
+		}
+		
+		if (!group.hasValue("numBursts"))
+		{
+			intDrag = new ExposedIntDrag("numBursts", null, 0);
+			group.addValue(intDrag);
+		}
+		
+		if (!group.hasValue("burstDuration"))
+		{
+			floatDrag = new ExposedFloatDrag("burstDuration", null, 0.0, null, 0.01);
+			group.addValue(floatDrag);
+		}
+		
+		if (!group.hasValue("burstInterval"))
+		{
+			floatDrag = new ExposedFloatDrag("burstInterval", null, 0.0, null, 0.01);
+			group.addValue(floatDrag);
+		}
+		
+		if (!group.hasValue("burstIntervalVariance"))
+		{
+			floatDrag = new ExposedFloatDrag("burstIntervalVariance", null, 0.0, null, 0.01);
+			group.addValue(floatDrag);
 		}
 		
 		if (!group.hasValue("autoSetEmissionRate"))
@@ -281,6 +328,18 @@ class MassiveParticleData
 		{
 			floatDrag = new ExposedFloatDrag("fadeOutTime", null, 0.0, null, 0.005, 0.005);
 			group.addValue(floatDrag);
+		}
+		
+		if (!group.hasValue("randomInvertX"))
+		{
+			bool = new ExposedBool("randomInvertX");
+			group.addValue(bool);
+		}
+		
+		if (!group.hasValue("randomInvertY"))
+		{
+			bool = new ExposedBool("randomInvertY");
+			group.addValue(bool);
 		}
 		
 		if (!group.hasGroup("Size"))
@@ -474,23 +533,17 @@ class MassiveParticleData
 			group = collection.getGroup("Animation");
 		}
 		
-		//if (!group.hasValue("animate"))
-		//{
-			//bool = new ExposedBool("animate");
-			//group.addValue(bool);
-		//}
+		if (!group.hasValue("animate"))
+		{
+			bool = new ExposedBool("animate");
+			group.addValue(bool);
+		}
 		
-		//if (!group.hasValue("textureAnimation"))
-		//{
-			//bool = new ExposedBool("textureAnimation");
-			//group.addValue(bool);
-		//}
-		
-		//if (!group.hasValue("frameRate"))
-		//{
-			//floatDrag = new ExposedFloatDrag("frameRate", null, 1);
-			//group.addValue(floatDrag);
-		//}
+		if (!group.hasValue("basicAnimation"))
+		{
+			bool = new ExposedBool("basicAnimation");
+			group.addValue(bool);
+		}
 		
 		if (!group.hasValue("frameDelta"))
 		{
@@ -502,24 +555,6 @@ class MassiveParticleData
 		{
 			floatDrag = new ExposedFloatDrag("frameDeltaVariance", null, 0.0, null, 0.01);
 			group.addValue(floatDrag);
-		}
-		
-		if (!group.hasValue("loopAnimation"))
-		{
-			bool = new ExposedBool("loopAnimation");
-			group.addValue(bool);
-		}
-		
-		if (!group.hasValue("animationLoops"))
-		{
-			intDrag = new ExposedIntDrag("animationLoops");
-			group.addValue(intDrag);
-		}
-		
-		if (!group.hasValue("randomStartFrame"))
-		{
-			bool = new ExposedBool("randomStartFrame");
-			group.addValue(bool);
 		}
 		
 		// gravity config
@@ -695,7 +730,7 @@ class MassiveParticleData
 		
 		if (!group.hasValue("ColorNote"))
 		{
-			note = new ExposedNote("ColorNote", "note that this won't have any effect if Display's colorMode is set to 'none' or 'display'");
+			note = new ExposedNote("ColorNote", "note that this won't have any effect if the MassiveDisplay's colorMode is set to 'none' or 'display'");
 			group.addValue(note);
 		}
 		
@@ -978,6 +1013,12 @@ class MassiveParticleData
 			subGroup.addValue(floatDrag);
 		}
 		
+		if (!subGroup.hasValue("positionOscillationOneWay"))
+		{
+			bool = new ExposedBool("positionOscillationOneWay", "one way");
+			subGroup.addValue(bool);
+		}
+		
 		if (!subGroup.hasValue("positionOscillationFrequency"))
 		{
 			floatDrag = new ExposedFloatDrag("positionOscillationFrequency", "frequency", null, null, 0.1);
@@ -1070,6 +1111,12 @@ class MassiveParticleData
 			subGroup.addValue(floatDrag);
 		}
 		
+		if (!subGroup.hasValue("position2OscillationOneWay"))
+		{
+			bool = new ExposedBool("positionOscillationOneWay", "one way");
+			subGroup.addValue(bool);
+		}
+		
 		if (!subGroup.hasValue("position2OscillationFrequency"))
 		{
 			floatDrag = new ExposedFloatDrag("position2OscillationFrequency", "frequency", null, null, 0.1);
@@ -1140,6 +1187,12 @@ class MassiveParticleData
 		{
 			floatDrag = new ExposedFloatDrag("rotationOscillationAngleVariance", "angle variance", null, null, 0.005, 0.005);
 			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("rotationOscillationOneWay"))
+		{
+			bool = new ExposedBool("rotationOscillationOneWay", "one way");
+			subGroup.addValue(bool);
 		}
 		
 		if (!subGroup.hasValue("rotationOscillationFrequency"))
@@ -1214,6 +1267,12 @@ class MassiveParticleData
 			subGroup.addValue(floatDrag);
 		}
 		
+		if (!subGroup.hasValue("scaleXOscillationOneWay"))
+		{
+			bool = new ExposedBool("scaleXOscillationOneWay", "one way");
+			subGroup.addValue(bool);
+		}
+		
 		if (!subGroup.hasValue("scaleXOscillationFrequency"))
 		{
 			floatDrag = new ExposedFloatDrag("scaleXOscillationFrequency", "x frequency", null, null, 0.1);
@@ -1284,6 +1343,12 @@ class MassiveParticleData
 		{
 			floatDrag = new ExposedFloatDrag("scaleYOscillationVariance", "y variance", null, null, 0.01);
 			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("scaleYOscillationOneWay"))
+		{
+			bool = new ExposedBool("scaleYOscillationOneWay", "one way");
+			subGroup.addValue(bool);
 		}
 		
 		if (!subGroup.hasValue("scaleYOscillationFrequency"))
@@ -1358,6 +1423,12 @@ class MassiveParticleData
 			subGroup.addValue(floatDrag);
 		}
 		
+		if (!subGroup.hasValue("skewXOscillationOneWay"))
+		{
+			bool = new ExposedBool("skewXOscillationOneWay", "one way");
+			subGroup.addValue(bool);
+		}
+		
 		if (!subGroup.hasValue("skewXOscillationFrequency"))
 		{
 			floatDrag = new ExposedFloatDrag("skewXOscillationFrequency", "x frequency", null, null, 0.1);
@@ -1430,6 +1501,12 @@ class MassiveParticleData
 			subGroup.addValue(floatDrag);
 		}
 		
+		if (!subGroup.hasValue("skewYOscillationOneWay"))
+		{
+			bool = new ExposedBool("skewYOscillationOneWay", "one way");
+			subGroup.addValue(bool);
+		}
+		
 		if (!subGroup.hasValue("skewYOscillationFrequency"))
 		{
 			floatDrag = new ExposedFloatDrag("skewYOscillationFrequency", "y frequency", null, null, 0.1);
@@ -1494,6 +1571,12 @@ class MassiveParticleData
 		{
 			floatDrag = new ExposedFloatDrag("colorOscillationGroupStartStep", "group start step", null, null, 0.01);
 			subGroup.addValue(floatDrag);
+		}
+		
+		if (!subGroup.hasValue("colorOscillationOneWay"))
+		{
+			bool = new ExposedBool("colorOscillationOneWay", "one way");
+			subGroup.addValue(bool);
 		}
 		
 		if (!subGroup.hasValue("colorOscillation"))
@@ -1574,6 +1657,12 @@ class MassiveParticleData
 			subGroup.addValue(floatDrag);
 		}
 		
+		if (!subGroup.hasValue("colorOffsetOscillationOneWay"))
+		{
+			bool = new ExposedBool("colorOffsetOscillationOneWay", "one way");
+			subGroup.addValue(bool);
+		}
+		
 		if (!subGroup.hasValue("colorOffsetOscillation"))
 		{
 			obj = new ExposedObject("colorOffsetOscillation", "color");
@@ -1620,7 +1709,13 @@ class MassiveParticleData
 			subGroup.addValue(select);
 		}
 		
-		MassiveDisplayData.exposeMassiveImageLayer(collection, groupName);
+		MassiveDisplayData.exposeImgContainer(collection, groupName);
+		
+		var value:ExposedValue = collection.getValue("autoHandleNumDatas");
+		if (value != null) value.isReadOnly = true;
+		
+		value = collection.getValue("numDatas");
+		if (value != null) value.isReadOnly = true;
 		
 		return collection;
 	}
@@ -1655,6 +1750,40 @@ class MassiveParticleData
 		else
 		{
 			value.isReadOnly = false;
+		}
+	}
+	
+	static private function emitterModeChange(modeValue:ExposedValue):Void
+	{
+		var collection:ExposedCollection = modeValue.collection;
+		var value:ExposedValue;
+		if (modeValue.value == EmitterMode.BURST)
+		{
+			value = collection.getValue("numBursts");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("burstDuration");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("burstInterval");
+			value.isReadOnly = false;
+			
+			value = collection.getValue("burstIntervalVariance");
+			value.isReadOnly = false;
+		}
+		else
+		{
+			value = collection.getValue("numBursts");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("burstDuration");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("burstInterval");
+			value.isReadOnly = true;
+			
+			value = collection.getValue("burstIntervalVariance");
+			value.isReadOnly = true;
 		}
 	}
 	
