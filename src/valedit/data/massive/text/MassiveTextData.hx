@@ -13,6 +13,7 @@ import valedit.value.ExposedObject;
 import valedit.value.ExposedSelect;
 import valedit.value.ExposedText;
 import valedit.value.base.ExposedValue;
+import valeditor.utils.ArraySort;
 
 /**
  * ...
@@ -128,11 +129,9 @@ class MassiveTextData
 		if (!collection.hasValue("font"))
 		{
 			select = new ExposedSelect("font");
-			select.choiceListFunction = MassiveText.getFontNames;
-			select.valueListFunction = MassiveText.getFontNames;
+			select.choiceListFunction = getFontNames;
+			select.valueListFunction = getFontNames;
 			collection.addValue(select, groupName);
-			
-			//collection.registerForValueChangeExternal("font", fontChange);
 		}
 		
 		if (!collection.hasValue("style"))
@@ -220,19 +219,32 @@ class MassiveTextData
 			collection.addValue(bool, groupName);
 		}
 		
-		if (!collection.hasValue("leading"))
-		{
-			floatDrag = new ExposedFloatDrag("leading");
-			collection.addValue(floatDrag, groupName);
-		}
-		
 		if (!collection.hasValue("letterSpacing"))
 		{
 			floatDrag = new ExposedFloatDrag("letterSpacing");
 			collection.addValue(floatDrag, groupName);
 		}
 		
+		if (!collection.hasValue("restrictImgHeightToFontSize"))
+		{
+			bool = new ExposedBool("restrictImgHeightToFontSize");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("restrictImgHeightOverflow"))
+		{
+			floatDrag = new ExposedFloatDrag("restrictImgHeightOverflow");
+			collection.addValue(floatDrag, groupName);
+		}
+		
 		return collection;
+	}
+	
+	private static function getFontNames():Array<String>
+	{
+		var fontNames:Array<String> = MassiveText.getFontNames();
+		fontNames.sort(ArraySort.alphabetical);
+		return fontNames;
 	}
 	
 	private static function getFontStyles(collection:ExposedCollection):Array<String>
@@ -245,7 +257,9 @@ class MassiveTextData
 		else
 		{
 			var font:MassiveFont = MassiveText.getFont(fontValue.value);
-			return font.getFontStyleNames();
+			var styleNames:Array<String> = font.getFontStyleNames();
+			styleNames.sort(ArraySort.alphabetical);
+			return styleNames;
 		}
 	}
 	
@@ -294,21 +308,63 @@ class MassiveTextData
 			collection.addValue(bool, groupName);
 		}
 		
+		if (!collection.hasValue("leading"))
+		{
+			floatDrag = new ExposedFloatDrag("leading");
+			collection.addValue(floatDrag, groupName);
+		}
+		
 		if (!collection.hasValue("uniformLineHeight"))
 		{
 			bool = new ExposedBool("uniformLineHeight");
 			collection.addValue(bool, groupName);
 		}
 		
-		if (!collection.hasValue("restrictImageHeightToFontSize"))
+		if (!collection.hasValue("intPositions"))
 		{
-			bool = new ExposedBool("restrictImageHeightToFontSize");
+			bool = new ExposedBool("intPositions");
 			collection.addValue(bool, groupName);
 		}
 		
-		if (!collection.hasValue("restrictImageHeightOverflow"))
+		if (!collection.hasValue("hyphenation"))
 		{
-			floatDrag = new ExposedFloatDrag("restrictImageHeightOverflow");
+			bool = new ExposedBool("hyphenation");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("hyphenationMinLength"))
+		{
+			intDrag = new ExposedIntDrag("hyphenationMinLength", null, 0);
+			collection.addValue(intDrag, groupName);
+		}
+		
+		if (!collection.hasValue("hyphenationSpaceRatio"))
+		{
+			floatDrag = new ExposedFloatDrag("hyphenationSpaceRatio", null, 1.0, null, 0.1, 0.1);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("charSpreading"))
+		{
+			bool = new ExposedBool("charSpreading");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("charSpreadingAllowIrregular"))
+		{
+			bool = new ExposedBool("charSpreadingAllowIrregular");
+			collection.addValue(bool, groupName);
+		}
+		
+		if (!collection.hasValue("charSpreadingMax"))
+		{
+			floatDrag = new ExposedFloatDrag("charSpreadingMax", null, 0.0);
+			collection.addValue(floatDrag, groupName);
+		}
+		
+		if (!collection.hasValue("charSpreadingSpaceRatio"))
+		{
+			floatDrag = new ExposedFloatDrag("charSpreadingSpaceRatio", null, 1.0, null, 0.1, 0.1);
 			collection.addValue(floatDrag, groupName);
 		}
 		
@@ -339,48 +395,6 @@ class MassiveTextData
 		if (!collection.hasValue("paddingBottom"))
 		{
 			floatDrag = new ExposedFloatDrag("paddingBottom");
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("intPositions"))
-		{
-			bool = new ExposedBool("intPositions");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("hyphenation"))
-		{
-			bool = new ExposedBool("hyphenation");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("hyphenationMinLength"))
-		{
-			intDrag = new ExposedIntDrag("hyphenationMinLength", null, 0);
-			collection.addValue(intDrag, groupName);
-		}
-		
-		if (!collection.hasValue("hyphenationMinRatio"))
-		{
-			floatDrag = new ExposedFloatDrag("hyphenationMinRatio", null, 0.0, 1.0, 0.01, 0.01);
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("letterSpreading"))
-		{
-			bool = new ExposedBool("letterSpreading");
-			collection.addValue(bool, groupName);
-		}
-		
-		if (!collection.hasValue("letterSpreadingMax"))
-		{
-			floatDrag = new ExposedFloatDrag("letterSpreadingMax", null, 0.0);
-			collection.addValue(floatDrag, groupName);
-		}
-		
-		if (!collection.hasValue("letterSpreadingMinRatio"))
-		{
-			floatDrag = new ExposedFloatDrag("letterSpreadingMinRatio", null, 0.0, 1.0, 0.01, 0.01);
 			collection.addValue(floatDrag, groupName);
 		}
 		
