@@ -97,7 +97,7 @@ class MassiveTextData
 		
 		if (!collection.hasValue("textSpeed"))
 		{
-			floatDrag = new ExposedFloatDrag("textSpeed", null, 0.0, null, 0.1);
+			floatDrag = new ExposedFloatDrag("textSpeed", null, 0.0, 10.0, 0.1);
 			collection.addValueAfter(floatDrag, "autoPauseAnimationIn", groupName);
 		}
 		
