@@ -83,10 +83,28 @@ class MassiveTextData
 			collection.addValueAfter(floatDrag, "width", groupName);
 		}
 		
+		if (!collection.hasValue("animationEnabled"))
+		{
+			bool = new ExposedBool("animationEnabled");
+			collection.addValueAfter(bool, "height", groupName);
+		}
+		
+		if (!collection.hasValue("autoPauseAnimationIn"))
+		{
+			bool = new ExposedBool("autoPauseAnimationIn");
+			collection.addValueAfter(bool, "animationEnabled", groupName);
+		}
+		
+		if (!collection.hasValue("textSpeed"))
+		{
+			floatDrag = new ExposedFloatDrag("textSpeed", null, 0.0, null, 0.1);
+			collection.addValueAfter(floatDrag, "autoPauseAnimationIn", groupName);
+		}
+		
 		if (!collection.hasValue("format"))
 		{
 			obj = new ExposedObject("format");
-			collection.addValueAfter(obj, "height", groupName);
+			collection.addValueAfter(obj, "textSpeed", groupName);
 		}
 		
 		if (!collection.hasValue("options"))
